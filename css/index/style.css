@@ -5,15 +5,14 @@
     font-family: "Montserrat", sans-serif;
 }
 
-
 .main-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 60px 100px;
+    padding: 0px 150px;
     gap: 40px;
     flex-wrap: wrap;
-    margin-top: 5%;
+    margin-top: 7%;
 }
 
 .motto-container {
@@ -136,11 +135,11 @@ form {
     flex-wrap: wrap;
     margin: 50px 20px 0 20px;
     gap: 20px;
-    }
+}
 
 .column1, .column2, .column3, .column4 {
-    flex: 1 1 2000px;
-    max-width: 250px;
+    flex: 1 1 300px;
+    max-width: 400px;
     padding: 30px;
     border-radius: 10px;
     text-align: center;
@@ -153,4 +152,78 @@ form {
     max-width: 80px;
     height: auto;
     margin: 0 auto;
+}
+
+.welcome-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+
+}
+
+.welcome-text {
+    font-size: 40px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.description {
+    margin-top: 20px;
+    font-size: 20px;
+    color: #555;
+    text-align: center;
+    padding-left: 20%;
+    padding-right: 20%;
+}
+
+.service-container {
+    display: flex;
+    justify-content: center;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 50px;
+}
+
+.image-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    width: 300px;
+    height: 200px;
+    overflow: hidden;
+}
+
+.image-column img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+
+.image-column p {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 0;
+    text-align: center;
+}
+
+.image-column:hover p {
+    display: block;
+}
+
+.image-column:hover img {
+    transition: 0.3s;
+    opacity: 0.5;
 }
