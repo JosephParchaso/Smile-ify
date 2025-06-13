@@ -1,6 +1,6 @@
 <?php 
 $currentPage = 'schedule';
-include '../includes/header.php'; ?>
+include '../../includes/header.php'; ?>
 
 <body>
     <title>Schedules</title>

@@ -1,6 +1,6 @@
 <?php 
 $currentPage = 'profile';
-include '../includes/header.php'; ?>
+include '../../includes/header.php'; ?>
 
 <body>
     <title>Profile</title>

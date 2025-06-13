@@ -1,6 +1,6 @@
 <?php 
 $currentPage = 'reports';
-include '../includes/header.php'; ?>
+include '../../includes/header.php'; ?>
 
 <body>
     <title>Reports</title>

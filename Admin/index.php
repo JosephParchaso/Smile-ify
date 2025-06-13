@@ -1,6 +1,6 @@
 <?php 
 $currentPage = 'index';
-include 'includes/header.php'; ?>
+include '../includes/header.php'; ?>
 
 <body>
     <title>Home</title>

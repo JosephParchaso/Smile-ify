@@ -1,6 +1,6 @@
 <?php 
 $currentPage = 'patients';
-include '../includes/header.php'; ?>
+include '../../includes/header.php'; ?>
 
 <body>
     <title>Patients</title>

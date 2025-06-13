@@ -1,6 +1,6 @@
 <?php 
 $currentPage = 'promos';
-include '../includes/header.php'; ?>
+include '../../includes/header.php'; ?>
 
 <body>
     <title>Promos</title>
