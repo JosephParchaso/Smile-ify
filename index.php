@@ -9,10 +9,10 @@
 
     <title>Welcome!</title>
     <link rel="icon" href="images/logo/logo_white.png" type="image/x-icon">
-    <link rel="stylesheet" href="css/index/style.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="css/style.css?v=<?php echo time(); ?>">
     <script src="js/openBookingModal.js"></script>
     <script src="js/togglePassword.js"></script>
-    <script src="js/openEducationalModal.js"></script>
+    <script src="js/openEducationalModal.js?v=1.1"></script>
 </head>
 <body>
 

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,14 +6,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
 
-    <title>Welcome!</title>
     <link rel="icon" href="../images/logo/logo_white.png" type="image/x-icon">
-    <link rel="stylesheet" href="../css/home/style.css?v=<?php echo time(); ?>">
+    <link rel="icon" href="../../images/logo/logo_white.png" type="image/x-icon">    
+    <link rel="stylesheet" href="../css/style.css?v=<?php echo time(); ?>">
 </head>
-<body>
-    HI Welcome
-
-    <?php include '../includes/footer.php'; ?>
-</body>
-</html>
+    

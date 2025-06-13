@@ -1,0 +1,90 @@
+Owner - CEO
+Admin Secretary
+Patients
+
+|   Naming Variables   |
+| Type             | Example                       | Notation Style                                    |
+| ---------------- | ----------------------------- | ------------------------------------------------- |
+| **id**           | `emailInput`, `mainHeader`    | camelCase (no spaces, first word lowercase)       |
+| **class**        | `form-control`, `input-group` | kebab-case (all lowercase, hyphens between words) |
+| **name**         | `email`, `username`           | lowercase or camelCase                            |
+| **JS variables** | `userEmail`, `formData`       | camelCase                                         |
+
+|   Naming Variables DB    |
+| Type            | Example                            | Notation Style                             |
+| --------------- | ---------------------------------- | ------------------------------------------ |
+| **Table**       | `users`, `order_items`             | snake\_case (lowercase, underscores)       |
+| **Column**      | `email`, `user_name`, `created_at` | snake\_case                                |
+| **Primary Key** | `id`                               | Usually `id` for primary key in each table |
+| **Foreign Key** | `user_id`, `product_id`            | `table_singular_id`                        |
+
+|   Naming Folders  |
+| Type           | Example                                        | Notation Style                              |
+| -------------- | ---------------------------------------------- | ------------------------------------------- |
+| **Folders**    | `css`, `js`, `includes`                        | all lowercase, descriptive                  |
+| **Subfolders** | `home`, `icons`, `logo`                        | all lowercase, single-word                  |
+| **CSS Files**  | `style.css`                                    | lowercase with hyphens if needed            |
+| **PHP Files**  | `about.php`, `navbar.php`                      | lowercase, underscores optional for clarity |
+| **JS Files**   | `togglePassword.js`, `openEducationalModal.js` | camelCase (matches function purpose)        |
+
+
+
+Font {
+    font-family: "Montserrat", sans-serif;
+}
+
+Shadows { 
+}
+
+Buttons {
+    background-color: #122130;
+    transition: background-color 0.3s ease;
+}
+
+Buttons Hover {
+    background-color: #2a394d;
+}
+
+Form {
+    form {
+    width: 100%;
+    }
+
+    .form-group {
+        position: relative;
+        margin-bottom: 20px;
+    }
+
+    .form-control {
+        width: 100%;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 12px;
+        font-size: 16px;
+        outline: none;
+    }
+
+    .form-label {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        background: #fff;
+        color: #999;
+        font-size: 16px;
+        padding: 0 4px;
+        pointer-events: none;
+        transition: 0.2s ease all;
+    }
+
+    .form-control:focus {
+        border-color: #2196f3;
+    }
+
+    .form-control:focus + .form-label,
+    .form-control:not(:placeholder-shown) + .form-label {
+        top: -10px;
+        left: 10px;
+        color: #2196f3;
+        font-size: 12px;
+    }
+}
