@@ -11,5 +11,6 @@
     <link rel="icon" href="../images/logo/logo_white.png" type="image/x-icon">
     <link rel="icon" href="../../images/logo/logo_white.png" type="image/x-icon">    
     <link rel="stylesheet" href="../css/style.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="../../css/style.css?v=<?php echo time(); ?>">
 </head>
     
