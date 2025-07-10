@@ -11,9 +11,8 @@ Patients
 |   Naming Variables   |
 | Type             | Example                       | Notation Style                                    |
 | ---------------- | ----------------------------- | ------------------------------------------------- |
-| **id**           | `emailInput`, `mainHeader`    | camelCase (no spaces, first word lowercase)       |
+| **id && name**   | `emailInput`, `mainHeader`    | camelCase (no spaces, first word lowercase)       |
 | **class**        | `form-control`, `input-group` | kebab-case (all lowercase, hyphens between words) |
-| **name**         | `email`, `username`           | lowercase or camelCase                            |
 | **JS variables** | `userEmail`, `formData`       | camelCase                                         |
 
 |   Naming Variables DB    |
@@ -117,3 +116,25 @@ Form {
         font-size: 12px;
     }
 }
+
+Alert or Message {
+    <?php
+        session_start();
+        $error = '';
+        if (isset($_SESSION['login_error'])) {
+            $error = $_SESSION['login_error'];
+            unset($_SESSION['login_error']);
+        }
+    ?>
+    -------
+    <?php if (!empty($error)): ?>
+        <div class="error"><?php echo htmlspecialchars($error); ?></div>
+    <?php endif; ?>
+    -------
+    {
+    $_SESSION['login_error'] = "Invalid username or password.";
+    header("Location: ../index.php");
+    exit;
+    }
+}
+    

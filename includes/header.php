@@ -14,5 +14,6 @@ $basePath = '/Smile-ify';
     <link rel="icon" href="<?= $basePath ?>/images/logo/logo_white.png" type="image/x-icon">
     <link rel="stylesheet" href="<?= $basePath ?>/css/style.css?v=<?= time(); ?>">
     <script src="<?= $basePath ?>/js/toggleNavbar.js?v=<?= time(); ?>"></script>
+    <script src="<?= $basePath ?>/js/logoutModal.js?v=<?= time(); ?>"></script>
 </head>
     

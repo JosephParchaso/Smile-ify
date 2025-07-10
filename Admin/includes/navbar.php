@@ -57,10 +57,20 @@
                 </a>
             </li>
             <li>
-                <a href="/Smile-ify/Admin/pages/logout.php" class="<?= ($currentPage == 'logout') ? 'active' : '' ?>">
+                <a href="#" id="logoutLink">
                     <span class="material-symbols-outlined">logout</span>
                     <span class="link-text">Logout</span>
                 </a>
+
+                <div id="logoutModal" class="logout-modal">
+                    <div class="logout-modal-content">
+                        <p>Are you sure you want to log out?</p>
+                        <div class="modal-buttons">
+                            <button id="confirmLogout">Yes, log out</button>
+                            <button id="cancelLogout">Cancel</button>
+                        </div>
+                    </div>
+                </div>
             </li>
         </ul>
     </div>

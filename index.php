@@ -1,3 +1,11 @@
+<?php
+session_start();
+$error = '';
+if (isset($_SESSION['login_error'])) {
+    $error = $_SESSION['login_error'];
+    unset($_SESSION['login_error']);
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,14 +31,17 @@
 
     <div class="login-container">
         <img src="images/logo/logo_default.png" alt="Logo" class="logo" />
-        <form action="pages/home.php" method="get">
+        <?php if (!empty($error)): ?>
+            <div class="error"><?php echo htmlspecialchars($error); ?></div>
+        <?php endif; ?>
+        <form action="includes/login.php" method="POST">
             <div class="form-group">
-                <input type="text" id="userName" class="form-control" placeholder=" " />
+                <input type="text" id="userName" name="userName" class="form-control" placeholder=" " required/>
                 <label for="userName" class="form-label">Username</label>
             </div>
 
             <div class="form-group">
-                <input type="password" id="passWord" class="form-control" placeholder=" " />
+                <input type="password" id="passWord" name="passWord" class="form-control" placeholder=" " required/>
                 <label for="passWord" class="form-label">Password</label>
                 <span onclick="togglePassword()" style="position: absolute; top: 50%; right: 12px; transform: translateY(-50%); cursor: pointer; font-size: 14px;">👁</span>
             </div>
@@ -49,7 +60,6 @@
     <div id="bookingModal" class="booking-modal">
         <div class="booking-modal-content">
             <form id="bookingForm">
-            <span class="close-button" onclick="closeModal()">&times;</span>
                 <div class="form-group">
                     <input type="text" id="lastName" class="form-control" name="lastName" placeholder=" " required />
                     <label for="lastName" class="form-label">Last Name <span class="required">*</span></label>
@@ -121,7 +131,10 @@
                     </select>
                     <label for="branch" class="form-label">Branch <span class="required">*</span></label>
                 </div>
-                <button type="submit" class="form-button">Confirm</button>
+                <div class="button-group">
+                    <button type="submit" class="form-button confirm-btn" id="confirmBooking">Confirm</button>
+                    <button type="button" class="form-button cancel-btn" onclick="closeModal()">Cancel</button>
+                </div>
             </form>
         </div>
     </div>
