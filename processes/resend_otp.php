@@ -1,16 +1,15 @@
 <?php
 session_start();
-require 'connection.php';
+require '../includes/db.php'; 
 
 if (isset($_SESSION['verified_data'])) {
     $verified_data = $_SESSION['verified_data'];
-    $email = $verified_data['email']; // Assuming 'email' is a key in the verified_data array
+    $email = $verified_data['email'];
 
-    // Generate a new OTP
     $otp = rand(100000, 999999);
     $_SESSION['otp'] = $otp;
+    $_SESSION['otp_created'] = time();
 
-    // Send the OTP via email
     require '../Mail/phpmailer/PHPMailerAutoload.php';
     $mail = new PHPMailer;
 
@@ -20,8 +19,8 @@ if (isset($_SESSION['verified_data'])) {
     $mail->SMTPAuth = true;
     $mail->SMTPSecure = 'tls';
 
-    $mail->Username = 'theartp2@gmail.com'; // Your Gmail username
-    $mail->Password = 'xnlc pyjn okdg ihwd'; // Your Gmail password
+    $mail->Username = 'theartp2@gmail.com';
+    $mail->Password = 'xnlc pyjn okdg ihwd';
 
     $mail->setFrom('theartp2@gmail.com', 'OTP Verification');
     $mail->addAddress($email);
@@ -35,14 +34,10 @@ if (isset($_SESSION['verified_data'])) {
         <b>Smile-ify</b>";
 
     if (!$mail->send()) {
-        // Email sending failed
         echo json_encode(['success' => false, 'message' => 'Failed to resend OTP. Please try again.']);
     } else {
-        // Email sent successfully
         echo json_encode(['success' => true, 'message' => 'OTP resent successfully.']);
     }
 } else {
-    // Session variable not set
     echo json_encode(['success' => false, 'message' => 'Session variable not set.']);
 }
-?>

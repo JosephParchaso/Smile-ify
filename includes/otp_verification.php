@@ -38,85 +38,138 @@ if (isset($_SESSION['verified_data'])) {
             </div>
 
             <div class="timer">
-                Time remaining: <span id="timer">1:00</span>
+                Time remaining: <span id="timer"></span>
             </div>
 
             <div class="button-group">
-                <button type="button" id="resendOTPButton" class="form-button cancel-btn">Resend</button>
-                <button type="button" onclick="window.location.href='../index.php'" class="form-button cancel-btn">Cancel</button>
-                <button type="submit" name="verify" class="form-button confirm-btn">Confirm</button>
+                <button type="button" id="resendOTPButton" class="form-button cancel-btn" disabled>Resend</button>
+                <button type="button" onclick="sessionStorage.clear(); window.location.href='../index.php'" class="form-button cancel-btn">Cancel</button>
+                <button type="submit" name="verify" class="form-button confirm-btn" id="confirmButton">Confirm</button>
             </div>
         </form>
     </div>
 </div>
+</body>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var timerEl = document.getElementById("timer");
-        var minutes = 1;
-        var seconds = 0;
+document.addEventListener('DOMContentLoaded', function () {
+    const timerEl = document.getElementById("timer");
+    const resendBtn = document.getElementById("resendOTPButton");
+    const expiryLimit = 60;
+    let countdown;
 
-        function startCountdown() {
-            var countdown = setInterval(function () {
-                if (minutes === 0 && seconds === 0) {
-                    clearInterval(countdown);
-                    timerEl.innerText = "Time expired";
-                    return;
-                }
+    const phpOtpCreated = <?php echo isset($_SESSION['otp_created']) ? ($_SESSION['otp_created'] * 1000) : 'null'; ?>;
+    const storageKey = "otpExpiryTimestamp_" + "<?php echo $_SESSION['otp_created']; ?>";
 
-                timerEl.innerText = minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+    Object.keys(sessionStorage).forEach(key => {
+        if (key.startsWith("otpExpiryTimestamp_")) {
+            const ts = parseInt(sessionStorage.getItem(key));
+            if (Date.now() > ts) {
+                sessionStorage.removeItem(key);
+            }
+        }
+    });
 
-                if (seconds === 0) {
-                    minutes--;
-                    seconds = 59;
-                } else {
-                    seconds--;
-                }
-            }, 1000);
+    if (phpOtpCreated !== null && !isNaN(phpOtpCreated) && !sessionStorage.getItem(storageKey)) {
+        const expiryTime = phpOtpCreated + (expiryLimit * 1000);
+        sessionStorage.setItem(storageKey, expiryTime);
+    }
+
+    function updateTimerUI() {
+        const expiryTime = parseInt(sessionStorage.getItem(storageKey));
+        if (!expiryTime) {
+            timerEl.innerText = "Time expired";
+            resendBtn.disabled = false;
+            return;
         }
 
+        const now = Date.now();
+        const remaining = Math.floor((expiryTime - now) / 1000);
+
+        if (remaining <= 0) {
+            timerEl.innerText = "Time expired";
+            resendBtn.disabled = false;
+            return;
+        }
+
+        resendBtn.disabled = true;
+        timerEl.innerText = "0:" + (remaining < 10 ? "0" : "") + remaining;
+    }
+
+    function startCountdown() {
+        clearInterval(countdown);
+        countdown = setInterval(() => {
+            const expiryTime = parseInt(sessionStorage.getItem(storageKey));
+            const now = Date.now();
+            const remaining = Math.floor((expiryTime - now) / 1000);
+
+            if (remaining <= 0) {
+                clearInterval(countdown);
+                timerEl.innerText = "Time expired";
+                resendBtn.disabled = false;
+                return;
+            }
+
+            timerEl.innerText = "0:" + (remaining < 10 ? "0" : "") + remaining;
+            resendBtn.disabled = true;
+        }, 1000);
+    }
+
+    const expiry = sessionStorage.getItem(storageKey);
+    if (expiry && Date.now() < parseInt(expiry)) {
         startCountdown();
+    } else {
+        updateTimerUI();
+    }
 
-        $('#resendOTPButton').click(function () {
-            $.ajax({
-                url: '../processes/resend_otp.php',
-                type: 'POST',
-                dataType: 'json',
-                success: function (response) {
-                    const messageDiv = $('#resendMessage');
+    $('#resendOTPButton').click(function () {
+        if (this.disabled) return;
 
-                    if (response.success) {
-                        messageDiv
-                            .removeClass('error') // Remove red styling
-                            .addClass('success') // Optional: use a `.success` class if you want
-                            .text(response.message)
-                            .css({ color: 'green', background: '#e6ffe6', border: '1px solid green' }) // optional inline
-                            .show();
-
-                        // Reset the timer
-                        minutes = 1;
-                        seconds = 0;
-                        startCountdown();
-                    } else {
-                        messageDiv
-                            .removeClass('success') // In case it was previously success
-                            .addClass('error')
-                            .text(response.message)
-                            .show();
-                    }
-                },
-                error: function () {
-                    $('#resendMessage')
-                        .removeClass('success')
-                        .addClass('error')
-                        .text('Error resending OTP. Please try again.')
-                        .show();
+        $.ajax({
+            url: '../processes/resend_otp.php',
+            type: 'POST',
+            dataType: 'json',
+            success: function (response) {
+                const messageDiv = $('#resendMessage');
+                if (response.success) {
+                    messageDiv.removeClass('error').addClass('success').text(response.message).show();
+                    const newExpiry = Date.now() + expiryLimit * 1000;
+                    const newKey = "otpExpiryTimestamp_" + Math.floor(Date.now() / 1000);
+                    Object.keys(sessionStorage).forEach(key => {
+                        if (key.startsWith("otpExpiryTimestamp_")) {
+                            sessionStorage.removeItem(key);
+                        }
+                    });
+                    sessionStorage.setItem(newKey, newExpiry);
+                    location.reload();
+                } else {
+                    messageDiv.removeClass('success').addClass('error').text(response.message).show();
                 }
-            });
+            },
+            error: function () {
+                $('#resendMessage').addClass('error').text('Error resending OTP. Please try again.').show();
+            }
         });
     });
+
+    document.querySelector('button[onclick*="index.php"]').addEventListener('click', () => {
+        sessionStorage.clear();
+    });
+
+    const confirmBtn = document.getElementById("confirmButton");
+    confirmBtn.addEventListener("click", function (e) {
+        const keys = Object.keys(sessionStorage).filter(k => k.startsWith("otpExpiryTimestamp_"));
+        const expiryTime = keys.length > 0 ? parseInt(sessionStorage.getItem(keys[0])) : null;
+        if (!expiryTime || Date.now() > expiryTime) {
+            e.preventDefault();
+            $('#resendMessage')
+                .removeClass('success')
+                .addClass('error')
+                .text('OTP expired. Please resend to get a new code.')
+                .show();
+        }
+    });
+});
 </script>
 
-</body>
-</html>

@@ -3,14 +3,24 @@ session_start();
 require '../includes/db.php'; 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["verify"])) {
-    $otp = $_SESSION['otp'];
-    $email = $_SESSION['mail'];
-    $otp_code = $_POST['otpCode'];
-    if($otp != $otp_code){
+    $otp = $_SESSION['otp'] ?? null;
+    $otp_code = trim($_POST['otpCode']);
+    $otp_created = $_SESSION['otp_created'] ?? 0;
+    $expiry_limit = 60;
+    $email = $_SESSION['mail'] ?? null;
 
-    $_SESSION['otp_error'] = "Invalid OTP code.";
-    header("Location: ../includes/otp_verification.php");
-    exit;
+    // If OTP has expired
+    if (time() - $otp_created > $expiry_limit) {
+        $_SESSION['otp_error'] = "OTP has expired. Please request a new one.";
+        header("Location: ../includes/otp_verification.php");
+        exit;
+    }
+
+    // If OTP is incorrect
+    if ((string)$otp !== (string)$otp_code) {
+        $_SESSION['otp_error'] = "Invalid OTP code.";
+        header("Location: ../includes/otp_verification.php");
+        exit;
 }
     else if (isset($_SESSION['verified_data'])) {
         $lastName = $_SESSION['verified_data']['lastName'];
@@ -56,21 +66,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["verify"])) {
                 throw new Exception("Appointment insert failed: " . $appointment_stmt->error);
             }
 
-            // Commit transaction
             $conn->commit();
             require '../Mail/phpmailer/PHPMailerAutoload.php';
-            // Send email with login credentials
             $mail = new PHPMailer;
             $mail->isSMTP();
             $mail->Host = 'smtp.gmail.com';
             $mail->Port = 587;
             $mail->SMTPAuth = true;
             $mail->SMTPSecure = 'tls';
-            $mail->Username = 'theartp2@gmail.com'; // Your email address
-            $mail->Password = 'xnlcpyjnokdgihwd'; // Your email password
+            $mail->Username = 'theartp2@gmail.com';
+            $mail->Password = 'xnlc pyjn okdg ihwd';
 
             $mail->setFrom('theartp2@gmail.com', 'Smile-ify Team');
-            $mail->addAddress($email); // User's email address
+            $mail->addAddress($email);
             $mail->isHTML(true);
             $mail->Subject = "Login Credentials";
             $mail->Body = "<p>Dear $username,</p>
@@ -81,11 +89,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["verify"])) {
                             <p>You can now log in to your account using these credentials.</p>
                             <p>Best regards,<br>Smile-ify Team</p>";
 
-            if (!$mail->send()) {
-                throw new Exception("Mailer Error: " . $mail->ErrorInfo);
-            } else {
+            try {
+                error_log("Sending email...");
+                if (!$mail->send()) {
+                    throw new Exception("Mailer Error: " . $mail->ErrorInfo);
+                }
+
+                error_log("Email sent successfully.");
                 $_SESSION['otp_success'] = "Email has been sent with your login credentials.";
                 header("Location: ../index.php");
+                exit;
+            } catch (Exception $e) {
+                error_log("PHPMailer Exception: " . $e->getMessage());
+                $_SESSION['otp_error'] = "Failed to send email. Please try again.";
+                header("Location: ../includes/otp_verification.php");
                 exit;
             }
         $conn->close();
