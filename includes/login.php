@@ -16,26 +16,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['userName'], $_POST['p
             $user = $result->fetch_assoc();
 
             if (password_verify($password, $user['password'])) {
-                // Store user info in session
                 $_SESSION['user_id'] = $user['user_id'];
                 $_SESSION['username'] = $user['username'];
                 $_SESSION['role'] = $user['role'];
 
-                // Redirect based on role
-                if (str_starts_with($user['username'], 'owner')) {
-                    header("Location: ../Owner/index.php");
-                    exit;
-                } elseif (str_starts_with($user['username'], 'admin')) {
-                    header("Location: ../Admin/index.php");
-                    exit;
-                } elseif (str_starts_with($user['username'], 'patient')) {
-                    header("Location: ../Patient/index.php");
-                    exit;
-                } else {
-                    $_SESSION['login_error'] = "Unknown role.";
-                    header("Location: ../index.php");
-                    exit;
+                $role = strtolower($user['role']);
+
+                switch ($role) {
+                    case 'owner':
+                        header("Location: ../Owner/index.php");
+                        break;
+                    case 'admin':
+                        header("Location: ../Admin/index.php");
+                        break;
+                    case 'patient':
+                        header("Location: ../Patient/index.php");
+                        break;
+                    default:
+                        header("Location: ../index.php");
+                        break;
                 }
+                exit;
             } else {
                 $_SESSION['login_error'] = "Invalid username or password.";
                 header("Location: ../index.php");

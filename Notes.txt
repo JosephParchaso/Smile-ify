@@ -15,13 +15,14 @@ Patients
 | **class**        | `form-control`, `input-group` | kebab-case (all lowercase, hyphens between words) |
 | **JS variables** | `userEmail`, `formData`       | camelCase                                         |
 
-|   Naming Variables DB    |
-| Type            | Example                            | Notation Style                             |
-| --------------- | ---------------------------------- | ------------------------------------------ |
-| **Table**       | `users`, `order_items`             | snake\_case (lowercase, underscores)       |
-| **Column**      | `email`, `user_name`, `created_at` | snake\_case                                |
-| **Primary Key** | `id`                               | Usually `id` for primary key in each table |
-| **Foreign Key** | `user_id`, `product_id`            | `table_singular_id`                        |
+|   Naming Variables DB      |
+| Type                       | Example                            | Notation Style                             |
+| -------------------------- | ---------------------------------- | ------------------------------------------ |
+| **Table**                  | `users`, `order_items`             | snake\_case (lowercase, underscores)       |
+| **Column**                 | `email`, `user_name`, `created_at` | snake\_case                                |
+| **Primary Key**            | `id`                               | Usually `id` for primary key in each table |
+| **Foreign Key**            | `user_id`, `product_id`            | `table_singular_id`                        |
+| **Foreign Key Constraint** | `fk_user_id`, `fk_product_id`      | `fk_table_singular_id`                     |
 
 |   Naming Folders  |
 | Type           | Example                                        | Notation Style                              |
@@ -138,3 +139,26 @@ Alert or Message {
     }
 }
     
+
+
+
+
+
+
+
+==========================================================================================================================================================================================
+
+Notes:
+doctor availability
+If you’re building for a simple clinic where a dentist is assigned to only one branch, go with Option 1. 1 = 1
+
+If your clinic has multiple branches and dentists rotate, go with Option 2. many = many
+
+doctor specialization - consultation all?
+time consume in each service
+doctor startdate
+doctor resignation
+
+
+==========================================================================================================================================================================================
+

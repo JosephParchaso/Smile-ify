@@ -1,26 +1,25 @@
 <?php
 session_start();
-$error = '';
+
+include 'includes/header.php';
+include 'includes/db.php';
+
+$loginError = '';
+$otpSuccess = '';
+
 if (isset($_SESSION['login_error'])) {
-    $error = $_SESSION['login_error'];
+    $loginError = $_SESSION['login_error'];
     unset($_SESSION['login_error']);
 }
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
+if (isset($_SESSION['otp_success'])) {
+    $otpSuccess = $_SESSION['otp_success'];
+    unset($_SESSION['otp_success']);
+}
+?>
+
+<head>    
     <title>Welcome!</title>
-    <link rel="icon" href="images/logo/logo_white.png" type="image/x-icon">
-    <link rel="stylesheet" href="css/style.css?v=<?php echo time(); ?>">
-    <script src="js/openBookingModal.js"></script>
-    <script src="js/togglePassword.js"></script>
-    <script src="js/openEducationalModal.js?v=1.1"></script>
 </head>
 <body>
 
@@ -31,12 +30,18 @@ if (isset($_SESSION['login_error'])) {
 
     <div class="login-container">
         <img src="images/logo/logo_default.png" alt="Logo" class="logo" />
-        <?php if (!empty($error)): ?>
-            <div class="error"><?php echo htmlspecialchars($error); ?></div>
+        
+        <?php if (!empty($otpSuccess)): ?>
+            <div class="success"><?php echo htmlspecialchars($otpSuccess); ?></div>
         <?php endif; ?>
-        <form action="includes/login.php" method="POST">
+
+        <?php if (!empty($loginError)): ?>
+            <div class="error"><?php echo htmlspecialchars($loginError); ?></div>
+        <?php endif; ?>
+
+        <form action="includes/login.php" method="POST" autocomplete="off">
             <div class="form-group">
-                <input type="text" id="userName" name="userName" class="form-control" placeholder=" " required/>
+                <input type="text" id="userName" name="userName" class="form-control" placeholder=" " required autocomplete="off"/>
                 <label for="userName" class="form-label">Username</label>
             </div>
 
@@ -59,7 +64,7 @@ if (isset($_SESSION['login_error'])) {
 
     <div id="bookingModal" class="booking-modal">
         <div class="booking-modal-content">
-            <form id="bookingForm">
+            <form action="processes/request_otp.php" method="POST" id="bookingForm" autocomplete="off">
                 <div class="form-group">
                     <input type="text" id="lastName" class="form-control" name="lastName" placeholder=" " required />
                     <label for="lastName" class="form-label">Last Name <span class="required">*</span></label>
@@ -75,10 +80,9 @@ if (isset($_SESSION['login_error'])) {
                     <label for="middleName" class="form-label">Middle Name</label>
                 </div>
 
-                <div class="form-group phone-group">
-                    <input type="tel" id="mobileNumber" class="form-control" name="mobileNumber" oninput="this.value = this.value.replace(/[^0-9]/g, '')" pattern="[0-9]{10}" title="Mobile number must be 10 digits" required />
-                    <label for="mobileNumber" class="form-label">Mobile Number <span class="required">*</span></label>
-                    <span class="phone-prefix">+63</span>
+                <div class="form-group">
+                    <input type="email" id="email" class="form-control" name="email" placeholder=" " required autocomplete="off"/>
+                    <label for="email" class="form-label">Email Address <span class="required">*</span></label>
                 </div>
                 
                 <div class="form-group">
@@ -86,19 +90,48 @@ if (isset($_SESSION['login_error'])) {
                         <option value="" disabled selected hidden></option>
                         <option value="female">Female</option>
                         <option value="male">Male</option>
-                        <option value="other">Other</option>
                     </select>
                     <label for="gender" class="form-label">Gender <span class="required">*</span></label>
                 </div>
 
+                <div class="form-group phone-group">
+                    <input type="tel" id="contactNumber" class="form-control" name="contactNumber" oninput="this.value = this.value.replace(/[^0-9]/g, '')" pattern="[0-9]{10}" title="Mobile number must be 10 digits" required maxlength="10" />
+                    <label for="contactNumber" class="form-label">Mobile Number <span class="required">*</span></label>
+                    <span class="phone-prefix">+63</span>
+                </div>
+
                 <div class="form-group">
-                    <select id="service" class="form-control" name="service" required>
+                    <select id="appointmentBranch" class="form-control" name="appointmentBranch" required>
                         <option value="" disabled selected hidden></option>
-                        <option value="consultation">Consultation</option>
-                        <option value="cleaning">Cleaning</option>
-                        <option value="whitening">Whitening</option>
+                        <?php
+
+                        $sql = "SELECT branch_id, name FROM branch";
+                        $result = $conn->query($sql);
+
+                        if ($result->num_rows > 0) {
+                            while($row = $result->fetch_assoc()) {
+                                echo "<option value='" . $row["branch_id"] . "'>" . htmlspecialchars($row["name"]) . "</option>";
+                            }
+                        } else {
+                            echo "<option disabled>No branches available</option>";
+                        }
+                        ?>
                     </select>
-                    <label for="service" class="form-label">Service <span class="required">*</span></label>
+                    <label for="appointmentBranch" class="form-label">Branch <span class="required">*</span></label>
+                </div>
+
+                <div class="form-group">
+                    <div id="services-container">
+                        <select id="appointmentService" class="form-control" name="appointmentService" required>
+                            <option value="" disabled selected hidden></option>
+                            <!-- Options will be populated here via AJAX -->
+                        </select>
+                    <label for="appointmentService" class="form-label">Service <span class="required">*</span></label>
+                    </div>
+                    
+                    <!-- <div class="button-wrapper">
+                        <button type="button" class="add-service-btn">Add Another Service</button>
+                    </div> -->
                 </div>
 
                 <div class="form-group">
@@ -107,7 +140,7 @@ if (isset($_SESSION['login_error'])) {
                 </div>
 
                 <div class="form-group">
-                    <select id="appointmentTime" name="appointmentTime" class="form-control" required>
+                    <select id="appointmentTime" class="form-control" name="appointmentTime" required>
                         <option value="" disabled selected hidden></option>
                         <option value="09:00">9:00 AM</option>
                         <option value="09:45">9:45 AM</option>
@@ -123,14 +156,12 @@ if (isset($_SESSION['login_error'])) {
                 </div>
 
                 <div class="form-group">
-                    <select id="branch" class="form-control" name="branch" required>
+                    <select id="appointmentDentist" class="form-control" name="appointmentDentist" required>
                         <option value="" disabled selected hidden></option>
-                        <option value="downtown">Downtown</option>
-                        <option value="uptown">Uptown</option>
-                        <option value="suburb">Suburb</option>
                     </select>
-                    <label for="branch" class="form-label">Branch <span class="required">*</span></label>
+                    <label for="appointmentDentist" class="form-label">Dentist <span class="required">*</span></label>
                 </div>
+
                 <div class="button-group">
                     <button type="submit" class="form-button confirm-btn" id="confirmBooking">Confirm</button>
                     <button type="button" class="form-button cancel-btn" onclick="closeModal()">Cancel</button>

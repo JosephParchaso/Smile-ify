@@ -13,6 +13,15 @@ $basePath = '/Smile-ify';
 
     <link rel="icon" href="<?= $basePath ?>/images/logo/logo_white.png" type="image/x-icon">
     <link rel="stylesheet" href="<?= $basePath ?>/css/style.css?v=<?= time(); ?>">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="<?= $basePath ?>/js/openBookingModal.js"></script>
+    <script src="<?= $basePath ?>/js/togglePassword.js"></script>
+    <script src="<?= $basePath ?>/js/loadServices.js"></script>
+    <script src="<?= $basePath ?>/js/loadDentists.js"></script>
+    <script src="<?= $basePath ?>/js/openEducationalModal.js?v=1.1"></script>
+    
     <script src="<?= $basePath ?>/js/toggleNavbar.js?v=<?= time(); ?>"></script>
     <script src="<?= $basePath ?>/js/logoutModal.js?v=<?= time(); ?>"></script>
 </head>

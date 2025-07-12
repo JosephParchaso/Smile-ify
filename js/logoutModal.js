@@ -1,11 +1,17 @@
 function openLogoutModal() {
-    document.getElementById("logoutModal").style.display = "flex";
-    document.body.classList.add("modal-open");
+    const modal = document.getElementById("logoutModal");
+    if (modal) {
+        modal.style.display = "flex";
+        document.body.classList.add("modal-open");
+    }
 }
 
 function closeLogoutModal() {
-    document.getElementById("logoutModal").style.display = "none";
-    document.body.classList.remove("modal-open");
+    const modal = document.getElementById("logoutModal");
+    if (modal) {
+        modal.style.display = "none";
+        document.body.classList.remove("modal-open");
+    }
 }
 
 function confirmLogout() {
@@ -13,11 +19,22 @@ function confirmLogout() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("logoutLink").addEventListener("click", function (e) {
-        e.preventDefault();
-        openLogoutModal();
-    });
+    const logoutLink = document.getElementById("logoutLink");
+    const confirmBtn = document.getElementById("confirmLogout");
+    const cancelBtn = document.getElementById("cancelLogout");
 
-    document.getElementById("confirmLogout").addEventListener("click", confirmLogout);
-    document.getElementById("cancelLogout").addEventListener("click", closeLogoutModal);
+    if (logoutLink) {
+        logoutLink.addEventListener("click", function (e) {
+            e.preventDefault();
+            openLogoutModal();
+        });
+    }
+
+    if (confirmBtn) {
+        confirmBtn.addEventListener("click", confirmLogout);
+    }
+
+    if (cancelBtn) {
+        cancelBtn.addEventListener("click", closeLogoutModal);
+    }
 });
