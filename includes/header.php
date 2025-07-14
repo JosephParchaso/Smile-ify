@@ -19,10 +19,9 @@ $basePath = '/Smile-ify';
     <script src="<?= $basePath ?>/js/openBookingModal.js"></script>
     <script src="<?= $basePath ?>/js/togglePassword.js"></script>
     <script src="<?= $basePath ?>/js/loadServices.js"></script>
+    <script src="<?= $basePath ?>/js/toggleCalendar.js"></script>
     <script src="<?= $basePath ?>/js/loadDentists.js"></script>
     <script src="<?= $basePath ?>/js/openEducationalModal.js?v=1.1"></script>
-    
     <script src="<?= $basePath ?>/js/toggleNavbar.js?v=<?= time(); ?>"></script>
     <script src="<?= $basePath ?>/js/logoutModal.js?v=<?= time(); ?>"></script>
 </head>
-    

@@ -68,6 +68,13 @@ body, html {
     text-align: center;
 }
 
+.error-msg-calendar {
+    display: none;
+    width: fit-content;
+    max-width: 100%;
+    margin-top: 4px;
+}
+
 form {
     width: 100%;
 }

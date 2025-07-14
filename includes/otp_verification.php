@@ -51,7 +51,6 @@ if (isset($_SESSION['verified_data'])) {
 </div>
 </body>
 
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const timerEl = document.getElementById("timer");

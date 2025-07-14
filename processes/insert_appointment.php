@@ -67,18 +67,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["verify"])) {
             }
 
             $conn->commit();
+
             require '../Mail/phpmailer/PHPMailerAutoload.php';
             $mail = new PHPMailer;
+
             $mail->isSMTP();
             $mail->Host = 'smtp.gmail.com';
             $mail->Port = 587;
             $mail->SMTPAuth = true;
             $mail->SMTPSecure = 'tls';
+
             $mail->Username = 'theartp2@gmail.com';
             $mail->Password = 'xnlc pyjn okdg ihwd';
 
             $mail->setFrom('theartp2@gmail.com', 'Smile-ify Team');
             $mail->addAddress($email);
+            
             $mail->isHTML(true);
             $mail->Subject = "Login Credentials";
             $mail->Body = "<p>Dear $username,</p>
@@ -113,7 +117,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["verify"])) {
         $username = $username_base;
         $counter = 0;
         
-        // Check if the base username already exists
         $check_sql = "SELECT username FROM users WHERE username = ?";
         $check_stmt = $conn->prepare($check_sql);
         $check_stmt->bind_param("s", $username);
@@ -122,15 +125,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["verify"])) {
         
         while ($check_stmt->num_rows > 0) {
             $counter++;
-            // If username already exists, append a unique identifier
             $username = $username_base . substr($firstName, $counter - 1, 1);
             
-            // Check if the new username exists
             $check_stmt->execute();
             $check_stmt->store_result();
         }
         
         return $username;
     }
-
 ?>

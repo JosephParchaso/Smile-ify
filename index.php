@@ -138,6 +138,9 @@ if (isset($_SESSION['otp_success'])) {
                 <div class="form-group">
                     <input type="date" id="appointmentDate" class="form-control" name="appointmentDate" required />
                     <label for="appointmentDate" class="form-label">Date <span class="required">*</span></label>
+                    <span id="dateError" class="error-msg-calendar error">
+                        Sundays are not available for appointments. Please select another date.
+                    </span>
                 </div>
 
                 <div class="form-group">
@@ -280,12 +283,3 @@ if (isset($_SESSION['otp_success'])) {
 <?php include 'includes/footer.php'; ?>
 </body>
 </html>
-
-<script>
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
-    const minDate = `${yyyy}-${mm}-${dd}`;
-    document.getElementById("appointmentDate").setAttribute("min", minDate);
-</script>
