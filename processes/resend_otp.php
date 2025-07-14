@@ -1,6 +1,6 @@
 <?php
 session_start();
-require '../includes/db.php'; 
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/db.php';
 
 if (isset($_SESSION['verified_data'])) {
     $verified_data = $_SESSION['verified_data'];

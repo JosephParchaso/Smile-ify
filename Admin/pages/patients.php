@@ -1,11 +1,11 @@
 <?php 
 $currentPage = 'patients';
-include '../../includes/header.php'; ?>
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/header.php'; 
+?>
 
 <body>
     <title>Patients</title>
-    <?php include '../includes/navbar.php'; ?>
+    <?php require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/Admin/includes/navbar.php'; ?>
 </body>
 
-<?php include '../../includes/footer.php'; ?>
-</html>
+<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/footer.php'; ?>

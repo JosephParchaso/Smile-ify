@@ -1,6 +1,6 @@
 <?php
 session_start();
-require '../includes/db.php'; 
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/db.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $_SESSION['verified_data'] = $_POST;

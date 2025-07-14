@@ -1,5 +1,5 @@
 <?php
-include '../includes/db.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/db.php';
 
 if (isset($_POST['appointmentBranch']) && isset($_POST['appointmentService'])) {
     $branchId = $_POST['appointmentBranch'];

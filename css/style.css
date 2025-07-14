@@ -612,7 +612,76 @@ nav {
 .material-symbols-outlined {
     font-size: 20px;
     vertical-align: middle;
+}
+
+.nav-item.dropdown {
+    position: relative;
+}
+
+.notif-badge {
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 12px;
+    position: absolute;
+    top: -5px;
+    right: -5px;
     }
+
+.notif-dropdown {
+    display: none;
+    position: absolute;
+    top: 40px;
+    right: 0;
+    background-color: #fff;
+    width: 400px;
+    border: 1px solid #ccc;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    z-index: 1000;
+    padding: 10px;
+}
+
+.notif-dropdown a {
+    background: #122130;
+    justify-content: center;
+}
+
+.notif-dropdown h4 {
+    margin: 0;
+    font-size: 16px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+}
+
+.notif-dropdown ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.notif-item {
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+}
+.notif-item:hover {
+    background-color: #f9f9f9;
+}
+
+.notif-item.unread {
+    background-color: #f9f9f9;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.notif-date {
+    display: block;
+    font-size: 10px;
+    color: #888;
+}
 
 .logout-modal {
     display: none;

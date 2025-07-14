@@ -33,6 +33,9 @@ Patients
 | **PHP Files**  | `about.php`, `navbar.php`                      | lowercase, underscores optional for clarity |
 | **JS Files**   | `togglePassword.js`, `openEducationalModal.js` | camelCase (matches function purpose)        |
 
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/db.php';
+$baseUrl = $_SERVER['HTTP_HOST'] === 'localhost' ? '/Smile-ify' : '';
+
 Root/
 │
 ├── Admin/
@@ -149,6 +152,10 @@ Alert or Message {
 ==========================================================================================================================================================================================
 
 Notes:
+
+gmail suspicious spams
+
+
 doctor availability
 If you’re building for a simple clinic where a dentist is assigned to only one branch, go with Option 1. 1 = 1
 

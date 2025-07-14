@@ -1,8 +1,8 @@
 <?php
 session_start();
 
-include 'includes/header.php';
-include 'includes/db.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/header.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/db.php';
 
 $loginError = '';
 $otpSuccess = '';
@@ -39,7 +39,7 @@ if (isset($_SESSION['otp_success'])) {
             <div class="error"><?php echo htmlspecialchars($loginError); ?></div>
         <?php endif; ?>
 
-        <form action="includes/login.php" method="POST" autocomplete="off">
+        <form action="processes/login.php" method="POST" autocomplete="off">
             <div class="form-group">
                 <input type="text" id="userName" name="userName" class="form-control" placeholder=" " required autocomplete="off"/>
                 <label for="userName" class="form-label">Username</label>

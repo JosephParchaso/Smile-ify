@@ -1,7 +1,9 @@
 <?php 
 session_start();
+$baseUrl = $_SERVER['HTTP_HOST'] === 'localhost' ? '/Smile-ify' : '';
+
 if (!isset($_SESSION['username'])) {
-    header("Location: /Smile-ify/index.php");
+    header("Location: $baseUrl/index.php");
     exit;
 }
 header("Cache-Control: no-cache, no-store, must-revalidate");
@@ -9,11 +11,13 @@ header("Pragma: no-cache");
 header("Expires: 0");
 
 $currentPage = 'index';
-include '../includes/header.php'; ?>
+
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/header.php'; 
+?>
 
 <body>
     <title>Home</title>
-    <?php include 'includes/navbar.php'; ?>
+    <?php require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/Owner/includes/navbar.php'; ?>
     <h1>Hi, Welcome Owner</h1>
 
     <main>
@@ -21,6 +25,5 @@ include '../includes/header.php'; ?>
         <p>You are logged in as <strong><?php echo htmlspecialchars($_SESSION['role']); ?></strong>.</p>
     </main>
 
-<?php include '../includes/footer.php'; ?>
+<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/footer.php'; ?>
 </body>
-</html>

@@ -1,7 +1,8 @@
 <?php 
 session_start(); 
-require 'db.php'; 
-require 'header.php'; 
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/db.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/header.php';
+define('BASE_URL', $_SERVER['HTTP_HOST'] === 'localhost' ? '/Smile-ify' : '');
 
 $error = '';
 if (isset($_SESSION['otp_error'])) {
@@ -31,7 +32,7 @@ if (isset($_SESSION['verified_data'])) {
 
         <div id="resendMessage" class="error" style="display: none;"></div>
 
-        <form action="../processes/insert_appointment.php" method="POST" autocomplete="off">
+        <form action="<?= BASE_URL ?>/processes/insert_appointment.php" method="POST" autocomplete="off">
             <div class="form-group">
                 <input type="text" id="otpCode" class="form-control" name="otpCode" placeholder=" " required maxlength="6" pattern="\d{6}" />
                 <label for="otpCode" class="form-label">OTP <span class="required">*</span></label>
@@ -52,6 +53,7 @@ if (isset($_SESSION['verified_data'])) {
 </body>
 
 <script>
+const BASE_URL = "<?= BASE_URL ?>";
 document.addEventListener('DOMContentLoaded', function () {
     const timerEl = document.getElementById("timer");
     const resendBtn = document.getElementById("resendOTPButton");
@@ -126,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (this.disabled) return;
 
         $.ajax({
-            url: '../processes/resend_otp.php',
+            url: BASE_URL + '/processes/resend_otp.php',
             type: 'POST',
             dataType: 'json',
             success: function (response) {
@@ -141,7 +143,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
                     });
                     sessionStorage.setItem(newKey, newExpiry);
-                    location.reload();
+                    setTimeout(() => {
+                        location.reload();
+                    }, 5000);
                 } else {
                     messageDiv.removeClass('success').addClass('error').text(response.message).show();
                 }

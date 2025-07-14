@@ -1,6 +1,7 @@
 <?php
 session_start();
-include 'db.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/db.php';
+$baseUrl = $_SERVER['HTTP_HOST'] === 'localhost' ? '/Smile-ify' : '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['userName'], $_POST['passWord'])) {
     $username = trim($_POST['userName']);
@@ -24,33 +25,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['userName'], $_POST['p
 
                 switch ($role) {
                     case 'owner':
-                        header("Location: ../Owner/index.php");
+                        header("Location: $baseUrl/Owner/index.php");
                         break;
                     case 'admin':
-                        header("Location: ../Admin/index.php");
+                        header("Location: $baseUrl/Admin/index.php");
                         break;
                     case 'patient':
-                        header("Location: ../Patient/index.php");
+                        header("Location: $baseUrl/Patient/index.php");
                         break;
                     default:
-                        header("Location: ../index.php");
+                        header("Location: $baseUrl/index.php");
                         break;
                 }
                 exit;
             } else {
                 $_SESSION['login_error'] = "Invalid username or password.";
-                header("Location: ../index.php");
+                header("Location: $baseUrl/index.php");
                 exit;
             }
         } else {
             $_SESSION['login_error'] = "Invalid username or password.";
-            header("Location: ../index.php");
+            header("Location: $baseUrl/index.php");
             exit;
         }
         $stmt->close();
     }
 } else {
-    header("Location: ../index.php");
+    header("Location: $baseUrl/index.php");
     exit;
 }
 ?>

@@ -1,3 +1,7 @@
+<?php
+require $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/db.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/processes/fetch_notifications.php';
+?>
 <nav>
     <div class="nav-container">
         <button class="menu-toggle">&#9776;</button>
@@ -50,11 +54,33 @@
                     <span class="link-text">About</span>
                 </a>
             </li>
-            <li>
-                <a href="/Smile-ify/Admin/pages/notifications.php" class="<?= ($currentPage == 'notifications') ? 'active' : '' ?>">
+            <li class="nav-item dropdown">
+                <a href="#" class="nav-link" id="notifDropdownToggle">
                     <span class="material-symbols-outlined">notifications</span>
                     <span class="link-text">Notifications</span>
+                    <?php if ($unreadCount > 0): ?>
+                    <span class="notif-badge"><?= $unreadCount ?></span>
+                    <?php endif; ?>
                 </a>
+                <div class="notif-dropdown" id="notifDropdown">
+                    <h4>Notifications</h4>
+                    <ul>
+                    <?php if (count($notifications) === 0): ?>
+                        <li class="notif-item">No notifications</li>
+                    <?php else: ?>
+                        <?php foreach ($notifications as $n): ?>
+                        <li 
+                        class="notif-item <?= $n['is_read'] ? '' : 'unread' ?>" 
+                        data-id="<?= $n['notification_id'] ?>"
+                        >
+                        <span class="notif-message"><?= htmlspecialchars($n['message']) ?></span>
+                        <span class="notif-date"><?= date('M d, H:i', strtotime($n['created_at'])) ?></span>
+                        </li>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                    </ul>
+                    <a href="#" id="markAllRead">Read all notifications</a>
+                </div>
             </li>
             <li>
                 <a href="#" id="logoutLink">
