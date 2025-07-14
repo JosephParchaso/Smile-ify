@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 12, 2025 at 11:23 PM
+-- Generation Time: Jul 14, 2025 at 06:07 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -57,7 +57,13 @@ INSERT INTO `appointment_transaction` (`appointment_transaction_id`, `user_id`, 
 (12, 21, 1, 1, 3, '2025-07-23', '13:30:00', '2025-07-12 20:37:27'),
 (13, 22, 2, 2, 2, '2025-07-29', '14:15:00', '2025-07-12 20:43:04'),
 (14, 23, 2, 10, NULL, '2025-07-24', '13:30:00', '2025-07-12 20:45:13'),
-(15, 24, 1, 5, NULL, '2025-07-23', '13:30:00', '2025-07-12 21:20:25');
+(15, 24, 1, 5, NULL, '2025-07-23', '13:30:00', '2025-07-12 21:20:25'),
+(16, 25, 2, 10, 3, '2025-07-24', '13:30:00', '2025-07-14 10:25:16'),
+(17, 26, 1, 5, 3, '2025-07-30', '13:30:00', '2025-07-14 10:33:22'),
+(18, 27, 2, 10, 3, '2025-07-29', '13:30:00', '2025-07-14 11:14:19'),
+(19, 28, 1, 3, 3, '2025-07-29', '14:15:00', '2025-07-14 11:26:32'),
+(20, 29, 1, 1, 1, '2025-07-24', '10:30:00', '2025-07-14 15:48:41'),
+(21, 30, 2, 8, 3, '2025-07-31', '13:30:00', '2025-07-14 16:03:59');
 
 -- --------------------------------------------------------
 
@@ -208,6 +214,40 @@ INSERT INTO `dentist_service` (`dentist_services_id`, `dentist_id`, `service_id`
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `notifications`
+--
+
+CREATE TABLE `notifications` (
+  `notification_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `message` text DEFAULT NULL,
+  `is_read` tinyint(4) DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `notifications`
+--
+
+INSERT INTO `notifications` (`notification_id`, `user_id`, `message`, `is_read`, `created_at`) VALUES
+(1, 27, 'Your appointment on 2025-07-29 at 13:30 was successfully booked!', 0, '2025-07-14 11:14:19'),
+(2, 28, 'Welcome to Smile-ify! Your account was successfully created.', 1, '2025-07-14 11:26:32'),
+(3, 28, 'Your appointment on 2025-07-29 at 14:15 was successfully booked!', 1, '2025-07-14 11:26:32'),
+(5, 2, 'sample - admin', 1, '2025-07-14 15:33:49'),
+(6, 1, 'sample - owner', 1, '2025-07-14 15:33:49'),
+(7, 1, 'sample - owner', 1, '2025-07-14 15:33:49'),
+(8, 1, 'sample - owner', 1, '2025-07-14 15:33:49'),
+(9, 2, 'sample - admin', 1, '2025-07-14 15:33:49'),
+(10, 2, 'sample - admin', 1, '2025-07-14 15:35:36'),
+(11, 2, 'sample - admin', 1, '2025-07-14 15:35:36'),
+(12, 29, 'Welcome to Smile-ify! Your account was successfully created.', 1, '2025-07-14 15:48:42'),
+(13, 29, 'Your appointment on 2025-07-24 at 10:30 was successfully booked!', 1, '2025-07-14 15:48:42'),
+(14, 30, 'Welcome to Smile-ify! Your account was successfully created.', 0, '2025-07-14 16:03:59'),
+(15, 30, 'Your appointment on 2025-07-31 at 13:30 was successfully booked!', 0, '2025-07-14 16:03:59');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `service`
 --
 
@@ -279,7 +319,13 @@ INSERT INTO `users` (`user_id`, `username`, `password`, `last_name`, `middle_nam
 (21, 'rixpp', '$2y$10$nvqUzj8gqqY16SHHkt4NQeVQVeU8CQbOaw6u0hhliacSetzJQU6v2', 'rix', '', 'potot', 'male', 'josephparchaso@gmail.com', '2342412421', 'patient', 'active', '2025-07-12 20:37:27'),
 (22, 'parchj', '$2y$10$sQwUuUFOgllhhPugQds8k.zXlAGrVCiCuTvbcfiCyBBnp4dd8/e3a', 'parch', 'rix', 'jj', 'female', '18100807@usc.edu.ph', '2346676887', 'patient', 'active', '2025-07-12 20:43:04'),
 (23, 'pretotd', '$2y$10$fTfrKDDNlUlfmfVRvYF.xOfaEyRWPo51Ux8aqHtLpDgBlxbWVjxSy', 'pretot', 'chiku', 'daze', 'female', 'josephparchaso@gmail.com', '3214325666', 'patient', 'active', '2025-07-12 20:45:13'),
-(24, '23dfsfs', '$2y$10$jRDx4wuzWruwA6NDUnGnn.XRyS0qYxK16q.20kDMphYGnVcDNlZKK', '23dfsf', 's', 'sdfsfd', 'male', 'josephparchaso@gmail.com', '4326789879', 'patient', 'active', '2025-07-12 21:20:25');
+(24, '23dfsfs', '$2y$10$jRDx4wuzWruwA6NDUnGnn.XRyS0qYxK16q.20kDMphYGnVcDNlZKK', '23dfsf', 's', 'sdfsfd', 'male', 'josephparchaso@gmail.com', '4326789879', 'patient', 'active', '2025-07-12 21:20:25'),
+(25, 'AchasGG', '$2y$10$csrxQ1iwxHEcfkhQHKf3se586DUSZSK.WhXgNKB39m9js/HfPwuYK', 'Achas', '', 'Gab', 'male', '18100807@usc.edu.ph', '0922626262', 'patient', 'active', '2025-07-14 10:25:16'),
+(26, 'DazeP', '$2y$10$du.PYFR4vnJv9ecdNWDox.UUDcjoC0cTUAvtnsnSG.tXwdqn5vLKO', 'Daze', '', 'Pretot', 'male', 'parchasoresidence@gmail.com', '9055626239', 'patient', 'active', '2025-07-14 10:33:22'),
+(27, 'ChikuY', '$2y$10$h7C7FiWzWuf7oS0hUaav/OZwJX4rYOExaPk3NJu3O39mmsutOsUvm', 'Chiku', 'Wix', 'Yel', 'female', 'parchasoresidence@gmail.com', '9055626239', 'patient', 'active', '2025-07-14 11:14:19'),
+(28, 'Josephp', '$2y$10$r842TnJ2H403dHtEVZX3ZuEsp/PneORgp0aQ6iOkCbc.n/5BCqyta', 'Joseph', '', 'parch', 'male', 'theartp1@gmail.com', '1221412515', 'patient', 'active', '2025-07-14 11:26:32'),
+(29, 'pototj', '$2y$10$9Swzre20c9pLQ8ejMr1ySufYwaARXiCYpp8sUXyb5CP1oI7xNjtC2', 'potot', '', 'jj', 'male', '18102727@usc.edu.ph', '9527194102', 'patient', 'active', '2025-07-14 15:48:41'),
+(30, 'pret', '$2y$10$qvBLwb6Rn1BwPq6OUHvJu.J7BQv21/byAtwbrlavv3ooZycF4fDIa', 'pre', '', 'tot', 'male', '18102727@usc.edu.ph', '9205251545', 'patient', 'active', '2025-07-14 16:03:59');
 
 --
 -- Indexes for dumped tables
@@ -332,6 +378,13 @@ ALTER TABLE `dentist_service`
   ADD KEY `service_id` (`service_id`);
 
 --
+-- Indexes for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD PRIMARY KEY (`notification_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
 -- Indexes for table `service`
 --
 ALTER TABLE `service`
@@ -352,7 +405,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `appointment_transaction`
 --
 ALTER TABLE `appointment_transaction`
-  MODIFY `appointment_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `appointment_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `branch`
@@ -385,6 +438,12 @@ ALTER TABLE `dentist_service`
   MODIFY `dentist_services_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
+-- AUTO_INCREMENT for table `notifications`
+--
+ALTER TABLE `notifications`
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
 -- AUTO_INCREMENT for table `service`
 --
 ALTER TABLE `service`
@@ -394,7 +453,7 @@ ALTER TABLE `service`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- Constraints for dumped tables
@@ -429,6 +488,12 @@ ALTER TABLE `dentist_branch`
 ALTER TABLE `dentist_service`
   ADD CONSTRAINT `dentist_service_ibfk_1` FOREIGN KEY (`dentist_id`) REFERENCES `dentist` (`dentist_id`) ON DELETE CASCADE,
   ADD CONSTRAINT `dentist_service_ibfk_2` FOREIGN KEY (`service_id`) REFERENCES `service` (`service_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
