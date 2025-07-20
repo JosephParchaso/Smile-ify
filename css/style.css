@@ -596,17 +596,18 @@ nav {
     font-weight: 500;
     height: 100%;
     width: 100%;
-    border-radius: 4px;
 }
 
 .nav-menu li a:hover {
     background-color: #243b53;
     transition: background-color 0.3s ease;
+    border-radius: 4px;
 }
 
 .nav-menu li a.active {
     border-bottom: 2px solid #ffffff;
-    padding-bottom: 4px;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
 }
 
 .material-symbols-outlined {

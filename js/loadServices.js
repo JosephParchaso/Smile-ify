@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (branchId) {
                 $.ajax({
                     type: "POST",
-                    url: "processes/get_services.php",
+                    url: `/Smile-ify/processes/get_services.php`,
                     data: { appointmentBranch: branchId },
                     success: function (response) {
                         serviceSelect.innerHTML = response;

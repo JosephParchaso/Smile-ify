@@ -153,18 +153,22 @@ Alert or Message {
 
 Notes:
 
-gmail suspicious spams
+gmail suspicious spams - sendgrid?
 
 
-doctor availability
-If you’re building for a simple clinic where a dentist is assigned to only one branch, go with Option 1. 1 = 1
-
-If your clinic has multiple branches and dentists rotate, go with Option 2. many = many
-
-doctor specialization - consultation all?
-time consume in each service
+doctor availability 9am - 4pm
+doctor branch assignment
+doctor specialization? - consultation all?
 doctor startdate
 doctor resignation
+
+If you’re building for a simple clinic where a dentist is assigned to only one branch, go with Option 1. 1 = 1
+If your clinic has multiple branches and dentists rotate, go with Option 2. many = many
+
+time consume in each service
+
+
+appointment: resched? cancel?
 
 
 ==========================================================================================================================================================================================

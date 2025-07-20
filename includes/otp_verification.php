@@ -143,9 +143,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
                     });
                     sessionStorage.setItem(newKey, newExpiry);
-                    setTimeout(() => {
-                        location.reload();
-                    }, 5000);
+                    // setTimeout(() => {
+                    //     location.reload();
+                    // }, 5000);
                 } else {
                     messageDiv.removeClass('success').addClass('error').text(response.message).show();
                 }
