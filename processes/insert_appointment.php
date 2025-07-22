@@ -12,14 +12,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["verify"])) {
     // If OTP has expired
     if (time() - $otp_created > $expiry_limit) {
         $_SESSION['otp_error'] = "OTP has expired. Please request a new one.";
-        header("Location: ../includes/otp_verification.php");
+        header("Location: /Smile-ify/includes/otp_verification.php");
         exit;
     }
 
     // If OTP is incorrect
     if ((string)$otp !== (string)$otp_code) {
         $_SESSION['otp_error'] = "Invalid OTP code.";
-        header("Location: ../includes/otp_verification.php");
+        header("Location: /Smile-ify/includes/otp_verification.php");
         exit;
 }
     else if (isset($_SESSION['verified_data'])) {
@@ -83,7 +83,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["verify"])) {
 
     $conn->commit();
 
-    require '../Mail/phpmailer/PHPMailerAutoload.php';
+    require '/Smile-ify/Mail/phpmailer/PHPMailerAutoload.php';
     $mail = new PHPMailer;
 
     $mail->isSMTP();
@@ -116,12 +116,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["verify"])) {
 
         error_log("Email sent successfully.");
         $_SESSION['otp_success'] = "Email has been sent with your login credentials.";
-        header("Location: ../index.php");
+        header("Location: /Smile-ify/index.php");
         exit;
     } catch (Exception $e) {
         error_log("PHPMailer Exception: " . $e->getMessage());
         $_SESSION['otp_error'] = "Failed to send email. Please try again.";
-        header("Location: ../includes/otp_verification.php");
+        header("Location: /Smile-ify/includes/otp_verification.php");
         exit;
     }
 $conn->close();

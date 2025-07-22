@@ -1,23 +1,30 @@
 <?php 
 session_start();
-$baseUrl = $_SERVER['HTTP_HOST'] === 'localhost' ? '/Smile-ify' : '';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/db.php';
 
-if (!isset($_SESSION['username'])) {
-    header("Location: $baseUrl/index.php");
+if (!isset($_SESSION['user_id'])) {
+    header("Location: /Smile-ify/index.php");
     exit;
 }
+
 header("Cache-Control: no-cache, no-store, must-revalidate");
 header("Pragma: no-cache");
 header("Expires: 0");
 
 $currentPage = 'index';
+$otpSuccess = '';
+
+if (isset($_SESSION['error_msg'])) {
+    $error_msg = $_SESSION['error_msg'];
+    unset($_SESSION['error_msg']);
+}
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/header.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/Patient/includes/navbar.php';
 ?>
 
 <body>
     <title>Home</title>
-    <?php require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/Patient/includes/navbar.php'; ?>
 
     <div class="dashboard">
         <div class="welcome">
@@ -27,44 +34,47 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/header.php';
 
         <div class="cards">
             <div class="card">
-                <h2>📅 Upcoming Appointments</h2>
+                <h2>Upcoming Appointments</h2>
                 <div class="appointment">
-                    <strong>July 25, 2025</strong> at 10:00 AM<br>
+                    <strong><span class="material-symbols-outlined">calendar_month</span> July 25, 2025</strong> at 10:00 AM<br>
                     with Dr. Smith (Mandaue Branch)
                 </div>
                 <div class="appointment">
-                    <strong>August 5, 2025</strong> at 2:30 PM<br>
+                    <strong><span class="material-symbols-outlined">calendar_month</span> August 5, 2025</strong> at 2:30 PM<br>
                     with Dr. Cruz (Babag Branch)
                 </div>
             </div>
 
             <div class="card">
-                <h2>📢 Announcements</h2>
-                <div class="announcement">Get 10% off on Root Canal Treatment until August 31!</div>
-                <div class="announcement">We’re closed on August 21 for National Holiday.</div>
+                <h2>Announcements</h2>
+                <div class="announcement"><span class="material-symbols-outlined">campaign</span> Get 10% off on Root Canal Treatment until August 31!</div>
+                <div class="announcement"><span class="material-symbols-outlined">campaign</span> We’re closed on August 21 for National Holiday.</div>
             </div>
 
             <div class="card">
-                <h2>🦷 Dental Care Tips</h2>
-                <div class="tip">Brush at least twice a day with fluoride toothpaste.</div>
-                <div class="tip">Floss daily to remove plaque between your teeth.</div>
-                <div class="tip">Avoid sugary drinks and snacks between meals.</div>
+                <h2>Dental Care Tips</h2>
+                <div class="tip"><span class="material-symbols-outlined">dentistry</span> Brush at least twice a day with fluoride toothpaste.</div>
+                <div class="tip"><span class="material-symbols-outlined">dentistry</span> Floss daily to remove plaque between your teeth.</div>
+                <div class="tip"><span class="material-symbols-outlined">dentistry</span> Avoid sugary drinks and snacks between meals.</div>
             </div>
 
             <div class="card">
-                <h2>⚡ Quick Links</h2>
+                <h2><span class="material-symbols-outlined">bolt</span> Quick Links</h2>
                 <div class="quick-links">
                     <a href="#" onclick="openBookingModal()"><span class="material-symbols-outlined">calendar_add_on</span> Book Appointment</a>
                     <a href="/Smile-ify/Patient/pages/profile.php"><span class="material-symbols-outlined">manage_accounts</span> Edit Profile</a>
                 </div>
             </div>
+            <?php if (!empty($error_msg)): ?>
+                <div class="error"><?php echo htmlspecialchars($error_msg); ?></div>
+            <?php endif; ?>
         </div>
     </div>
 
     <div id="bookingModal" class="booking-modal">
         <div class="booking-modal-content" style="margin: 20vh auto;">
             
-            <form action="" method="POST" id="bookingForm" autocomplete="off">
+            <form action="processes/insert_appointment.php" method="POST" id="bookingForm" autocomplete="off">
                 <div class="form-group">
                     <select id="appointmentBranch" class="form-control" name="appointmentBranch" required>
                         <option value="" disabled selected hidden></option>

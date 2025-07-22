@@ -1,5 +1,5 @@
 <?php
-require $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/db.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/db.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/processes/fetch_notifications.php';
 ?>
 <link rel="stylesheet" href="/Smile-ify/Patient/css/style.css">

@@ -1,16 +1,3 @@
-body, html {
-    margin: 0;
-    padding: 0;
-    background: #f9f9f9;
-}
-
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
-    font-family: "Montserrat", sans-serif;
-}
-
 .dashboard {
     padding: 5rem;
 }
