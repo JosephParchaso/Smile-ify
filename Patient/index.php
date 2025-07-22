@@ -62,7 +62,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/Patient/includes/navbar.php
                 <h2><span class="material-symbols-outlined">bolt</span> Quick Links</h2>
                 <div class="quick-links">
                     <a href="#" onclick="openBookingModal()"><span class="material-symbols-outlined">calendar_add_on</span> Book Appointment</a>
-                    <a href="/Smile-ify/Patient/pages/profile.php"><span class="material-symbols-outlined">manage_accounts</span> Edit Profile</a>
+                    <a href="/Smile-ify/Patient/pages/profile.php"><span class="material-symbols-outlined">manage_accounts</span> Edit Profile</a><br>
+                    <a href="#" onclick="openEducationalModal()"><span class="material-symbols-outlined">info</span> About</a>
                 </div>
             </div>
             <?php if (!empty($error_msg)): ?>
@@ -145,6 +146,11 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/Patient/includes/navbar.php
                     <button type="button" class="form-button cancel-btn" onclick="closeModal()">Cancel</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <div id="educationalModal" class="educational-modal">
+        <div class="educational-modal-content" id="educationalModalContent">
         </div>
     </div>
 

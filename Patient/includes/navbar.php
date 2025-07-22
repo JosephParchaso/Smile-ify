@@ -25,12 +25,6 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/processes/fetch_notificatio
                     <span class="link-text">Profile</span>
                 </a>
             </li>
-            <li>
-                <a href="/Smile-ify/Patient/pages/about.php" class="<?= ($currentPage == 'about') ? 'active' : '' ?>">
-                    <span class="material-symbols-outlined">info</span>
-                    <span class="link-text">About</span>
-                </a>
-            </li>
             <li class="nav-item dropdown">
                 <a href="#" class="nav-link" id="notifDropdownToggle">
                     <span class="material-symbols-outlined">notifications</span>
