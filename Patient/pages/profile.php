@@ -1,12 +1,92 @@
-<?php 
+<?php
+session_start();
+
 $currentPage = 'profile';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/header.php'; 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/Patient/includes/navbar.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
+require_once BASE_PATH . '/includes/header.php';
+require_once BASE_PATH . '/Patient/includes/navbar.php';
 
+if (!isset($_SESSION['user_id'])) {
+    header("Location: " . BASE_URL . "/index.php");
+    exit();
+}
 ?>
+<title>Profile</title>
 
-<body>
-    <title>Profile</title>
-</body>
+<div class="profile-container">
+    <div class="profile-card" id="profileCard">
+        <p>Loading profile...</p>
+    </div>
 
-<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/footer.php'; ?>
+    <div class="tabs-container">
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('appointment_history')">Appointment History</div>
+            <div class="tab" onclick="switchTab('dental_transaction')">Dental Transactions</div>
+        </div>
+
+        <div class="tab-content active" id="appointment_history">
+            <table class="transaction-table">
+                <thead>
+                    <tr>
+                        <th>Dentist</th>
+                        <th>Branch</th>
+                        <th>Service</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="tab-content" id="dental_transaction">
+            <table class="transaction-table">
+            <thead>
+                    <tr>
+                        <th>Dentist</th>
+                        <th>Branch</th>
+                        <th>Service</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<?php require_once BASE_PATH . '/includes/footer.php'; ?>

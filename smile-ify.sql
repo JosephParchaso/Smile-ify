@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 14, 2025 at 06:07 PM
+-- Generation Time: Jul 24, 2025 at 06:02 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -63,7 +63,13 @@ INSERT INTO `appointment_transaction` (`appointment_transaction_id`, `user_id`, 
 (18, 27, 2, 10, 3, '2025-07-29', '13:30:00', '2025-07-14 11:14:19'),
 (19, 28, 1, 3, 3, '2025-07-29', '14:15:00', '2025-07-14 11:26:32'),
 (20, 29, 1, 1, 1, '2025-07-24', '10:30:00', '2025-07-14 15:48:41'),
-(21, 30, 2, 8, 3, '2025-07-31', '13:30:00', '2025-07-14 16:03:59');
+(21, 30, 2, 8, 3, '2025-07-31', '13:30:00', '2025-07-14 16:03:59'),
+(22, 28, 2, 10, 3, '2025-07-23', '09:45:00', '2025-07-21 18:30:17'),
+(23, 28, 1, 2, NULL, '2025-07-31', '15:00:00', '2025-07-21 18:42:53'),
+(24, 28, 3, 2, NULL, '2025-07-30', '15:00:00', '2025-07-21 20:03:40'),
+(25, 28, 1, 5, 3, '2025-07-30', '10:30:00', '2025-07-21 20:10:59'),
+(26, 28, 1, 1, 1, '2025-07-24', '12:00:00', '2025-07-21 20:30:32'),
+(27, 28, 2, 8, 3, '2025-07-31', '10:30:00', '2025-07-24 15:58:38');
 
 -- --------------------------------------------------------
 
@@ -243,7 +249,13 @@ INSERT INTO `notifications` (`notification_id`, `user_id`, `message`, `is_read`,
 (12, 29, 'Welcome to Smile-ify! Your account was successfully created.', 1, '2025-07-14 15:48:42'),
 (13, 29, 'Your appointment on 2025-07-24 at 10:30 was successfully booked!', 1, '2025-07-14 15:48:42'),
 (14, 30, 'Welcome to Smile-ify! Your account was successfully created.', 0, '2025-07-14 16:03:59'),
-(15, 30, 'Your appointment on 2025-07-31 at 13:30 was successfully booked!', 0, '2025-07-14 16:03:59');
+(15, 30, 'Your appointment on 2025-07-31 at 13:30 was successfully booked!', 0, '2025-07-14 16:03:59'),
+(16, 28, 'Your appointment on 2025-07-23 at 09:45 was successfully booked!', 1, '2025-07-21 18:30:17'),
+(17, 28, 'Your appointment on 2025-07-31 at 15:00 was successfully booked!', 1, '2025-07-21 18:42:53'),
+(18, 28, 'Your appointment on 2025-07-30 at 15:00 was successfully booked!', 1, '2025-07-21 20:03:40'),
+(19, 28, 'Your appointment on 2025-07-30 at 10:30 was successfully booked!', 1, '2025-07-21 20:10:59'),
+(20, 28, 'Your appointment on 2025-07-24 at 12:00 was successfully booked!', 1, '2025-07-21 20:30:32'),
+(21, 28, 'Your appointment on 2025-07-31 at 10:30 was successfully booked!', 1, '2025-07-24 15:58:38');
 
 -- --------------------------------------------------------
 
@@ -405,7 +417,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `appointment_transaction`
 --
 ALTER TABLE `appointment_transaction`
-  MODIFY `appointment_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `appointment_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `branch`
@@ -441,7 +453,7 @@ ALTER TABLE `dentist_service`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `service`

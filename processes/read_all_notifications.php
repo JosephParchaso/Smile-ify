@@ -1,6 +1,9 @@
 <?php
 session_start();
-require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/db.php';
+
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
+require_once BASE_PATH . '/includes/db.php';
+
 
 if (isset($_SESSION['user_id'])) {
     $userId = $_SESSION['user_id'];

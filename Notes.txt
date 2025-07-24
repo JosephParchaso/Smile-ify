@@ -33,8 +33,6 @@ Patients
 | **PHP Files**  | `about.php`, `navbar.php`                      | lowercase, underscores optional for clarity |
 | **JS Files**   | `togglePassword.js`, `openEducationalModal.js` | camelCase (matches function purpose)        |
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/db.php';
-$baseUrl = $_SERVER['HTTP_HOST'] === 'localhost' ? '/Smile-ify' : '';
 
 Root/
 │
@@ -120,32 +118,7 @@ Form {
         font-size: 12px;
     }
 }
-
-Alert or Message {
-    <?php
-        session_start();
-        $error = '';
-        if (isset($_SESSION['login_error'])) {
-            $error = $_SESSION['login_error'];
-            unset($_SESSION['login_error']);
-        }
-    ?>
-    -------
-    <?php if (!empty($error)): ?>
-        <div class="error"><?php echo htmlspecialchars($error); ?></div>
-    <?php endif; ?>
-    -------
-    {
-    $_SESSION['login_error'] = "Invalid username or password.";
-    header("Location: ../index.php");
-    exit;
-    }
-}
     
-
-
-
-
 
 
 

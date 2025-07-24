@@ -2,7 +2,7 @@ function openEducationalModal() {
     const modal = document.getElementById("educationalModal");
     const modalContent = document.getElementById("educationalModalContent");
 
-    fetch('/Smile-ify/includes/educational_content.php')
+    fetch(`${BASE_URL}/includes/educational_content.php`)
         .then(response => response.text())
         .then(data => {
             modalContent.innerHTML = data;

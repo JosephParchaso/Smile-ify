@@ -1,6 +1,8 @@
 <?php
 session_start();
-require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/db.php';
+
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
+require_once BASE_PATH . '/includes/db.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $_SESSION['verified_data'] = $_POST;
@@ -10,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $_SESSION['otp_created'] = time();
     $_SESSION['mail'] = $_POST["email"];
 
-    require '../Mail/phpmailer/PHPMailerAutoload.php';
+    require BASE_PATH . '/Mail/phpmailer/PHPMailerAutoload.php';
     $mail = new PHPMailer;
 
     $mail->isSMTP();
@@ -35,9 +37,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (!$mail->send()) {
         $_SESSION['otp_error'] = "Invalid email address. Please try again.";
-        header("Location: ../includes/otp_verification.php");
+        header("Location: " . BASE_URL . "/includes/otp_verification.php");
+        exit;
     }
 
-    header("Location: ../includes/otp_verification.php");
+    header("Location: " . BASE_URL . "/includes/otp_verification.php");
     exit;
 }
+?>

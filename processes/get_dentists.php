@@ -1,5 +1,7 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/db.php';
+
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
+require_once BASE_PATH . '/includes/db.php';
 
 if (isset($_POST['appointmentBranch']) && isset($_POST['appointmentService'])) {
     $branchId = $_POST['appointmentBranch'];

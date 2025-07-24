@@ -1,7 +1,8 @@
 <?php
 session_start();
-require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/db.php';
-$baseUrl = $_SERVER['HTTP_HOST'] === 'localhost' ? '/Smile-ify' : '';
+
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
+require_once BASE_PATH . '/includes/db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['userName'], $_POST['passWord'])) {
     $username = trim($_POST['userName']);
@@ -25,33 +26,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['userName'], $_POST['p
 
                 switch ($role) {
                     case 'owner':
-                        header("Location: $baseUrl/Owner/index.php");
+                        header("Location: " . BASE_URL . "/Owner/index.php");
                         break;
                     case 'admin':
-                        header("Location: $baseUrl/Admin/index.php");
+                        header("Location: " . BASE_URL . "/Admin/index.php");
                         break;
                     case 'patient':
-                        header("Location: $baseUrl/Patient/index.php");
+                        header("Location: " . BASE_URL . "/Patient/index.php");
                         break;
                     default:
-                        header("Location: $baseUrl/index.php");
+                        header("Location: " . BASE_URL . "/index.php");
                         break;
                 }
                 exit;
             } else {
                 $_SESSION['login_error'] = "Invalid username or password.";
-                header("Location: $baseUrl/index.php");
+                header("Location: " . BASE_URL . "/index.php");
                 exit;
             }
         } else {
             $_SESSION['login_error'] = "Invalid username or password.";
-            header("Location: $baseUrl/index.php");
+            header("Location: " . BASE_URL . "/index.php");
             exit;
         }
         $stmt->close();
     }
 } else {
-    header("Location: $baseUrl/index.php");
+    header("Location: " . BASE_URL . "/index.php");
     exit;
 }
 ?>

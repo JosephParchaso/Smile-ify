@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
             item.addEventListener('click', function () {
                 const id = this.getAttribute('data-id');
 
-                fetch('/Smile-ify/processes/read_notification.php', {
+                fetch(`${BASE_URL}/processes/read_notification.php`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
         markAllReadBtn.addEventListener('click', function (e) {
             e.preventDefault();
 
-            fetch('/Smile-ify/processes/read_all_notifications.php', {
+            fetch(`${BASE_URL}/processes/read_all_notifications.php`, {
                 method: 'POST'
             })
                 .then(response => response.text())

@@ -192,11 +192,11 @@ form {
 .otp-verification-modal-content {
     background: #fff;
     padding: 30px 40px;
-    border-radius: 10px;
+    border-radius: 4px;
     text-align: center;
     max-width: 400px;
     width: 100%;
-    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
 }
 
 .otp-verification-modal-content h2 {
@@ -230,6 +230,7 @@ form {
     padding: 30px 40px;
     margin: 5vh auto;
     position: relative;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
 }
 
 .required {
@@ -500,6 +501,7 @@ form {
     max-width: 80%;
     max-height: 85vh;
     overflow-y: auto;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
 }
 
 .educ_main {
@@ -622,7 +624,7 @@ nav {
 .notif-badge {
     background-color: red;
     color: white;
-    border-radius: 50%;
+    border-radius: 4px;
     padding: 2px 6px;
     font-size: 12px;
     position: absolute;
@@ -639,6 +641,7 @@ nav {
     width: 400px;
     border: 1px solid #ccc;
     box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    border-radius: 4px;
     z-index: 1000;
     padding: 10px;
 }
@@ -713,7 +716,7 @@ nav {
 .modal-buttons button {
     padding: 0.5rem 1rem;
     border: none;
-    border-radius: 5px;
+    border-radius: 4px;
     font-weight: bold;
     cursor: pointer;
 }
@@ -746,8 +749,8 @@ nav {
     margin: 40px auto;
     background: #ffffff;
     padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 #calendar {
@@ -762,7 +765,7 @@ nav {
 .fc-toolbar-chunk button {
     background: #2d3e50;
     color: #fff;
-    border-radius: 6px;
+    border-radius: 4px;
     padding: 5px 10px;
     border: none;
 }
@@ -797,4 +800,52 @@ nav {
         transition: background-color 0.3s ease;
         border-radius: 4px;
     }
+}
+
+    
+.footer {
+    background-color: #ffd6ff;
+    padding: 30px 0;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    max-width: 1000px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+    gap: 60px;
+    text-align: center;
+}
+
+.footer-logo {
+    width: 200px;
+    height: auto;
+}
+
+.footer-column {
+    flex: 1 1 200px;
+}
+
+.footer-column h3 {
+    color: #2a394d;
+    margin-bottom: 10px;
+}
+
+.footerDes {
+    color: #555;
+    margin: 4px 0;
+    text-decoration: none;
+    display: block;
+}
+
+.footer-about {
+    color: #2a394d;
+    margin-top: 10px;
+    line-height: 1.5;
+}
+
+.footer a.footerDes:hover {
+    text-decoration: underline;
 }

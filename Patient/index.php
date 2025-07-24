@@ -1,9 +1,11 @@
 <?php 
 session_start();
-require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/db.php';
+
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
+require_once BASE_PATH . '/includes/db.php';
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: /Smile-ify/index.php");
+    header("Location: " . BASE_URL . "/index.php");
     exit;
 }
 
@@ -19,8 +21,8 @@ if (isset($_SESSION['error_msg'])) {
     unset($_SESSION['error_msg']);
 }
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/header.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/Patient/includes/navbar.php';
+require_once BASE_PATH . '/includes/header.php';
+require_once BASE_PATH . '/Patient/includes/navbar.php';
 ?>
 
 <body>
@@ -62,7 +64,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/Patient/includes/navbar.php
                 <h2><span class="material-symbols-outlined">bolt</span> Quick Links</h2>
                 <div class="quick-links">
                     <a href="#" onclick="openBookingModal()"><span class="material-symbols-outlined">calendar_add_on</span> Book Appointment</a>
-                    <a href="/Smile-ify/Patient/pages/profile.php"><span class="material-symbols-outlined">manage_accounts</span> Edit Profile</a><br>
+                    <a href="<?= BASE_URL ?>/Patient/pages/profile.php"><span class="material-symbols-outlined">manage_accounts</span> Edit Profile</a><br>
                     <a href="#" onclick="openEducationalModal()"><span class="material-symbols-outlined">info</span> About</a>
                 </div>
             </div>
@@ -75,7 +77,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/Patient/includes/navbar.php
     <div id="bookingModal" class="booking-modal">
         <div class="booking-modal-content" style="margin: 20vh auto;">
             
-            <form action="processes/insert_appointment.php" method="POST" id="bookingForm" autocomplete="off">
+            <form action="<?= BASE_URL ?>/Patient/processes/insert_appointment.php" method="POST" id="bookingForm" autocomplete="off">
                 <div class="form-group">
                     <select id="appointmentBranch" class="form-control" name="appointmentBranch" required>
                         <option value="" disabled selected hidden></option>
@@ -154,5 +156,5 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/Patient/includes/navbar.php
         </div>
     </div>
 
-    <?php require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/footer.php'; ?>
+    <?php require_once BASE_PATH . '/includes/footer.php'; ?>
 </body>

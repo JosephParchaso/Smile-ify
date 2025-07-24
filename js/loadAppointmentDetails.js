@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         },
         height: 650,
-        events: '/Smile-ify/Patient/processes/load_patient_appointments.php',
+        events: `${BASE_URL}/Patient/processes/load_patient_appointments.php`,
         eventClick: function(info) {
             const appointment = info.event.extendedProps;
 

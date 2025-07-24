@@ -1,9 +1,11 @@
 <?php
 session_start();
-require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/db.php';
+
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
+require_once BASE_PATH . '/includes/db.php';
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: /Smile-ify/index.php");
+    header("Location: " . BASE_URL . "/index.php");
     exit;
 }
 
@@ -27,8 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             VALUES (?, ?, ?, ?, ?, ?)";
 
         $appointment_stmt = $conn->prepare($appointment_sql);
-        $appointment_stmt->bind_param("iiisss", $user_id, $appointmentBranch, $appointmentService, $appointmentDentist, $appointmentDate, $appointmentTime
-        );
+        $appointment_stmt->bind_param("iiisss", $user_id, $appointmentBranch, $appointmentService, $appointmentDentist, $appointmentDate, $appointmentTime);
 
         if (!$appointment_stmt->execute()) {
             throw new Exception("Failed to book appointment: " . $appointment_stmt->error);
@@ -43,20 +44,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $conn->commit();
 
         $_SESSION['success_msg'] = "Appointment booked successfully.";
-        header("Location: /Smile-ify/Patient/pages/schedule.php");
+        header("Location: " . BASE_URL . "/Patient/pages/schedule.php");
         exit;
 
     } catch (Exception $e) {
         $conn->rollback();
         error_log("Error booking appointment: " . $e->getMessage());
         $_SESSION['error_msg'] = "Failed to book appointment. Please try again.";
-        header("Location: /Smile-ify/Patient/index.php");
+        header("Location: " . BASE_URL . "/Patient/index.php");
         exit;
     }
 } else {
-    header("Location: /Smile-ify/Patient/index.php");
+    header("Location: " . BASE_URL . "/Patient/index.php");
     exit;
 }
 
 $conn->close();
-?>

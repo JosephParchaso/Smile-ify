@@ -1,11 +1,13 @@
-<?php 
+<?php
+
 $currentPage = 'patients';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/header.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/Admin/includes/navbar.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
+require_once BASE_PATH . '/includes/header.php';
+require_once BASE_PATH . '/Admin/includes/navbar.php';
 ?>
 
 <body>
     <title>Patients</title>
 </body>
 
-<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/footer.php'; ?>
+<?php require_once BASE_PATH . '/includes/footer.php'; ?>

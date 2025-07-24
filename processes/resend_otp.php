@@ -1,6 +1,8 @@
 <?php
 session_start();
-require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/db.php';
+
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
+require_once BASE_PATH . '/includes/db.php';
 
 if (isset($_SESSION['verified_data'])) {
     $verified_data = $_SESSION['verified_data'];
@@ -10,7 +12,7 @@ if (isset($_SESSION['verified_data'])) {
     $_SESSION['otp'] = $otp;
     $_SESSION['otp_created'] = time();
 
-    require '../Mail/phpmailer/PHPMailerAutoload.php';
+    require BASE_PATH . '/Mail/phpmailer/PHPMailerAutoload.php';
     $mail = new PHPMailer;
 
     $mail->isSMTP();
@@ -34,10 +36,17 @@ if (isset($_SESSION['verified_data'])) {
         <b>Smile-ify</b>";
 
     if (!$mail->send()) {
-        echo json_encode(['success' => false, 'message' => 'Failed to resend OTP. Please try again.']);
+        $_SESSION['otp_error'] = "Failed to resend OTP. Please try again.";
+        header("Location: " . BASE_URL . "/includes/otp_verification.php");
+        exit;
     } else {
-        echo json_encode(['success' => true, 'message' => 'OTP resent successfully.']);
+        $_SESSION['otp_success'] = "OTP resent successfully.";
+        header("Location: " . BASE_URL . "/includes/otp_verification.php");
+        exit;
     }
 } else {
-    echo json_encode(['success' => false, 'message' => 'Session variable not set.']);
+    $_SESSION['otp_error'] = "Session expired. Please re-enter your email.";
+    header("Location: " . BASE_URL . "/includes/otp_verification.php");
+    exit;
 }
+?>

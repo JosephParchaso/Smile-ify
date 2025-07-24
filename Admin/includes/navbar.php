@@ -1,55 +1,56 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/db.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/processes/fetch_notifications.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
+require_once BASE_PATH . '/includes/db.php';
+require_once BASE_PATH . '/processes/fetch_notifications.php';
 ?>
 <nav>
     <div class="nav-container">
         <button class="menu-toggle">&#9776;</button>
         <ul class="nav-menu">
             <li>
-                <a href="/Smile-ify/Admin/index.php" class="<?= ($currentPage == 'index') ? 'active' : '' ?>">
+                <a href="<?= BASE_URL ?>/Admin/index.php" class="<?= ($currentPage == 'index') ? 'active' : '' ?>">
                     <span class="material-symbols-outlined">home</span>
                     <span class="link-text">Home</span>
                 </a>
             </li>
             <li>
-                <a href="/Smile-ify/Admin/pages/schedule.php" class="<?= ($currentPage == 'schedule') ? 'active' : '' ?>">
+                <a href="<?= BASE_URL ?>/Admin/pages/schedule.php" class="<?= ($currentPage == 'schedule') ? 'active' : '' ?>">
                     <span class="material-symbols-outlined">calendar_month</span>
                     <span class="link-text">Schedules</span>
                 </a>
             </li>
             <li>
-                <a href="/Smile-ify/Admin/pages/patients.php" class="<?= ($currentPage == 'patients') ? 'active' : '' ?>">
+                <a href="<?= BASE_URL ?>/Admin/pages/patients.php" class="<?= ($currentPage == 'patients') ? 'active' : '' ?>">
                     <span class="material-symbols-outlined">groups</span>
                     <span class="link-text">Patients</span>
                 </a>
             </li>
             <li>
-                <a href="/Smile-ify/Admin/pages/supplies.php" class="<?= ($currentPage == 'supplies') ? 'active' : '' ?>">
+                <a href="<?= BASE_URL ?>/Admin/pages/supplies.php" class="<?= ($currentPage == 'supplies') ? 'active' : '' ?>">
                     <span class="material-symbols-outlined">inventory_2</span>
                     <span class="link-text">Supplies</span>
                 </a>
             </li>
             <li>
-                <a href="/Smile-ify/Admin/pages/services.php" class="<?= ($currentPage == 'services') ? 'active' : '' ?>">
+                <a href="<?= BASE_URL ?>/Admin/pages/services.php" class="<?= ($currentPage == 'services') ? 'active' : '' ?>">
                     <span class="material-symbols-outlined">medical_services</span>
                     <span class="link-text">Services</span>
                 </a>
             </li>
             <li>
-                <a href="/Smile-ify/Admin/pages/promos.php" class="<?= ($currentPage == 'promos') ? 'active' : '' ?>">
+                <a href="<?= BASE_URL ?>/Admin/pages/promos.php" class="<?= ($currentPage == 'promos') ? 'active' : '' ?>">
                     <span class="material-symbols-outlined">sell</span>
                     <span class="link-text">Promos</span>
                 </a>
             </li>
             <li>
-                <a href="/Smile-ify/Admin/pages/profile.php" class="<?= ($currentPage == 'profile') ? 'active' : '' ?>">
+                <a href="<?= BASE_URL ?>/Admin/pages/profile.php" class="<?= ($currentPage == 'profile') ? 'active' : '' ?>">
                     <span class="material-symbols-outlined">person</span>
                     <span class="link-text">Profile</span>
                 </a>
             </li>
             <li>
-                <a href="/Smile-ify/Admin/pages/about.php" class="<?= ($currentPage == 'about') ? 'active' : '' ?>">
+                <a href="<?= BASE_URL ?>/Admin/pages/about.php" class="<?= ($currentPage == 'about') ? 'active' : '' ?>">
                     <span class="material-symbols-outlined">info</span>
                     <span class="link-text">About</span>
                 </a>
@@ -59,25 +60,22 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/processes/fetch_notificatio
                     <span class="material-symbols-outlined">notifications</span>
                     <span class="link-text">Notifications</span>
                     <?php if ($unreadCount > 0): ?>
-                    <span class="notif-badge"><?= $unreadCount ?></span>
+                        <span class="notif-badge"><?= $unreadCount ?></span>
                     <?php endif; ?>
                 </a>
                 <div class="notif-dropdown" id="notifDropdown">
                     <h4>Notifications</h4>
                     <ul>
-                    <?php if (count($notifications) === 0): ?>
-                        <li class="notif-item">No notifications</li>
-                    <?php else: ?>
-                        <?php foreach ($notifications as $n): ?>
-                        <li 
-                        class="notif-item <?= $n['is_read'] ? '' : 'unread' ?>" 
-                        data-id="<?= $n['notification_id'] ?>"
-                        >
-                        <span class="notif-message"><?= htmlspecialchars($n['message']) ?></span>
-                        <span class="notif-date"><?= date('M d, H:i', strtotime($n['created_at'])) ?></span>
-                        </li>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
+                        <?php if (count($notifications) === 0): ?>
+                            <li class="notif-item">No notifications</li>
+                        <?php else: ?>
+                            <?php foreach ($notifications as $n): ?>
+                                <li class="notif-item <?= $n['is_read'] ? '' : 'unread' ?>" data-id="<?= $n['notification_id'] ?>">
+                                    <span class="notif-message"><?= htmlspecialchars($n['message']) ?></span>
+                                    <span class="notif-date"><?= date('M d, H:i', strtotime($n['created_at'])) ?></span>
+                                </li>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </ul>
                     <a href="#" id="markAllRead">Read all notifications</a>
                 </div>

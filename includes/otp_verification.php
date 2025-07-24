@@ -1,8 +1,9 @@
 <?php 
 session_start(); 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/db.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/header.php';
+
 define('BASE_URL', $_SERVER['HTTP_HOST'] === 'localhost' ? '/Smile-ify' : '');
+require_once $_SERVER['DOCUMENT_ROOT'] . BASE_URL . '/includes/db.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . BASE_URL . '/includes/header.php';
 
 $error = '';
 if (isset($_SESSION['otp_error'])) {
@@ -25,7 +26,7 @@ if (isset($_SESSION['verified_data'])) {
         <h2>OTP Verification</h2>
 
         <?php if (!empty($error)): ?>
-            <div class="error"><?php echo htmlspecialchars($error); ?></div>
+            <div class="error"><?= htmlspecialchars($error) ?></div>
         <?php else: ?>
             <p>We’ve sent a 6-digit code to your email.</p>
         <?php endif; ?>
@@ -44,7 +45,7 @@ if (isset($_SESSION['verified_data'])) {
 
             <div class="button-group">
                 <button type="button" id="resendOTPButton" class="form-button cancel-btn" disabled>Resend</button>
-                <button type="button" onclick="sessionStorage.clear(); window.location.href='../index.php'" class="form-button cancel-btn">Cancel</button>
+                <button type="button" onclick="sessionStorage.clear(); window.location.href='<?= BASE_URL ?>/index.php'" class="form-button cancel-btn">Cancel</button>
                 <button type="submit" name="verify" class="form-button confirm-btn" id="confirmButton">Confirm</button>
             </div>
         </form>
@@ -54,6 +55,7 @@ if (isset($_SESSION['verified_data'])) {
 
 <script>
 const BASE_URL = "<?= BASE_URL ?>";
+
 document.addEventListener('DOMContentLoaded', function () {
     const timerEl = document.getElementById("timer");
     const resendBtn = document.getElementById("resendOTPButton");
@@ -64,36 +66,25 @@ document.addEventListener('DOMContentLoaded', function () {
     const storageKey = "otpExpiryTimestamp_" + "<?php echo $_SESSION['otp_created']; ?>";
 
     Object.keys(sessionStorage).forEach(key => {
-        if (key.startsWith("otpExpiryTimestamp_")) {
-            const ts = parseInt(sessionStorage.getItem(key));
-            if (Date.now() > ts) {
-                sessionStorage.removeItem(key);
-            }
+        if (key.startsWith("otpExpiryTimestamp_") && Date.now() > parseInt(sessionStorage.getItem(key))) {
+            sessionStorage.removeItem(key);
         }
     });
 
-    if (phpOtpCreated !== null && !isNaN(phpOtpCreated) && !sessionStorage.getItem(storageKey)) {
-        const expiryTime = phpOtpCreated + (expiryLimit * 1000);
+    if (phpOtpCreated && !sessionStorage.getItem(storageKey)) {
+        const expiryTime = phpOtpCreated + expiryLimit * 1000;
         sessionStorage.setItem(storageKey, expiryTime);
     }
 
     function updateTimerUI() {
         const expiryTime = parseInt(sessionStorage.getItem(storageKey));
-        if (!expiryTime) {
+        if (!expiryTime || Date.now() >= expiryTime) {
             timerEl.innerText = "Time expired";
             resendBtn.disabled = false;
             return;
         }
 
-        const now = Date.now();
-        const remaining = Math.floor((expiryTime - now) / 1000);
-
-        if (remaining <= 0) {
-            timerEl.innerText = "Time expired";
-            resendBtn.disabled = false;
-            return;
-        }
-
+        const remaining = Math.floor((expiryTime - Date.now()) / 1000);
         resendBtn.disabled = true;
         timerEl.innerText = "0:" + (remaining < 10 ? "0" : "") + remaining;
     }
@@ -101,24 +92,11 @@ document.addEventListener('DOMContentLoaded', function () {
     function startCountdown() {
         clearInterval(countdown);
         countdown = setInterval(() => {
-            const expiryTime = parseInt(sessionStorage.getItem(storageKey));
-            const now = Date.now();
-            const remaining = Math.floor((expiryTime - now) / 1000);
-
-            if (remaining <= 0) {
-                clearInterval(countdown);
-                timerEl.innerText = "Time expired";
-                resendBtn.disabled = false;
-                return;
-            }
-
-            timerEl.innerText = "0:" + (remaining < 10 ? "0" : "") + remaining;
-            resendBtn.disabled = true;
+            updateTimerUI();
         }, 1000);
     }
 
-    const expiry = sessionStorage.getItem(storageKey);
-    if (expiry && Date.now() < parseInt(expiry)) {
+    if (sessionStorage.getItem(storageKey)) {
         startCountdown();
     } else {
         updateTimerUI();
@@ -135,17 +113,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 const messageDiv = $('#resendMessage');
                 if (response.success) {
                     messageDiv.removeClass('error').addClass('success').text(response.message).show();
+
                     const newExpiry = Date.now() + expiryLimit * 1000;
                     const newKey = "otpExpiryTimestamp_" + Math.floor(Date.now() / 1000);
+
                     Object.keys(sessionStorage).forEach(key => {
                         if (key.startsWith("otpExpiryTimestamp_")) {
                             sessionStorage.removeItem(key);
                         }
                     });
+
                     sessionStorage.setItem(newKey, newExpiry);
-                    // setTimeout(() => {
-                    //     location.reload();
-                    // }, 5000);
                 } else {
                     messageDiv.removeClass('success').addClass('error').text(response.message).show();
                 }
@@ -156,14 +134,11 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    document.querySelector('button[onclick*="index.php"]').addEventListener('click', () => {
-        sessionStorage.clear();
-    });
-
     const confirmBtn = document.getElementById("confirmButton");
     confirmBtn.addEventListener("click", function (e) {
         const keys = Object.keys(sessionStorage).filter(k => k.startsWith("otpExpiryTimestamp_"));
         const expiryTime = keys.length > 0 ? parseInt(sessionStorage.getItem(keys[0])) : null;
+
         if (!expiryTime || Date.now() > expiryTime) {
             e.preventDefault();
             $('#resendMessage')
@@ -175,4 +150,3 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
-

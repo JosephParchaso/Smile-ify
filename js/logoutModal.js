@@ -15,7 +15,7 @@ function closeLogoutModal() {
 }
 
 function confirmLogout() {
-    window.location.href = '/Smile-ify/processes/logout.php';
+    window.location.href = `${BASE_URL}/processes/logout.php`;
 }
 
 document.addEventListener("DOMContentLoaded", function () {

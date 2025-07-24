@@ -20,7 +20,7 @@
 
 .card {
     background: #fff;
-    border-radius: 10px;
+    border-radius: 4px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     padding: 1.5rem;
 }
@@ -35,7 +35,7 @@
     padding: 0.5rem;
     border-left: 4px solid #122130;
     background: #ddebff;
-    border-radius: 5px;
+    border-radius: 4px;
 }
 
 .quick-links a {
@@ -45,10 +45,81 @@
     background: #122130;
     color: #fff;
     text-decoration: none;
-    border-radius: 5px;
+    border-radius: 4px;
     transition: background 0.3s;
 }
 
 .quick-links a:hover {
     background: #2a394d;
+}
+
+.profile-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 40px;
+    gap: 50px;
+    flex-wrap: wrap;
+}
+
+.profile-card {
+    width: 350px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    padding: 25px;
+    text-align: center;
+}
+
+.profile-card img {
+    width: 100px;
+    border-radius: 50%;
+    margin-bottom: 15px;
+}
+
+.profile-card h3 {
+    margin: 10px 0 5px;
+}
+
+.tabs-container {
+    flex: 1;
+    min-width: 350px;
+}
+
+.tabs {
+    display: flex;
+    border-bottom: 2px solid #ccc;
+    margin-bottom: 10px;
+}
+
+.tab {
+    padding: 10px 20px;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    font-weight: bold;
+    color: #5b5f64ff;
+}
+
+.tab.active {
+    border-bottom-color: #2196f3;
+    color: #122130;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.transaction-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.transaction-table th,
+.transaction-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
 }
