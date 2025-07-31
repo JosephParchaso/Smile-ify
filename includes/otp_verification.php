@@ -1,7 +1,7 @@
 <?php 
 session_start(); 
 
-define('BASE_URL', $_SERVER['HTTP_HOST'] === 'localhost' ? '/Smile-ify' : '');
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . BASE_URL . '/includes/db.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . BASE_URL . '/includes/header.php';
 
@@ -54,7 +54,6 @@ if (isset($_SESSION['verified_data'])) {
 </body>
 
 <script>
-const BASE_URL = "<?= BASE_URL ?>";
 
 document.addEventListener('DOMContentLoaded', function () {
     const timerEl = document.getElementById("timer");
@@ -63,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let countdown;
 
     const phpOtpCreated = <?php echo isset($_SESSION['otp_created']) ? ($_SESSION['otp_created'] * 1000) : 'null'; ?>;
-    const storageKey = "otpExpiryTimestamp_" + "<?php echo $_SESSION['otp_created']; ?>";
+    let storageKey = "otpExpiryTimestamp_" + "<?php echo $_SESSION['otp_created']; ?>";
 
     Object.keys(sessionStorage).forEach(key => {
         if (key.startsWith("otpExpiryTimestamp_") && Date.now() > parseInt(sessionStorage.getItem(key))) {
@@ -114,16 +113,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (response.success) {
                     messageDiv.removeClass('error').addClass('success').text(response.message).show();
 
+                    const newTimestamp = Math.floor(Date.now() / 1000);
+                    const newKey = "otpExpiryTimestamp_" + newTimestamp;
                     const newExpiry = Date.now() + expiryLimit * 1000;
-                    const newKey = "otpExpiryTimestamp_" + Math.floor(Date.now() / 1000);
 
                     Object.keys(sessionStorage).forEach(key => {
                         if (key.startsWith("otpExpiryTimestamp_")) {
                             sessionStorage.removeItem(key);
                         }
                     });
-
                     sessionStorage.setItem(newKey, newExpiry);
+                    storageKey = newKey;
+                    startCountdown();
                 } else {
                     messageDiv.removeClass('success').addClass('error').text(response.message).show();
                 }

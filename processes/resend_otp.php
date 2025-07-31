@@ -1,8 +1,9 @@
 <?php
 session_start();
-
 require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
+
+header('Content-Type: application/json');
 
 if (isset($_SESSION['verified_data'])) {
     $verified_data = $_SESSION['verified_data'];
@@ -36,17 +37,20 @@ if (isset($_SESSION['verified_data'])) {
         <b>Smile-ify</b>";
 
     if (!$mail->send()) {
-        $_SESSION['otp_error'] = "Failed to resend OTP. Please try again.";
-        header("Location: " . BASE_URL . "/includes/otp_verification.php");
-        exit;
+        echo json_encode([
+            'success' => false,
+            'message' => 'Failed to resend OTP. Please try again.'
+        ]);
     } else {
-        $_SESSION['otp_success'] = "OTP resent successfully.";
-        header("Location: " . BASE_URL . "/includes/otp_verification.php");
-        exit;
+        echo json_encode([
+            'success' => true,
+            'message' => 'OTP resent successfully.'
+        ]);
     }
 } else {
-    $_SESSION['otp_error'] = "Session expired. Please re-enter your email.";
-    header("Location: " . BASE_URL . "/includes/otp_verification.php");
-    exit;
+    echo json_encode([
+        'success' => false,
+        'message' => 'Session expired. Please re-enter your email.'
+    ]);
 }
 ?>

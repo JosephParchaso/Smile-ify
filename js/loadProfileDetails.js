@@ -1,9 +1,15 @@
 document.addEventListener("DOMContentLoaded", function () {
-    fetch(`${BASE_URL}/Patient/processes/load_details.php`)
-        .then(response => response.json())
-        .then(data => {
-            const profileCard = document.getElementById("profileCard");
+    const profileCard = document.getElementById("profileCard");
+    if (!profileCard) return; // ← Prevent running on other pages
 
+    fetch(`${BASE_URL}/Patient/processes/load_details.php`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Forbidden or failed to load.");
+            }
+            return response.json();
+        })
+        .then(data => {
             if (data.error) {
                 profileCard.innerHTML = `<p>${data.error}</p>`;
                 return;
@@ -18,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
             `;
         })
         .catch(error => {
-            document.getElementById("profileCard").innerHTML = "<p>Error loading profile.</p>";
+            profileCard.innerHTML = "<p>Error loading profile.</p>";
             console.error("Fetch error:", error);
         });
 });

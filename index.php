@@ -66,7 +66,7 @@ if (isset($_SESSION['otp_success'])) {
     <div id="bookingModal" class="booking-modal">
         <div class="booking-modal-content">
             
-            <form action="<?= BASE_URL ?>processes/request_otp.php" method="POST" id="bookingForm" autocomplete="off">
+            <form action="<?= BASE_URL ?>/processes/request_otp.php" method="POST" id="bookingForm" autocomplete="off">
                 <div class="form-group">
                     <input type="text" id="lastName" class="form-control" name="lastName" placeholder=" " required />
                     <label for="lastName" class="form-label">Last Name <span class="required">*</span></label>
