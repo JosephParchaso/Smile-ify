@@ -17,6 +17,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['userName'], $_POST['p
         if ($result->num_rows === 1) {
             $user = $result->fetch_assoc();
 
+            if (strtolower($user['status']) !== 'active') {
+                $_SESSION['login_error'] = "Account is inactive. Please contact support.";
+                header("Location: " . BASE_URL . "/index.php");
+                exit;
+            }
+
             if (password_verify($password, $user['password'])) {
                 $_SESSION['user_id'] = $user['user_id'];
                 $_SESSION['username'] = $user['username'];

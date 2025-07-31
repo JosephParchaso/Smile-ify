@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
     const profileCard = document.getElementById("profileCard");
-    if (!profileCard) return; // ← Prevent running on other pages
+    if (!profileCard) return;
 
     fetch(`${BASE_URL}/Patient/processes/load_details.php`)
         .then(response => {
@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <h3>${data.full_name}</h3>
                 <p><strong>Gender:</strong> ${data.gender}</p>
                 <p><strong>Email:</strong> ${data.email}</p>
-                <p><strong>Contact:</strong> ${data.contact_number}</p>
+                <p><strong>Contact Number:</strong> ${data.contact_number}</p>
                 <p><strong>Joined:</strong> ${data.joined}</p>
             `;
         })
