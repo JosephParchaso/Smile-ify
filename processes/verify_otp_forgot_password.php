@@ -1,0 +1,35 @@
+<?php
+session_start();
+
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $enteredOtp = trim($_POST['otpCode']);
+
+    if (!isset($_SESSION['otp']) || !isset($_SESSION['otp_created'])) {
+        $_SESSION['otp_error'] = "OTP session expired.";
+        header("Location: " . BASE_URL . "/includes/otp_verification_forgot_password.php");
+        exit;
+    }
+
+    $originalOtp = $_SESSION['otp'];
+    $otpCreatedTime = $_SESSION['otp_created'];
+    $currentTime = time();
+
+    if ($currentTime - $otpCreatedTime > 60) {
+        $_SESSION['otp_error'] = "OTP expired. Please request a new one.";
+        header("Location: " . BASE_URL . "/includes/otp_verification_forgot_password.php");
+        exit;
+    }
+
+    if ($enteredOtp !== $originalOtp) {
+        $_SESSION['otp_error'] = "Incorrect OTP. Please try again.";
+        header("Location: " . BASE_URL . "/includes/otp_verification_forgot_password.php");
+        exit;
+    }
+
+    $_SESSION['otp_verified'] = true;
+    header("Location: " . BASE_URL . "/includes/reset_password.php");
+    exit;
+}
+?>

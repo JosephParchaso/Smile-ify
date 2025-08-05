@@ -24,16 +24,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $mail->Username = 'theartp2@gmail.com';
     $mail->Password = 'xnlc pyjn okdg ihwd';
 
-    $mail->setFrom('theartp2@gmail.com', 'OTP Verification');
+    $mail->setFrom('theartp2@gmail.com', 'Smile-ify OTP Verification');
     $mail->addAddress($_POST["email"]);
 
     $mail->isHTML(true);
-    $mail->Subject = "Your verify code";
-    $mail->Body = "<p>Dear customer/patient, </p> <h3>Your OTP code is $otp <br></h3>
-        <br><br>
-        <p><i> Smile with confidence. </i></p>
-        <p>Best Regards,</p>
-        <b>Smile-ify</b>";
+    $mail->Subject = "Smile-ify Verification Code";
+    $mail->Body = "
+        <p>Dear Customer/Patient,</p>
+        <p>Your One-Time Password (OTP) is:</p>
+        <h3>$otp</h3>
+        <br>
+        <p><i>Smile with confidence.</i></p>
+        <p>Best regards,<br><strong>Smile-ify</strong></p>
+    ";
 
     if (!$mail->send()) {
         $_SESSION['otp_error'] = "Invalid email address. Please try again.";

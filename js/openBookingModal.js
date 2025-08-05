@@ -3,7 +3,7 @@ function openBookingModal() {
   document.body.classList.add("modal-open");
 }
 
-function closeModal() {
+function closeBookingModal() {
   document.getElementById("bookingModal").style.display = "none";
 }
 

@@ -106,20 +106,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["verify"])) {
         $mail->addAddress($email);
 
         $mail->isHTML(true);
-        $mail->Subject = "Login Credentials";
-        $mail->Body = "<p>Dear $username,</p>
-                        <p>Your Smile-ify account has been successfully verified.</p>
-                        <p><strong>Username:</strong> $username</p>
-                        <p><strong>Password:</strong> $default_password</p>
-                        <p>You can now log in to your account using these credentials.</p>
-                        <p>Best regards,<br>Smile-ify Team</p>";
+        $mail->Subject = "Smile-ify Login Credentials";
+        $mail->Body = "
+            <p>Dear <strong>$username</strong>,</p>
+            <p>Your Smile-ify account has been successfully verified.</p>
+            <p>You may now log in using the following credentials:</p>
+            <p><strong>Username:</strong> $username<br>
+            <strong>Password:</strong> $default_password</p>
+            <br>
+            <p><i>Smile with confidence.</i></p>
+            <p>Best regards,<br><strong>Smile-ify</strong></p>
+        ";
 
         try {
             if (!$mail->send()) {
                 throw new Exception("Mailer Error: " . $mail->ErrorInfo);
             }
 
-            $_SESSION['otp_success'] = "Email has been sent with your login credentials.";
+            $_SESSION['login_success'] = "Email has been sent with your login credentials.";
             header("Location: " . BASE_URL . "/index.php");
             exit;
         } catch (Exception $e) {

@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
 
@@ -25,16 +26,19 @@ if (isset($_SESSION['verified_data'])) {
     $mail->Username = 'theartp2@gmail.com';
     $mail->Password = 'xnlc pyjn okdg ihwd';
 
-    $mail->setFrom('theartp2@gmail.com', 'OTP Verification');
+    $mail->setFrom('theartp2@gmail.com', 'Smile-ify OTP Verification');
     $mail->addAddress($email);
 
     $mail->isHTML(true);
-    $mail->Subject = "Resend verify code";
-    $mail->Body = "<p>Dear customer/patient, </p> <h3>Your OTP code is $otp <br></h3>
-        <br><br>
-        <p><i> Smile with confidence. </i></p>
-        <p>Best Regards,</p>
-        <b>Smile-ify</b>";
+    $mail->Subject = "Smile-ify Verification Code Resend";
+    $mail->Body = "
+        <p>Dear Customer/Patient,</p>
+        <p>As requested, here is your OTP:</p>
+        <h3>$otp</h3>
+        <br>
+        <p><i>Smile with confidence.</i></p>
+        <p>Best regards,<br><strong>Smile-ify</strong></p>
+";
 
     if (!$mail->send()) {
         echo json_encode([

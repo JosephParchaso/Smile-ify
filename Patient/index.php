@@ -77,7 +77,7 @@ require_once BASE_PATH . '/Patient/includes/navbar.php';
     <div id="bookingModal" class="booking-modal">
         <div class="booking-modal-content" style="margin: 20vh auto;">
             
-            <form action="<?= BASE_URL ?>/Patient/processes/insert_appointment.php" method="POST" id="bookingForm" autocomplete="off">
+            <form action="<?= BASE_URL ?>/Patient/processes/insert_appointment.php" method="POST" autocomplete="off">
                 <div class="form-group">
                     <select id="appointmentBranch" class="form-control" name="appointmentBranch" required>
                         <option value="" disabled selected hidden></option>
@@ -144,7 +144,7 @@ require_once BASE_PATH . '/Patient/includes/navbar.php';
                 </div>
 
                 <div class="button-group">
-                    <button type="submit" class="form-button confirm-btn" id="confirmBooking">Confirm</button>
+                    <button type="submit" class="form-button confirm-btn">Confirm</button>
                     <button type="button" class="form-button cancel-btn" onclick="closeModal()">Cancel</button>
                 </div>
             </form>

@@ -26,13 +26,13 @@ $maskedEmail = isset($verified_data['email']) ? maskEmail($verified_data['email'
 ?>
 
 <head>
-    <title>OTP Verification</title>
+    <title>OTP Verification - Forgot Password</title>
 </head>
 <body>
 
 <div class="otp-verification-modal">
     <div class="otp-verification-modal-content">
-        <h2>OTP Verification</h2>
+        <h2>OTP Verification for Password Reset</h2>
         <p>
             We’ve sent a 6-digit code to your email to verify your password reset request:
             <strong><?= htmlspecialchars($maskedEmail) ?></strong>
@@ -44,7 +44,7 @@ $maskedEmail = isset($verified_data['email']) ? maskEmail($verified_data['email'
 
         <div id="resendMessage" class="error" style="display: none;"></div>
 
-        <form action="<?= BASE_URL ?>/processes/insert_appointment.php" method="POST" autocomplete="off">
+        <form action="<?= BASE_URL ?>/processes/verify_otp_forgot_password.php" method="POST" autocomplete="off">
             <div class="form-group">
                 <input type="text" id="otpCode" class="form-control" name="otpCode" placeholder=" " required maxlength="6" pattern="\d{6}" />
                 <label for="otpCode" class="form-label">OTP <span class="required">*</span></label>
