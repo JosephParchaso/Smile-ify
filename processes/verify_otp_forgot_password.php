@@ -12,24 +12,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    $originalOtp = $_SESSION['otp'];
-    $otpCreatedTime = $_SESSION['otp_created'];
+    $originalOtp = (string) $_SESSION['otp'];
+    $otpCreatedTime = (int) $_SESSION['otp_created'];
     $currentTime = time();
 
-    if ($currentTime - $otpCreatedTime > 60) {
+    if (($currentTime - $otpCreatedTime) > 60) {
         $_SESSION['otp_error'] = "OTP expired. Please request a new one.";
         header("Location: " . BASE_URL . "/includes/otp_verification_forgot_password.php");
         exit;
     }
 
-    if ($enteredOtp !== $originalOtp) {
+    if ((string)$enteredOtp !== $originalOtp) {
         $_SESSION['otp_error'] = "Incorrect OTP. Please try again.";
         header("Location: " . BASE_URL . "/includes/otp_verification_forgot_password.php");
         exit;
     }
 
     $_SESSION['otp_verified'] = true;
+    if (isset($_SESSION['verified_data']['username'])) {
+        $_SESSION['reset_username'] = $_SESSION['verified_data']['username'];
+    }
     header("Location: " . BASE_URL . "/includes/reset_password.php");
     exit;
 }
-?>

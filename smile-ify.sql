@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 31, 2025 at 05:15 PM
+-- Generation Time: Aug 09, 2025 at 11:54 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -73,7 +73,9 @@ INSERT INTO `appointment_transaction` (`appointment_transaction_id`, `user_id`, 
 (28, 31, 1, 1, 1, '2025-08-02', '12:45:00', '2025-07-31 14:32:30'),
 (29, 32, 2, 6, 2, '2025-08-16', '11:15:00', '2025-07-31 14:38:20'),
 (30, 33, 2, 6, 2, '2025-08-16', '11:15:00', '2025-07-31 14:38:28'),
-(31, 34, 2, 6, 2, '2025-08-01', '10:30:00', '2025-07-31 14:54:44');
+(31, 34, 2, 6, 2, '2025-08-01', '10:30:00', '2025-07-31 14:54:44'),
+(32, 35, 3, 1, 1, '2025-08-29', '15:00:00', '2025-08-05 20:06:22'),
+(33, 36, 2, 8, 3, '2025-08-12', '14:15:00', '2025-08-09 17:21:09');
 
 -- --------------------------------------------------------
 
@@ -252,8 +254,8 @@ INSERT INTO `notifications` (`notification_id`, `user_id`, `message`, `is_read`,
 (11, 2, 'sample - admin', 1, '2025-07-14 15:35:36'),
 (12, 29, 'Welcome to Smile-ify! Your account was successfully created.', 1, '2025-07-14 15:48:42'),
 (13, 29, 'Your appointment on 2025-07-24 at 10:30 was successfully booked!', 1, '2025-07-14 15:48:42'),
-(14, 30, 'Welcome to Smile-ify! Your account was successfully created.', 0, '2025-07-14 16:03:59'),
-(15, 30, 'Your appointment on 2025-07-31 at 13:30 was successfully booked!', 0, '2025-07-14 16:03:59'),
+(14, 30, 'Welcome to Smile-ify! Your account was successfully created.', 1, '2025-07-14 16:03:59'),
+(15, 30, 'Your appointment on 2025-07-31 at 13:30 was successfully booked!', 1, '2025-07-14 16:03:59'),
 (16, 28, 'Your appointment on 2025-07-23 at 09:45 was successfully booked!', 1, '2025-07-21 18:30:17'),
 (17, 28, 'Your appointment on 2025-07-31 at 15:00 was successfully booked!', 1, '2025-07-21 18:42:53'),
 (18, 28, 'Your appointment on 2025-07-30 at 15:00 was successfully booked!', 1, '2025-07-21 20:03:40'),
@@ -267,7 +269,25 @@ INSERT INTO `notifications` (`notification_id`, `user_id`, `message`, `is_read`,
 (26, 33, 'Welcome to Smile-ify! Your account was successfully created.', 0, '2025-07-31 14:38:28'),
 (27, 33, 'Your appointment on 2025-08-16 at 11:15 was successfully booked!', 0, '2025-07-31 14:38:28'),
 (28, 34, 'Welcome to Smile-ify! Your account was successfully created.', 0, '2025-07-31 14:54:44'),
-(29, 34, 'Your appointment on 2025-08-01 at 10:30 was successfully booked!', 0, '2025-07-31 14:54:44');
+(29, 34, 'Your appointment on 2025-08-01 at 10:30 was successfully booked!', 0, '2025-07-31 14:54:44'),
+(30, 35, 'Welcome to Smile-ify! Your account was successfully created.', 0, '2025-08-05 20:06:22'),
+(31, 35, 'Your appointment on 2025-08-29 at 15:00 was successfully booked!', 0, '2025-08-05 20:06:23'),
+(32, 36, 'Welcome to Smile-ify! Your account was successfully created.', 0, '2025-08-09 17:21:09'),
+(33, 36, 'Your appointment on 2025-08-12 at 14:15 was successfully booked!', 0, '2025-08-09 17:21:09'),
+(34, 30, 'Your password was successfully reset on August 9, 2025, 8:46 pm. If this wasn’t you, please contact support immediately.', 1, '2025-08-09 18:46:24'),
+(35, 30, 'Your password was successfully reset on August 10, 2025, 2:52 am. If this wasn’t you, please contact support immediately.', 1, '2025-08-09 18:52:02'),
+(36, 30, 'Your appointment on 2025-08-15 at 10:00 was successfully booked.', 1, '2025-08-09 19:22:26'),
+(37, 30, 'Reminder: Your dental cleaning is tomorrow at 14:30.', 1, '2025-08-09 19:22:26'),
+(38, 30, 'Your profile has been updated successfully.', 1, '2025-08-09 19:22:26'),
+(39, 30, 'Special Offer: 20% off whitening treatment this month!', 1, '2025-08-09 19:22:26'),
+(40, 30, 'We received your payment for your last visit.', 1, '2025-08-09 19:22:26'),
+(41, 30, 'New message from Dr. Smith regarding your last appointment.', 1, '2025-08-09 19:22:26'),
+(42, 30, 'Your appointment on 2025-08-20 at 09:00 is confirmed.', 1, '2025-08-09 19:22:26'),
+(43, 30, 'Lab results are now available in your account.', 1, '2025-08-09 19:22:26'),
+(44, 30, 'Your subscription plan has been renewed successfully.', 1, '2025-08-09 19:22:26'),
+(45, 30, 'Important: Our clinic hours have changed starting next week.', 1, '2025-08-09 19:22:26'),
+(46, 1, 'sample index', 0, '2025-08-09 20:34:25'),
+(47, 1, 'sample index', 0, '2025-08-09 20:34:25');
 
 -- --------------------------------------------------------
 
@@ -339,9 +359,9 @@ INSERT INTO `users` (`user_id`, `username`, `password`, `last_name`, `middle_nam
 (17, 'PototRx', '$2y$10$/z0.LVx2xEaDvFVmYKUx9Ou3r8cYEg8Iv0aO6lSArBdZbX2e4XJ9m', 'Potot', 'Travero', 'Rix', 'female', 'josephparchaso@gmail.com', '9055626239', 'patient', 'active', '2025-07-12 19:04:48'),
 (18, 'parchr', '$2y$10$rBXard1PzWqKnXOsGVbowu8pT1dv11gHFELYhn2UjusTOkR39ZxVS', 'parch', 'potot', 'rix', 'female', 'josephparchaso@gmail.com', '3243242343', 'patient', 'active', '2025-07-12 20:04:53'),
 (19, 'achasg', '$2y$10$pdkklvpmZcbw451FCvkKt.JI14X7dXVExlkqd4e7hAyzunu1KkRjC', 'achas', 'gab', 'gab', 'male', 'josephparchaso@gmail.com', '2423543265', 'patient', 'active', '2025-07-12 20:31:49'),
-(20, 'rixp', '$2y$10$qBN90ZhgnNkJMH23cBT6uOHqAmlXeUTkkJgaQ.myzXnRwATFWEvma', 'rix', '', 'potot', 'male', 'josephparchaso@gmail.com', '2342412421', 'patient', 'active', '2025-07-12 20:36:12'),
-(21, 'rixpp', '$2y$10$nvqUzj8gqqY16SHHkt4NQeVQVeU8CQbOaw6u0hhliacSetzJQU6v2', 'rix', '', 'potot', 'male', 'josephparchaso@gmail.com', '2342412421', 'patient', 'active', '2025-07-12 20:37:27'),
-(22, 'parchj', '$2y$10$sQwUuUFOgllhhPugQds8k.zXlAGrVCiCuTvbcfiCyBBnp4dd8/e3a', 'parch', 'rix', 'jj', 'female', '18100807@usc.edu.ph', '2346676887', 'patient', 'active', '2025-07-12 20:43:04'),
+(20, 'rixp', '$2y$10$qBN90ZhgnNkJMH23cBT6uOHqAmlXeUTkkJgaQ.myzXnRwATFWEvma', 'rix', '', 'potot', 'male', 'josephparchaso@gmail.com', '2342412421', 'patient', 'inactive', '2025-07-12 20:36:12'),
+(21, 'rixpp', '$2y$10$nvqUzj8gqqY16SHHkt4NQeVQVeU8CQbOaw6u0hhliacSetzJQU6v2', 'rix', '', 'potot', 'male', 'josephparchaso@gmail.com', '2342412421', 'patient', 'inactive', '2025-07-12 20:37:27'),
+(22, 'parchj', '$2y$10$sQwUuUFOgllhhPugQds8k.zXlAGrVCiCuTvbcfiCyBBnp4dd8/e3a', 'parch', 'rix', 'jj', 'female', '18100807@usc.edu.ph', '2346676887', 'patient', 'inactive', '2025-07-12 20:43:04'),
 (23, 'pretotd', '$2y$10$fTfrKDDNlUlfmfVRvYF.xOfaEyRWPo51Ux8aqHtLpDgBlxbWVjxSy', 'pretot', 'chiku', 'daze', 'female', 'josephparchaso@gmail.com', '3214325666', 'patient', 'active', '2025-07-12 20:45:13'),
 (24, '23dfsfs', '$2y$10$jRDx4wuzWruwA6NDUnGnn.XRyS0qYxK16q.20kDMphYGnVcDNlZKK', '23dfsf', 's', 'sdfsfd', 'male', 'josephparchaso@gmail.com', '4326789879', 'patient', 'active', '2025-07-12 21:20:25'),
 (25, 'AchasGG', '$2y$10$csrxQ1iwxHEcfkhQHKf3se586DUSZSK.WhXgNKB39m9js/HfPwuYK', 'Achas', '', 'Gab', 'male', '18100807@usc.edu.ph', '0922626262', 'patient', 'active', '2025-07-14 10:25:16'),
@@ -349,11 +369,13 @@ INSERT INTO `users` (`user_id`, `username`, `password`, `last_name`, `middle_nam
 (27, 'ChikuY', '$2y$10$h7C7FiWzWuf7oS0hUaav/OZwJX4rYOExaPk3NJu3O39mmsutOsUvm', 'Chiku', 'Wix', 'Yel', 'female', 'parchasoresidence@gmail.com', '9055626239', 'patient', 'active', '2025-07-14 11:14:19'),
 (28, 'Josephp', '$2y$10$r842TnJ2H403dHtEVZX3ZuEsp/PneORgp0aQ6iOkCbc.n/5BCqyta', 'Joseph', '', 'parch', 'male', 'theartp1@gmail.com', '1221412515', 'patient', 'active', '2025-07-14 11:26:32'),
 (29, 'pototj', '$2y$10$9Swzre20c9pLQ8ejMr1ySufYwaARXiCYpp8sUXyb5CP1oI7xNjtC2', 'potot', '', 'jj', 'male', '18102727@usc.edu.ph', '9527194102', 'patient', 'active', '2025-07-14 15:48:41'),
-(30, 'pret', '$2y$10$qvBLwb6Rn1BwPq6OUHvJu.J7BQv21/byAtwbrlavv3ooZycF4fDIa', 'pre', '', 'tot', 'male', '18102727@usc.edu.ph', '9205251545', 'patient', 'active', '2025-07-14 16:03:59'),
+(30, 'pret', '$2y$10$z7r/dpwWQ2m.RZK8EcwJGu2MkUM3tRY2EgG/7OyfSubN.bmXm2yTW', 'pre', '', 'tot', 'male', '18102727@usc.edu.ph', '9205251545', 'patient', 'active', '2025-07-14 16:03:59'),
 (31, 'Parchaso_J', '$2y$10$14IUZVVauGdjCe04vSuVTechUS8.EYYzOO5yZ0Li6Lq/IUhGx0.Ny', 'Parchaso', 'Espana', 'Jhon', 'female', '18100807@usc.edu.ph', '9055626239', 'patient', 'active', '2025-07-31 14:32:30'),
 (32, 'Parchaso_J1', '$2y$10$jhV55n5K2zZw.hoG40uBw.OceefQ5Q8VftYGFBJND/AdBnP7FmhkS', 'Parchaso', 'Espana', 'Jhon', 'male', 'josephparchaso@gmail.com', '9055626239', 'patient', 'active', '2025-07-31 14:38:20'),
 (33, 'Parchaso_J2', '$2y$10$9RhohMzQ7GCr2dSgX02sROUqqX9BhlYPQbvFzTte0bR7nms04U562', 'Parchaso', 'Espana', 'Jhon', 'male', 'josephparchaso@gmail.com', '9055626239', 'patient', 'active', '2025-07-31 14:38:28'),
-(34, 'parchaso_J', '$2y$10$AzXcLMHhefFKyQJfG3lteu/2wKCjJzmhRM4ncT6oSQzhIfEvci9ca', 'parchaso', 'espana', 'jhon', 'female', 'josephparchaso@gmail.com', '9055626239', 'patient', 'active', '2025-07-31 14:54:44');
+(34, 'parchaso_J', '$2y$10$AzXcLMHhefFKyQJfG3lteu/2wKCjJzmhRM4ncT6oSQzhIfEvci9ca', 'parchaso', 'espana', 'jhon', 'female', 'josephparchaso@gmail.com', '9055626239', 'patient', 'active', '2025-07-31 14:54:44'),
+(35, 'Parchhh_J', '$2y$10$BLbxRzDFxMO/QnMcVMpT/OO7r5CYpuSanK4TIMTrLAv6kq7qMy.IG', 'Parchhh', '', 'jj', 'female', '18100807@usc.edu.ph', '6515616165', 'patient', 'active', '2025-08-05 20:06:22'),
+(36, 'asdasd_A', '$2y$10$bMsAKLtfJ1e00emYMAaNWuFrD00n/n5St9zCFqmlbLvlHKoKNOXfS', 'asdasd', '', 'asdads', 'female', 'josephparchaso@gmail.com', '2525325425', 'patient', 'active', '2025-08-09 17:21:09');
 
 --
 -- Indexes for dumped tables
@@ -433,7 +455,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `appointment_transaction`
 --
 ALTER TABLE `appointment_transaction`
-  MODIFY `appointment_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `appointment_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT for table `branch`
@@ -469,7 +491,7 @@ ALTER TABLE `dentist_service`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
 -- AUTO_INCREMENT for table `service`
@@ -481,7 +503,7 @@ ALTER TABLE `service`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- Constraints for dumped tables

@@ -19,6 +19,10 @@ document.addEventListener('DOMContentLoaded', function () {
     if (notifItems.length > 0) {
         notifItems.forEach(function (item) {
             item.addEventListener('click', function () {
+                if (!this.classList.contains('unread')) {
+                    return;
+                }
+                
                 const id = this.getAttribute('data-id');
 
                 fetch(`${BASE_URL}/processes/read_notification.php`, {

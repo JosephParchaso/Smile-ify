@@ -12,7 +12,7 @@ $notifications = [];
 if (isset($_SESSION['user_id'])) {
     $userId = $_SESSION['user_id'];
 
-    $stmt = $conn->prepare("SELECT notification_id, message, is_read, created_at FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT 5");
+    $stmt = $conn->prepare("SELECT notification_id, message, is_read, created_at FROM notifications WHERE user_id = ? ORDER BY created_at DESC");
     $stmt->bind_param("i", $userId);
     $stmt->execute();
     $result = $stmt->get_result();

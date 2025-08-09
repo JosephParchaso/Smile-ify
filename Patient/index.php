@@ -4,17 +4,13 @@ session_start();
 require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
 
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'patient') {
     header("Location: " . BASE_URL . "/index.php");
-    exit;
+    exit();
 }
 
-header("Cache-Control: no-cache, no-store, must-revalidate");
-header("Pragma: no-cache");
-header("Expires: 0");
-
 $currentPage = 'index';
-$otpSuccess = '';
+$error_msg = '';
 
 if (isset($_SESSION['error_msg'])) {
     $error_msg = $_SESSION['error_msg'];
@@ -145,7 +141,7 @@ require_once BASE_PATH . '/Patient/includes/navbar.php';
 
                 <div class="button-group">
                     <button type="submit" class="form-button confirm-btn">Confirm</button>
-                    <button type="button" class="form-button cancel-btn" onclick="closeModal()">Cancel</button>
+                    <button type="button" class="form-button cancel-btn" onclick="closeBookingModal()">Cancel</button>
                 </div>
             </form>
         </div>

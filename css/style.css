@@ -209,6 +209,11 @@ form {
     color: #555;
 }
 
+#resendOTPButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .booking-modal, .forgot-password-modal {
     display: none;
     position: fixed;
@@ -604,7 +609,6 @@ nav {
 
 .nav-menu li {
     display: flex;
-    align-items: stretch;
 }
 
 .nav-menu li a {
@@ -686,10 +690,15 @@ nav {
 }
 
 .notif-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     padding: 8px;
     border-bottom: 1px solid #eee;
     cursor: pointer;
+    font-size: 13px;
 }
+
 .notif-item:hover {
     background-color: #f9f9f9;
 }
@@ -700,10 +709,15 @@ nav {
     cursor: pointer;
 }
 
+.notif-message {
+    flex: 1;
+    margin-right: 5px;
+}
+
 .notif-date {
-    display: block;
     font-size: 10px;
     color: #888;
+    white-space: nowrap;
 }
 
 .logout-modal {
@@ -724,6 +738,26 @@ nav {
     box-shadow: 0 4px 12px rgba(0,0,0,0.25);
     width: 300px;
     color: #122130;
+}
+
+.logged-user {
+    font-size: 15px;
+    color: white;
+    display: flex;
+    align-items: center;
+}
+
+.logged-user .colon {
+    margin: 0 5px;
+}
+
+.logged-user .dash {
+    margin: 0 5px;
+}
+
+.user-role {
+    font-weight: normal;
+    color: #ccc;
 }
 
 .modal-buttons {
@@ -776,6 +810,10 @@ nav {
     width: 100%;
 }
 
+.fc-daygrid-event-harness:hover {
+    cursor: pointer;
+}
+
 .fc-toolbar-title {
     font-size: 1.5rem;
     font-weight: bold;
@@ -791,34 +829,6 @@ nav {
 
 .fc-toolbar-chunk button:hover {
     background: #1a252f;
-}
-
-
-
-/* Responsive layout */
-@media (max-width: 768px) {
-    .menu-toggle {
-        display: block;
-    }
-
-    .nav-menu {
-        display: none;
-        flex-direction: column;
-        align-items: center;
-        width: 100%;
-    }
-
-    .nav-menu.show {
-        display: flex;
-    }
-
-    .nav-menu li a {
-        justify-content: center;
-        padding: 12px 0;
-        padding: 10px 16px;
-        transition: background-color 0.3s ease;
-        border-radius: 4px;
-    }
 }
 
     
@@ -867,4 +877,53 @@ nav {
 
 .footer a.footerDes:hover {
     text-decoration: underline;
+}
+
+/* Responsive layout */
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: block;
+    }
+
+    .nav-menu {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    .nav-menu.show {
+        display: flex;
+    }
+
+    .nav-menu li a {
+        justify-content: center;
+        padding: 12px 0;
+        padding: 10px 16px;
+        transition: background-color 0.3s ease;
+        border-radius: 4px;
+    }
+
+    .notif-dropdown {
+        position: fixed;
+        top: 60px;
+        right: 10px;
+        left: 10px;
+        width: auto;
+        max-height: 80vh;
+        overflow-y: auto;
+        font-size: 14px;
+        padding: 12px;
+        z-index: 2000;
+    }
+
+    .notif-item {
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+    .notif-date {
+        font-size: 11px;
+        color: #666;
+    }
 }

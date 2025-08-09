@@ -115,14 +115,27 @@ document.addEventListener('DOMContentLoaded', function () {
     $('#resendOTPButton').click(function () {
         if (this.disabled) return;
 
+        const messageDiv = $('#resendMessage');
+        
+        messageDiv.removeClass('error')
+                .addClass('success')
+                .text('Resending OTP')
+                .show();
+
         $.ajax({
             url: BASE_URL + '/processes/resend_otp.php',
             type: 'POST',
             dataType: 'json',
             success: function (response) {
-                const messageDiv = $('#resendMessage');
                 if (response.success) {
-                    messageDiv.removeClass('error').addClass('success').text(response.message).show();
+                    messageDiv.removeClass('error')
+                            .addClass('success')
+                            .text('OTP resent successfully.')
+                            .show();
+
+                    setTimeout(() => {
+                        messageDiv.fadeOut();
+                    }, 10000);
 
                     const newTimestamp = Math.floor(Date.now() / 1000);
                     const newKey = "otpExpiryTimestamp_" + newTimestamp;
@@ -137,11 +150,17 @@ document.addEventListener('DOMContentLoaded', function () {
                     storageKey = newKey;
                     startCountdown();
                 } else {
-                    messageDiv.removeClass('success').addClass('error').text(response.message).show();
+                    messageDiv.removeClass('success')
+                            .addClass('error')
+                            .text(response.message)
+                            .show();
                 }
             },
             error: function () {
-                $('#resendMessage').addClass('error').text('Error resending OTP. Please try again.').show();
+                messageDiv.removeClass('success')
+                        .addClass('error')
+                        .text('Error resending OTP. Please try again.')
+                        .show();
             }
         });
     });

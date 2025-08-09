@@ -10,18 +10,8 @@ document.addEventListener('DOMContentLoaded', function() {
             right: 'dayGridMonth,timeGridWeek,timeGridDay'
         },
         customButtons: {
-            customPrev: {
-                text: '<',
-                click: function() {
-                    calendar.prev();
-                }
-            },
-            customNext: {
-                text: '>',
-                click: function() {
-                    calendar.next();
-                }
-            }
+            customPrev: { text: '<', click: () => calendar.prev() },
+            customNext: { text: '>', click: () => calendar.next() }
         },
         height: 650,
         events: `${BASE_URL}/Patient/processes/load_patient_appointments.php`,

@@ -47,7 +47,7 @@ require_once BASE_PATH . '/processes/fetch_notifications.php';
                                     data-id="<?= $n['notification_id'] ?>"
                                 >
                                     <span class="notif-message"><?= htmlspecialchars($n['message']) ?></span>
-                                    <span class="notif-date"><?= date('M d, H:i', strtotime($n['created_at'])) ?></span>
+                                    <span class="notif-date"><?= date('M d, Y H:i', strtotime($n['created_at'])) ?></span>
                                 </li>
                             <?php endforeach; ?>
                         <?php endif; ?>
@@ -70,6 +70,12 @@ require_once BASE_PATH . '/processes/fetch_notifications.php';
                         </div>
                     </div>
                 </div>
+            </li>
+            <li class="logged-user">
+                Logged in as <span class="colon">:</span> 
+                <strong><?= htmlspecialchars($_SESSION['username']) ?></strong> 
+                <span class="dash">-</span> 
+                <span class="user-role"><?= htmlspecialchars($_SESSION['role']) ?></span>
             </li>
         </ul>
     </div>

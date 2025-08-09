@@ -5,8 +5,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
 require_once BASE_PATH . '/includes/header.php';
 require_once BASE_PATH . '/includes/db.php';
 
-$loginError = '';
 $loginSuccess = '';
+$loginError = '';
 $otpError = '';
 $usernameError = '';
 $showForgotPasswordModal = false;
@@ -69,7 +69,7 @@ if (isset($_SESSION['username_error'])) {
             <div class="form-group">
                 <input type="password" id="passWord" name="passWord" class="form-control" placeholder=" " required/>
                 <label for="passWord" class="form-label">Password</label>
-                <span onclick="togglePassword()" style="position: absolute; top: 50%; right: 12px; transform: translateY(-50%); cursor: pointer; font-size: 14px;">👁</span>
+                <span onclick="togglePassword('passWord')" style="position: absolute; top: 50%; right: 12px; transform: translateY(-50%); cursor: pointer; font-size: 14px;">👁</span>
             </div>
 
             <div style="text-align: right; margin-bottom: 10px;">

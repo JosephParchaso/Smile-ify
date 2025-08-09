@@ -48,7 +48,8 @@ if (isset($_SESSION['verified_data'])) {
     } else {
         echo json_encode([
             'success' => true,
-            'message' => 'OTP resent successfully.'
+            'message' => 'OTP resent successfully.',
+            'otp_created' => $_SESSION['otp_created']
         ]);
     }
 } else {

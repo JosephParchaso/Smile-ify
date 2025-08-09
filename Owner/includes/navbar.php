@@ -3,49 +3,43 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
 require_once BASE_PATH . '/processes/fetch_notifications.php';
 ?>
+<link rel="stylesheet" href="<?= BASE_URL ?>/Owner/css/style.css?v=<?= time(); ?>" />
 <nav>
     <div class="nav-container">
         <button class="menu-toggle">&#9776;</button>
         <ul class="nav-menu">
             <li>
                 <a href="<?= BASE_URL ?>/Owner/index.php" class="<?= ($currentPage == 'index') ? 'active' : '' ?>">
-                    <span class="material-symbols-outlined">home</span>
                     <span class="link-text">Home</span>
                 </a>
             </li>
             <li>
                 <a href="<?= BASE_URL ?>/Owner/pages/reports.php" class="<?= ($currentPage == 'reports') ? 'active' : '' ?>">
-                    <span class="material-symbols-outlined">monitoring</span>
                     <span class="link-text">Report</span>
                 </a>
             </li>
             <li>
                 <a href="<?= BASE_URL ?>/Owner/pages/schedule.php" class="<?= ($currentPage == 'schedule') ? 'active' : '' ?>">
-                    <span class="material-symbols-outlined">calendar_month</span>
                     <span class="link-text">Schedules</span>
                 </a>
             </li>
             <li>
                 <a href="<?= BASE_URL ?>/Owner/pages/employees.php" class="<?= ($currentPage == 'employees') ? 'active' : '' ?>">
-                    <span class="material-symbols-outlined">groups</span>
                     <span class="link-text">Employees</span>
                 </a>
             </li>
             <li>
                 <a href="<?= BASE_URL ?>/Owner/pages/profile.php" class="<?= ($currentPage == 'profile') ? 'active' : '' ?>">
-                    <span class="material-symbols-outlined">person</span>
                     <span class="link-text">Profile</span>
                 </a>
             </li>
             <li>
                 <a href="<?= BASE_URL ?>/Owner/pages/about.php" class="<?= ($currentPage == 'about') ? 'active' : '' ?>">
-                    <span class="material-symbols-outlined">info</span>
                     <span class="link-text">About</span>
                 </a>
             </li>
             <li class="nav-item dropdown">
                 <a href="#" class="nav-link" id="notifDropdownToggle">
-                    <span class="material-symbols-outlined">notifications</span>
                     <span class="link-text">Notifications</span>
                     <?php if ($unreadCount > 0): ?>
                         <span class="notif-badge"><?= $unreadCount ?></span>
@@ -63,7 +57,7 @@ require_once BASE_PATH . '/processes/fetch_notifications.php';
                                     data-id="<?= $n['notification_id'] ?>"
                                 >
                                     <span class="notif-message"><?= htmlspecialchars($n['message']) ?></span>
-                                    <span class="notif-date"><?= date('M d, H:i', strtotime($n['created_at'])) ?></span>
+                                    <span class="notif-date"><?= date('M d, Y H:i', strtotime($n['created_at'])) ?></span>
                                 </li>
                             <?php endforeach; ?>
                         <?php endif; ?>
@@ -86,6 +80,12 @@ require_once BASE_PATH . '/processes/fetch_notifications.php';
                         </div>
                     </div>
                 </div>
+            </li>
+            <li class="logged-user">
+                Logged in as <span class="colon">:</span> 
+                <strong><?= htmlspecialchars($_SESSION['username']) ?></strong> 
+                <span class="dash">-</span> 
+                <span class="user-role"><?= htmlspecialchars($_SESSION['role']) ?></span>
             </li>
         </ul>
     </div>

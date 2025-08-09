@@ -115,19 +115,34 @@ document.addEventListener('DOMContentLoaded', function () {
     $('#resendOTPButton').click(function () {
         if (this.disabled) return;
 
+        $('.otp-verification-modal-content .error').not('#resendMessage').hide();
+
+        const messageDiv = $('#resendMessage');
+        
+        messageDiv.removeClass('error')
+                .addClass('success')
+                .text('Resending OTP')
+                .show();
+
         $.ajax({
             url: BASE_URL + '/processes/resend_otp.php',
             type: 'POST',
             dataType: 'json',
             success: function (response) {
-                const messageDiv = $('#resendMessage');
                 if (response.success) {
-                    messageDiv.removeClass('error').addClass('success').text(response.message).show();
+                    messageDiv.removeClass('error')
+                            .addClass('success')
+                            .text(response.message)
+                            .show();
 
-                    const newTimestamp = Math.floor(Date.now() / 1000);
+                    setTimeout(() => {
+                        messageDiv.fadeOut();
+                    }, 10000);
+
+                    const newTimestamp = response.otp_created;
                     const newKey = "otpExpiryTimestamp_" + newTimestamp;
-                    const newExpiry = Date.now() + expiryLimit * 1000;
-
+                    const newExpiry = (newTimestamp * 1000) + (expiryLimit * 1000);
+                    
                     Object.keys(sessionStorage).forEach(key => {
                         if (key.startsWith("otpExpiryTimestamp_")) {
                             sessionStorage.removeItem(key);
@@ -137,28 +152,19 @@ document.addEventListener('DOMContentLoaded', function () {
                     storageKey = newKey;
                     startCountdown();
                 } else {
-                    messageDiv.removeClass('success').addClass('error').text(response.message).show();
+                    messageDiv.removeClass('success')
+                            .addClass('error')
+                            .text(response.message)
+                            .show();
                 }
             },
             error: function () {
-                $('#resendMessage').addClass('error').text('Error resending OTP. Please try again.').show();
+                messageDiv.removeClass('success')
+                        .addClass('error')
+                        .text('Error resending OTP. Please try again.')
+                        .show();
             }
         });
-    });
-
-    const confirmBtn = document.getElementById("confirmButton");
-    confirmBtn.addEventListener("click", function (e) {
-        const keys = Object.keys(sessionStorage).filter(k => k.startsWith("otpExpiryTimestamp_"));
-        const expiryTime = keys.length > 0 ? parseInt(sessionStorage.getItem(keys[0])) : null;
-
-        if (!expiryTime || Date.now() > expiryTime) {
-            e.preventDefault();
-            $('#resendMessage')
-                .removeClass('success')
-                .addClass('error')
-                .text('OTP expired. Please resend to get a new code.')
-                .show();
-        }
     });
 });
 </script>

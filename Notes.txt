@@ -128,7 +128,7 @@ Notes:
 login case sensitive
 password - random
 gmail suspicious spams - sendgrid?
-
+fadeout error?
 
 doctor availability 9am - 4pm
 doctor branch assignment
@@ -148,3 +148,4 @@ appointment: resched? cancel?
 
 ==========================================================================================================================================================================================
 
+dungan register different user
