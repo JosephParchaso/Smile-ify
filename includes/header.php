@@ -49,6 +49,8 @@ $role = $_SESSION['role'] ?? null;
 
     <?php elseif ($role === 'admin'): ?>
         <!-- Admin-specific -->
+        <script src="<?= BASE_URL ?>/js/Admin/loadAppointmentDetails.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/js/Admin/loadProfileDetails.js?v=<?= time(); ?>"></script>
 
     <?php elseif ($role === 'patient'): ?>
         <!-- Patient-specific -->

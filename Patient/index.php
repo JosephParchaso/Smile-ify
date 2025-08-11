@@ -32,35 +32,35 @@ require_once BASE_PATH . '/Patient/includes/navbar.php';
 
         <div class="cards">
             <div class="card">
-                <h2>Upcoming Appointments</h2>
+                <h2><span class="material-symbols-outlined">calendar_month</span> Upcoming Appointments</h2>
                 <div class="appointment">
-                    <strong><span class="material-symbols-outlined">calendar_month</span> July 25, 2025</strong> at 10:00 AM<br>
+                    <strong>July 25, 2025</strong> at 10:00 AM<br>
                     with Dr. Smith (Mandaue Branch)
                 </div>
                 <div class="appointment">
-                    <strong><span class="material-symbols-outlined">calendar_month</span> August 5, 2025</strong> at 2:30 PM<br>
+                    <strong>August 5, 2025</strong> at 2:30 PM<br>
                     with Dr. Cruz (Babag Branch)
                 </div>
             </div>
 
             <div class="card">
-                <h2>Announcements</h2>
-                <div class="announcement"><span class="material-symbols-outlined">campaign</span> Get 10% off on Root Canal Treatment until August 31!</div>
-                <div class="announcement"><span class="material-symbols-outlined">campaign</span> We’re closed on August 21 for National Holiday.</div>
+                <h2><span class="material-symbols-outlined">campaign</span> Announcements</h2>
+                <div class="announcement">Get 10% off on Root Canal Treatment until August 31!</div>
+                <div class="announcement">We’re closed on August 21 for National Holiday.</div>
             </div>
 
             <div class="card">
-                <h2>Dental Care Tips</h2>
-                <div class="tip"><span class="material-symbols-outlined">dentistry</span> Brush at least twice a day with fluoride toothpaste.</div>
-                <div class="tip"><span class="material-symbols-outlined">dentistry</span> Floss daily to remove plaque between your teeth.</div>
-                <div class="tip"><span class="material-symbols-outlined">dentistry</span> Avoid sugary drinks and snacks between meals.</div>
+                <h2><span class="material-symbols-outlined">dentistry</span> Dental Care Tips</h2>
+                <div class="tip">Brush at least twice a day with fluoride toothpaste.</div>
+                <div class="tip">Floss daily to remove plaque between your teeth.</div>
+                <div class="tip">Avoid sugary drinks and snacks between meals.</div>
             </div>
 
             <div class="card">
                 <h2><span class="material-symbols-outlined">bolt</span> Quick Links</h2>
                 <div class="quick-links">
                     <a href="#" onclick="openBookingModal()"><span class="material-symbols-outlined">calendar_add_on</span> Book Appointment</a>
-                    <a href="<?= BASE_URL ?>/Patient/pages/profile.php"><span class="material-symbols-outlined">manage_accounts</span> Edit Profile</a><br>
+                    <a href="<?= BASE_URL ?>/Patient/pages/profile.php"><span class="material-symbols-outlined">manage_accounts</span> Profile Settings</a><br>
                     <a href="#" onclick="openEducationalModal()"><span class="material-symbols-outlined">info</span> About</a>
                 </div>
             </div>

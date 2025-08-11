@@ -9,7 +9,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['userName'], $_POST['p
     $password = trim($_POST['passWord']);
 
     if (!empty($username) && !empty($password)) {
-        $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
+        $stmt = $conn->prepare("SELECT u.*, b.name AS branch_name, 
+                                            b.branch_id AS branch_id
+                                FROM users u
+                                LEFT JOIN branch b ON u.branch_id = b.branch_id
+                                WHERE u.username = ?"
+                                );
         $stmt->bind_param("s", $username);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -27,6 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['userName'], $_POST['p
                 $_SESSION['user_id'] = $user['user_id'];
                 $_SESSION['username'] = $user['username'];
                 $_SESSION['role'] = $user['role'];
+                $_SESSION['branch_id'] = $user['branch_id'];
+                $_SESSION['branch_name'] = $user['branch_name'];
 
                 $role = strtolower($user['role']);
 

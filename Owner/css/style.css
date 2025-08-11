@@ -40,7 +40,6 @@
     text-decoration: none;
     border-radius: 4px;
     transition: background 0.3s;
-    font-size: 0.9rem;
 }
 
 .quick-links a:hover {
@@ -72,8 +71,57 @@
 
 .profile-card h3 {
     margin: 10px 0 5px;
+}.tabs-container {
+    flex: 1;
+    min-width: 350px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers horizontally */
 }
 
+.tabs {
+    display: flex;
+    border-bottom: 2px solid #ccc;
+    margin-bottom: 10px;
+    justify-content: center; /* Centers tabs horizontally */
+    width: 100%;
+}
+
+.tab {
+    padding: 10px 20px;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    font-weight: bold;
+    color: #5b5f64ff;
+}
+
+.tab.active {
+    border-bottom-color: #2196f3;
+    color: #122130;
+}
+
+.tab-content {
+    display: none;
+    width: 80%; /* Adjust to your liking */
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.transaction-table {
+    width: 100%;
+    max-width: 900px; /* Limit table width */
+    margin: 0 auto; /* Center table */
+    border-collapse: collapse;
+}
+
+.transaction-table th,
+.transaction-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
 
 @media (max-width: 900px) {
     .cards {

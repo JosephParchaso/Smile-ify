@@ -3,61 +3,58 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
 require_once BASE_PATH . '/processes/fetch_notifications.php';
 ?>
+<link rel="stylesheet" href="<?= BASE_URL ?>/Admin/css/style.css?v=<?= time(); ?>" />
 <nav>
     <div class="nav-container">
         <button class="menu-toggle">&#9776;</button>
         <ul class="nav-menu">
             <li>
                 <a href="<?= BASE_URL ?>/Admin/index.php" class="<?= ($currentPage == 'index') ? 'active' : '' ?>">
-                    <span class="material-symbols-outlined">home</span>
                     <span class="link-text">Home</span>
                 </a>
             </li>
             <li>
                 <a href="<?= BASE_URL ?>/Admin/pages/schedule.php" class="<?= ($currentPage == 'schedule') ? 'active' : '' ?>">
-                    <span class="material-symbols-outlined">calendar_month</span>
                     <span class="link-text">Schedules</span>
                 </a>
             </li>
             <li>
+                <a href="<?= BASE_URL ?>/Admin/pages/reports.php" class="<?= ($currentPage == 'reports') ? 'active' : '' ?>">
+                    <span class="link-text">Reports</span>
+                </a>
+            </li>
+            <li>
                 <a href="<?= BASE_URL ?>/Admin/pages/patients.php" class="<?= ($currentPage == 'patients') ? 'active' : '' ?>">
-                    <span class="material-symbols-outlined">groups</span>
                     <span class="link-text">Patients</span>
                 </a>
             </li>
             <li>
                 <a href="<?= BASE_URL ?>/Admin/pages/supplies.php" class="<?= ($currentPage == 'supplies') ? 'active' : '' ?>">
-                    <span class="material-symbols-outlined">inventory_2</span>
                     <span class="link-text">Supplies</span>
                 </a>
             </li>
             <li>
                 <a href="<?= BASE_URL ?>/Admin/pages/services.php" class="<?= ($currentPage == 'services') ? 'active' : '' ?>">
-                    <span class="material-symbols-outlined">medical_services</span>
                     <span class="link-text">Services</span>
                 </a>
             </li>
             <li>
                 <a href="<?= BASE_URL ?>/Admin/pages/promos.php" class="<?= ($currentPage == 'promos') ? 'active' : '' ?>">
-                    <span class="material-symbols-outlined">sell</span>
                     <span class="link-text">Promos</span>
                 </a>
             </li>
             <li>
                 <a href="<?= BASE_URL ?>/Admin/pages/profile.php" class="<?= ($currentPage == 'profile') ? 'active' : '' ?>">
-                    <span class="material-symbols-outlined">person</span>
                     <span class="link-text">Profile</span>
                 </a>
             </li>
             <li>
                 <a href="<?= BASE_URL ?>/Admin/pages/about.php" class="<?= ($currentPage == 'about') ? 'active' : '' ?>">
-                    <span class="material-symbols-outlined">info</span>
                     <span class="link-text">About</span>
                 </a>
             </li>
             <li class="nav-item dropdown">
                 <a href="#" class="nav-link" id="notifDropdownToggle">
-                    <span class="material-symbols-outlined">notifications</span>
                     <span class="link-text">Notifications</span>
                     <?php if ($unreadCount > 0): ?>
                         <span class="notif-badge"><?= $unreadCount ?></span>
@@ -101,6 +98,10 @@ require_once BASE_PATH . '/processes/fetch_notifications.php';
                 <strong><?= htmlspecialchars($_SESSION['username']) ?></strong> 
                 <span class="dash">-</span> 
                 <span class="user-role"><?= htmlspecialchars($_SESSION['role']) ?></span>
+                <?php if (!empty($_SESSION['branch_name'])): ?>
+                    <span class="dash">-</span> 
+                    <span class="user-branch"><?= htmlspecialchars($_SESSION['branch_name']) ?></span>
+                <?php endif; ?>
             </li>
         </ul>
     </div>

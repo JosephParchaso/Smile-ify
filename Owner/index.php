@@ -15,6 +15,8 @@ require_once BASE_PATH . '/includes/header.php';
 require_once BASE_PATH . '/Owner/includes/navbar.php';
 ?>
 
+<title>Home</title>
+
 <div class="dashboard">
 
     <div class="cards">

@@ -11,25 +11,21 @@ require_once BASE_PATH . '/processes/fetch_notifications.php';
         <ul class="nav-menu">
             <li>
                 <a href="<?= BASE_URL ?>/Patient/index.php" class="<?= ($currentPage == 'index') ? 'active' : '' ?>">
-                    <span class="material-symbols-outlined">home</span>
                     <span class="link-text">Home</span>
                 </a>
             </li>
             <li>
                 <a href="<?= BASE_URL ?>/Patient/pages/schedule.php" class="<?= ($currentPage == 'schedule') ? 'active' : '' ?>">
-                    <span class="material-symbols-outlined">calendar_month</span>
                     <span class="link-text">Schedules</span>
                 </a>
             </li>
             <li>
                 <a href="<?= BASE_URL ?>/Patient/pages/profile.php" class="<?= ($currentPage == 'profile') ? 'active' : '' ?>">
-                    <span class="material-symbols-outlined">person</span>
                     <span class="link-text">Profile</span>
                 </a>
             </li>
             <li class="nav-item dropdown">
                 <a href="#" class="nav-link" id="notifDropdownToggle">
-                    <span class="material-symbols-outlined">notifications</span>
                     <span class="link-text">Notifications</span>
                     <?php if ($unreadCount > 0): ?>
                         <span class="notif-badge"><?= $unreadCount ?></span>

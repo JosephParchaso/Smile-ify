@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'patient') {
 
 $userID = $_SESSION['user_id'];
 
-$sql = "SELECT 
+$sql = "SELECT DISTINCT
             a.appointment_transaction_id,
             b.name AS branch,
             s.name AS service,

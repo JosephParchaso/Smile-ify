@@ -4,12 +4,19 @@ session_start();
 require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'owner') {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     http_response_code(403);
     exit('Unauthorized');
 }
 
-$sql = "SELECT DISTINCT
+$branch_id = $_SESSION['branch_id'] ?? null;
+
+if (!$branch_id) {
+    http_response_code(400);
+    exit('Branch ID not found in session');
+}
+
+$sql = "SELECT DISTINCT 
             a.appointment_transaction_id,
             CONCAT(u.first_name, ' ', u.last_name) AS patient,
             b.name AS branch,
@@ -22,9 +29,13 @@ $sql = "SELECT DISTINCT
         LEFT JOIN service s ON a.service_id = s.service_id
         LEFT JOIN dentist d ON a.dentist_id = d.dentist_id
         LEFT JOIN users u ON a.user_id = u.user_id
+        WHERE a.branch_id = ?
         ORDER BY a.appointment_date, a.appointment_time";
 
-$result = $conn->query($sql);
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $branch_id);
+$stmt->execute();
+$result = $stmt->get_result();
 
 $events = [];
 while ($row = $result->fetch_assoc()) {
@@ -41,4 +52,6 @@ while ($row = $result->fetch_assoc()) {
 
 header('Content-Type: application/json');
 echo json_encode($events);
+
+$stmt->close();
 $conn->close();
