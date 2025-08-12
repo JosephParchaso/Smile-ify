@@ -14,4 +14,3 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 <title>Patients</title>
 
 <?php require_once BASE_PATH . '/includes/footer.php'; ?>
-

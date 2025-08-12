@@ -26,13 +26,13 @@ $maskedEmail = isset($verified_data['email']) ? maskEmail($verified_data['email'
 ?>
 
 <head>
-    <title>OTP Verification</title>
+    <title>OTP Verification - Forgot Password</title>
 </head>
 <body>
 
 <div class="otp-verification-modal">
     <div class="otp-verification-modal-content">
-        <h2>OTP Verification</h2>
+        <h2>OTP Verification for Password Reset</h2>
         <p>
             We’ve sent a 6-digit code to your email to verify your password reset request:
             <strong><?= htmlspecialchars($maskedEmail) ?></strong>
@@ -44,7 +44,7 @@ $maskedEmail = isset($verified_data['email']) ? maskEmail($verified_data['email'
 
         <div id="resendMessage" class="error" style="display: none;"></div>
 
-        <form action="<?= BASE_URL ?>/processes/insert_appointment.php" method="POST" autocomplete="off">
+        <form action="<?= BASE_URL ?>/processes/OTP Processes/verify_otp_forgot_password.php" method="POST" autocomplete="off">
             <div class="form-group">
                 <input type="text" id="otpCode" class="form-control" name="otpCode" placeholder=" " required maxlength="6" pattern="\d{6}" />
                 <label for="otpCode" class="form-label">OTP <span class="required">*</span></label>
@@ -115,6 +115,8 @@ document.addEventListener('DOMContentLoaded', function () {
     $('#resendOTPButton').click(function () {
         if (this.disabled) return;
 
+        $('.otp-verification-modal-content .error').not('#resendMessage').hide();
+
         const messageDiv = $('#resendMessage');
         
         messageDiv.removeClass('error')
@@ -123,24 +125,24 @@ document.addEventListener('DOMContentLoaded', function () {
                 .show();
 
         $.ajax({
-            url: BASE_URL + '/processes/resend_otp.php',
+            url: BASE_URL + '/processes/OTP Processes/resend_otp.php',
             type: 'POST',
             dataType: 'json',
             success: function (response) {
                 if (response.success) {
                     messageDiv.removeClass('error')
                             .addClass('success')
-                            .text('OTP resent successfully.')
+                            .text(response.message)
                             .show();
 
                     setTimeout(() => {
                         messageDiv.fadeOut();
                     }, 10000);
 
-                    const newTimestamp = Math.floor(Date.now() / 1000);
+                    const newTimestamp = response.otp_created;
                     const newKey = "otpExpiryTimestamp_" + newTimestamp;
-                    const newExpiry = Date.now() + expiryLimit * 1000;
-
+                    const newExpiry = (newTimestamp * 1000) + (expiryLimit * 1000);
+                    
                     Object.keys(sessionStorage).forEach(key => {
                         if (key.startsWith("otpExpiryTimestamp_")) {
                             sessionStorage.removeItem(key);
@@ -163,21 +165,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         .show();
             }
         });
-    });
-
-    const confirmBtn = document.getElementById("confirmButton");
-    confirmBtn.addEventListener("click", function (e) {
-        const keys = Object.keys(sessionStorage).filter(k => k.startsWith("otpExpiryTimestamp_"));
-        const expiryTime = keys.length > 0 ? parseInt(sessionStorage.getItem(keys[0])) : null;
-
-        if (!expiryTime || Date.now() > expiryTime) {
-            e.preventDefault();
-            $('#resendMessage')
-                .removeClass('success')
-                .addClass('error')
-                .text('OTP expired. Please resend to get a new code.')
-                .show();
-        }
     });
 });
 </script>

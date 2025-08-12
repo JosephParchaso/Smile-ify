@@ -88,7 +88,7 @@ if (isset($_SESSION['username_error'])) {
 <div id="bookingModal" class="booking-modal">
     <div class="booking-modal-content">
         
-        <form action="<?= BASE_URL ?>/processes/request_otp.php" method="POST" autocomplete="off">
+        <form action="<?= BASE_URL ?>/processes/OTP Processes/request_otp.php" method="POST" autocomplete="off">
             <div class="form-group">
                 <input type="text" id="lastName" class="form-control" name="lastName" placeholder=" " required />
                 <label for="lastName" class="form-label">Last Name <span class="required">*</span></label>
@@ -202,7 +202,7 @@ if (isset($_SESSION['username_error'])) {
         <?php if (!empty($usernameError)): ?>
             <div class="error"><?php echo htmlspecialchars($usernameError); ?></div>
         <?php endif; ?>
-        <form action="<?= BASE_URL ?>/processes/request_otp_forgot_password.php" method="POST">
+        <form action="<?= BASE_URL ?>/processes/OTP Processes/request_otp_forgot_password.php" method="POST">
             <div class="form-group">
                 <input type="text" id="username" class="form-control" name="username" placeholder=" " required autocomplete="off"/>
                 <label for="username" class="form-label">Enter Username <span class="required">*</span></label>

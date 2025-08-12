@@ -72,7 +72,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit;
     }
 
-    header("Location: " . BASE_URL . "/includes/otp_verification_forgot_password.php");
+    header("Location: " . BASE_URL . "/includes/OTP Includes/otp_verification_forgot_password.php");
     exit;
 }
 ?>

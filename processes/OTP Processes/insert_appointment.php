@@ -13,13 +13,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["verify"])) {
 
     if (time() - $otp_created > $expiry_limit) {
         $_SESSION['otp_error'] = "OTP has expired. Please request a new one.";
-        header("Location: " . BASE_URL . "/includes/otp_verification.php");
+        header("Location: " . BASE_URL . "/includes/OTP Includes/otp_verification.php");
         exit;
     }
 
     if ((string)$otp !== (string)$otp_code) {
         $_SESSION['otp_error'] = "Invalid OTP code.";
-        header("Location: " . BASE_URL . "/includes/otp_verification.php");
+        header("Location: " . BASE_URL . "/includes/OTP Includes/otp_verification.php");
         exit;
     }
 
@@ -86,7 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["verify"])) {
             $conn->rollback();
             error_log("Transaction failed: " . $e->getMessage());
             $_SESSION['otp_error'] = "Something went wrong during account creation. Please try again.";
-            header("Location: " . BASE_URL . "/includes/otp_verification.php");
+            header("Location: " . BASE_URL . "/includes/OTP Includes/otp_verification.php");
             exit;
         }
 
@@ -129,7 +129,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["verify"])) {
         } catch (Exception $e) {
             error_log("PHPMailer Exception: " . $e->getMessage());
             $_SESSION['otp_error'] = "Failed to send email. Please try again.";
-            header("Location: " . BASE_URL . "/includes/otp_verification.php");
+            header("Location: " . BASE_URL . "/includes/OTP Includes/otp_verification.php");
             exit;
         }
     }

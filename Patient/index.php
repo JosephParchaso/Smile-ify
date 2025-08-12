@@ -73,7 +73,7 @@ require_once BASE_PATH . '/Patient/includes/navbar.php';
     <div id="bookingModal" class="booking-modal">
         <div class="booking-modal-content" style="margin: 20vh auto;">
             
-            <form action="<?= BASE_URL ?>/Patient/processes/insert_appointment.php" method="POST" autocomplete="off">
+            <form action="<?= BASE_URL ?>/processes/Patient/insert_appointment.php" method="POST" autocomplete="off">
                 <div class="form-group">
                     <select id="appointmentBranch" class="form-control" name="appointmentBranch" required>
                         <option value="" disabled selected hidden></option>

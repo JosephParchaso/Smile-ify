@@ -16,10 +16,10 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         height: 650,
         events: {
-            url: `${BASE_URL}/Admin/processes/load_patient_appointments.php`,
+            url: `${BASE_URL}/processes/Admin/load_patient_appointments.php`,
             method: 'GET',
             extraParams: {
-                branch_id: branchId // send branch ID along with start & end
+                branch_id: branchId
             }
         },
         eventClick: function(info) {

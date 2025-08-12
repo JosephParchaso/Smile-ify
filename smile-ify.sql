@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 09, 2025 at 11:54 PM
+-- Generation Time: Aug 12, 2025 at 05:40 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -75,7 +75,8 @@ INSERT INTO `appointment_transaction` (`appointment_transaction_id`, `user_id`, 
 (30, 33, 2, 6, 2, '2025-08-16', '11:15:00', '2025-07-31 14:38:28'),
 (31, 34, 2, 6, 2, '2025-08-01', '10:30:00', '2025-07-31 14:54:44'),
 (32, 35, 3, 1, 1, '2025-08-29', '15:00:00', '2025-08-05 20:06:22'),
-(33, 36, 2, 8, 3, '2025-08-12', '14:15:00', '2025-08-09 17:21:09');
+(33, 36, 2, 8, 3, '2025-08-12', '14:15:00', '2025-08-09 17:21:09'),
+(34, 42, 3, 1, 1, '2025-08-18', '15:00:00', '2025-08-12 15:18:53');
 
 -- --------------------------------------------------------
 
@@ -286,8 +287,10 @@ INSERT INTO `notifications` (`notification_id`, `user_id`, `message`, `is_read`,
 (43, 30, 'Lab results are now available in your account.', 1, '2025-08-09 19:22:26'),
 (44, 30, 'Your subscription plan has been renewed successfully.', 1, '2025-08-09 19:22:26'),
 (45, 30, 'Important: Our clinic hours have changed starting next week.', 1, '2025-08-09 19:22:26'),
-(46, 1, 'sample index', 0, '2025-08-09 20:34:25'),
-(47, 1, 'sample index', 0, '2025-08-09 20:34:25');
+(46, 1, 'sample index', 1, '2025-08-09 20:34:25'),
+(47, 1, 'sample index', 1, '2025-08-09 20:34:25'),
+(48, 42, 'Welcome to Smile-ify! Your account was successfully created.', 0, '2025-08-12 15:18:53'),
+(49, 42, 'Your appointment on 2025-08-18 at 15:00 was successfully booked!', 0, '2025-08-12 15:18:53');
 
 -- --------------------------------------------------------
 
@@ -335,6 +338,7 @@ CREATE TABLE `users` (
   `email` varchar(50) NOT NULL,
   `contact_number` varchar(10) NOT NULL,
   `role` enum('owner','admin','patient') NOT NULL,
+  `branch_id` int(11) DEFAULT NULL,
   `status` enum('active','inactive') NOT NULL,
   `date_created` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -343,39 +347,45 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`user_id`, `username`, `password`, `last_name`, `middle_name`, `first_name`, `gender`, `email`, `contact_number`, `role`, `status`, `date_created`) VALUES
-(1, 'owner01', '$2a$12$tpxGgFFwdB5hG7rOus1ZuuQzJy8xwA4kvaUTZdvMqCTB9dK/v0yFS', 'Owner', 'Dummy', 'Sample', 'male', '', '9998887777', 'owner', 'active', '2025-06-14 10:39:32'),
-(2, 'admin01', '$2a$12$pKUNknha3XVdUTPXL84XUe8YxjAnrLmF7ZeB8KUspXb.ouNVrFGt6', 'Admin', 'Dummy', 'Sample', 'female', '', '9223334444', 'admin', 'active', '2025-06-14 10:39:32'),
-(3, 'patient01', '$2a$12$RJZbVUZ3JDsUjDB5eFTyiuACuCvxFJyrQI4cE9u8fQ2ChJf/.Srdq', 'Patient', 'Dummy', 'Sample', 'male', '', '9123456789', 'patient', 'active', '2025-06-14 10:39:32'),
-(8, 'ParchasoJ', '$2y$10$9fqT9Gco1CtAKVKu6bSDgeh9SFZbg/bb8GJR5OJrrVIJycPZgqxWC', 'Parchaso', 'Espana', 'Jhon', 'male', '9055626239', 'josephparc', 'owner', 'active', '2025-07-11 22:27:56'),
-(9, 'ParchasoJJ', '$2y$10$W.BXzGapcq9J/oxpk1RHYeaYMxBCz0fSTp8YiRh41YSUebQ12Hjhy', 'Parchaso', 'Joseph', 'Jhon', 'male', '9055626239', 'josephparc', 'owner', 'active', '2025-07-11 22:30:07'),
-(10, 'ParchasoJo', '$2y$10$7TtiXyp5duA0k9e0t7nmX.BfdQgpQkYwzUVT8tiCFDY166aCIZFoG', 'Parchaso', '', 'Joseph', 'male', '9055626239', 'josephparc', 'patient', 'active', '2025-07-11 22:31:48'),
-(11, 'PototR', '$2y$10$2LodhIAZ8iTEc7e5U8ciM.ERBdKf5t2XTv1enJGrQyxJC501X7DG.', 'Potot', 'Travero', 'Rix', 'female', '9950217941', 'josephparc', 'patient', 'active', '2025-07-11 22:36:13'),
-(12, 'ParchasoJh', '$2y$10$V9IluHOclcF/fELFexGVPOwsPpXLMCpVz6X5tA53PNxqjGUN39XHq', 'Parchaso', 'Espana', 'Jhon', 'male', 'josephparchaso@gmail.com', '9055626239', 'patient', 'active', '2025-07-11 23:10:37'),
-(13, 'asdasdaa', '$2y$10$xx/z0aCzxsgWfhbTyNeT2ewgqLJDF0eA4MIG2KJAh48nLldnoT7mu', 'asdasda', 'dasdads', 'asdasdas', 'male', 'josephparchaso@gmail.com', '3543535353', 'patient', 'active', '2025-07-11 23:49:00'),
-(14, 'ParchasoJn', '$2y$10$n0Wn8ENlBKZSmFAc8XIo6.8MBB9.vBHC9jj20HU4E4aBg3QzLnJGa', 'Parchaso', 'espana', 'Jhon', 'male', 'josephparchaso@gmail.com', '9055626239', 'patient', 'active', '2025-07-11 23:53:50'),
-(15, 'pototrr', '$2y$10$81epq2ks0nZntMd5BJtQZeTQgwcM1olJw54tWvY3BCS2.WMKgVy6q', 'potot', 'travs', 'rix', 'female', 'josephparchaso@gmail.com', '3242424243', 'patient', 'active', '2025-07-11 23:57:34'),
-(16, 'PototRi', '$2y$10$upl6ZnCyMKiiML1SFtOANefWYuh0EKOdUDdNDm/i8b/2nExYEXuea', 'Potot', 'Travero', 'Rix', 'female', 'josephparchaso@gmail.com', '9055626339', 'patient', 'active', '2025-07-12 18:37:17'),
-(17, 'PototRx', '$2y$10$/z0.LVx2xEaDvFVmYKUx9Ou3r8cYEg8Iv0aO6lSArBdZbX2e4XJ9m', 'Potot', 'Travero', 'Rix', 'female', 'josephparchaso@gmail.com', '9055626239', 'patient', 'active', '2025-07-12 19:04:48'),
-(18, 'parchr', '$2y$10$rBXard1PzWqKnXOsGVbowu8pT1dv11gHFELYhn2UjusTOkR39ZxVS', 'parch', 'potot', 'rix', 'female', 'josephparchaso@gmail.com', '3243242343', 'patient', 'active', '2025-07-12 20:04:53'),
-(19, 'achasg', '$2y$10$pdkklvpmZcbw451FCvkKt.JI14X7dXVExlkqd4e7hAyzunu1KkRjC', 'achas', 'gab', 'gab', 'male', 'josephparchaso@gmail.com', '2423543265', 'patient', 'active', '2025-07-12 20:31:49'),
-(20, 'rixp', '$2y$10$qBN90ZhgnNkJMH23cBT6uOHqAmlXeUTkkJgaQ.myzXnRwATFWEvma', 'rix', '', 'potot', 'male', 'josephparchaso@gmail.com', '2342412421', 'patient', 'inactive', '2025-07-12 20:36:12'),
-(21, 'rixpp', '$2y$10$nvqUzj8gqqY16SHHkt4NQeVQVeU8CQbOaw6u0hhliacSetzJQU6v2', 'rix', '', 'potot', 'male', 'josephparchaso@gmail.com', '2342412421', 'patient', 'inactive', '2025-07-12 20:37:27'),
-(22, 'parchj', '$2y$10$sQwUuUFOgllhhPugQds8k.zXlAGrVCiCuTvbcfiCyBBnp4dd8/e3a', 'parch', 'rix', 'jj', 'female', '18100807@usc.edu.ph', '2346676887', 'patient', 'inactive', '2025-07-12 20:43:04'),
-(23, 'pretotd', '$2y$10$fTfrKDDNlUlfmfVRvYF.xOfaEyRWPo51Ux8aqHtLpDgBlxbWVjxSy', 'pretot', 'chiku', 'daze', 'female', 'josephparchaso@gmail.com', '3214325666', 'patient', 'active', '2025-07-12 20:45:13'),
-(24, '23dfsfs', '$2y$10$jRDx4wuzWruwA6NDUnGnn.XRyS0qYxK16q.20kDMphYGnVcDNlZKK', '23dfsf', 's', 'sdfsfd', 'male', 'josephparchaso@gmail.com', '4326789879', 'patient', 'active', '2025-07-12 21:20:25'),
-(25, 'AchasGG', '$2y$10$csrxQ1iwxHEcfkhQHKf3se586DUSZSK.WhXgNKB39m9js/HfPwuYK', 'Achas', '', 'Gab', 'male', '18100807@usc.edu.ph', '0922626262', 'patient', 'active', '2025-07-14 10:25:16'),
-(26, 'DazeP', '$2y$10$du.PYFR4vnJv9ecdNWDox.UUDcjoC0cTUAvtnsnSG.tXwdqn5vLKO', 'Daze', '', 'Pretot', 'male', 'parchasoresidence@gmail.com', '9055626239', 'patient', 'active', '2025-07-14 10:33:22'),
-(27, 'ChikuY', '$2y$10$h7C7FiWzWuf7oS0hUaav/OZwJX4rYOExaPk3NJu3O39mmsutOsUvm', 'Chiku', 'Wix', 'Yel', 'female', 'parchasoresidence@gmail.com', '9055626239', 'patient', 'active', '2025-07-14 11:14:19'),
-(28, 'Josephp', '$2y$10$r842TnJ2H403dHtEVZX3ZuEsp/PneORgp0aQ6iOkCbc.n/5BCqyta', 'Joseph', '', 'parch', 'male', 'theartp1@gmail.com', '1221412515', 'patient', 'active', '2025-07-14 11:26:32'),
-(29, 'pototj', '$2y$10$9Swzre20c9pLQ8ejMr1ySufYwaARXiCYpp8sUXyb5CP1oI7xNjtC2', 'potot', '', 'jj', 'male', '18102727@usc.edu.ph', '9527194102', 'patient', 'active', '2025-07-14 15:48:41'),
-(30, 'pret', '$2y$10$z7r/dpwWQ2m.RZK8EcwJGu2MkUM3tRY2EgG/7OyfSubN.bmXm2yTW', 'pre', '', 'tot', 'male', '18102727@usc.edu.ph', '9205251545', 'patient', 'active', '2025-07-14 16:03:59'),
-(31, 'Parchaso_J', '$2y$10$14IUZVVauGdjCe04vSuVTechUS8.EYYzOO5yZ0Li6Lq/IUhGx0.Ny', 'Parchaso', 'Espana', 'Jhon', 'female', '18100807@usc.edu.ph', '9055626239', 'patient', 'active', '2025-07-31 14:32:30'),
-(32, 'Parchaso_J1', '$2y$10$jhV55n5K2zZw.hoG40uBw.OceefQ5Q8VftYGFBJND/AdBnP7FmhkS', 'Parchaso', 'Espana', 'Jhon', 'male', 'josephparchaso@gmail.com', '9055626239', 'patient', 'active', '2025-07-31 14:38:20'),
-(33, 'Parchaso_J2', '$2y$10$9RhohMzQ7GCr2dSgX02sROUqqX9BhlYPQbvFzTte0bR7nms04U562', 'Parchaso', 'Espana', 'Jhon', 'male', 'josephparchaso@gmail.com', '9055626239', 'patient', 'active', '2025-07-31 14:38:28'),
-(34, 'parchaso_J', '$2y$10$AzXcLMHhefFKyQJfG3lteu/2wKCjJzmhRM4ncT6oSQzhIfEvci9ca', 'parchaso', 'espana', 'jhon', 'female', 'josephparchaso@gmail.com', '9055626239', 'patient', 'active', '2025-07-31 14:54:44'),
-(35, 'Parchhh_J', '$2y$10$BLbxRzDFxMO/QnMcVMpT/OO7r5CYpuSanK4TIMTrLAv6kq7qMy.IG', 'Parchhh', '', 'jj', 'female', '18100807@usc.edu.ph', '6515616165', 'patient', 'active', '2025-08-05 20:06:22'),
-(36, 'asdasd_A', '$2y$10$bMsAKLtfJ1e00emYMAaNWuFrD00n/n5St9zCFqmlbLvlHKoKNOXfS', 'asdasd', '', 'asdads', 'female', 'josephparchaso@gmail.com', '2525325425', 'patient', 'active', '2025-08-09 17:21:09');
+INSERT INTO `users` (`user_id`, `username`, `password`, `last_name`, `middle_name`, `first_name`, `gender`, `email`, `contact_number`, `role`, `branch_id`, `status`, `date_created`) VALUES
+(1, 'owner01', '$2a$12$tpxGgFFwdB5hG7rOus1ZuuQzJy8xwA4kvaUTZdvMqCTB9dK/v0yFS', 'Owner', 'Dummy', 'Sample', 'male', '', '9998887777', 'owner', NULL, 'active', '2025-06-14 10:39:32'),
+(2, 'admin01', '$2a$12$pKUNknha3XVdUTPXL84XUe8YxjAnrLmF7ZeB8KUspXb.ouNVrFGt6', 'Admin', 'Dummy', 'Sample', 'female', '', '9223334444', 'admin', 1, 'active', '2025-06-14 10:39:32'),
+(3, 'patient01', '$2a$12$RJZbVUZ3JDsUjDB5eFTyiuACuCvxFJyrQI4cE9u8fQ2ChJf/.Srdq', 'Patient', 'Dummy', 'Sample', 'male', '', '9123456789', 'patient', NULL, 'active', '2025-06-14 10:39:32'),
+(8, 'ParchasoJ', '$2y$10$9fqT9Gco1CtAKVKu6bSDgeh9SFZbg/bb8GJR5OJrrVIJycPZgqxWC', 'Parchaso', 'Espana', 'Jhon', 'male', '9055626239', 'josephparc', 'owner', NULL, 'active', '2025-07-11 22:27:56'),
+(9, 'ParchasoJJ', '$2y$10$W.BXzGapcq9J/oxpk1RHYeaYMxBCz0fSTp8YiRh41YSUebQ12Hjhy', 'Parchaso', 'Joseph', 'Jhon', 'male', '9055626239', 'josephparc', 'owner', NULL, 'active', '2025-07-11 22:30:07'),
+(10, 'ParchasoJo', '$2y$10$7TtiXyp5duA0k9e0t7nmX.BfdQgpQkYwzUVT8tiCFDY166aCIZFoG', 'Parchaso', '', 'Joseph', 'male', '9055626239', 'josephparc', 'patient', NULL, 'active', '2025-07-11 22:31:48'),
+(11, 'PototR', '$2y$10$2LodhIAZ8iTEc7e5U8ciM.ERBdKf5t2XTv1enJGrQyxJC501X7DG.', 'Potot', 'Travero', 'Rix', 'female', '9950217941', 'josephparc', 'patient', NULL, 'active', '2025-07-11 22:36:13'),
+(12, 'ParchasoJh', '$2y$10$V9IluHOclcF/fELFexGVPOwsPpXLMCpVz6X5tA53PNxqjGUN39XHq', 'Parchaso', 'Espana', 'Jhon', 'male', 'josephparchaso@gmail.com', '9055626239', 'patient', NULL, 'active', '2025-07-11 23:10:37'),
+(13, 'asdasdaa', '$2y$10$xx/z0aCzxsgWfhbTyNeT2ewgqLJDF0eA4MIG2KJAh48nLldnoT7mu', 'asdasda', 'dasdads', 'asdasdas', 'male', 'josephparchaso@gmail.com', '3543535353', 'patient', NULL, 'active', '2025-07-11 23:49:00'),
+(14, 'ParchasoJn', '$2y$10$n0Wn8ENlBKZSmFAc8XIo6.8MBB9.vBHC9jj20HU4E4aBg3QzLnJGa', 'Parchaso', 'espana', 'Jhon', 'male', 'josephparchaso@gmail.com', '9055626239', 'patient', NULL, 'active', '2025-07-11 23:53:50'),
+(15, 'pototrr', '$2y$10$81epq2ks0nZntMd5BJtQZeTQgwcM1olJw54tWvY3BCS2.WMKgVy6q', 'potot', 'travs', 'rix', 'female', 'josephparchaso@gmail.com', '3242424243', 'patient', NULL, 'active', '2025-07-11 23:57:34'),
+(16, 'PototRi', '$2y$10$upl6ZnCyMKiiML1SFtOANefWYuh0EKOdUDdNDm/i8b/2nExYEXuea', 'Potot', 'Travero', 'Rix', 'female', 'josephparchaso@gmail.com', '9055626339', 'patient', NULL, 'active', '2025-07-12 18:37:17'),
+(17, 'PototRx', '$2y$10$/z0.LVx2xEaDvFVmYKUx9Ou3r8cYEg8Iv0aO6lSArBdZbX2e4XJ9m', 'Potot', 'Travero', 'Rix', 'female', 'josephparchaso@gmail.com', '9055626239', 'patient', NULL, 'active', '2025-07-12 19:04:48'),
+(18, 'parchr', '$2y$10$rBXard1PzWqKnXOsGVbowu8pT1dv11gHFELYhn2UjusTOkR39ZxVS', 'parch', 'potot', 'rix', 'female', 'josephparchaso@gmail.com', '3243242343', 'patient', NULL, 'active', '2025-07-12 20:04:53'),
+(19, 'achasg', '$2y$10$pdkklvpmZcbw451FCvkKt.JI14X7dXVExlkqd4e7hAyzunu1KkRjC', 'achas', 'gab', 'gab', 'male', 'josephparchaso@gmail.com', '2423543265', 'patient', NULL, 'active', '2025-07-12 20:31:49'),
+(20, 'rixp', '$2y$10$qBN90ZhgnNkJMH23cBT6uOHqAmlXeUTkkJgaQ.myzXnRwATFWEvma', 'rix', '', 'potot', 'male', 'josephparchaso@gmail.com', '2342412421', 'patient', NULL, 'inactive', '2025-07-12 20:36:12'),
+(21, 'rixpp', '$2y$10$nvqUzj8gqqY16SHHkt4NQeVQVeU8CQbOaw6u0hhliacSetzJQU6v2', 'rix', '', 'potot', 'male', 'josephparchaso@gmail.com', '2342412421', 'patient', NULL, 'inactive', '2025-07-12 20:37:27'),
+(22, 'parchj', '$2y$10$sQwUuUFOgllhhPugQds8k.zXlAGrVCiCuTvbcfiCyBBnp4dd8/e3a', 'parch', 'rix', 'jj', 'female', '18100807@usc.edu.ph', '2346676887', 'patient', NULL, 'inactive', '2025-07-12 20:43:04'),
+(23, 'pretotd', '$2y$10$fTfrKDDNlUlfmfVRvYF.xOfaEyRWPo51Ux8aqHtLpDgBlxbWVjxSy', 'pretot', 'chiku', 'daze', 'female', 'josephparchaso@gmail.com', '3214325666', 'patient', NULL, 'active', '2025-07-12 20:45:13'),
+(24, '23dfsfs', '$2y$10$jRDx4wuzWruwA6NDUnGnn.XRyS0qYxK16q.20kDMphYGnVcDNlZKK', '23dfsf', 's', 'sdfsfd', 'male', 'josephparchaso@gmail.com', '4326789879', 'patient', NULL, 'active', '2025-07-12 21:20:25'),
+(25, 'AchasGG', '$2y$10$csrxQ1iwxHEcfkhQHKf3se586DUSZSK.WhXgNKB39m9js/HfPwuYK', 'Achas', '', 'Gab', 'male', '18100807@usc.edu.ph', '0922626262', 'patient', NULL, 'active', '2025-07-14 10:25:16'),
+(26, 'DazeP', '$2y$10$du.PYFR4vnJv9ecdNWDox.UUDcjoC0cTUAvtnsnSG.tXwdqn5vLKO', 'Daze', '', 'Pretot', 'male', 'parchasoresidence@gmail.com', '9055626239', 'patient', NULL, 'active', '2025-07-14 10:33:22'),
+(27, 'ChikuY', '$2y$10$h7C7FiWzWuf7oS0hUaav/OZwJX4rYOExaPk3NJu3O39mmsutOsUvm', 'Chiku', 'Wix', 'Yel', 'female', 'parchasoresidence@gmail.com', '9055626239', 'patient', NULL, 'active', '2025-07-14 11:14:19'),
+(28, 'Josephp', '$2y$10$r842TnJ2H403dHtEVZX3ZuEsp/PneORgp0aQ6iOkCbc.n/5BCqyta', 'Joseph', '', 'parch', 'male', 'theartp1@gmail.com', '1221412515', 'patient', NULL, 'active', '2025-07-14 11:26:32'),
+(29, 'pototj', '$2y$10$9Swzre20c9pLQ8ejMr1ySufYwaARXiCYpp8sUXyb5CP1oI7xNjtC2', 'potot', '', 'jj', 'male', '18102727@usc.edu.ph', '9527194102', 'patient', NULL, 'active', '2025-07-14 15:48:41'),
+(30, 'pret', '$2y$10$z7r/dpwWQ2m.RZK8EcwJGu2MkUM3tRY2EgG/7OyfSubN.bmXm2yTW', 'pre', '', 'tot', 'male', '18102727@usc.edu.ph', '9205251545', 'patient', NULL, 'active', '2025-07-14 16:03:59'),
+(31, 'Parchaso_J', '$2y$10$14IUZVVauGdjCe04vSuVTechUS8.EYYzOO5yZ0Li6Lq/IUhGx0.Ny', 'Parchaso', 'Espana', 'Jhon', 'female', '18100807@usc.edu.ph', '9055626239', 'patient', NULL, 'active', '2025-07-31 14:32:30'),
+(32, 'Parchaso_J1', '$2y$10$jhV55n5K2zZw.hoG40uBw.OceefQ5Q8VftYGFBJND/AdBnP7FmhkS', 'Parchaso', 'Espana', 'Jhon', 'male', 'josephparchaso@gmail.com', '9055626239', 'patient', NULL, 'active', '2025-07-31 14:38:20'),
+(33, 'Parchaso_J2', '$2y$10$9RhohMzQ7GCr2dSgX02sROUqqX9BhlYPQbvFzTte0bR7nms04U562', 'Parchaso', 'Espana', 'Jhon', 'male', 'josephparchaso@gmail.com', '9055626239', 'patient', NULL, 'active', '2025-07-31 14:38:28'),
+(34, 'parchaso_J', '$2y$10$AzXcLMHhefFKyQJfG3lteu/2wKCjJzmhRM4ncT6oSQzhIfEvci9ca', 'parchaso', 'espana', 'jhon', 'female', 'josephparchaso@gmail.com', '9055626239', 'patient', NULL, 'active', '2025-07-31 14:54:44'),
+(35, 'Parchhh_J', '$2y$10$BLbxRzDFxMO/QnMcVMpT/OO7r5CYpuSanK4TIMTrLAv6kq7qMy.IG', 'Parchhh', '', 'jj', 'female', '18100807@usc.edu.ph', '6515616165', 'patient', NULL, 'active', '2025-08-05 20:06:22'),
+(36, 'asdasd_A', '$2y$10$bMsAKLtfJ1e00emYMAaNWuFrD00n/n5St9zCFqmlbLvlHKoKNOXfS', 'asdasd', '', 'asdads', 'female', 'josephparchaso@gmail.com', '2525325425', 'patient', NULL, 'active', '2025-08-09 17:21:09'),
+(37, 'admin_b1_01', '$2a$12$hBbDjdgIHA7jTYk63MoYCevpRg.Wyl.Q9AlF1k22Adu5ZTZ2scPhm', 'Admin', 'B1', 'Alice', 'female', 'alice.b1@example.com', '0911111111', 'admin', 1, 'active', '2025-08-11 18:06:49'),
+(38, 'admin_b1_02', '$2a$12$q3izbTzuli5uTm1twK/4YuDY3QSDbWej0pkWVyGsSMRpXVhbrbVRO', 'Admin', 'B1', 'Bob', 'male', 'bob.b1@example.com', '0911111111', 'admin', 1, 'active', '2025-08-11 18:06:49'),
+(39, 'admin_b2_01', '$2a$12$zoGuJuLYhOVs6B828pgDe.lrvUEwXroV1zUzbmxgfwZgCSLi39mHa', 'Admin', 'B2', 'Charlie', 'male', 'charlie.b2@example.com', '0922222222', 'admin', 2, 'active', '2025-08-11 18:06:49'),
+(40, 'admin_b2_02', '$2a$12$KL9XSfdZh75UuYWljehw0.zNyPK/arJmS7mEzFMvNuK1sBKqLBTLC', 'Admin', 'B2', 'Diana', 'female', 'diana.b2@example.com', '0922222222', 'admin', 2, 'active', '2025-08-11 18:06:49'),
+(41, 'admin_b3_01', '$2a$12$hNePRteKgF2EC1nNHkhQP..14KMwMN66/t3YzL4.GGbLNPXhS7ksa', 'Admin', 'B3', 'Evan', 'male', 'evan.b3@example.com', '0933333333', 'admin', 3, 'active', '2025-08-11 18:06:49'),
+(42, 'Parchaso_J3', '$2y$10$7nbX35783pFvgW4/mdIuzuSaFhONUt6S5Gw/Aabgd2akXGwfmzwa2', 'Parchaso', 'Espana', 'JJ', 'male', 'josephparchaso@gmail.com', '9055626239', 'patient', NULL, 'active', '2025-08-12 15:18:53');
 
 --
 -- Indexes for dumped tables
@@ -445,7 +455,8 @@ ALTER TABLE `service`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`user_id`),
-  ADD UNIQUE KEY `index_username_unique` (`username`);
+  ADD UNIQUE KEY `index_username_unique` (`username`),
+  ADD KEY `fk_users_branch` (`branch_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -455,7 +466,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `appointment_transaction`
 --
 ALTER TABLE `appointment_transaction`
-  MODIFY `appointment_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `appointment_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT for table `branch`
@@ -491,7 +502,7 @@ ALTER TABLE `dentist_service`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT for table `service`
@@ -503,7 +514,7 @@ ALTER TABLE `service`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 
 --
 -- Constraints for dumped tables
@@ -544,6 +555,12 @@ ALTER TABLE `dentist_service`
 --
 ALTER TABLE `notifications`
   ADD CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `users`
+--
+ALTER TABLE `users`
+  ADD CONSTRAINT `fk_users_branch` FOREIGN KEY (`branch_id`) REFERENCES `branch` (`branch_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

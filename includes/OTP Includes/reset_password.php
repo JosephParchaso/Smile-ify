@@ -26,7 +26,7 @@ if (isset($_SESSION['password_error'])) {
             <?php if (!empty($passwordError)): ?>
                 <div class="error"><?= htmlspecialchars($passwordError) ?></div>
             <?php endif; ?>
-            <form action="<?= BASE_URL ?>/processes/reset_password.php" method="POST">
+            <form action="<?= BASE_URL ?>/processes/OTP Processes/reset_password.php" method="POST">
                 <div class="form-group">
                     <input type="password" id="newPassword" name="new_password" class="form-control" placeholder=" " required autocomplete="off" 
                     pattern="^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$" 

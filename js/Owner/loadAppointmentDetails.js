@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
             customNext: { text: '>', click: () => calendar.next() }
         },
         height: 650,
-        events: `${BASE_URL}/Owner/processes/load_patient_appointments.php`,
+        events: `${BASE_URL}/processes/Owner/load_patient_appointments.php`,
         eventClick: function(info) {
             const appointment = info.event.extendedProps;
 

@@ -40,11 +40,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (!$mail->send()) {
         $_SESSION['otp_error'] = "Invalid email address. Please try again.";
-        header("Location: " . BASE_URL . "/includes/otp_verification.php");
+        header("Location: " . BASE_URL . "/includes/OTP Includes/otp_verification.php");
         exit;
     }
 
-    header("Location: " . BASE_URL . "/includes/otp_verification.php");
+    header("Location: " . BASE_URL . "/includes/OTP Includes/otp_verification.php");
     exit;
 }
 ?>

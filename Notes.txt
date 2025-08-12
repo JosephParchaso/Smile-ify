@@ -1,12 +1,17 @@
 Owner - CEO
 Admin Secretary
 Patients
+| Username      | Password   |
+| ------------- | ---------- |
+| patient01     | patient123 |
+| admin01       | admin123   |
+| admin_b1_01   | admin_b1   | - babag
+| admin_b1_02   | admin_b1   | - babag
+| admin_b2_01   | admin_b2   | - pusok
+| admin_b2_02   | admin_b2   | - pusok
+| admin_b3_01   | admin_b3   | - mandaue
+| owner01       | owner123   |
 
-| **Username** | **Password** |
-| ------------ | ------------ |
-| `patient01`  | `patient123` |
-| `admin01`    | `admin123`   |
-| `owner01`    | `owner123`   |
 
 |   Naming Variables   |
 | Type             | Example                       | Notation Style                                    |
