@@ -33,8 +33,10 @@ if (isset($_SESSION['username_error'])) {
     $usernameError = $_SESSION['username_error'];
     unset($_SESSION['username_error']);
 }
+if (isset($_GET['timeout'])) {
+    $timeoutError = "Your session has expired due to inactivity. Please log in again.";
+}
 ?>
-
 <head>    
     <title>Welcome!</title>
 </head>
@@ -59,6 +61,11 @@ if (isset($_SESSION['username_error'])) {
         <?php if (!empty($otpError)): ?>
             <div class="error"><?php echo htmlspecialchars($otpError); ?></div>
         <?php endif; ?>
+
+    <?php if (!empty($_SESSION['timeoutError'])): ?>
+        <div class="error"><?php echo htmlspecialchars($_SESSION['timeoutError']); ?></div>
+        <?php unset($_SESSION['timeoutError']); ?>
+    <?php endif; ?>
 
         <form action="<?= BASE_URL ?>/processes/login.php" method="POST" autocomplete="off">
             <div class="form-group">
