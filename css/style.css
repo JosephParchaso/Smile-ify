@@ -282,6 +282,11 @@ form {
     border-radius: 4px;
 }
 
+.confirm-btn:hover, .add-service-btn:hover {
+    background-color: #243b53;
+    transition: background-color 0.3s ease;
+}
+
 .button-wrapper {
     display: flex;
     justify-content: flex-end;
@@ -301,7 +306,6 @@ form {
 .cancel-btn:hover {
     background-color: #f0f0f0;
 }
-
 
 .tagline-container {
     display: flex;

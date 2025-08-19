@@ -71,19 +71,27 @@
 
 .profile-card h3 {
     margin: 10px 0 5px;
-}.tabs-container {
+}
+
+.message-box {
+    width: 350px;
+    margin-top: 15px;
+    text-align: center;
+}
+
+.tabs-container {
     flex: 1;
     min-width: 350px;
     display: flex;
     flex-direction: column;
-    align-items: center; /* Centers horizontally */
+    align-items: center;
 }
 
 .tabs {
     display: flex;
     border-bottom: 2px solid #ccc;
     margin-bottom: 10px;
-    justify-content: center; /* Centers tabs horizontally */
+    justify-content: center;
     width: 100%;
 }
 
@@ -102,7 +110,7 @@
 
 .tab-content {
     display: none;
-    width: 80%; /* Adjust to your liking */
+    width: 80%;
 }
 
 .tab-content.active {
@@ -111,8 +119,8 @@
 
 .transaction-table {
     width: 100%;
-    max-width: 900px; /* Limit table width */
-    margin: 0 auto; /* Center table */
+    max-width: 900px;
+    margin: 0 auto;
     border-collapse: collapse;
 }
 
@@ -132,5 +140,17 @@
 @media (max-width: 600px) {
     .cards {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .profile-container {
+        justify-content: center;
+        align-items: center;
+    }
+
+    .profile-card {
+        width: 90%;
+        max-width: 400px;
     }
 }

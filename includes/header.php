@@ -24,10 +24,12 @@ $role = $_SESSION['role'] ?? null;
 
     <!-- Global Styles -->
     <link rel="stylesheet" href="<?= BASE_URL ?>/css/style.css?v=<?= time(); ?>" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
 
     <!-- Libraries -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 
     <!-- JS: All users -->
     <script src="<?= BASE_URL ?>/js/openBookingModal.js?v=<?= time(); ?>"></script>
@@ -44,18 +46,19 @@ $role = $_SESSION['role'] ?? null;
 
     <?php if ($role === 'owner'): ?>
         <!-- Owner-specific -->
-        <script src="<?= BASE_URL ?>/js/Owner/loadAppointmentDetails.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/js/Owner/loadAppointmentSchedule.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/js/Owner/loadProfileDetails.js?v=<?= time(); ?>"></script>
 
     <?php elseif ($role === 'admin'): ?>
         <!-- Admin-specific -->
-        <script src="<?= BASE_URL ?>/js/Admin/loadAppointmentDetails.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/js/Admin/loadAppointmentSchedule.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/js/Admin/loadProfileDetails.js?v=<?= time(); ?>"></script>
 
     <?php elseif ($role === 'patient'): ?>
         <!-- Patient-specific -->
-        <script src="<?= BASE_URL ?>/js/Patient/loadAppointmentDetails.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/js/Patient/loadAppointmentSchedule.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/js/Patient/loadProfileDetails.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/js/Patient/loadAppointments.js?v=<?= time(); ?>"></script>
     <?php endif; ?>
 
     <!-- JS: Extras -->

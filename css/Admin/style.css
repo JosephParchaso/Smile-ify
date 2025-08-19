@@ -85,3 +85,15 @@
         grid-template-columns: 1fr;
     }
 }
+
+@media (max-width: 768px) {
+    .profile-container {
+        justify-content: center;
+        align-items: center;
+    }
+
+    .profile-card {
+        width: 90%;
+        max-width: 400px;
+    }
+}

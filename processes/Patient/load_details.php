@@ -17,7 +17,8 @@ $sql = "SELECT
             last_name, 
             gender, 
             email, 
-            contact_number, 
+            contact_number,
+            address, 
             date_created 
         FROM users 
         WHERE user_id = ?";
@@ -33,6 +34,7 @@ if ($row = $result->fetch_assoc()) {
         'gender' => ucfirst($row['gender']),
         'email' => $row['email'],
         'contact_number' => $row['contact_number'],
+        'address' => $row['address'],
         'joined' => date("F d, Y", strtotime($row['date_created']))
     ];
 

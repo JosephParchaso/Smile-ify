@@ -25,8 +25,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $conn->begin_transaction();
 
         $appointment_sql = "INSERT INTO appointment_transaction 
-            (user_id, branch_id, service_id, dentist_id, appointment_date, appointment_time)
-            VALUES (?, ?, ?, ?, ?, ?)";
+            (user_id, branch_id, service_id, dentist_id, appointment_date, appointment_time, status)
+            VALUES (?, ?, ?, ?, ?, ?, 'Pending')";
 
         $appointment_stmt = $conn->prepare($appointment_sql);
         $appointment_stmt->bind_param("iiisss", $user_id, $appointmentBranch, $appointmentService, $appointmentDentist, $appointmentDate, $appointmentTime);
