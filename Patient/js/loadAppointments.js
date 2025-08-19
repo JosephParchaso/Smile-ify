@@ -1,6 +1,6 @@
 $(document).ready(function() {
     $('#appointmentTable').DataTable({
-        "ajax": `${BASE_URL}/processes/Patient/load_appointments.php`,
+        "ajax": `${BASE_URL}/Patient/processes/load_appointments.php`,
         "pageLength": 20,
         "lengthChange": false,
         "ordering": true,

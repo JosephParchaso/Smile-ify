@@ -3,7 +3,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
 require_once BASE_PATH . '/processes/fetch_notifications.php';
 ?>
-<link rel="stylesheet" href="<?= BASE_URL ?>/css/Admin/style.css?v=<?= time(); ?>" />
+<link rel="stylesheet" href="<?= BASE_URL ?>/Admin/css/style.css?v=<?= time(); ?>" />
 <nav>
     <div class="nav-container">
         <button class="menu-toggle">&#9776;</button>
