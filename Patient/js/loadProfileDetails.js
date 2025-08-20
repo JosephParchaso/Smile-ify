@@ -27,13 +27,19 @@ document.addEventListener("DOMContentLoaded", function () {
                     <button class="confirm-btn" id="changePasswordBtn">Change Password</button>
                 </div>
             `;
-
             const editBtn = document.getElementById("editDetails");
             if (editBtn) {
                 editBtn.addEventListener("click", () => {
                     document.getElementById("contactNumber").value = data.contact_number || "";
                     document.getElementById("address").value = data.address || "";
                     document.getElementById("editProfileModal").style.display = "block";
+                });
+            }
+
+            const changePasswordBtn = document.getElementById("changePasswordBtn");
+            if (changePasswordBtn) {
+                changePasswordBtn.addEventListener("click", () => {
+                    document.getElementById("changePasswordModal").style.display = "block";
                 });
             }
         })
@@ -45,4 +51,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function closeEditProfileModal() {
     document.getElementById("editProfileModal").style.display = "none";
+}
+function closeChangePasswordModal() {
+    document.getElementById("changePasswordModal").style.display = "none";
 }

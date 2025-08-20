@@ -21,11 +21,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param("ssi", $contact, $address, $user_id);
 
         if ($stmt->execute()) {
-            $_SESSION['updateSuccess'] = "Profile updated successfully!";
+            if ($stmt->affected_rows > 0) {
+                $_SESSION['updateSuccess'] = "Profile updated successfully!";
+            } else {
+                $_SESSION['updateSuccess'] = "No Updates.";
+            }
         } else {
             $_SESSION['updateError'] = "Failed to update profile. Please try again.";
-        }
-
+    }
         $stmt->close();
     } catch (Exception $e) {
         $_SESSION['updateError'] = "Database error: " . $e->getMessage();

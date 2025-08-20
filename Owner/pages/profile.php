@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'owner') {
     exit();
 }
 require_once BASE_PATH . '/includes/header.php';
-require_once BASE_PATH . '/Owner/includes/navbar.php';
+require_once BASE_PATH . '/Owner/includes/navbar.php';  
 $updateSuccess = $_SESSION['updateSuccess'] ?? "";
 $updateError = $_SESSION['updateError'] ?? "";
 ?>
@@ -39,10 +39,8 @@ $updateError = $_SESSION['updateError'] ?? "";
         </div>
 
         <div id="editProfileModal" class="booking-modal">
-            <div class="booking-modal-content">
-
+            <div class="edit-profile-modal-content">
                 <form id="editProfileForm" method="POST" action="<?= BASE_URL ?>/Owner/processes/update_profile.php" autocomplete="off">
-                    
                     <div class="form-group phone-group">
                         <input type="tel" id="contactNumber" class="form-control" name="contactNumber" oninput="this.value = this.value.replace(/[^0-9]/g, '')" pattern="[0-9]{10}" title="Mobile number must be 10 digits" required maxlength="10" />
                         <label for="contactNumber" class="form-label">Mobile Number <span class="required">*</span></label>
@@ -59,6 +57,18 @@ $updateError = $_SESSION['updateError'] ?? "";
                         <button type="button" class="form-button cancel-btn" onclick="closeEditProfileModal()">Cancel</button>
                     </div>
                 </form>
+            </div>
+        </div>
+
+        <div id="changePasswordModal" class="change-password-modal" style="display:none;">
+            <div class="change-password-modal-content">
+                <form id="requestOtpForm" method="POST" action="<?= BASE_URL ?>/Owner/processes/OTP Processes/request_otp_change_password.php">
+                    <p style="text-align:center;">Click below to request an OTP for password change.</p>
+                    <div class="button-group">
+                        <button type="submit" class="form-button confirm-btn">Send OTP</button>
+                        <button type="button" class="form-button cancel-btn" onclick="closeChangePasswordModal()">Cancel</button>
+                    </div>
+                </form> 
             </div>
         </div>
     </div>

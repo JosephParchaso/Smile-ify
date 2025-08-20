@@ -214,7 +214,7 @@ form {
     cursor: not-allowed;
 }
 
-.booking-modal, .forgot-password-modal {
+.booking-modal, .forgot-password-modal, .change-password-modal {
     display: none;
     position: fixed;
     z-index: 1000;
@@ -226,7 +226,7 @@ form {
     background-color: rgba(0, 0, 0, 0.5);
 }
 
-.booking-modal-content, .forgot-password-modal-content {
+.booking-modal-content, .forgot-password-modal-content, .edit-profile-modal-content, .change-password-modal-content {
     background: #fff;
     border-radius: 4px;
     max-width: 900px;
@@ -241,6 +241,14 @@ form {
 .forgot-password-modal-content {
     max-width: 400px;
     width: 90%;
+    padding: 40px 30px;
+    margin: 30vh auto;
+}
+
+.change-password-modal-content, .edit-profile-modal-content {
+    max-width: 500px;
+    max-height: 150vh;
+    width: 100%;
     padding: 40px 30px;
     margin: 30vh auto;
 }

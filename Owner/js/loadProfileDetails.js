@@ -35,9 +35,23 @@ document.addEventListener("DOMContentLoaded", function () {
                     document.getElementById("editProfileModal").style.display = "block";
                 });
             }
+
+            const changePasswordBtn = document.getElementById("changePasswordBtn");
+            if (changePasswordBtn) {
+                changePasswordBtn.addEventListener("click", () => {
+                    document.getElementById("changePasswordModal").style.display = "block";
+                });
+            }
         })
         .catch(error => {
             profileCard.innerHTML = "<p>Error loading profile.</p>";
             console.error("Fetch error:", error);
         });
 });
+
+function closeEditProfileModal() {
+    document.getElementById("editProfileModal").style.display = "none";
+}
+function closeChangePasswordModal() {
+    document.getElementById("changePasswordModal").style.display = "none";
+}

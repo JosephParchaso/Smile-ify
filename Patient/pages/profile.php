@@ -19,30 +19,28 @@ $updateError = $_SESSION['updateError'] ?? "";
 
 <div class="profile-container">
     <div class="profile-section">
-    <div class="profile-card" id="profileCard">
-        <p>Loading profile...</p>
-    </div>
-    
-    <?php if (!empty($updateSuccess) || !empty($updateError)): ?>
-        <div class="message-box">
-            <?php if (!empty($updateSuccess)): ?>
-                <div class="alert success" id="alertMessage"><?= htmlspecialchars($updateSuccess) ?></div>
-                <?php unset($_SESSION['updateSuccess']); ?>
-            <?php endif; ?>
-
-            <?php if (!empty($updateError)): ?>
-                <div class="alert error" id="alertMessage"><?= htmlspecialchars($updateError) ?></div>
-                <?php unset($_SESSION['updateError']); ?>
-            <?php endif; ?>
+        <div class="profile-card" id="profileCard">
+            <p>Loading profile...</p>
         </div>
-    <?php endif; ?>
+    
+        <?php if (!empty($updateSuccess) || !empty($updateError)): ?>
+            <div class="message-box">
+                <?php if (!empty($updateSuccess)): ?>
+                    <div class="alert success" id="alertMessage"><?= htmlspecialchars($updateSuccess) ?></div>
+                    <?php unset($_SESSION['updateSuccess']); ?>
+                <?php endif; ?>
+
+                <?php if (!empty($updateError)): ?>
+                    <div class="alert error" id="alertMessage"><?= htmlspecialchars($updateError) ?></div>
+                    <?php unset($_SESSION['updateError']); ?>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
     </div>
 
     <div id="editProfileModal" class="booking-modal">
-        <div class="booking-modal-content">
-
+        <div class="edit-profile-modal-content">
             <form id="editProfileForm" method="POST" action="<?= BASE_URL ?>/Patient/processes/update_profile.php" autocomplete="off">
-                
                 <div class="form-group phone-group">
                     <input type="tel" id="contactNumber" class="form-control" name="contactNumber" oninput="this.value = this.value.replace(/[^0-9]/g, '')" pattern="[0-9]{10}" title="Mobile number must be 10 digits" required maxlength="10" />
                     <label for="contactNumber" class="form-label">Mobile Number <span class="required">*</span></label>
@@ -61,14 +59,26 @@ $updateError = $_SESSION['updateError'] ?? "";
             </form>
         </div>
     </div>
+    
+    <div id="changePasswordModal" class="change-password-modal" style="display:none;">
+        <div class="change-password-modal-content">
+            <form id="requestOtpForm" method="POST" action="<?= BASE_URL ?>/Patient/processes/OTP Processes/request_otp_change_password.php">
+                <p style="text-align:center;">Click below to request an OTP for password change.</p>
+                <div class="button-group">
+                    <button type="submit" class="form-button confirm-btn">Send OTP</button>
+                    <button type="button" class="form-button cancel-btn" onclick="closeChangePasswordModal()">Cancel</button>
+                </div>
+            </form> 
+        </div>
+    </div>
 
     <div class="tabs-container">
-    <div class="tabs-header">
-        <div class="tabs">
-            <div class="tab active" onclick="switchTab('appointment_history')">Appointment History</div>
-            <div class="tab" onclick="switchTab('dental_transaction')">Dental Transactions</div>
-        </div>
-    </div>  
+        <div class="tabs-header">
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('appointment_history')">Appointment History</div>
+                <div class="tab" onclick="switchTab('dental_transaction')">Dental Transactions</div>
+            </div>
+        </div>  
 
         <div class="tab-content active" id="appointment_history">
             <table id="appointmentTable" class="transaction-table">
