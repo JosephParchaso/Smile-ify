@@ -46,17 +46,17 @@ $role = $_SESSION['role'] ?? null;
 
     <?php if ($role === 'owner'): ?>
         <!-- Owner-specific -->
-        <script src="<?= BASE_URL ?>/Owner/js/loadAppointmentSchedule.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Owner/js/loadCalendar.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Owner/js/loadProfileDetails.js?v=<?= time(); ?>"></script>
 
     <?php elseif ($role === 'admin'): ?>
         <!-- Admin-specific -->
-        <script src="<?= BASE_URL ?>/Admin/js/loadAppointmentSchedule.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Admin/js/loadCalendar.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/loadProfileDetails.js?v=<?= time(); ?>"></script>
 
     <?php elseif ($role === 'patient'): ?>
         <!-- Patient-specific -->
-        <script src="<?= BASE_URL ?>/Patient/js/loadAppointmentSchedule.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Patient/js/loadCalendar.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Patient/js/loadProfileDetails.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Patient/js/loadAppointments.js?v=<?= time(); ?>"></script>
     <?php endif; ?>

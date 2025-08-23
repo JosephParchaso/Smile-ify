@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
     if (!calendarEl) return;
 
-    var branchId = document.getElementById('branchIdInput').value;
     var calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
         headerToolbar: {
@@ -15,13 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
             customNext: { text: '>', click: () => calendar.next() }
         },
         height: 650,
-        events: {
-            url: `${BASE_URL}/Admin/processes/load_patient_appointments.php`,
-            method: 'GET',
-            extraParams: {
-                branch_id: branchId
-            }
-        },
+        events: `${BASE_URL}/Owner/processes/load_calendar.php`,
         eventClick: function(info) {
             const appointment = info.event.extendedProps;
 
