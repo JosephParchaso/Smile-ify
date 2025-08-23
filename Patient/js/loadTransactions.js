@@ -1,6 +1,6 @@
 $(document).ready(function() {
-    $('#appointmentTable').DataTable({
-        "ajax": `${BASE_URL}/Patient/processes/load_appointments.php`,
+    $('#transactionTable').DataTable({
+        "ajax": `${BASE_URL}/Patient/processes/load_dental_transactions.php`,
         "pageLength": 20,
         "lengthChange": false,
         "ordering": true,
@@ -12,7 +12,7 @@ $(document).ready(function() {
             { "title": "Service" },
             { "title": "Date" },
             { "title": "Time" },
-            { "title": "Status" },
+            { "title": "Amount" },
             { "title": "Action", "orderable": false },
             { "title": "Created", "visible": false, "searchable": false }
         ],
@@ -21,11 +21,11 @@ $(document).ready(function() {
             searchPlaceholder: "Search"
         },
         "initComplete": function() {
-            const $searchInput = $('#appointmentTable_filter input[type=search]');
+            const $searchInput = $('#transactionTable_filter input[type=search]');
             $searchInput
-                .attr('id', 'appointmentSearch')
-                .attr('name', 'appointmentSearch');
-            $('#appointmentTable_filter label').attr('for', 'appointmentSearch');
+                .attr('id', 'dentalTransactionSearch')
+                .attr('name', 'dentalTransactionSearch');
+            $('#transactionTable_filter label').attr('for', 'dentalTransactionSearch');
         }
     });
 });

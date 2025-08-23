@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('modalTime').textContent = info.event.start.toLocaleTimeString([], {
                 hour: '2-digit', minute: '2-digit'
             });
+            document.getElementById('modalNotes').textContent = appointment.notes;
 
             document.getElementById('appointmentModalDetails').style.display = "block";
         }

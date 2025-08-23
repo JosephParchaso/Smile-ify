@@ -14,7 +14,7 @@ require_once BASE_PATH . '/processes/fetch_notifications.php';
                 </a>
             </li>
             <li>
-                <a href="<?= BASE_URL ?>/Admin/pages/schedule.php" class="<?= ($currentPage == 'schedule') ? 'active' : '' ?>">
+                <a href="<?= BASE_URL ?>/Admin/pages/calendar.php" class="<?= ($currentPage == 'calendar') ? 'active' : '' ?>">
                     <span class="link-text">Schedules</span>
                 </a>
             </li>

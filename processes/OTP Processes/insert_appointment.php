@@ -37,6 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["verify"])) {
         $appointmentDentist = $_SESSION['verified_data']['appointmentDentist'];
         $appointmentDate = $_SESSION['verified_data']['appointmentDate'];
         $appointmentTime = $_SESSION['verified_data']['appointmentTime'];
+        $notes = $_SESSION['verified_data']['notes'];
 
         $username = generateUniqueUsername($lastName, $firstName, $conn);
         $default_password = "passworduser";
@@ -60,10 +61,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["verify"])) {
                 $appointmentDentist = null;
             }
 
-            $appointment_sql = "INSERT INTO appointment_transaction (user_id, branch_id, service_id, dentist_id, appointment_date, appointment_time, status)
-                                VALUES (?, ?, ?, ?, ?, ?), 'Pending')";
+            $appointment_sql = "INSERT INTO appointment_transaction (user_id, branch_id, service_id, dentist_id, appointment_date, appointment_time, notes, status)
+                                VALUES (?, ?, ?, ?, ?, ?, ?, 'Pending')";
             $appointment_stmt = $conn->prepare($appointment_sql);
-            $appointment_stmt->bind_param("iiisss", $user_id, $appointmentBranch, $appointmentService, $appointmentDentist, $appointmentDate, $appointmentTime);
+            $appointment_stmt->bind_param("iiisss", $user_id, $appointmentBranch, $appointmentService, $appointmentDentist, $appointmentDate, $appointmentTime, $notes);
 
             if (!$appointment_stmt->execute()) {
                 throw new Exception("Appointment insert failed: " . $appointment_stmt->error);

@@ -73,54 +73,18 @@ $updateError = $_SESSION['updateError'] ?? "";
     </div>
 
     <div class="tabs-container">
-        <div class="tabs-header">
-            <div class="tabs">
-                <div class="tab active" onclick="switchTab('appointment_history')">Appointment History</div>
-                <div class="tab" onclick="switchTab('dental_transaction')">Dental Transactions</div>
-            </div>
-        </div>  
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('appointment_history')">Appointment History</div>
+            <div class="tab" onclick="switchTab('dental_transaction')">Dental Transactions</div>
+        </div> 
 
         <div class="tab-content active" id="appointment_history">
             <table id="appointmentTable" class="transaction-table">
-                
-                <thead>
-                    <tr>
-                        <th>Dentist</th>
-                        <th>Branch</th>
-                        <th>Service</th>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Data will be loaded via AJAX -->
-                </tbody>
             </table>
         </div>
 
         <div class="tab-content" id="dental_transaction">
-            <table class="transaction-table">
-            <thead>
-                    <tr>
-                        <th>Dentist</th>
-                        <th>Branch</th>
-                        <th>Service</th>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                </tbody>
+            <table id="transactionTable" class="transaction-table">
             </table>
         </div>
     </div>

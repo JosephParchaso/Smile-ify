@@ -196,6 +196,11 @@ if (isset($_GET['timeout'])) {
                 <label for="appointmentDentist" class="form-label">Dentist <span class="required">*</span></label>
             </div>
 
+            <div class="form-group">
+                <textarea id="notes" class="form-control" name="notes" rows="3" required placeholder=" "autocomplete="off"></textarea>
+                <label for="notes" class="form-label">Add a note...</label>
+            </div>
+
             <div class="button-group">
                 <button type="submit" class="form-button confirm-btn">Confirm</button>
                 <button type="button" class="form-button cancel-btn" onclick="closeBookingModal()">Cancel</button>

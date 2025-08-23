@@ -12,40 +12,48 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'patient') {
 $userID = $_SESSION['user_id'];
 
 $sql = "SELECT 
-            a.appointment_transaction_id,
+            dt.dental_transaction_id,
             b.name AS branch,
             s.name AS service,
             CONCAT('Dr. ', d.last_name, ', ', d.first_name, ' ', IFNULL(d.middle_name, '')) AS dentist,
             a.appointment_date,
             a.appointment_time,
-            a.status,
-            a.date_created
-        FROM appointment_transaction a
-        LEFT JOIN branch b ON a.branch_id = b.branch_id
-        LEFT JOIN service s ON a.service_id = s.service_id
-        LEFT JOIN dentist d ON a.dentist_id = d.dentist_id
+            dt.amount_paid,
+            dt.is_swelling,
+            dt.is_sensitive,
+            dt.is_bleeding,
+            dt.date_created
+        FROM dental_transaction dt
+        INNER JOIN appointment_transaction a 
+            ON dt.appointment_transaction_id = a.appointment_transaction_id
+        LEFT JOIN branch b 
+            ON a.branch_id = b.branch_id
+        LEFT JOIN service s 
+            ON a.service_id = s.service_id
+        LEFT JOIN dentist d 
+            ON d.dentist_id = COALESCE(dt.dentist_id, a.dentist_id)
         WHERE a.user_id = ?
-        ORDER BY a.date_created DESC";
+        ORDER BY dt.date_created DESC";
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $userID);
 $stmt->execute();
 $result = $stmt->get_result();
 
-$appointments = [];
+$transactions = [];
 while ($row = $result->fetch_assoc()) {
-    $appointments[] = [
-        $row['dentist'] ?: 'Available Dentist',
+    $transactions[] = [
+        $row['dentist'] ?: '-',
         $row['branch'] ?: '-',
         $row['service'] ?: '-',
         $row['appointment_date'],
         substr($row['appointment_time'], 0, 5),
-        $row['status'],
-        '<button class="btn-action" data-id="'.$row['appointment_transaction_id'].'">Manage</button>',
+        number_format($row['amount_paid'], 2),
+        '<button class="btn-action" data-id="'.$row['dental_transaction_id'].'">Manage</button>',
         $row['date_created']
     ];
 }
 
 header('Content-Type: application/json');
-echo json_encode(["data" => $appointments]);
+echo json_encode(["data" => $transactions]);
 $conn->close();

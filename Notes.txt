@@ -10,7 +10,7 @@ Patients
 | admin_b2_01   | admin_b2   | - pusok
 | admin_b2_02   | admin_b2   | - pusok
 | admin_b3_01   | admin_b3   | - mandaue
-| owner01       | owner123   |
+| owner01       | P@ssw0rd   |
 
 
 |   Naming Variables   |

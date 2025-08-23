@@ -23,7 +23,8 @@ $sql = "SELECT DISTINCT
             s.name AS service,
             CONCAT(d.last_name, ', ', d.first_name) AS dentist,
             a.appointment_date,
-            a.appointment_time
+            a.appointment_time,
+            a.notes
         FROM appointment_transaction a
         LEFT JOIN branch b ON a.branch_id = b.branch_id
         LEFT JOIN service s ON a.service_id = s.service_id
@@ -46,7 +47,8 @@ while ($row = $result->fetch_assoc()) {
         'branch' => $row['branch'],
         'service' => $row['service'],
         'dentist' => $row['dentist'],
-        'patient' => $row['patient']
+        'patient' => $row['patient'],
+        'notes' => $row['notes']
     ];
 }
 

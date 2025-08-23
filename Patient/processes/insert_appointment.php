@@ -16,6 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $appointmentDentist = $_POST['appointmentDentist'];
     $appointmentDate = $_POST['appointmentDate'];
     $appointmentTime = $_POST['appointmentTime'];
+    $notes = $_POST['notes'];
 
     if ($appointmentDentist === "none" || empty($appointmentDentist)) {
         $appointmentDentist = null;
@@ -25,11 +26,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $conn->begin_transaction();
 
         $appointment_sql = "INSERT INTO appointment_transaction 
-            (user_id, branch_id, service_id, dentist_id, appointment_date, appointment_time, status)
-            VALUES (?, ?, ?, ?, ?, ?, 'Pending')";
+            (user_id, branch_id, service_id, dentist_id, appointment_date, appointment_time, notes, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'Pending')";
 
         $appointment_stmt = $conn->prepare($appointment_sql);
-        $appointment_stmt->bind_param("iiisss", $user_id, $appointmentBranch, $appointmentService, $appointmentDentist, $appointmentDate, $appointmentTime);
+        $appointment_stmt->bind_param("iiissss", $user_id, $appointmentBranch, $appointmentService, $appointmentDentist, $appointmentDate, $appointmentTime, $notes);
 
         if (!$appointment_stmt->execute()) {
             throw new Exception("Failed to book appointment: " . $appointment_stmt->error);
