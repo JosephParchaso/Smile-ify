@@ -28,7 +28,8 @@ while ($row = $result->fetch_assoc()) {
         $row['name'],
         ($row['branch'] ?: '-'),
         $row['status'],
-        '<button class="btn-action">Manage</button></span>'
+        '<button class="btn-action" data-type="admin" data-id="'.$row['user_id'].'">Manage</button>',
+        
     ];
 }
 

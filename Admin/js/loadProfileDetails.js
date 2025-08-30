@@ -18,6 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
             profileCard.innerHTML = `
                 <h3>${data.full_name}</h3>
                 <p><strong>Gender:</strong> ${data.gender}</p>
+                <p><strong>Date of Birth:</strong><span>${data.date_of_birth}</p></span> 
                 <p><strong>Email:</strong> ${data.email}</p>
                 <p><strong>Contact Number:</strong> ${data.contact_number}</p>
                 <p><strong>Joined:</strong> ${data.joined}</p>

@@ -41,7 +41,7 @@ while ($row = $result->fetch_assoc()) {
         $row['appointment_date'],
         substr($row['appointment_time'], 0, 5),
         $row['status'],
-        '<button class="btn-action" data-id="'.$row['appointment_transaction_id'].'">Manage</button>',
+        '<button class="btn-action" data-type="appointment" data-id="'.$row['appointment_transaction_id'].'">Manage</button>',
         $row['date_created']
     ];
 }

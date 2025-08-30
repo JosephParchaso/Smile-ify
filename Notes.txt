@@ -130,8 +130,7 @@ Form {
 ==========================================================================================================================================================================================
 
 Notes:
-login case sensitive
-password - random
+password - random characters?
 gmail suspicious spams - sendgrid?
 fadeout error?
 
@@ -145,11 +144,6 @@ If you’re building for a simple clinic where a dentist is assigned to only one
 If your clinic has multiple branches and dentists rotate, go with Option 2. many = many
 
 time consume in each service
-
-
-appointment: resched? cancel?
-calendar: blue dot, red, green
-
 
 
 ==========================================================================================================================================================================================

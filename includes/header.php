@@ -32,6 +32,7 @@ $role = $_SESSION['role'] ?? null;
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 
     <!-- JS: All users -->
+    <script src="<?= BASE_URL ?>/js/generateUsername.js?v=<?= time(); ?>"></script>
     <script src="<?= BASE_URL ?>/js/openBookingModal.js?v=<?= time(); ?>"></script>
     <script src="<?= BASE_URL ?>/js/openForgotPasswordModal.js?v=<?= time(); ?>"></script>
     <script src="<?= BASE_URL ?>/js/togglePassword.js?v=<?= time(); ?>"></script>
@@ -48,8 +49,10 @@ $role = $_SESSION['role'] ?? null;
         <!-- Owner-specific -->
         <script src="<?= BASE_URL ?>/Owner/js/loadCalendar.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Owner/js/loadProfileDetails.js?v=<?= time(); ?>"></script>
-        <script src="<?= BASE_URL ?>/Owner/js/loadEmployees.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Owner/js/loadAdmins.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Owner/js/loadDentists.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Owner/js/showModal.js?v=<?= time(); ?>"></script>
+    
     <?php elseif ($role === 'admin'): ?>
         <!-- Admin-specific -->
         <script src="<?= BASE_URL ?>/Admin/js/loadCalendar.js?v=<?= time(); ?>"></script>
@@ -61,6 +64,7 @@ $role = $_SESSION['role'] ?? null;
         <script src="<?= BASE_URL ?>/Patient/js/loadProfileDetails.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Patient/js/loadAppointments.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Patient/js/loadTransactions.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Patient/js/showModal.js?v=<?= time(); ?>"></script>
     <?php endif; ?>
 
     <!-- JS: Extras -->

@@ -16,6 +16,7 @@ $sql = "SELECT
             middle_name, 
             last_name, 
             gender, 
+            date_of_birth, 
             email, 
             contact_number, 
             date_created 
@@ -31,6 +32,7 @@ if ($row = $result->fetch_assoc()) {
     $profile = [
         'full_name' => $row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name'],
         'gender' => ucfirst($row['gender']),
+        'date_of_birth' => $row['date_of_birth'],
         'email' => $row['email'],
         'contact_number' => $row['contact_number'],
         'joined' => date("F d, Y", strtotime($row['date_created']))

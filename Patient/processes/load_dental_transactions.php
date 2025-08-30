@@ -49,7 +49,7 @@ while ($row = $result->fetch_assoc()) {
         $row['appointment_date'],
         substr($row['appointment_time'], 0, 5),
         number_format($row['amount_paid'], 2),
-        '<button class="btn-action" data-id="'.$row['dental_transaction_id'].'">Manage</button>',
+        '<button class="btn-action" data-type="transaction" data-id="'.$row['dental_transaction_id'].'">Manage</button>',
         $row['date_created']
     ];
 }

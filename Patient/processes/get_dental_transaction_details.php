@@ -1,0 +1,81 @@
+<?php
+session_start();
+
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
+require_once BASE_PATH . '/includes/db.php';
+
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'patient') {
+    echo json_encode(["error" => "Unauthorized"]);
+    exit();
+}
+
+if (!isset($_GET['id'])) {
+    echo json_encode(["error" => "No transaction ID provided"]);
+    exit();
+}
+
+$transactionId = intval($_GET['id']);
+$userId = $_SESSION['user_id'];
+
+$sql = "SELECT 
+            b.name AS branch,
+            s.name AS service,
+            CONCAT('Dr. ', d.last_name, ', ', d.first_name, ' ', IFNULL(d.middle_name, '')) AS dentist,
+            a.appointment_transaction_id,
+            a.appointment_date,
+            a.appointment_time,
+            dt.notes,
+            dt.amount_paid,
+            dt.is_swelling,
+            dt.is_sensitive,
+            dt.is_bleeding,
+            dt.date_created,
+
+            dv.body_temp,
+            dv.pulse_rate,
+            dv.respiratory_rate,
+            dv.blood_pressure,
+            dv.height,
+            dv.weight
+        FROM dental_transaction dt
+        INNER JOIN appointment_transaction a 
+            ON dt.appointment_transaction_id = a.appointment_transaction_id
+        LEFT JOIN branch b 
+            ON a.branch_id = b.branch_id
+        LEFT JOIN service s 
+            ON a.service_id = s.service_id
+        LEFT JOIN dentist d 
+            ON d.dentist_id = COALESCE(dt.dentist_id, a.dentist_id)
+        LEFT JOIN dental_vitals dv
+            ON dv.appointment_transaction_id = a.appointment_transaction_id
+        WHERE dt.dental_transaction_id = ? 
+        AND a.user_id = ?";
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("ii", $transactionId, $userId);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($row = $result->fetch_assoc()) {
+    $appointmentTransactionId = $row['appointment_transaction_id'];
+
+    $prescriptionsSql = "SELECT drug, route, frequency, dosage, duration, instructions 
+                            FROM dental_prescription 
+                            WHERE appointment_transaction_id = ?";
+    $stmt2 = $conn->prepare($prescriptionsSql);
+    $stmt2->bind_param("i", $appointmentTransactionId);
+    $stmt2->execute();
+    $prescriptionsResult = $stmt2->get_result();
+
+    $prescriptions = [];
+    while ($p = $prescriptionsResult->fetch_assoc()) {
+        $prescriptions[] = $p;
+    }
+    $row['prescriptions'] = $prescriptions;
+
+    echo json_encode($row);
+} else {
+    echo json_encode(["error" => "Transaction not found"]);
+}
+
+$conn->close();

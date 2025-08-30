@@ -29,6 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["verify"])) {
         $middleName = $_SESSION['verified_data']['middleName'];
         $email = $_SESSION['verified_data']['email'];
         $gender = $_SESSION['verified_data']['gender'];
+        $dateofBirth = $_SESSION['verified_data']['dateofBirth'];
         $contactNumber = $_SESSION['verified_data']['contactNumber'];
         $role = 'patient';
 
@@ -46,10 +47,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["verify"])) {
         try {
             $conn->begin_transaction();
 
-            $user_sql = "INSERT INTO users (username, password, last_name, middle_name, first_name, gender, email, contact_number, role)
+            $user_sql = "INSERT INTO users (username, password, last_name, middle_name, first_name, gender, date_of_birth, email, contact_number, role)
                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $user_stmt = $conn->prepare($user_sql);
-            $user_stmt->bind_param("sssssssss", $username, $hashed_password, $lastName, $middleName, $firstName, $gender, $email, $contactNumber, $role);
+            $user_stmt->bind_param("sssssssss", $username, $hashed_password, $lastName, $middleName, $firstName, $gender, $dateofBirth, $email, $contactNumber, $role);
 
             if (!$user_stmt->execute()) {
                 throw new Exception("User insert failed: " . $user_stmt->error);
@@ -136,27 +137,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["verify"])) {
     }
 
     $conn->close();
-}
-
-function generateUniqueUsername($lastName, $firstName, $conn) {
-    $username_base = $lastName . '_' . strtoupper(substr($firstName, 0, 1));
-    $username = $username_base;
-    $counter = 0;
-
-    $check_sql = "SELECT username FROM users WHERE username = ?";
-    $check_stmt = $conn->prepare($check_sql);
-
-    do {
-        if ($counter > 0) {
-            $username = $username_base . $counter;
-        }
-
-        $check_stmt->bind_param("s", $username);
-        $check_stmt->execute();
-        $check_stmt->store_result();
-        $counter++;
-    } while ($check_stmt->num_rows > 0);
-
-    return $username;
 }
 ?>

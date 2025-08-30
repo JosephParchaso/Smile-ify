@@ -76,24 +76,6 @@
     text-align: center;
 }
 
-.profile-card {
-    width: 350px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-    padding: 25px;
-    text-align: center;
-}
-
-.profile-card img {
-    width: 100px;
-    border-radius: 50%;
-    margin-bottom: 15px;
-}
-
-.profile-card h3 {
-    margin: 10px 0 5px;
-}
-
 .tabs-container {
     flex: 1;
     min-width: 350px;
@@ -103,124 +85,8 @@
     display: flex;
 }
 
-.tab {
-    padding: 10px 20px;
-    cursor: pointer;
-    border-bottom: 3px solid transparent;
-    font-weight: bold;
-    color: #5b5f64ff;
-}
-
-.tab.active {
-    border-bottom-color: #2196f3;
-    color: #122130;
-}
-
 .tab-content {
     display: none;
-}
-
-.tab-content.active {
-    display: block;
-}
-
-.transaction-table {
-    border-collapse: separate;
-    border-spacing: 0 8px;
-    width: 100%;
-    min-width: 900px;   
-    table-layout: fixed;
-}
-
-.transaction-table thead th {
-    text-align: left;
-    padding: 12px 15px;
-    border: none;
-    white-space: nowrap;
-}
-
-.transaction-table tbody td {
-    padding: 12px 15px;
-    border-top: 1px solid #ffff;
-    vertical-align: middle;
-    word-wrap: break-word;
-}
-
-.transaction-table thead th,
-.transaction-table tbody td {
-    padding: 10px 15px;
-    text-align: left;
-    vertical-align: middle;
-    text-overflow: ellipsis;
-    height: 48px;
-}
-
-.transaction-table tbody tr {
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    border-radius: 4px;
-}
-
-.transaction-table tbody tr:hover {
-    background: #eef4ff;
-}
-.transaction-table tbody tr td:first-child {
-    border-top-left-radius: 4px;
-    border-bottom-left-radius: 4px;
-}
-.transaction-table tbody tr td:last-child {
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
-}
-
-.transaction-table .btn-action,
-.transaction-table button {
-    padding: 6px 12px;
-    background: #fff;
-    border: 1px solid #d0d7e2;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
-    font-size: 14px;
-    white-space: nowrap;
-}
-
-.transaction-table .btn-action:hover,
-.transaction-table button:hover {
-    background: #0077b6;
-    border-color: #0077b6;
-}
-
-.transaction-table tbody tr:hover .btn-action,
-.transaction-table tbody tr:hover button {
-    background: #eef4ff;
-}
-
-.dataTables_filter input[type="search"] {
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    padding: 6px 12px;
-    margin-left: 8px;
-    font-size: 14px;
-    width: 100%;
-    max-width: 200px;
-}
-
-.dataTables_wrapper .dataTables_paginate .paginate_button {
-    padding: 6px 12px;
-    margin: 0 2px;
-    border-radius: 6px;
-    border: 1px solid transparent;
-    background: #f0f0f0;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-    background: #eef4ff;
-}
-.dataTables_wrapper .dataTables_paginate .paginate_button.current {
-    background: #eef4ff !important;
-    border: 1px solid transparent;
-    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
 }
 
 #appointmentTable, #transactionTable {

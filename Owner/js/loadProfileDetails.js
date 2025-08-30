@@ -17,12 +17,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
             profileCard.innerHTML = `
                 <h3>${data.full_name}</h3>
-                <p><strong>Gender:</strong> ${data.gender}</p>
-                <p><strong>Email:</strong> ${data.email}</p>
-                <p><strong>Contact Number:</strong> ${data.contact_number}</p>
-                <p><strong>Address:</strong> ${data.address}</p>
-                <p><strong>Joined:</strong> ${data.joined}</p>
-                <div class="button-group">
+                <p><strong>Gender:</strong><span>${data.gender}</p></span> 
+                <p><strong>Date of Birth:</strong><span>${data.date_of_birth}</p></span> 
+                <p><strong>Email:</strong><span>${data.email}</p></span> 
+                <p><strong>Contact Number:</strong><span>${data.contact_number}</p></span> 
+                <p><strong>Address:</strong><span>${data.address}</p></span> 
+                <p><strong>Joined:</strong><span>${data.joined}</p> </span> 
+                <div class="button-group button-group-profile">
                     <button class="confirm-btn" id="editDetails">Edit Profile</button>
                     <button class="confirm-btn" id="changePasswordBtn">Change Password</button>
                 </div>

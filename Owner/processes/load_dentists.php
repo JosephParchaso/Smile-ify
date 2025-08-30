@@ -27,9 +27,9 @@ while ($row = $result->fetch_assoc()) {
     $dentists[] = [
         $row['dentist_id'],
         $row['name'],
-        ($row['branches'] ?? 'N/A'),
+        ($row['branches'] ?? '-'),
         $row['status'],
-        '<button class="btn-action" data-id="'.$row['dentist_id'].'">Manage</button>'
+        '<button class="btn-action" data-type="dentist" data-id="'.$row['dentist_id'].'">Manage</button>',
     ];
 }
 

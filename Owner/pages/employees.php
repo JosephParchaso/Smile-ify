@@ -12,23 +12,46 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'owner') {
 }
 require_once BASE_PATH . '/includes/header.php';
 require_once BASE_PATH . '/Owner/includes/navbar.php';
+$activeTab = $_GET['tab'] ?? 'admin';
+$updateSuccess = $_SESSION['updateSuccess'] ?? '';
+$updateError   = $_SESSION['updateError'] ?? '';
 ?>
 <title>Employees</title>
 
 <div class="tabs-container">
     <div class="tabs">
-        <div class="tab active" onclick="switchTab('admin')">Admins</div>
-        <div class="tab" onclick="switchTab('dentist')">Dentists</div>
+        <div class="tab <?= $activeTab === 'admin' ? 'active' : '' ?>" onclick="switchTab('admin')">Admins</div>
+        <div class="tab <?= $activeTab === 'dentist' ? 'active' : '' ?>" onclick="switchTab('dentist')">Dentists</div>
+    </div>
+    
+    <?php if (!empty($updateSuccess) || !empty($updateError)): ?>
+        <div class="message-box">
+            <?php if (!empty($updateSuccess)): ?>
+                <div class="alert success" id="alertMessage"><?= htmlspecialchars($updateSuccess) ?></div>
+                <?php unset($_SESSION['updateSuccess']); ?>
+            <?php endif; ?>
+
+            <?php if (!empty($updateError)): ?>
+                <div class="alert error" id="alertMessage"><?= htmlspecialchars($updateError) ?></div>
+                <?php unset($_SESSION['updateError']); ?>
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
+
+    <div class="tab-content <?= $activeTab === 'admin' ? 'active' : '' ?>" id="admin">
+        <table id="adminsTable" class="transaction-table"></table>
     </div>
 
-    <div class="tab-content active" id="admin">
-        <table id="adminsTable" class="transaction-table">
-        </table>
+    <div class="tab-content <?= $activeTab === 'dentist' ? 'active' : '' ?>" id="dentist">
+        <table id="dentistsTable" class="transaction-table"></table>
     </div>
+</div>
 
-    <div class="tab-content" id="dentist">
-        <table id="dentistsTable" class="transaction-table">
-        </table>
+<div id="manageModal" class="manage-employee-modal">
+    <div class="manage-employee-modal-content">
+        <div id="modalBody" class="manage-employee-modal-content-body">
+            <!-- Appointment info will be loaded here -->
+        </div>
     </div>
 </div>
 

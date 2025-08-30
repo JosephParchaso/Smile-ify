@@ -38,7 +38,7 @@ $updateError = $_SESSION['updateError'] ?? "";
         <?php endif; ?>
         </div>
 
-        <div id="editProfileModal" class="booking-modal">
+        <div id="editProfileModal" class="edit-profile-modal">
             <div class="edit-profile-modal-content">
                 <form id="editProfileForm" method="POST" action="<?= BASE_URL ?>/Owner/processes/update_profile.php" autocomplete="off">
                     <div class="form-group phone-group">
@@ -60,7 +60,7 @@ $updateError = $_SESSION['updateError'] ?? "";
             </div>
         </div>
 
-        <div id="changePasswordModal" class="change-password-modal" style="display:none;">
+        <div id="changePasswordModal" class="change-password-modal">
             <div class="change-password-modal-content">
                 <form id="requestOtpForm" method="POST" action="<?= BASE_URL ?>/Owner/processes/OTP Processes/request_otp_change_password.php">
                     <p style="text-align:center;">Click below to request an OTP for password change.</p>

@@ -125,6 +125,11 @@ if (isset($_GET['timeout'])) {
                 <label for="gender" class="form-label">Gender <span class="required">*</span></label>
             </div>
 
+            <div class="form-group">
+                <input type="date" id="dateofBirth" class="form-control" name="dateofBirth" required />
+                <label for="dateofBirth" class="form-label">Date of Birth <span class="required">*</span></label>
+            </div>
+
             <div class="form-group phone-group">
                 <input type="tel" id="contactNumber" class="form-control" name="contactNumber" oninput="this.value = this.value.replace(/[^0-9]/g, '')" pattern="[0-9]{10}" title="Mobile number must be 10 digits" required maxlength="10" />
                 <label for="contactNumber" class="form-label">Mobile Number <span class="required">*</span></label>
