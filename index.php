@@ -97,27 +97,27 @@ if (isset($_GET['timeout'])) {
         
         <form action="<?= BASE_URL ?>/processes/OTP Processes/request_otp.php" method="POST" autocomplete="off">
             <div class="form-group">
-                <input type="text" id="lastName" class="form-control" name="lastName" placeholder=" " required />
+                <input type="text" id="lastName" name="lastName" class="form-control" placeholder=" " required />
                 <label for="lastName" class="form-label">Last Name <span class="required">*</span></label>
             </div>
 
             <div class="form-group">
-                <input type="text" id="firstName" class="form-control" name="firstName" placeholder=" " required />
+                <input type="text" id="firstName" name="firstName" class="form-control" placeholder=" " required />
                 <label for="firstName" class="form-label">First Name <span class="required">*</span></label>
             </div>
 
             <div class="form-group">
-                <input type="text" id="middleName" class="form-control" name="middleName" placeholder=" " />
+                <input type="text" id="middleName" name="middleName" class="form-control" placeholder=" " />
                 <label for="middleName" class="form-label">Middle Name</label>
             </div>
 
             <div class="form-group">
-                <input type="email" id="email" class="form-control" name="email" placeholder=" " required autocomplete="off"/>
+                <input type="email" id="email" name="email" class="form-control" placeholder=" " required autocomplete="off"/>
                 <label for="email" class="form-label">Email Address <span class="required">*</span></label>
             </div>
             
             <div class="form-group">
-                <select id="gender" class="form-control" name="gender" required>
+                <select id="gender" name="gender" class="form-control" required>
                     <option value="" disabled selected hidden></option>
                     <option value="female">Female</option>
                     <option value="male">Male</option>
@@ -126,18 +126,18 @@ if (isset($_GET['timeout'])) {
             </div>
 
             <div class="form-group">
-                <input type="date" id="dateofBirth" class="form-control" name="dateofBirth" required />
+                <input type="date" id="dateofBirth" name="dateofBirth" class="form-control" required />
                 <label for="dateofBirth" class="form-label">Date of Birth <span class="required">*</span></label>
             </div>
 
             <div class="form-group phone-group">
-                <input type="tel" id="contactNumber" class="form-control" name="contactNumber" oninput="this.value = this.value.replace(/[^0-9]/g, '')" pattern="[0-9]{10}" title="Mobile number must be 10 digits" required maxlength="10" />
+                <input type="tel" id="contactNumber" name="contactNumber" class="form-control" oninput="this.value = this.value.replace(/[^0-9]/g, '')" pattern="[0-9]{10}" title="Mobile number must be 10 digits" required maxlength="10" />
                 <label for="contactNumber" class="form-label">Mobile Number <span class="required">*</span></label>
                 <span class="phone-prefix">+63</span>
             </div>
 
             <div class="form-group">
-                <select id="appointmentBranch" class="form-control" name="appointmentBranch" required>
+                <select id="appointmentBranch" name="appointmentBranch" class="form-control" required>
                     <option value="" disabled selected hidden></option>
                     <?php
 
@@ -171,7 +171,7 @@ if (isset($_GET['timeout'])) {
             </div>
 
             <div class="form-group">
-                <input type="date" id="appointmentDate" class="form-control" name="appointmentDate" required />
+                <input type="date" id="appointmentDate" name="appointmentDate" class="form-control" required />
                 <label for="appointmentDate" class="form-label">Date <span class="required">*</span></label>
                 <span id="dateError" class="error-msg-calendar error">
                     Sundays are not available for appointments. Please select another date.
@@ -179,7 +179,7 @@ if (isset($_GET['timeout'])) {
             </div>
 
             <div class="form-group">
-                <select id="appointmentTime" class="form-control" name="appointmentTime" required>
+                <select id="appointmentTime" name="appointmentTime" class="form-control" required>
                     <option value="" disabled selected hidden></option>
                     <option value="09:00">9:00 AM</option>
                     <option value="09:45">9:45 AM</option>
@@ -195,14 +195,14 @@ if (isset($_GET['timeout'])) {
             </div>
 
             <div class="form-group">
-                <select id="appointmentDentist" class="form-control" name="appointmentDentist" required>
+                <select id="appointmentDentist" name="appointmentDentist" class="form-control" required>
                     <option value="" disabled selected hidden></option>
                 </select>
                 <label for="appointmentDentist" class="form-label">Dentist <span class="required">*</span></label>
             </div>
 
             <div class="form-group">
-                <textarea id="notes" class="form-control" name="notes" rows="3" required placeholder=" "autocomplete="off"></textarea>
+                <textarea id="notes" name="notes" class="form-control" rows="3" placeholder=" "autocomplete="off"></textarea>
                 <label for="notes" class="form-label">Add a note...</label>
             </div>
 
@@ -221,7 +221,7 @@ if (isset($_GET['timeout'])) {
         <?php endif; ?>
         <form action="<?= BASE_URL ?>/processes/OTP Processes/request_otp_forgot_password.php" method="POST">
             <div class="form-group">
-                <input type="text" id="username" class="form-control" name="username" placeholder=" " required autocomplete="off"/>
+                <input type="text" id="username" name="username" class="form-control" placeholder=" " required autocomplete="off"/>
                 <label for="username" class="form-label">Enter Username <span class="required">*</span></label>
             </div>
 

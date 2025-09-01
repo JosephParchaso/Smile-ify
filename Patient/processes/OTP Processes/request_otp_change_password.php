@@ -29,7 +29,6 @@ $email = $row["email"];
 $otp = rand(100000, 999999);
 $_SESSION['otp'] = $otp;
 $_SESSION['otp_created'] = time();
-$_SESSION['otp_context'] = 'change_password';
 
 require BASE_PATH . '/Mail/phpmailer/PHPMailerAutoload.php';
 $mail = new PHPMailer;

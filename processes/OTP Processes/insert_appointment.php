@@ -4,6 +4,8 @@ session_start();
 require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
 
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["verify"])) {
     $otp = $_SESSION['otp'] ?? null;
     $otp_code = trim($_POST['otpCode']);
@@ -31,7 +33,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["verify"])) {
         $gender = $_SESSION['verified_data']['gender'];
         $dateofBirth = $_SESSION['verified_data']['dateofBirth'];
         $contactNumber = $_SESSION['verified_data']['contactNumber'];
-        $role = 'patient';
 
         $appointmentBranch = $_SESSION['verified_data']['appointmentBranch'];
         $appointmentService = $_SESSION['verified_data']['appointmentService'];
@@ -47,10 +48,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["verify"])) {
         try {
             $conn->begin_transaction();
 
-            $user_sql = "INSERT INTO users (username, password, last_name, middle_name, first_name, gender, date_of_birth, email, contact_number, role)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $user_sql = "INSERT INTO users 
+                (username, password, last_name, middle_name, first_name, gender, date_of_birth, email, contact_number, role)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'patient')";
             $user_stmt = $conn->prepare($user_sql);
-            $user_stmt->bind_param("sssssssss", $username, $hashed_password, $lastName, $middleName, $firstName, $gender, $dateofBirth, $email, $contactNumber, $role);
+            $user_stmt->bind_param("sssssssss", $username, $hashed_password, $lastName, $middleName, $firstName, $gender, $dateofBirth, $email, $contactNumber
+            );
 
             if (!$user_stmt->execute()) {
                 throw new Exception("User insert failed: " . $user_stmt->error);
@@ -62,10 +65,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["verify"])) {
                 $appointmentDentist = null;
             }
 
-            $appointment_sql = "INSERT INTO appointment_transaction (user_id, branch_id, service_id, dentist_id, appointment_date, appointment_time, notes, status)
-                                VALUES (?, ?, ?, ?, ?, ?, ?, 'Pending')";
+            $appointment_sql = "INSERT INTO appointment_transaction 
+                (user_id, branch_id, service_id, dentist_id, appointment_date, appointment_time, notes, status)
+                VALUES (?, ?, ?, ?, ?, ?, ?, 'Pending')";
             $appointment_stmt = $conn->prepare($appointment_sql);
-            $appointment_stmt->bind_param("iiisss", $user_id, $appointmentBranch, $appointmentService, $appointmentDentist, $appointmentDate, $appointmentTime, $notes);
+            $appointment_stmt->bind_param("iiiisss", $user_id, $appointmentBranch, $appointmentService, $appointmentDentist, $appointmentDate, $appointmentTime, $notes
+            );
 
             if (!$appointment_stmt->execute()) {
                 throw new Exception("Appointment insert failed: " . $appointment_stmt->error);
@@ -137,5 +142,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["verify"])) {
     }
 
     $conn->close();
+}
+
+function generateUniqueUsername($lastName, $firstName, $conn) {
+    $username_base = $lastName . '_' . strtoupper(substr($firstName, 0, 1));
+    $username = $username_base;
+    $counter = 0;
+
+    $check_sql = "SELECT username FROM users WHERE username = ?";
+    $check_stmt = $conn->prepare($check_sql);
+
+    do {
+        if ($counter > 0) {
+            $username = $username_base . $counter;
+        }
+
+        $check_stmt->bind_param("s", $username);
+        $check_stmt->execute();
+        $check_stmt->store_result();
+        $counter++;
+    } while ($check_stmt->num_rows > 0);
+
+    return $username;
 }
 ?>

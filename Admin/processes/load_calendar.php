@@ -24,7 +24,9 @@ $sql = "SELECT DISTINCT
             CONCAT(d.last_name, ', ', d.first_name) AS dentist,
             a.appointment_date,
             a.appointment_time,
-            a.notes
+            a.notes,
+            a.date_created,
+            a.status
         FROM appointment_transaction a
         LEFT JOIN branch b ON a.branch_id = b.branch_id
         LEFT JOIN service s ON a.service_id = s.service_id
@@ -40,15 +42,26 @@ $result = $stmt->get_result();
 
 $events = [];
 while ($row = $result->fetch_assoc()) {
+
+    $statusColor = '#fe9705';
+    if (strcasecmp($row['status'], 'Completed') === 0) {
+        $statusColor = '#3ac430';
+    } elseif (strcasecmp($row['status'], 'Cancelled') === 0) {
+        $statusColor = '#d11313';
+    }
+
     $events[] = [
         'id' => $row['appointment_transaction_id'],
+        'patient' => $row['patient'],
         'title' => $row['service'] . ' - ' . $row['patient'],
         'start' => $row['appointment_date'] . 'T' . $row['appointment_time'],
         'branch' => $row['branch'],
         'service' => $row['service'],
         'dentist' => $row['dentist'],
-        'patient' => $row['patient'],
-        'notes' => $row['notes']
+        'notes' => $row['notes'],
+        'status' => $row['status'],
+        'date_created' => $row['date_created'],
+        'color' => $statusColor
     ];
 }
 

@@ -25,17 +25,19 @@ document.addEventListener('DOMContentLoaded', function() {
         eventClick: function(info) {
             const appointment = info.event.extendedProps;
 
-            document.getElementById('modalPatient').textContent = appointment.patient;
-            document.getElementById('modalBranch').textContent = appointment.branch;
-            document.getElementById('modalService').textContent = appointment.service;
-            document.getElementById('modalDentist').textContent = appointment.dentist 
-                ? "Dr. " + appointment.dentist 
-                : "Not Assigned";
-            document.getElementById('modalDate').textContent = info.event.start.toLocaleDateString();
-            document.getElementById('modalTime').textContent = info.event.start.toLocaleTimeString([], {
-                hour: '2-digit', minute: '2-digit'
-            });
-            document.getElementById('modalNotes').textContent = appointment.notes;
+            const modalBody = document.getElementById('modalBody');
+            modalBody.innerHTML = `
+                <h2>Appointment Details</h2>
+                <p><strong>Patient:</strong> ${appointment.patient}</p>
+                <p><strong>Dentist:</strong> ${appointment.dentist ? "Dr. " + appointment.dentist : "Available Dentist"}</p>
+                <p><strong>Branch:</strong> ${appointment.branch}</p>
+                <p><strong>Service:</strong> ${appointment.service}</p>
+                <p><strong>Date:</strong> ${info.event.start.toLocaleDateString()}</p>
+                <p><strong>Time:</strong> ${info.event.start.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</p>
+                <p><strong>Notes:</strong> ${appointment.notes ?? '-'}</p>
+                <p><strong>Status:</strong> ${appointment.status}</p>
+                <p><strong>Date Booked:</strong> ${appointment.date_created}</p>
+            `;
 
             document.getElementById('appointmentModalDetails').style.display = "block";
         }

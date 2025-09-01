@@ -9,29 +9,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'owner') {
     exit();
 }
 
-function generateUniqueUsername($lastName, $firstName, $conn) {
-    $username_base = strtolower($lastName . '_' . strtoupper(substr($firstName, 0, 1)));
-    $username = $username_base;
-    $counter = 0;
-
-    $check_sql = "SELECT username FROM users WHERE username = ?";
-    $check_stmt = $conn->prepare($check_sql);
-
-    do {
-        if ($counter > 0) {
-            $username = $username_base . $counter;
-        }
-
-        $check_stmt->bind_param("s", $username);
-        $check_stmt->execute();
-        $check_stmt->store_result();
-        $counter++;
-    } while ($check_stmt->num_rows > 0);
-
-    $check_stmt->close();
-    return $username;
-}
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $lastName       = trim($_POST['lastName'] ?? '');
     $firstName      = trim($_POST['firstName'] ?? '');
@@ -58,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $username = generateUniqueUsername($lastName, $firstName, $conn);
 
-        $raw_password = $lastName . '_' . $branch_name;
+        $s = $lastName . '_' . $firstName;
         $password = password_hash($raw_password, PASSWORD_DEFAULT);
 
         $stmt = $conn->prepare("
@@ -102,4 +79,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 } else {
     header("Location: " . BASE_URL . "/Owner/pages/employees.php");
     exit();
+}
+
+function generateUniqueUsername($lastName, $firstName, $conn) {
+    $username_base = $lastName . '_' . strtoupper(substr($firstName, 0, 1));
+    $username = $username_base;
+    $counter = 0;
+
+    $check_sql = "SELECT username FROM users WHERE username = ?";
+    $check_stmt = $conn->prepare($check_sql);
+
+    do {
+        if ($counter > 0) {
+            $username = $username_base . $counter;
+        }
+
+        $check_stmt->bind_param("s", $username);
+        $check_stmt->execute();
+        $check_stmt->store_result();
+        $counter++;
+    } while ($check_stmt->num_rows > 0);
+
+    return $username;
 }

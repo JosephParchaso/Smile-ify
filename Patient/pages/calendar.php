@@ -21,7 +21,7 @@ require_once BASE_PATH . '/Patient/includes/navbar.php';
 
 <div id="appointmentModalDetails" class="manage-appointment-modal">
     <div class="manage-appointment-modal-content">
-        <div id="modalBody">
+        <div id="modalBody" class="manage-appointment-modal-content-body">
             <!-- Appointment info will be loaded here -->
         </div>
     </div>

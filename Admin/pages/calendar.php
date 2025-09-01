@@ -19,16 +19,11 @@ require_once BASE_PATH . '/Admin/includes/navbar.php';
 </div>
 <input type="hidden" id="branchIdInput" value="<?= htmlspecialchars($_SESSION['branch_id'] ?? '') ?>">
 
-<div id="appointmentModalDetails" class="booking-modal"> 
-    <div class="booking-modal-content">
-        <h2>Appointment Details</h2>
-        <p><strong>Patient:</strong> <span id="modalPatient"></span></p>
-        <p><strong>Branch:</strong> <span id="modalBranch"></span></p>
-        <p><strong>Service:</strong> <span id="modalService"></span></p>
-        <p><strong>Dentist:</strong> <span id="modalDentist"></span></p>
-        <p><strong>Date:</strong> <span id="modalDate"></span></p>
-        <p><strong>Time:</strong> <span id="modalTime"></span></p>
-        <p><strong>Notes:</strong> <span id="modalNotes"></span></p>
+<div id="appointmentModalDetails" class="manage-appointment-modal">
+    <div class="manage-appointment-modal-content">
+        <div id="modalBody" class="manage-appointment-modal-content-body">
+            <!-- Appointment info will be loaded here -->
+        </div>
     </div>
 </div>
 

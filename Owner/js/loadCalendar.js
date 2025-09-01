@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const modalBody = document.getElementById('modalBody');
             modalBody.innerHTML = `
                 <h2>Appointment Details</h2>
+                <p><strong>Patient:</strong> ${appointment.patient}</p>
                 <p><strong>Dentist:</strong> ${appointment.dentist ? "Dr. " + appointment.dentist : "Available Dentist"}</p>
                 <p><strong>Branch:</strong> ${appointment.branch}</p>
                 <p><strong>Service:</strong> ${appointment.service}</p>

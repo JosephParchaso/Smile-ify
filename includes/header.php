@@ -32,7 +32,6 @@ $role = $_SESSION['role'] ?? null;
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 
     <!-- JS: All users -->
-    <script src="<?= BASE_URL ?>/js/generateUsername.js?v=<?= time(); ?>"></script>
     <script src="<?= BASE_URL ?>/js/openBookingModal.js?v=<?= time(); ?>"></script>
     <script src="<?= BASE_URL ?>/js/openForgotPasswordModal.js?v=<?= time(); ?>"></script>
     <script src="<?= BASE_URL ?>/js/togglePassword.js?v=<?= time(); ?>"></script>

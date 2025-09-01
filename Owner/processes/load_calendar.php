@@ -41,6 +41,7 @@ while ($row = $result->fetch_assoc()) {
 
     $events[] = [
         'id' => $row['appointment_transaction_id'],
+        'patient' => $row['patient'],
         'title' => $row['service'],
         'start' => $row['appointment_date'] . 'T' . $row['appointment_time'],
         'branch' => $row['branch'],

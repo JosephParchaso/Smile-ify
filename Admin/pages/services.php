@@ -13,6 +13,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 require_once BASE_PATH . '/includes/header.php';
 require_once BASE_PATH . '/Admin/includes/navbar.php';
 ?>
+
 <title>Services</title>
 
 <?php require_once BASE_PATH . '/includes/footer.php'; ?>

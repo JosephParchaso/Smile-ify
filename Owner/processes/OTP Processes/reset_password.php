@@ -48,15 +48,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $notif_stmt->close();
 
         unset($_SESSION['otp_verified']);
-        $_SESSION['updateSuccess'] = "Password updated successfully.";
+        $_SESSION['login_success'] = "Password reset successful. You can now login.";
+        header("Location: " . BASE_URL . "/index.php");
+        exit;
     } else {
         $_SESSION['updateError'] = "Failed to update password. Please try again.";
+        header("Location: " . BASE_URL . "/Owner/pages/profile.php");
+        exit;
     }
 
     $stmt->close();
     $conn->close();
-
-    header("Location: " . BASE_URL . "/Owner/pages/profile.php");
     exit;
 }
 ?>

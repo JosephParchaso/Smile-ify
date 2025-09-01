@@ -20,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $contactNumber  = trim($_POST['contactNumber']);
     $licenseNumber  = trim($_POST['licenseNumber']);
     $status         = $_POST['status'];
-    $branches       = isset($_POST['branches']) ? $_POST['branches'] : [];
+    $branches       = isset($_POST['branches']) ? array_map('intval', $_POST['branches']) : [];
 
     $sql = "UPDATE dentist
             SET last_name = ?, 
@@ -47,27 +47,48 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $dentistId
     );
 
+    $changed = false;
+
     if ($stmt->execute()) {
-        $deleteSql = "DELETE FROM dentist_branch WHERE dentist_id = ?";
-        $deleteStmt = $conn->prepare($deleteSql);
-        $deleteStmt->bind_param("i", $dentistId);
-        $deleteStmt->execute();
-        $deleteStmt->close();
-
-        if (!empty($branches)) {
-            $insertSql = "INSERT INTO dentist_branch (dentist_id, branch_id) VALUES (?, ?)";
-            $insertStmt = $conn->prepare($insertSql);
-
-            foreach ($branches as $branchId) {
-                $branchId = intval($branchId);
-                $insertStmt->bind_param("ii", $dentistId, $branchId);
-                $insertStmt->execute();
-            }
-
-            $insertStmt->close();
+        if ($stmt->affected_rows > 0) {
+            $changed = true;
         }
 
-        $_SESSION['updateSuccess'] = "Dentist updated successfully!";
+        $currentBranches = [];
+        $res = $conn->prepare("SELECT branch_id FROM dentist_branch WHERE dentist_id = ?");
+        $res->bind_param("i", $dentistId);
+        $res->execute();
+        $result = $res->get_result();
+        while ($row = $result->fetch_assoc()) {
+            $currentBranches[] = (int)$row['branch_id'];
+        }
+        $res->close();
+
+        sort($currentBranches);
+        sort($branches);
+
+        if ($currentBranches !== $branches) {
+            $deleteSql = "DELETE FROM dentist_branch WHERE dentist_id = ?";
+            $deleteStmt = $conn->prepare($deleteSql);
+            $deleteStmt->bind_param("i", $dentistId);
+            $deleteStmt->execute();
+            $deleteStmt->close();
+
+            if (!empty($branches)) {
+                $insertSql = "INSERT INTO dentist_branch (dentist_id, branch_id) VALUES (?, ?)";
+                $insertStmt = $conn->prepare($insertSql);
+                foreach ($branches as $branchId) {
+                    $insertStmt->bind_param("ii", $dentistId, $branchId);
+                    $insertStmt->execute();
+                }
+                $insertStmt->close();
+            }
+            $changed = true;
+        }
+
+        if ($changed) {
+            $_SESSION['updateSuccess'] = "Dentist updated successfully!";
+        }
     } else {
         $_SESSION['updateError'] = "Failed to update dentist.";
     }
