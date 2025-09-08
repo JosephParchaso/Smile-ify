@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.target.classList.contains("btn-action")) {
             const id = e.target.getAttribute("data-id");
             const type = e.target.getAttribute("data-type");
-            
+
             let url = "";
             if (type === "appointment") {
                 url = `${BASE_URL}/Patient/processes/get_appointment_details.php?id=${id}`;
@@ -44,7 +44,9 @@ document.addEventListener("DOMContentLoaded", () => {
                             <p><strong>Date Booked:</strong>${data.date_created}</p>
                         `;
                         appointmentModal.style.display = "block";
-                    } else if (type === "transaction") {
+                    } 
+
+                    else if (type === "transaction") {
                         transactionBody.innerHTML = `
                             <div class="transaction-columns">
                                 <div class="transaction-section">
@@ -74,21 +76,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
                                 <div class="transaction-section">
                                     <h3>Prescription</h3>
-                                    <div id="prescriptionList">
-                                        <p><strong>Drug:</strong> <span>${data.drug ?? '-'}</span></p>
-                                        <p><strong>Route:</strong> <span>${data.route ?? '-'}</span></p>
-                                        <p><strong>Frequency:</strong> <span>${data.frequency ?? '-'}</span></p>
-                                        <p><strong>Dosage:</strong> <span>${data.dosage ?? '-'}</span></p>
-                                        <p><strong>Duration:</strong> <span>${data.duration ?? '-'}</span></p>
-                                        <p><strong>Instructions:</strong> <span>${data.instructions ?? '-'}</span></p>
-                                    </div>
+                                    <div id="prescriptionList"></div>
 
                                     <div class="button-group button-group-profile">
-                                        <button class="confirm-btn" id="downloadPrescription">Download Prescription</button>
+                                        ${
+                                            data.prescription_downloaded == 0
+                                            ? `<button class="confirm-btn" id="downloadPrescription">Download Prescription</button>`
+                                            : `<button class="confirm-btn" disabled>Already Downloaded</button>`
+                                        }
                                     </div>
                                 </div>
                             </div>
                         `;
+
+                        // ===== PRESCRIPTIONS LIST =====
                         let prescriptionHtml = '';
                         if (data.prescriptions && data.prescriptions.length > 0) {
                             data.prescriptions.forEach(p => {
@@ -110,6 +111,160 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         document.getElementById("prescriptionList").innerHTML = prescriptionHtml;
                         transactionModal.style.display = "block";
+
+                        // ========= DOWNLOAD PRESCRIPTION =========
+                        const btn = document.getElementById("downloadPrescription");
+                        if (btn) {
+                            btn.addEventListener("click", async () => {
+                                const { jsPDF } = window.jspdf;
+                                const doc = new jsPDF();
+
+                                async function getBase64ImageFromUrl(url) {
+                                    const res = await fetch(url);
+                                    const blob = await res.blob();
+                                    return new Promise((resolve, reject) => {
+                                        const reader = new FileReader();
+                                        reader.onloadend = () => resolve(reader.result);
+                                        reader.onerror = reject;
+                                        reader.readAsDataURL(blob);
+                                    });
+                                }
+
+                                // ===== HEADER =====
+                                const logoUrl = `${BASE_URL}/images/logo/logo_default.png`;
+                                const logoBase64 = await getBase64ImageFromUrl(logoUrl);
+                                doc.addImage(logoBase64, "PNG", 10, 10, 50, 30);
+
+                                doc.setFontSize(14);
+                                doc.setFont("helvetica", "bold");
+                                doc.text("SMILE-IFY DENTAL CLINIC", 105, 15, { align: "center" });
+
+                                doc.setFontSize(11);
+                                doc.setFont("helvetica", "normal");
+                                doc.text("Mandaue • Pusok • Babag", 105, 22, { align: "center" });
+                                doc.text("Contact Us: 09955446451", 105, 28, { align: "center" });
+                                doc.text("Smile-ify@gmail.com", 105, 34, { align: "center" });
+                                doc.text("Clinic Hours: 9AM - 3PM | Mon–Sun (All Branches)", 105, 40, { align: "center" });
+
+                                doc.line(10, 45, 200, 45);
+
+                                // ===== PATIENT INFO =====
+                                const patientFullName = `${data.patient_last_name}, ${data.patient_first_name} ${data.patient_middle_name ? data.patient_middle_name[0] + '.' : ''}`;
+                                let patientAge = "-";
+                                if (data.patient_dob) {
+                                    const dob = new Date(data.patient_dob);
+                                    const diff = Date.now() - dob.getTime();
+                                    patientAge = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25)) + " yrs";
+                                }
+
+                                doc.setFontSize(12);
+                                doc.setFont("helvetica", "bold");
+
+                                // Row 1
+                                doc.text("Patient Name:", 10, 55);
+                                doc.line(45, 55, 100, 55);
+
+                                doc.text("Age:", 110, 55);
+                                doc.line(122, 55, 145, 55);
+
+                                doc.text("Gender:", 155, 55);
+                                doc.line(178, 55, 200, 55);
+
+                                doc.setFont("helvetica", "normal");
+                                doc.text(patientFullName || "-", 47, 54);
+                                doc.text(patientAge || "-", 124, 54);
+                                doc.text(data.gender ?? "-", 180, 54);
+
+                                // Row 2
+                                doc.setFont("helvetica", "bold");
+                                doc.text("Service:", 10, 70);
+                                doc.line(35, 70, 100, 70);
+
+                                doc.text("Branch:", 110, 70);
+                                doc.line(140, 70, 190, 70);
+
+                                doc.setFont("helvetica", "normal");
+                                doc.text(data.service || "-", 37, 69);
+                                doc.text(data.branch || "-", 142, 69);
+
+                                doc.setFont("helvetica", "bold");
+                                doc.text("Date:", 10, 85);
+                                doc.line(30, 85, 80, 85);
+
+                                doc.text("Time:", 110, 85);
+                                doc.line(135, 85, 190, 85);
+
+                                doc.setFont("helvetica", "normal");
+                                doc.text(data.appointment_date || "-", 32, 84);
+                                doc.text(data.appointment_time || "-", 137, 84);
+
+                                // ===== PRESCRIPTIONS =====
+                                doc.setFont("helvetica", "bold");
+                                doc.text("Prescription:", 10, 110);
+
+                                doc.setFont("helvetica", "normal");
+                                let y = 120;
+                                if (data.prescriptions && data.prescriptions.length > 0) {
+                                    data.prescriptions.forEach((p, index) => {
+                                        if (index > 0) y += 3;
+                                        doc.text(`• ${p.drug} | ${p.dosage} | ${p.frequency} | ${p.duration}`, 10, y);
+                                        y += 7;
+                                        if (p.instructions) {
+                                            doc.text(`  Notes: ${p.instructions}`, 15, y);
+                                            y += 7;
+                                        }
+                                    });
+                                } else {
+                                    doc.text("No prescriptions recorded.", 10, y);
+                                }
+
+                                // ===== SIGNATURE =====
+                                if (data.signature_image) {
+                                    const sigUrl = `${BASE_URL}/images/signatures/${data.signature_image}`;
+                                    try {
+                                        const sigBase64 = await getBase64ImageFromUrl(sigUrl);
+                                        doc.addImage(sigBase64, "PNG", 130, 220, 60, 40);
+                                    } catch (err) {
+                                        console.warn("Could not load signature", err);
+                                    }
+                                }
+
+                                doc.line(120, 250, 200, 250);
+                                const dentistFullName = `${data.dentist_last_name}, ${data.dentist_first_name} ${data.dentist_middle_name ? data.dentist_middle_name[0] + '.' : ''}`;
+                                doc.text("Dr. " + dentistFullName, 160, 260, { align: "center" });
+                                doc.text("License No: " + (data.license_number ?? "-"), 160, 270, { align: "center" });
+
+                                // Save PD
+                                const fileName = `${data.patient_last_name}_${data.date_created.split(" ")[0]}.pdf`;
+                                doc.save(fileName);
+
+                                try {
+                                    const res = await fetch(
+                                        `${BASE_URL}/Patient/processes/mark_prescription_downloaded.php`,
+                                        {
+                                            method: "POST",
+                                            headers: { "Content-Type": "application/json" },
+                                            body: JSON.stringify({
+                                                transaction_id: data.dental_transaction_id
+                                            })
+                                        }
+                                    );
+
+                                    const json = await res.json();
+
+                                    if (json.success) {
+                                        btn.textContent = "Already Downloaded";
+                                        btn.disabled = true;
+                                    } else {
+                                        console.error("Update failed:", json.error);
+                                        window.location.href = `${BASE_URL}/Patient/processes/mark_prescription_downloaded.php?error=1`;
+                                    }
+                                } catch (err) {
+                                    console.error("Update fetch error:", err);
+                                    window.location.href = `${BASE_URL}/Patient/processes/mark_prescription_downloaded.php?error=1`;
+                                }
+                            });
+                        }
                     }
                 })
                 .catch(err => {

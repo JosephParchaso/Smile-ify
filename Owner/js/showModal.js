@@ -56,6 +56,12 @@ document.addEventListener("DOMContentLoaded", () => {
             <form id="adminForm" action="${BASE_URL}/Owner/processes/${isEdit ? "update_admin.php" : "insert_admin.php"}" method="POST" autocomplete="off">
                 ${isEdit ? `<input type="hidden" name="user_id" value="${data.user_id}">` : ""}
 
+                ${isEdit ? `
+                <div class="form-group">
+                    <input type="text" id="userName" class="form-control" value="${data.username}" disabled>
+                    <label for="userName" class="form-label">Date Created</label>
+                </div>` : ""}
+
                 <div class="form-group">
                     <input type="text" id="lastName" name="lastName" class="form-control"
                         value="${isEdit ? data.last_name : ""}" required placeholder=" " autocomplete="off">
@@ -104,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 <div class="form-group">
                     <input type="text" id="address" name="address" class="form-control"
-                        value="${isEdit ? (data.address || "") : ""}" required placeholder=" " autocomplete="off">
+                        value="${isEdit ? data.address : ""}" required placeholder=" " autocomplete="off">
                     <label for="address" class="form-label">Address <span class="required">*</span></label>
                 </div>
 
@@ -162,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const selectedBranches = isEdit && data.branches ? data.branches.map(b => parseInt(b)) : [];
         employeeBody.innerHTML = `
             <h2>${isEdit ? "Manage Dentist" : "Add Dentist"}</h2>
-            <form id="dentistForm" action="${BASE_URL}/Owner/processes/${isEdit ? "update_dentist.php" : "insert_dentist.php"}" method="POST" autocomplete="off">
+            <form id="dentistForm" action="${BASE_URL}/Owner/processes/${isEdit ? "update_dentist.php" : "insert_dentist.php"}" method="POST" enctype="multipart/form-data" autocomplete="off">
                 ${isEdit ? `<input type="hidden" name="dentist_id" value="${data.dentist_id}">` : ""}
 
                 <div class="form-group">
@@ -228,6 +234,19 @@ document.addEventListener("DOMContentLoaded", () => {
                         <option value="Inactive" ${isEdit && data.status === "Inactive" ? "selected" : ""}>Inactive</option>
                     </select>
                     <label for="status" class="form-label">Status <span class="required">*</span></label>
+                </div>
+
+                <div class="form-group">
+                    <input type="file" id="signatureImage" name="signatureImage" class="form-control" accept="image/*" ${isEdit ? "" : "required"}>
+                    <label for="signatureImage" class="form-label">Signature Image <span class="required">*</span></label>
+
+                    ${isEdit && data.signature_image 
+                        ? `<div class="mt-2">
+                                <p>Current Signature:</p>
+                                <img src="${BASE_URL}/images/signatures/${data.signature_image}" alt="Signature" style="max-width:150px; border:1px solid #ccc; padding:4px; border-radius:6px;">
+                        </div>` 
+                        : ""
+                    }
                 </div>
                 
                 <div class="form-group">

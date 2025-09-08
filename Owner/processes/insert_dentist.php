@@ -21,23 +21,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $status         = $_POST['status'];
     $branches       = $_POST['branches'] ?? [];
 
+    $signatureImage = null;
+    if (isset($_FILES['signatureImage']) && $_FILES['signatureImage']['error'] === UPLOAD_ERR_OK) {
+        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/signatures/';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+        $fileName = uniqid() . "_" . basename($_FILES['signatureImage']['name']);
+        $targetPath = $uploadDir . $fileName;
+
+        if (move_uploaded_file($_FILES['signatureImage']['tmp_name'], $targetPath)) {
+            $signatureImage = $fileName;
+        }
+    }
+
     try {
-        $stmt = $conn->prepare("
-            INSERT INTO dentist (last_name, first_name, middle_name, gender, date_of_birth, email, contact_number, license_number, status)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ");
-        $stmt->bind_param(
-            "sssssssss",
-            $lastName,
-            $firstName,
-            $middleName,
-            $gender,
-            $dateofBirth,
-            $email,
-            $contactNumber,
-            $licenseNumber,
-            $status
-        );
+            $stmt = $conn->prepare("
+                INSERT INTO dentist (last_name, first_name, middle_name, gender, date_of_birth, email, contact_number, license_number, status, signature_image)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ");
+            $stmt->bind_param(
+                "ssssssssss",
+                $lastName,
+                $firstName,
+                $middleName,
+                $gender,
+                $dateofBirth,
+                $email,
+                $contactNumber,
+                $licenseNumber,
+                $status,
+                $signatureImage
+            );
 
         if ($stmt->execute()) {
             $dentistId = $stmt->insert_id;

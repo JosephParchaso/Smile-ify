@@ -20,7 +20,8 @@ $adminId = intval($_GET['id']);
 
 $sql = "SELECT 
             u.user_id,
-            u.last_name,
+            u.username,
+            u.last_name,    
             u.first_name,
             u.middle_name,
             CONCAT(u.last_name, ', ', u.first_name, ' ', IFNULL(u.middle_name, '')) AS name,

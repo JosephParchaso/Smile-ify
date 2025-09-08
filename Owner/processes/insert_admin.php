@@ -22,6 +22,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $status         = $_POST['status'] ?? 'Inactive';
     $dateStarted    = $_POST['dateStarted'] ?? null;
 
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $_SESSION['updateError'] = "Invalid email format.";
+        header("Location: " . BASE_URL . "/Owner/pages/employees.php");
+        exit();
+    }
+
+    if (!isValidEmailDomain($email)) {
+        $_SESSION['updateError'] = "Email domain is not valid or unreachable.";
+        header("Location: " . BASE_URL . "/Owner/pages/employees.php");
+        exit();
+    }
+
     try {
         $branch_name = '';
         if ($branch_id) {
@@ -35,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $username = generateUniqueUsername($lastName, $firstName, $conn);
 
-        $s = $lastName . '_' . $firstName;
+        $raw_password = generatePassword(12);
         $password = password_hash($raw_password, PASSWORD_DEFAULT);
 
         $stmt = $conn->prepare("
@@ -47,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ");
 
         $stmt->bind_param(
-            "ssssssssissss",
+            "sssssssssisss",
             $username,
             $lastName,
             $firstName,
@@ -101,4 +113,18 @@ function generateUniqueUsername($lastName, $firstName, $conn) {
     } while ($check_stmt->num_rows > 0);
 
     return $username;
+}
+
+function generatePassword($length = 10) {
+    $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
+    $password = '';
+    for ($i = 0; $i < $length; $i++) {
+        $password .= $chars[random_int(0, strlen($chars) - 1)];
+    }
+    return $password;
+}
+
+function isValidEmailDomain($email) {
+    $domain = substr(strrchr($email, "@"), 1);
+    return checkdnsrr($domain, "MX");
 }

@@ -140,7 +140,7 @@ require_once BASE_PATH . '/Patient/includes/navbar.php';
                 </div>
 
                 <div class="form-group">
-                    <textarea id="notes" class="form-control" name="notes" rows="3" required placeholder=" "autocomplete="off"></textarea>
+                    <textarea id="notes" class="form-control" name="notes" rows="3" placeholder=" "autocomplete="off"></textarea>
                     <label for="notes" class="form-label">Add a note...</label>
                 </div>
 

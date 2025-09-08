@@ -25,14 +25,14 @@ $updateError   = $_SESSION['updateError'] ?? '';
     </div>
     
     <?php if (!empty($updateSuccess) || !empty($updateError)): ?>
-        <div class="message-box">
+        <div id="toastContainer">
             <?php if (!empty($updateSuccess)): ?>
-                <div class="alert success" id="alertMessage"><?= htmlspecialchars($updateSuccess) ?></div>
+                <div class="toast success"><?= htmlspecialchars($updateSuccess) ?></div>
                 <?php unset($_SESSION['updateSuccess']); ?>
             <?php endif; ?>
 
             <?php if (!empty($updateError)): ?>
-                <div class="alert error" id="alertMessage"><?= htmlspecialchars($updateError) ?></div>
+                <div class="toast error"><?= htmlspecialchars($updateError) ?></div>
                 <?php unset($_SESSION['updateError']); ?>
             <?php endif; ?>
         </div>

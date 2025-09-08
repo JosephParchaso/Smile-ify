@@ -30,6 +30,7 @@ $role = $_SESSION['role'] ?? null;
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"></script>
 
     <!-- JS: All users -->
     <script src="<?= BASE_URL ?>/js/openBookingModal.js?v=<?= time(); ?>"></script>

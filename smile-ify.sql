@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 30, 2025 at 02:38 PM
+-- Generation Time: Sep 08, 2025 at 02:53 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -80,7 +80,13 @@ INSERT INTO `appointment_transaction` (`appointment_transaction_id`, `user_id`, 
 (33, 36, 2, 8, 3, '2025-08-12', '14:15:00', '', '2025-08-09 17:21:09', 'Completed'),
 (34, 42, 3, 1, 1, '2025-08-18', '15:00:00', '', '2025-08-12 15:18:53', 'Completed'),
 (35, 28, 3, 7, 4, '2025-08-27', '15:00:00', '', '2025-08-19 20:55:36', 'Pending'),
-(36, 28, 2, 2, 2, '2025-08-29', '15:00:00', 'sample note', '2025-08-23 18:39:11', 'Pending');
+(36, 28, 2, 2, 2, '2025-08-29', '15:00:00', 'sample note', '2025-08-23 18:39:11', 'Pending'),
+(37, 45, 1, 1, 3, '2025-09-09', '11:15:00', 'hhff', '2025-09-01 10:51:29', 'Pending'),
+(38, 46, 2, 2, 2, '2025-09-05', '09:00:00', 'Need t extract', '2025-09-01 10:54:07', 'Pending'),
+(39, 47, 2, 10, 3, '2025-09-04', '15:00:00', '', '2025-09-01 15:43:24', 'Pending'),
+(40, 28, 2, 10, 3, '2025-09-12', '10:30:00', '', '2025-09-07 19:43:36', 'Pending'),
+(41, 28, 1, 1, 1, '2025-09-11', '10:30:00', '', '2025-09-07 19:44:03', 'Pending'),
+(42, 28, 1, 5, NULL, '2025-09-12', '09:45:00', '', '2025-09-07 19:47:38', 'Pending');
 
 -- --------------------------------------------------------
 
@@ -174,7 +180,12 @@ INSERT INTO `dental_prescription` (`prescription_id`, `appointment_transaction_i
 (8, 27, 'Sodium Fluoride Gel', 'Topical', '1x/day', 'Thin layer', '14 days', 'Apply at night before bed', '2025-08-23 18:54:01'),
 (9, 28, 'Amoxicillin', 'Oral', '3x/day', '500mg', '7 days', 'Take after meals', '2025-08-23 18:54:01'),
 (10, 28, 'Mefenamic Acid', 'Oral', '3x/day', '500mg', '5 days', 'Take only when needed', '2025-08-23 18:54:01'),
-(11, 28, 'Paracetamol', 'Oral', '3x/day', '500mg', '5 days', 'Alternate with Mefenamic Acid if severe pain', '2025-08-23 18:54:01');
+(11, 28, 'Paracetamol', 'Oral', '3x/day', '500mg', '5 days', 'Alternate with Mefenamic Acid if severe pain', '2025-08-23 18:54:01'),
+(12, 24, 'Ibuprofen', 'Oral', '3x/day', '400mg', '5 days', 'Take after meals for pain and inflammation', '2025-09-07 19:57:34'),
+(13, 24, 'Mefenamic Acid', 'Oral', '3x/day', '500mg', '5 days', 'Take only when needed for severe pain', '2025-09-07 19:57:34'),
+(14, 24, 'Chlorhexidine Mouthwash', 'Oral Rinse', '2x/day', '15ml', '7 days', 'Rinse for 30 seconds, do not swallow', '2025-09-07 19:57:34'),
+(15, 24, 'Prednisone', 'Oral', '1x/day', '10mg', '3 days', 'Take in the morning to reduce swelling', '2025-09-07 19:57:34'),
+(16, 24, 'Metronidazole', 'Oral', '3x/day', '500mg', '7 days', 'Take after meals, avoid alcohol', '2025-09-07 19:57:34');
 
 -- --------------------------------------------------------
 
@@ -191,21 +202,21 @@ CREATE TABLE `dental_transaction` (
   `is_sensitive` enum('Yes','No') DEFAULT 'No',
   `is_bleeding` enum('Yes','No') DEFAULT 'No',
   `notes` text DEFAULT NULL,
-  `date_created` timestamp NOT NULL DEFAULT current_timestamp()
+  `date_created` timestamp NOT NULL DEFAULT current_timestamp(),
+  `prescription_downloaded` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `dental_transaction`
 --
 
-INSERT INTO `dental_transaction` (`dental_transaction_id`, `appointment_transaction_id`, `dentist_id`, `amount_paid`, `is_swelling`, `is_sensitive`, `is_bleeding`, `notes`, `date_created`) VALUES
-(1, 21, 3, 1500.00, 'Yes', 'No', 'No', 'Tooth #12 extraction, mild swelling.', '2025-08-23 19:37:15'),
-(2, 22, 3, 2000.00, 'No', 'Yes', 'No', 'Tooth filling, slight sensitivity.', '2025-08-23 19:37:15'),
-(3, 23, 1, 1200.00, 'No', 'No', 'No', 'Routine cleaning, no complications.', '2025-08-23 19:37:15'),
-(4, 24, 4, 1800.00, 'Yes', 'No', 'Yes', 'Wisdom tooth removal, moderate bleeding.', '2025-08-23 19:37:15'),
-(5, 25, 3, 2500.00, 'No', 'No', 'No', 'Root canal treatment, stable condition.', '2025-08-23 19:37:15'),
-(8, 28, 1, 3000.00, 'Yes', 'Yes', 'Yes', 'Complex surgical extraction with swelling & bleeding.', '2025-08-23 19:37:15'),
-(10, 36, 2, 1.00, 'No', 'No', 'No', 'sample notes dental transact', '2025-08-29 19:52:08');
+INSERT INTO `dental_transaction` (`dental_transaction_id`, `appointment_transaction_id`, `dentist_id`, `amount_paid`, `is_swelling`, `is_sensitive`, `is_bleeding`, `notes`, `date_created`, `prescription_downloaded`) VALUES
+(1, 21, 3, 1500.00, 'Yes', 'No', 'No', 'Tooth #12 extraction, mild swelling.', '2025-08-23 19:37:15', 1),
+(2, 22, 3, 2000.00, 'No', 'Yes', 'No', 'Tooth filling, slight sensitivity.', '2025-08-23 19:37:15', 1),
+(3, 23, 1, 1200.00, 'No', 'No', 'No', 'Routine cleaning, no complications.', '2025-08-23 19:37:15', 1),
+(4, 24, 4, 1800.00, 'Yes', 'No', 'Yes', 'Wisdom tooth removal, moderate bleeding.', '2025-08-23 19:37:15', 1),
+(5, 25, 3, 2500.00, 'No', 'No', 'No', 'Root canal treatment, stable condition.', '2025-08-23 19:37:15', 1),
+(8, 28, 1, 3000.00, 'Yes', 'Yes', 'Yes', 'Complex surgical extraction with swelling & bleeding.', '2025-08-23 19:37:15', 0);
 
 -- --------------------------------------------------------
 
@@ -257,6 +268,7 @@ CREATE TABLE `dentist` (
   `license_number` varchar(50) NOT NULL,
   `date_started` date NOT NULL,
   `status` enum('Active','Inactive') NOT NULL DEFAULT 'Active',
+  `signature_image` varchar(255) DEFAULT NULL,
   `date_created` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -264,14 +276,15 @@ CREATE TABLE `dentist` (
 -- Dumping data for table `dentist`
 --
 
-INSERT INTO `dentist` (`dentist_id`, `last_name`, `middle_name`, `first_name`, `gender`, `date_of_birth`, `email`, `contact_number`, `license_number`, `date_started`, `status`, `date_created`) VALUES
-(1, 'Ulanday', 'Mansanitas', 'Precious', 'Female', '2025-01-02', 'precious@gmail.com', '9789321654', 'LIC-100111', '2023-01-15', 'Active', '2025-07-11 19:40:26'),
-(2, 'Chan', 'Marie', 'Kyla', 'Female', '2025-08-29', 'kyla.marie@gmail.com', '', 'LIC-1002', '2023-02-10', 'Active', '2025-07-11 19:40:26'),
-(3, 'Summers', '', 'Daze', 'Female', '0000-00-00', 'daze@gmail.com', '0912345680', 'LIC-1003', '2023-03-05', 'Active', '2025-07-11 19:40:26'),
-(4, 'San Jose', '', 'Solene', 'Female', '0000-00-00', 'solene@gmail.com', '0912345681', 'LIC-1004', '2023-04-01', 'Active', '2025-07-11 19:40:26'),
-(5, 'San Jose', 'Codm', 'Yel', 'Female', '0000-00-00', 'yel@gmail.com', '9123456789', 'LIC-100322', '2023-05-20', 'Active', '2025-08-30 00:24:25'),
-(6, 'Achas', '', 'Gab', 'Male', '2025-08-02', 'achas@gmail.com', '7864515665', '123123', '0000-00-00', 'Active', '2025-08-30 12:07:53'),
-(7, 'Menano', '', 'Andy', 'Male', '2025-08-29', 'adny@gmail.com', '8756465486', '123321', '0000-00-00', 'Inactive', '2025-08-30 12:17:41');
+INSERT INTO `dentist` (`dentist_id`, `last_name`, `middle_name`, `first_name`, `gender`, `date_of_birth`, `email`, `contact_number`, `license_number`, `date_started`, `status`, `signature_image`, `date_created`) VALUES
+(1, 'Ulanday', 'Mansanitas', 'Precious', 'Female', '2025-01-02', 'precious@gmail.com', '9789321654', 'LIC-100111', '2023-01-15', 'Active', '68be0b0fa22c2_pretot.png', '2025-07-11 19:40:26'),
+(2, 'Chan', 'Marie', 'Kyla', 'Female', '2025-08-29', 'kyla.marie@gmail.com', '2112321321', 'LIC-1002', '2023-02-10', 'Active', '68be0b1e6d278_chiku.png', '2025-07-11 19:40:26'),
+(3, 'Summers', '', 'Daze', 'Female', '2025-09-09', 'daze@gmail.com', '0912345680', 'LIC-1003', '2023-03-05', 'Active', '68be0b26e6fc2_daze.png', '2025-07-11 19:40:26'),
+(4, 'San Jose', '', 'Solene', 'Female', '2025-09-12', 'solene@gmail.com', '0912345681', 'LIC-1004', '2023-04-01', 'Active', '68be0b34297fb_sol.png', '2025-07-11 19:40:26'),
+(5, 'San Jose', 'Codm', 'Yel', 'Female', '2025-09-04', 'yel@gmail.com', '9123456789', 'LIC-100322', '2023-05-20', 'Active', '68be0b3d5870b_yel.png', '2025-08-30 00:24:25'),
+(6, 'Achas', '', 'Gab', 'Male', '2025-08-02', 'achas@gmail.com', '7864515665', '123123', '0000-00-00', 'Active', NULL, '2025-08-30 12:07:53'),
+(7, 'Menano', '', 'Andy', 'Male', '2025-08-29', 'adny@gmail.com', '8756465486', '123321', '0000-00-00', 'Inactive', NULL, '2025-08-30 12:17:41'),
+(8, 'asd', 'sad', 'asdas', 'Female', '2025-09-08', 'asd@sad.casd', '1241421241', '1221211', '0000-00-00', 'Inactive', '68be08a6d924a_gary-vaynerchuk-signature-0.png', '2025-09-07 22:35:18');
 
 -- --------------------------------------------------------
 
@@ -298,7 +311,11 @@ INSERT INTO `dentist_branch` (`dentist_branch_id`, `dentist_id`, `branch_id`) VA
 (22, 3, 2),
 (28, 2, 3),
 (29, 2, 2),
-(35, 7, 3);
+(35, 7, 3),
+(74, 1, 1),
+(75, 1, 2),
+(76, 1, 3),
+(77, 8, 2);
 
 -- --------------------------------------------------------
 
@@ -407,8 +424,20 @@ INSERT INTO `notifications` (`notification_id`, `user_id`, `message`, `is_read`,
 (53, 28, 'Your password was changed successfully on August 21, 2025, 6:20 am. If this wasn’t you, please contact support immediately.', 1, '2025-08-20 22:20:58'),
 (54, 28, 'Your password was changed successfully on August 21, 2025, 6:22 am. If this wasn’t you, please contact support immediately.', 1, '2025-08-20 22:22:40'),
 (55, 1, 'Your password was changed successfully on August 21, 2025, 6:44 am. If this wasn’t you, please contact support immediately.', 0, '2025-08-20 22:44:20'),
-(56, 28, 'Your password was successfully reset on August 23, 2025, 11:09 pm. If this wasn’t you, please contact support immediately.', 0, '2025-08-23 15:09:45'),
-(57, 28, 'Your appointment on 2025-08-29 at 15:00 was successfully booked!', 0, '2025-08-23 18:39:11');
+(56, 28, 'Your password was successfully reset on August 23, 2025, 11:09 pm. If this wasn’t you, please contact support immediately.', 1, '2025-08-23 15:09:45'),
+(57, 28, 'Your appointment on 2025-08-29 at 15:00 was successfully booked!', 1, '2025-08-23 18:39:11'),
+(58, 45, 'Welcome to Smile-ify! Your account was successfully created.', 0, '2025-09-01 10:51:29'),
+(59, 45, 'Your appointment on 2025-09-09 at 11:15 was successfully booked!', 0, '2025-09-01 10:51:29'),
+(60, 46, 'Welcome to Smile-ify! Your account was successfully created.', 1, '2025-09-01 10:54:07'),
+(61, 46, 'Your appointment on 2025-09-05 at 09:00 was successfully booked!', 1, '2025-09-01 10:54:07'),
+(62, 46, 'Your password was changed successfully on September 1, 2025, 6:57 pm. If this wasn’t you, please contact support immediately.', 0, '2025-09-01 10:57:48'),
+(63, 47, 'Welcome to Smile-ify! Your account was successfully created.', 0, '2025-09-01 15:43:24'),
+(64, 47, 'Your appointment on 2025-09-04 at 15:00 was successfully booked!', 0, '2025-09-01 15:43:24'),
+(65, 47, 'Your password was changed successfully on September 1, 2025, 11:48 pm. If this wasn’t you, please contact support immediately.', 0, '2025-09-01 15:48:43'),
+(66, 28, 'Your appointment on 2025-09-12 at 10:30 was successfully booked!', 1, '2025-09-07 19:43:36'),
+(67, 28, 'Your appointment on 2025-09-11 at 10:30 was successfully booked!', 1, '2025-09-07 19:44:03'),
+(68, 28, 'Your appointment on 2025-09-12 at 09:45 was successfully booked!', 1, '2025-09-07 19:47:38'),
+(69, 2, 'Your password was successfully reset on September 8, 2025, 6:12 am. If this wasn’t you, please contact support immediately.', 0, '2025-09-07 22:12:42');
 
 -- --------------------------------------------------------
 
@@ -471,7 +500,7 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`user_id`, `username`, `password`, `last_name`, `middle_name`, `first_name`, `gender`, `date_of_birth`, `email`, `contact_number`, `address`, `role`, `branch_id`, `date_started`, `status`, `date_created`) VALUES
 (1, 'owner01', '$2y$10$EABxPBtN.h3tZJ635PA61.HsgAlxeTn6bZWxOA4hXTkYX/Ls9pLi.', 'Owner', 'Dummy', 'Sample', 'Male', '0000-00-00', 'josephparchaso@gmail.com', '9998887777', 'decaasdad', 'owner', NULL, NULL, 'Active', '2025-06-14 10:39:32'),
-(2, 'admin01', '$2a$12$pKUNknha3XVdUTPXL84XUe8YxjAnrLmF7ZeB8KUspXb.ouNVrFGt6', 'Potot', 'Travero', 'Rix', 'Female', '2000-04-05', '18102727@usc.edu.ph', '9950217941', 'San Miguel, Cordova', 'admin', 2, '2025-08-17', 'Active', '2025-06-14 10:39:32'),
+(2, 'admin01', '$2y$10$fs8iUS2ahGMXZyNsC5C7.uVfOyG.ele6uTjXyrto46PUVFIYcnnEa', 'Potot', 'Travero', 'Rix', 'Female', '2000-04-05', '18102727@usc.edu.ph', '9950217941', 'San Miguel, Cordovaa', 'admin', 1, '2025-08-17', 'Active', '2025-06-14 10:39:32'),
 (3, 'patient01', '$2a$12$RJZbVUZ3JDsUjDB5eFTyiuACuCvxFJyrQI4cE9u8fQ2ChJf/.Srdq', 'Patient', 'Dummy', 'Sample', 'Male', '0000-00-00', '', '9123456789', NULL, 'patient', NULL, NULL, 'Active', '2025-06-14 10:39:32'),
 (8, 'ParchasoJ', '$2y$10$9fqT9Gco1CtAKVKu6bSDgeh9SFZbg/bb8GJR5OJrrVIJycPZgqxWC', 'Parchaso', 'Espana', 'Jhon', 'Male', '0000-00-00', '9055626239', 'josephparc', NULL, 'owner', NULL, NULL, 'Active', '2025-07-11 22:27:56'),
 (9, 'ParchasoJJ', '$2y$10$W.BXzGapcq9J/oxpk1RHYeaYMxBCz0fSTp8YiRh41YSUebQ12Hjhy', 'Parchaso', 'Joseph', 'Jhon', 'Male', '0000-00-00', '9055626239', 'josephparc', NULL, 'owner', NULL, NULL, 'Active', '2025-07-11 22:30:07'),
@@ -493,7 +522,7 @@ INSERT INTO `users` (`user_id`, `username`, `password`, `last_name`, `middle_nam
 (25, 'AchasGG', '$2y$10$csrxQ1iwxHEcfkhQHKf3se586DUSZSK.WhXgNKB39m9js/HfPwuYK', 'Achas', '', 'Gab', 'Male', '0000-00-00', '18100807@usc.edu.ph', '0922626262', NULL, 'patient', NULL, NULL, 'Active', '2025-07-14 10:25:16'),
 (26, 'DazeP', '$2y$10$du.PYFR4vnJv9ecdNWDox.UUDcjoC0cTUAvtnsnSG.tXwdqn5vLKO', 'Daze', '', 'Pretot', 'Male', '0000-00-00', 'parchasoresidence@gmail.com', '9055626239', NULL, 'patient', NULL, NULL, 'Active', '2025-07-14 10:33:22'),
 (27, 'ChikuY', '$2y$10$h7C7FiWzWuf7oS0hUaav/OZwJX4rYOExaPk3NJu3O39mmsutOsUvm', 'Chiku', 'Wix', 'Yel', 'Female', '0000-00-00', 'parchasoresidence@gmail.com', '9055626239', NULL, 'patient', NULL, NULL, 'Active', '2025-07-14 11:14:19'),
-(28, 'Josephp', '$2y$10$WFRSiU6H8ER6LfQ2KYYdWupYZknVTM6WGZl39Lt0glRYJdr7rTpiW', 'Joseph', '', 'parch', 'Male', '0000-00-00', 'theartp1@gmail.com', '9055626239', 'Block 22, Lot 6, Deca 4 Bankal Lapu Lapu City Cebu', 'patient', NULL, NULL, 'Active', '2025-07-14 11:26:32'),
+(28, 'Josephp', '$2y$10$WFRSiU6H8ER6LfQ2KYYdWupYZknVTM6WGZl39Lt0glRYJdr7rTpiW', 'Joseph', '', 'parch', 'Male', '1999-08-17', 'theartp1@gmail.com', '9055626239', 'Block 22, Lot 6, Deca 4 Bankal Lapu Lapu City Cebu', 'patient', NULL, NULL, 'Active', '2025-07-14 11:26:32'),
 (29, 'pototj', '$2y$10$9Swzre20c9pLQ8ejMr1ySufYwaARXiCYpp8sUXyb5CP1oI7xNjtC2', 'potot', '', 'jj', 'Male', '0000-00-00', '18102727@usc.edu.ph', '9527194102', NULL, 'patient', NULL, NULL, 'Active', '2025-07-14 15:48:41'),
 (30, 'pret', '$2y$10$z7r/dpwWQ2m.RZK8EcwJGu2MkUM3tRY2EgG/7OyfSubN.bmXm2yTW', 'pre', '', 'tot', 'Male', '0000-00-00', '18102727@usc.edu.ph', '9205251545', NULL, 'patient', NULL, NULL, 'Active', '2025-07-14 16:03:59'),
 (31, 'Parchaso_J', '$2y$10$14IUZVVauGdjCe04vSuVTechUS8.EYYzOO5yZ0Li6Lq/IUhGx0.Ny', 'Parchaso', 'Espana', 'Jhon', 'Female', '0000-00-00', '18100807@usc.edu.ph', '9055626239', NULL, 'patient', NULL, NULL, 'Active', '2025-07-31 14:32:30'),
@@ -509,7 +538,15 @@ INSERT INTO `users` (`user_id`, `username`, `password`, `last_name`, `middle_nam
 (41, 'admin_b3_01', '$2a$12$hNePRteKgF2EC1nNHkhQP..14KMwMN66/t3YzL4.GGbLNPXhS7ksa', 'Admin', 'B3', 'Evan', 'Male', '0000-00-00', 'evan.b3@example.com', '0933333333', NULL, 'admin', 3, '2025-02-20', 'Active', '2025-08-11 18:06:49'),
 (42, 'Parchaso_J3', '$2y$10$7nbX35783pFvgW4/mdIuzuSaFhONUt6S5Gw/Aabgd2akXGwfmzwa2', 'Parchaso', 'Espana', 'JJ', 'Male', '0000-00-00', 'josephparchaso@gmail.com', '9055626239', NULL, 'patient', NULL, NULL, 'Active', '2025-08-12 15:18:53'),
 (43, NULL, '$2y$10$aCLfK7EOsfLFyCYFsCDZzO03iVxSaxZ7D9grAp7C1GMnDs2t.YSYi', 'Potot', 'Travero', 'Thamara', 'Female', '2013-09-25', 'maya@gmail.com', '5465464654', 'asdsad', 'admin', 1, '2025-09-25', 'Inactive', '2025-08-30 11:40:50'),
-(44, 'potot_a', '$2y$10$f5shlmN2IMzn1yz/VacRLOjezOmSdU7xPB7kizyd70K0nvpk7e8AK', 'Potot', 'Travero', 'Anna', 'Female', '2025-07-27', 'ana@gmail.com', '1231324654', '0', 'admin', 3, '2025-09-29', 'Inactive', '2025-08-30 11:47:27');
+(44, 'potot_a', '$2y$10$f5shlmN2IMzn1yz/VacRLOjezOmSdU7xPB7kizyd70K0nvpk7e8AK', 'Potot', 'Travero', 'Anna', 'Female', '2025-07-27', 'ana@gmail.com', '1231324654', '0', 'admin', 3, '2025-09-29', 'Inactive', '2025-08-30 11:47:27'),
+(45, 'ttvt_K', '$2y$10$avex/XQe4/bbLQTfGq4vsOeLiFV.SANzStRzaEgpZHUr5kLUuJ1Bq', 'ttvt', 'k', 'kggjkj', 'Female', '2025-09-02', 'josephparchaso@gmail.com', '9055626239', NULL, 'patient', NULL, NULL, 'Active', '2025-09-01 10:51:29'),
+(46, 'Achas_J', '$2y$10$YuOFDFrnJFYnE65JjXFChu.WQxRa2okENHtFER9xJPwLN1LM29l1y', 'Achas', 'Pallasigue', 'Joshua Gabriel', 'Male', '1999-04-27', 'gabbyachas99@gmail.com', '9260860681', 'P-1 Base Camp, Maramag, Bukidnon', 'patient', NULL, NULL, 'Active', '2025-09-01 10:54:07'),
+(47, 'Parchaso_J4', '$2y$10$Durf8pKbOk2BG6IioMFST.63gUDR4PRITB5mJbdJrOvg6MfdfZRCK', 'Parchaso', 'Espana', 'Jhon', 'Female', '1999-08-17', '18100807@usc.edu.ph', '9055626239', NULL, 'patient', NULL, NULL, 'Active', '2025-09-01 15:43:24'),
+(48, 'Achas_G', '$2y$10$qF68ie3yW6UnvQyTV74O7.zN7PotiUXW0huXAGuMQ5FY4SDxkqXgK', 'Achas', '', 'Gab', 'Male', '2025-09-11', 'josephparchaso@gmail.com', '9055626239', 'deca', 'admin', 3, '2025-09-09', 'Active', '2025-09-07 21:54:27'),
+(49, 'asd_A', '$2y$10$mWpr.dorheR9kWYUjq71n.DYPE98YkIwheXxDpRFejM88d6GLslRq', 'asd', 'asd', 'asd', 'Female', '2025-09-04', 'josephparchasooo@gmail.com', '8481198919', '0', 'admin', 3, '2025-09-24', 'Inactive', '2025-09-07 21:56:18'),
+(50, 'parch_J', '$2y$10$Pnho0/H8Abi2ZzJcSapU8.5YBJJKsLidoJAr1uCfibTzM9MHLZx82', 'parch', '', 'jj', 'Female', '2025-09-04', '21313@gmail.com', '1232141242', '0', 'admin', 3, '2025-09-10', 'Active', '2025-09-07 22:00:07'),
+(51, 'adny_A', '$2y$10$7KPScD0EP86YwVfwAxj7tu50e5rO1dDFfSm1SmjYg1dL66SUDS3QC', 'adny', '', 'adsa', 'Female', '2025-09-09', 'j@gmail.com', '1324412414', '0', 'admin', 1, '2025-09-24', 'Inactive', '2025-09-07 22:03:04'),
+(52, 'potot_R', '$2y$10$mnp55PKAKO0Yawgeg2FWqeE4ejo9aK2RCto5E2EtfWHSY6IqNKwjK', 'potot', '', 'rix', 'Male', '2025-09-02', 'asd@gmail.com', '1243141414', 'deca', 'admin', 1, '2025-09-24', 'Active', '2025-09-07 22:05:06');
 
 --
 -- Indexes for dumped tables
@@ -612,7 +649,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `appointment_transaction`
 --
 ALTER TABLE `appointment_transaction`
-  MODIFY `appointment_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `appointment_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 
 --
 -- AUTO_INCREMENT for table `branch`
@@ -630,13 +667,13 @@ ALTER TABLE `branch_service`
 -- AUTO_INCREMENT for table `dental_prescription`
 --
 ALTER TABLE `dental_prescription`
-  MODIFY `prescription_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `prescription_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `dental_transaction`
 --
 ALTER TABLE `dental_transaction`
-  MODIFY `dental_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `dental_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `dental_vitals`
@@ -648,13 +685,13 @@ ALTER TABLE `dental_vitals`
 -- AUTO_INCREMENT for table `dentist`
 --
 ALTER TABLE `dentist`
-  MODIFY `dentist_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `dentist_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `dentist_branch`
 --
 ALTER TABLE `dentist_branch`
-  MODIFY `dentist_branch_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `dentist_branch_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
 
 --
 -- AUTO_INCREMENT for table `dentist_service`
@@ -666,7 +703,7 @@ ALTER TABLE `dentist_service`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70;
 
 --
 -- AUTO_INCREMENT for table `service`
@@ -678,7 +715,7 @@ ALTER TABLE `service`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
 -- Constraints for dumped tables

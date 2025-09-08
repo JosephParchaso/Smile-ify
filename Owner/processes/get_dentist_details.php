@@ -29,6 +29,7 @@ $sql = "SELECT
             contact_number,
             license_number,
             status,
+            signature_image,
             date_started,
             date_created
         FROM dentist

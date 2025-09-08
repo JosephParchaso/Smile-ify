@@ -18,38 +18,54 @@ $transactionId = intval($_GET['id']);
 $userId = $_SESSION['user_id'];
 
 $sql = "SELECT 
-            b.name AS branch,
-            s.name AS service,
-            CONCAT('Dr. ', d.last_name, ', ', d.first_name, ' ', IFNULL(d.middle_name, '')) AS dentist,
-            a.appointment_transaction_id,
-            a.appointment_date,
-            a.appointment_time,
-            dt.notes,
-            dt.amount_paid,
-            dt.is_swelling,
-            dt.is_sensitive,
-            dt.is_bleeding,
-            dt.date_created,
+        b.name AS branch,
+        s.name AS service,
+        CONCAT('Dr. ', d.last_name, ', ', d.first_name, ' ', IFNULL(d.middle_name, '')) AS dentist,
+        d.last_name AS dentist_last_name,
+        d.first_name AS dentist_first_name,
+        d.middle_name AS dentist_middle_name,
+        d.license_number,
+        d.signature_image,
 
-            dv.body_temp,
-            dv.pulse_rate,
-            dv.respiratory_rate,
-            dv.blood_pressure,
-            dv.height,
-            dv.weight
-        FROM dental_transaction dt
-        INNER JOIN appointment_transaction a 
-            ON dt.appointment_transaction_id = a.appointment_transaction_id
-        LEFT JOIN branch b 
-            ON a.branch_id = b.branch_id
-        LEFT JOIN service s 
-            ON a.service_id = s.service_id
-        LEFT JOIN dentist d 
-            ON d.dentist_id = COALESCE(dt.dentist_id, a.dentist_id)
-        LEFT JOIN dental_vitals dv
-            ON dv.appointment_transaction_id = a.appointment_transaction_id
-        WHERE dt.dental_transaction_id = ? 
-        AND a.user_id = ?";
+        u.last_name AS patient_last_name,
+        u.first_name AS patient_first_name,
+        u.middle_name AS patient_middle_name,
+        u.date_of_birth AS patient_dob,
+        u.gender AS gender,
+
+        a.appointment_transaction_id,
+        a.appointment_date,
+        a.appointment_time,
+        dt.dental_transaction_id,
+        dt.notes,
+        dt.amount_paid,
+        dt.is_swelling,
+        dt.is_sensitive,
+        dt.is_bleeding,
+        dt.date_created,
+        dt.prescription_downloaded,
+
+        dv.body_temp,
+        dv.pulse_rate,
+        dv.respiratory_rate,
+        dv.blood_pressure,
+        dv.height,
+        dv.weight
+    FROM dental_transaction dt
+    INNER JOIN appointment_transaction a 
+        ON dt.appointment_transaction_id = a.appointment_transaction_id
+    LEFT JOIN branch b 
+        ON a.branch_id = b.branch_id
+    LEFT JOIN service s 
+        ON a.service_id = s.service_id
+    LEFT JOIN dentist d 
+        ON d.dentist_id = COALESCE(dt.dentist_id, a.dentist_id)
+    LEFT JOIN dental_vitals dv
+        ON dv.appointment_transaction_id = a.appointment_transaction_id
+    LEFT JOIN users u 
+        ON a.user_id = u.user_id
+    WHERE dt.dental_transaction_id = ? 
+    AND a.user_id = ?";
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("ii", $transactionId, $userId);
@@ -71,6 +87,7 @@ if ($row = $result->fetch_assoc()) {
     while ($p = $prescriptionsResult->fetch_assoc()) {
         $prescriptions[] = $p;
     }
+    $row['dental_transaction_id'] = $transactionId;
     $row['prescriptions'] = $prescriptions;
 
     echo json_encode($row);

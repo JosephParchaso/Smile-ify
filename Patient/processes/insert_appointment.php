@@ -44,14 +44,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $conn->commit();
 
-        $_SESSION['success_msg'] = "Appointment booked successfully.";
-        header("Location: " . BASE_URL . "/Patient/pages/schedule.php");
+        $_SESSION['updateSuccess'] = "Appointment booked successfully.";
+        header("Location: " . BASE_URL . "/Patient/pages/calendar.php");
         exit;
 
     } catch (Exception $e) {
         $conn->rollback();
         error_log("Error booking appointment: " . $e->getMessage());
-        $_SESSION['error_msg'] = "Failed to book appointment. Please try again.";
+        $_SESSION['updateError'] = "Failed to book appointment. Please try again.";
         header("Location: " . BASE_URL . "/Patient/index.php");
         exit;
     }

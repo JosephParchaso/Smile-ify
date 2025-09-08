@@ -12,6 +12,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'patient') {
 }
 require_once BASE_PATH . '/includes/header.php';
 require_once BASE_PATH . '/Patient/includes/navbar.php';
+$updateSuccess = $_SESSION['updateSuccess'] ?? "";
+$updateError = $_SESSION['updateError'] ?? "";
 ?>
 <title>My Schedule</title>
 
@@ -26,5 +28,19 @@ require_once BASE_PATH . '/Patient/includes/navbar.php';
         </div>
     </div>
 </div>
+
+<?php if (!empty($updateSuccess) || !empty($updateError)): ?>
+    <div id="toastContainer">
+        <?php if (!empty($updateSuccess)): ?>
+            <div class="toast success"><?= htmlspecialchars($updateSuccess) ?></div>
+            <?php unset($_SESSION['updateSuccess']); ?>
+        <?php endif; ?>
+
+        <?php if (!empty($updateError)): ?>
+            <div class="toast error"><?= htmlspecialchars($updateError) ?></div>
+            <?php unset($_SESSION['updateError']); ?>
+        <?php endif; ?>
+    </div>
+<?php endif; ?>
 
 <?php require_once BASE_PATH . '/includes/footer.php'; ?>

@@ -23,8 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($stmt->execute()) {
             if ($stmt->affected_rows > 0) {
                 $_SESSION['updateSuccess'] = "Profile updated successfully!";
-            } else {
-                $_SESSION['updateSuccess'] = "No Updates.";
             }
         } else {
             $_SESSION['updateError'] = "Failed to update profile. Please try again.";
