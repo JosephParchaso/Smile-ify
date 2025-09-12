@@ -48,11 +48,6 @@ require_once BASE_PATH . '/processes/fetch_notifications.php';
                     <span class="link-text">Profile</span>
                 </a>
             </li>
-            <li>
-                <a href="<?= BASE_URL ?>/Admin/pages/about.php" class="<?= ($currentPage == 'about') ? 'active' : '' ?>">
-                    <span class="link-text">About</span>
-                </a>
-            </li>
             <li class="nav-item dropdown">
                 <a href="#" class="nav-link" id="notifDropdownToggle">
                     <span class="link-text">Notifications</span>

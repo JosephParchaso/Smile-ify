@@ -56,23 +56,90 @@
     flex-wrap: wrap;
 }
 
-.profile-card {
-    width: 350px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-    padding: 25px;
+.tabs-container {
+    flex: 1;
+    min-width: 350px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.tabs {
+    display: flex;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 20px;
+    padding: 10px 0 0 0;
+    justify-content: center;
+    width: 100%;
+}
+
+.tab-content {
+    display: none;
+    width: 80%;
+}
+
+#registeredTable, #recentTable, #inactiveTable {
+    width: 100% !important;
+}
+
+#registeredTable_filter, #recentTable_filter, #inactiveTable_filter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#registeredTable_filter input[type="search"],
+#recentTable_filter input[type="search"],
+#inactiveTable_filter input[type="search"] {
+    height: 38px;
+    padding: 6px 12px;
+}
+
+#registeredTable_filter button,
+#recentTable_filter button,
+#inactiveTable_filter button {
+    height: 38px;
+    padding: 6px 12px;
+    border: 1px solid #1e293b;
+    border-radius: 4px;
+    background-color: #1e293b;
+    color: #fff;
+    cursor: pointer;
+}
+
+#registeredTable th:nth-child(1),
+#registeredTable td:nth-child(1),
+#inactiveTable th:nth-child(1),
+#inactiveTable td:nth-child(1) {
+    width: 15% !important;
     text-align: center;
 }
 
-.profile-card img {
-    width: 100px;
-    border-radius: 50%;
-    margin-bottom: 15px;
+#registeredTable th:nth-child(2),
+#registeredTable td:nth-child(2),
+#inactiveTable th:nth-child(2),
+#inactiveTable td:nth-child(2) {
+    width: 40% !important;
+    text-align: left;
 }
 
-.profile-card h3 {
-    margin: 10px 0 5px;
+#registeredTable th:nth-child(3),
+#registeredTable td:nth-child(3),
+#inactiveTable th:nth-child(3),
+#inactiveTable td:nth-child(3) {
+    width: 30% !important;
+    text-align: center;
 }
+
+#recentTable th:nth-child(1), #recentTable td:nth-child(1) { width: 5% !important; }
+#recentTable th:nth-child(2), #recentTable td:nth-child(2) { width: 15% !important; }
+#recentTable th:nth-child(3), #recentTable td:nth-child(3) { width: 15% !important; }
+#recentTable th:nth-child(4), #recentTable td:nth-child(4) { width: 15% !important; }
+#recentTable th:nth-child(5), #recentTable td:nth-child(5) { width: 15% !important; }
+#recentTable th:nth-child(6), #recentTable td:nth-child(6) { width: 10% !important; }
+#recentTable th:nth-child(7), #recentTable td:nth-child(7) { width: 10% !important; }
+#recentTable th:nth-child(8), #recentTable td:nth-child(8) { width: 15% !important; }
+#recentTable th:nth-child(9), #recentTable td:nth-child(9) { width: 10% !important; }
 
 @media (max-width: 900px) {
     .cards {

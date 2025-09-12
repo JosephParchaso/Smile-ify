@@ -5,6 +5,10 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+if (!isset($_SESSION['tab_token'])) {
+    $_SESSION['tab_token'] = bin2hex(random_bytes(16));
+}
+
 $baseUrl = (strpos($_SERVER['REQUEST_URI'], '/Smile-ify') !== false || $_SERVER['HTTP_HOST'] === 'localhost') ? '/Smile-ify' : '';
 define('BASE_URL', $baseUrl);
 define('BASE_PATH', $_SERVER['DOCUMENT_ROOT'] . BASE_URL);

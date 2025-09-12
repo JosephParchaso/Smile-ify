@@ -4,7 +4,7 @@ Patients
 | Username      | Password   |
 | ------------- | ---------- |
 | patient01     | patient123 |
-| admin01       | @dm1N011   |
+| admin01       | P@rch@s0   |
 | admin_b1_01   | admin_b1   | - babag
 | admin_b1_02   | admin_b1   | - babag
 | admin_b2_01   | admin_b2   | - pusok

@@ -19,6 +19,7 @@ $sql = "SELECT
             date_of_birth, 
             email, 
             contact_number, 
+            address,
             date_created 
         FROM users 
         WHERE user_id = ?";
@@ -35,6 +36,7 @@ if ($row = $result->fetch_assoc()) {
         'date_of_birth' => $row['date_of_birth'],
         'email' => $row['email'],
         'contact_number' => $row['contact_number'],
+        'address' => $row['address'],
         'joined' => date("F d, Y", strtotime($row['date_created']))
     ];
 

@@ -49,11 +49,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["verify"])) {
             $conn->begin_transaction();
 
             $user_sql = "INSERT INTO users 
-                (username, password, last_name, middle_name, first_name, gender, date_of_birth, email, contact_number, role)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'patient')";
+                                    (username, password, last_name, middle_name, first_name, gender, date_of_birth, email, contact_number, role, branch_id)
+                                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'patient', ?)";
             $user_stmt = $conn->prepare($user_sql);
-            $user_stmt->bind_param("sssssssss", $username, $hashed_password, $lastName, $middleName, $firstName, $gender, $dateofBirth, $email, $contactNumber
-            );
+            $user_stmt->bind_param("sssssssssi", $username, $hashed_password, $lastName, $middleName, $firstName, $gender, $dateofBirth, $email, $contactNumber, $appointmentBranch);
 
             if (!$user_stmt->execute()) {
                 throw new Exception("User insert failed: " . $user_stmt->error);

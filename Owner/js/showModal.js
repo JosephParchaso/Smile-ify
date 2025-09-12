@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ${isEdit ? `
                 <div class="form-group">
                     <input type="text" id="userName" class="form-control" value="${data.username}" disabled>
-                    <label for="userName" class="form-label">Date Created</label>
+                    <label for="userName" class="form-label">Username</label>
                 </div>` : ""}
 
                 <div class="form-group">

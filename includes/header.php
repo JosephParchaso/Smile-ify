@@ -57,6 +57,10 @@ $role = $_SESSION['role'] ?? null;
         <!-- Admin-specific -->
         <script src="<?= BASE_URL ?>/Admin/js/loadCalendar.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/loadProfileDetails.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Admin/js/loadRegisteredPatients.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Admin/js/loadRecentBookings.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Admin/js/loadInactivePatients.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Admin/js/showModal.js?v=<?= time(); ?>"></script>
 
     <?php elseif ($role === 'patient'): ?>
         <!-- Patient-specific -->
@@ -74,5 +78,13 @@ $role = $_SESSION['role'] ?? null;
     <!-- PHP constant to JS -->
     <script>
         const BASE_URL = "<?= BASE_URL ?>";
+        
+        if (!sessionStorage.getItem("tab_token")) {
+            sessionStorage.setItem("tab_token", "<?= $_SESSION['tab_token'] ?>");
+        }
+
+        if (sessionStorage.getItem("tab_token") !== "<?= $_SESSION['tab_token'] ?>") {
+            sessionStorage.setItem("tab_token", "<?= $_SESSION['tab_token'] ?>");
+        }
     </script>
 </head>

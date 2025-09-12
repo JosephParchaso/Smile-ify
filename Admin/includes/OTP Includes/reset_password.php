@@ -26,7 +26,7 @@ if (isset($_SESSION['updateError'])) {
             <?php if (!empty($passwordError)): ?>
                 <div class="error"><?= htmlspecialchars($passwordError) ?></div>
             <?php endif; ?>
-            <form action="<?= BASE_URL ?>/Patient/processes/OTP Processes/reset_password.php" method="POST">
+            <form action="<?= BASE_URL ?>/Admin/processes/OTP Processes/reset_password.php" method="POST">
                 <div class="form-group">
                     <input type="password" id="newPassword" name="new_password" class="form-control" placeholder=" " required autocomplete="off" 
                     pattern="^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$" 
@@ -43,7 +43,7 @@ if (isset($_SESSION['updateError'])) {
                 </div>
                 <div class="button-group">
                     <button type="submit" name="verify" class="form-button confirm-btn" id="confirmButton">Confirm</button>
-                    <button type="button" onclick="sessionStorage.clear(); window.location.href='<?= BASE_URL ?>/Patient/pages/profile.php'" class="form-button cancel-btn">Cancel</button>
+                    <button type="button" onclick="sessionStorage.clear(); window.location.href='<?= BASE_URL ?>/Admin/pages/profile.php'" class="form-button cancel-btn">Cancel</button>
                 </div>
             </form>
         </div>
