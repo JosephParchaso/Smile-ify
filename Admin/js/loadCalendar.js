@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         height: 650,
         events: {
-            url: `${BASE_URL}/Admin/processes/load_calendar.php`,
+            url: `${BASE_URL}/Admin/processes/calendar/load_calendar.php`,
             method: 'GET',
             extraParams: {
                 branch_id: branchId
@@ -30,7 +30,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 <h2>Appointment Details</h2>
                 <p><strong>Patient:</strong> ${appointment.patient}</p>
                 <p><strong>Dentist:</strong> ${appointment.dentist ? "Dr. " + appointment.dentist : "Available Dentist"}</p>
-                <p><strong>Branch:</strong> ${appointment.branch}</p>
                 <p><strong>Service:</strong> ${appointment.service}</p>
                 <p><strong>Date:</strong> ${info.event.start.toLocaleDateString()}</p>
                 <p><strong>Time:</strong> ${info.event.start.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</p>

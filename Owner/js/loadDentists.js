@@ -1,7 +1,7 @@
 $(document).ready(function() { 
     if (!$.fn.DataTable.isDataTable('#dentistsTable')) {
         $('#dentistsTable').DataTable({
-            "ajax": `${BASE_URL}/Owner/processes/load_dentists.php`,
+            "ajax": `${BASE_URL}/Owner/processes/employees/load_dentists.php`,
             "pageLength": 20,
             "lengthChange": false,
             "ordering": true,

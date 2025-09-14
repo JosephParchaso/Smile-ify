@@ -12,9 +12,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             let url = "";
             if (type === "appointment") {
-                url = `${BASE_URL}/Patient/processes/get_appointment_details.php?id=${id}`;
+                url = `${BASE_URL}/Patient/processes/profile/get_appointment_details.php?id=${id}`;
             } else if (type === "transaction") {
-                url = `${BASE_URL}/Patient/processes/get_dental_transaction_details.php?id=${id}`;
+                url = `${BASE_URL}/Patient/processes/profile/get_dental_transaction_details.php?id=${id}`;
             }
 
             fetch(url)
@@ -240,7 +240,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                                 try {
                                     const res = await fetch(
-                                        `${BASE_URL}/Patient/processes/mark_prescription_downloaded.php`,
+                                        `${BASE_URL}/Patient/processes/profile/mark_prescription_downloaded.php`,
                                         {
                                             method: "POST",
                                             headers: { "Content-Type": "application/json" },
@@ -257,11 +257,11 @@ document.addEventListener("DOMContentLoaded", () => {
                                         btn.disabled = true;
                                     } else {
                                         console.error("Update failed:", json.error);
-                                        window.location.href = `${BASE_URL}/Patient/processes/mark_prescription_downloaded.php?error=1`;
+                                        window.location.href = `${BASE_URL}/Patient/processes/profile/mark_prescription_downloaded.php?error=1`;
                                     }
                                 } catch (err) {
                                     console.error("Update fetch error:", err);
-                                    window.location.href = `${BASE_URL}/Patient/processes/mark_prescription_downloaded.php?error=1`;
+                                    window.location.href = `${BASE_URL}/Patient/processes/profile/mark_prescription_downloaded.php?error=1`;
                                 }
                             });
                         }

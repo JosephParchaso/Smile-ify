@@ -38,7 +38,7 @@ $totalAppointmentsMonth = 42;
             <h2><span class="material-symbols-outlined">calendar_month</span> Today's Appointments</h2>
             <div class="appointment">Today: <?= $todayCount ?></div>
             <div class="appointment">Tomorrow: <?= $tomorrowCount ?></div>
-            <a href="<?= BASE_URL ?>/Admin/pages/schedule.php" class="card-link">View Schedule</a>
+            <a href="<?= BASE_URL ?>/Admin/pages/calendar.php" class="card-link">View Schedule</a>
             <a href="<?= BASE_URL ?>/Admin/pages/add_appointment.php" class="card-link">Add Appointment</a>
         </div>
 

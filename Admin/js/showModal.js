@@ -9,11 +9,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
             let url = "";
             if (type === "patient") {
-                url = `${BASE_URL}/Admin/processes/get_patient_details.php?id=${id}`;
+                url = `${BASE_URL}/Admin/processes/patients/get_patient_details.php?id=${id}`;
             } else if (type === "booking") {
-                url = `${BASE_URL}/Admin/processes/get_booking_details.php?id=${id}`;
+                url = `${BASE_URL}/Admin/processes/patients/get_booking_details.php?id=${id}`;
             } else if (type === "inactive") {
-                url = `${BASE_URL}/Admin/processes/get_inactive_patient_details.php?id=${id}`;
+                url = `${BASE_URL}/Admin/processes/patients/get_inactive_patient_details.php?id=${id}`;
             }
 
             fetch(url)
@@ -29,12 +29,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (type === "patient" || type === "inactive") {
                         modalBody.innerHTML = `
                             <h2>Patient Details</h2>
-                            <p><strong>Name:</strong> ${data.last_name}, ${data.first_name} ${data.middle_name ?? ''}</p>
-                            <p><strong>Email:</strong> ${data.email}</p>
-                            <p><strong>Contact:</strong> ${data.contact_number ?? '-'}</p>
-                            <p><strong>Gender:</strong> ${data.gender ?? '-'}</p>
-                            <p><strong>Date of Birth:</strong> ${data.date_of_birth ?? '-'}</p>
-                            <p><strong>Status:</strong> ${type === "inactive" ? "Inactive" : "Active"}</p>
+                            <p><strong>Name:</strong><span>${data.last_name}, ${data.first_name} ${data.middle_name ?? ''}</span></p>
+                            <p><strong>Email:</strong><span>${data.email}</span></p>
+                            <p><strong>Contact:</strong><span>${data.contact_number ?? '-'}</span></p>
+                            <p><strong>Gender:</strong><span>${data.gender ?? '-'}</span></p>
+                            <p><strong>Date of Birth:</strong><span>${data.date_of_birth ?? '-'}</span></p>
+                            <p><strong>Address:</strong><span>${data.address ?? '-'}</span></p>
+                            <p><strong>Status:</strong><span>${type === "inactive" ? "Inactive" : "Active"}</span></p>
                         `;
                         manageModal.style.display = "block";
                     }
@@ -43,14 +44,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     else if (type === "booking") {
                         modalBody.innerHTML = `
                             <h2>Booking Details</h2>
-                            <p><strong>Patient:</strong> ${data.patient_name}</p>
-                            <p><strong>Dentist:</strong> ${data.dentist ?? 'Available Dentist'}</p>
-                            <p><strong>Branch:</strong> ${data.branch}</p>
-                            <p><strong>Service:</strong> ${data.service}</p>
-                            <p><strong>Date:</strong> ${data.appointment_date}</p>
-                            <p><strong>Time:</strong> ${data.appointment_time}</p>
-                            <p><strong>Notes:</strong> ${data.notes ?? '-'}</p>
-                            <p><strong>Status:</strong> ${data.status}</p>
+                            <p><strong>Patient:</strong><span>${data.patient_name}</span></p>
+                            <p><strong>Dentist:</strong><span>${data.dentist ?? 'Available Dentist'}</span></p>
+                            <p><strong>Branch:</strong><span>${data.branch}</span></p>
+                            <p><strong>Service:</strong><span>${data.service}</span></p>
+                            <p><strong>Date:</strong><span>${data.appointment_date}</span></p>
+                            <p><strong>Time:</strong><span>${data.appointment_time}</span></p>
+                            <p><strong>Notes:</strong><span>${data.notes ?? '-'}</span></p>
+                            <p><strong>Status:</strong><span>${data.status}</span></p>
                         `;
                         manageModal.style.display = "block";
                     }

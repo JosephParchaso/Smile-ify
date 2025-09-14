@@ -1,7 +1,7 @@
 $(document).ready(function() {
     if (!$.fn.DataTable.isDataTable('#inactiveTable')) {
         $('#inactiveTable').DataTable({
-            "ajax": `${BASE_URL}/Admin/processes/load_inactive_patients.php`,
+            "ajax": `${BASE_URL}/Admin/processes/patients/load_inactive_patients.php`,
             "pageLength": 20,
             "lengthChange": false,
             "ordering": true,

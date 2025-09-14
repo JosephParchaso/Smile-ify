@@ -40,7 +40,7 @@ $updateError = $_SESSION['updateError'] ?? "";
 
     <div id="editProfileModal" class="edit-profile-modal">
         <div class="edit-profile-modal-content">
-            <form id="editProfileForm" method="POST" action="<?= BASE_URL ?>/Admin/processes/update_profile.php" autocomplete="off">
+            <form id="editProfileForm" method="POST" action="<?= BASE_URL ?>/Admin/processes/profile/update_profile.php" autocomplete="off">
                 <div class="form-group phone-group">
                     <input type="tel" id="contactNumber" class="form-control" name="contactNumber" oninput="this.value = this.value.replace(/[^0-9]/g, '')" pattern="[0-9]{10}" title="Mobile number must be 10 digits" required maxlength="10" />
                     <label for="contactNumber" class="form-label">Mobile Number <span class="required">*</span></label>

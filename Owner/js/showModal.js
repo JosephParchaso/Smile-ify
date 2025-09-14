@@ -9,9 +9,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             let url = "";
             if (type === "admin") {
-                url = `${BASE_URL}/Owner/processes/get_admin_details.php?id=${id}`;
+                url = `${BASE_URL}/Owner/processes/employees/get_admin_details.php?id=${id}`;
             } else if (type === "dentist") {
-                url = `${BASE_URL}/Owner/processes/get_dentist_details.php?id=${id}`;
+                url = `${BASE_URL}/Owner/processes/employees/get_dentist_details.php?id=${id}`;
             }
 
             fetch(url)
@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const isEdit = !!data;
         employeeBody.innerHTML = `
             <h2>${isEdit ? "Manage Admin" : "Add Admin"}</h2>
-            <form id="adminForm" action="${BASE_URL}/Owner/processes/${isEdit ? "update_admin.php" : "insert_admin.php"}" method="POST" autocomplete="off">
+            <form id="adminForm" action="${BASE_URL}/Owner/processes/employees/${isEdit ? "update_admin.php" : "insert_admin.php"}" method="POST" autocomplete="off">
                 ${isEdit ? `<input type="hidden" name="user_id" value="${data.user_id}">` : ""}
 
                 ${isEdit ? `
@@ -149,7 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </form>
         `;
 
-        fetch(`${BASE_URL}/Owner/processes/get_branches.php`)
+        fetch(`${BASE_URL}/Owner/processes/employees/get_branches.php`)
         .then(res => res.json())
         .then(branches => {
             const branchSelect = document.getElementById("appointmentBranch");
@@ -168,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const selectedBranches = isEdit && data.branches ? data.branches.map(b => parseInt(b)) : [];
         employeeBody.innerHTML = `
             <h2>${isEdit ? "Manage Dentist" : "Add Dentist"}</h2>
-            <form id="dentistForm" action="${BASE_URL}/Owner/processes/${isEdit ? "update_dentist.php" : "insert_dentist.php"}" method="POST" enctype="multipart/form-data" autocomplete="off">
+            <form id="dentistForm" action="${BASE_URL}/Owner/processes/employees/${isEdit ? "update_dentist.php" : "insert_dentist.php"}" method="POST" enctype="multipart/form-data" autocomplete="off">
                 ${isEdit ? `<input type="hidden" name="dentist_id" value="${data.dentist_id}">` : ""}
 
                 <div class="form-group">
@@ -268,7 +268,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </form>
         `;
 
-        fetch(`${BASE_URL}/Owner/processes/get_branches.php`)
+        fetch(`${BASE_URL}/Owner/processes/employees/get_branches.php`)
         .then(res => res.json())
         .then(branches => {
             const container = document.getElementById("appointmentBranchesCheckboxes");

@@ -146,6 +146,8 @@ If your clinic has multiple branches and dentists rotate, go with Option 2. many
 time consume in each service
 
 email checker
+
+dentist owner can edit or admin
 ==========================================================================================================================================================================================
 
 dungan register different user

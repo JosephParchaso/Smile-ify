@@ -1,6 +1,6 @@
 $(document).ready(function() {
     $('#transactionTable').DataTable({
-        "ajax": `${BASE_URL}/Patient/processes/load_dental_transactions.php`,
+        "ajax": `${BASE_URL}/Patient/processes/profile/load_dental_transactions.php`,
         "pageLength": 20,
         "lengthChange": false,
         "ordering": true,
