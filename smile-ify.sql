@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 08, 2025 at 02:53 AM
+-- Generation Time: Sep 16, 2025 at 03:10 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -277,7 +277,7 @@ CREATE TABLE `dentist` (
 --
 
 INSERT INTO `dentist` (`dentist_id`, `last_name`, `middle_name`, `first_name`, `gender`, `date_of_birth`, `email`, `contact_number`, `license_number`, `date_started`, `status`, `signature_image`, `date_created`) VALUES
-(1, 'Ulanday', 'Mansanitas', 'Precious', 'Female', '2025-01-02', 'precious@gmail.com', '9789321654', 'LIC-100111', '2023-01-15', 'Active', '68be0b0fa22c2_pretot.png', '2025-07-11 19:40:26'),
+(1, 'Ulanday', 'Mansanitass', 'Precious', 'Female', '2025-01-02', 'precious@gmail.com', '9789321654', 'LIC-100111', '2023-01-15', 'Active', '68be0b0fa22c2_pretot.png', '2025-07-11 19:40:26'),
 (2, 'Chan', 'Marie', 'Kyla', 'Female', '2025-08-29', 'kyla.marie@gmail.com', '2112321321', 'LIC-1002', '2023-02-10', 'Active', '68be0b1e6d278_chiku.png', '2025-07-11 19:40:26'),
 (3, 'Summers', '', 'Daze', 'Female', '2025-09-09', 'daze@gmail.com', '0912345680', 'LIC-1003', '2023-03-05', 'Active', '68be0b26e6fc2_daze.png', '2025-07-11 19:40:26'),
 (4, 'San Jose', '', 'Solene', 'Female', '2025-09-12', 'solene@gmail.com', '0912345681', 'LIC-1004', '2023-04-01', 'Active', '68be0b34297fb_sol.png', '2025-07-11 19:40:26'),
@@ -315,7 +315,8 @@ INSERT INTO `dentist_branch` (`dentist_branch_id`, `dentist_id`, `branch_id`) VA
 (74, 1, 1),
 (75, 1, 2),
 (76, 1, 3),
-(77, 8, 2);
+(77, 8, 2),
+(78, 6, 2);
 
 -- --------------------------------------------------------
 
@@ -437,7 +438,9 @@ INSERT INTO `notifications` (`notification_id`, `user_id`, `message`, `is_read`,
 (66, 28, 'Your appointment on 2025-09-12 at 10:30 was successfully booked!', 1, '2025-09-07 19:43:36'),
 (67, 28, 'Your appointment on 2025-09-11 at 10:30 was successfully booked!', 1, '2025-09-07 19:44:03'),
 (68, 28, 'Your appointment on 2025-09-12 at 09:45 was successfully booked!', 1, '2025-09-07 19:47:38'),
-(69, 2, 'Your password was successfully reset on September 8, 2025, 6:12 am. If this wasn’t you, please contact support immediately.', 0, '2025-09-07 22:12:42');
+(69, 2, 'Your password was successfully reset on September 8, 2025, 6:12 am. If this wasn’t you, please contact support immediately.', 0, '2025-09-07 22:12:42'),
+(70, 2, 'Your password was successfully reset on September 13, 2025, 3:37 am. If this wasn’t you, please contact support immediately.', 0, '2025-09-12 19:37:06'),
+(71, 2, 'Your password was changed successfully on September 13, 2025, 4:00 am. If this wasn’t you, please contact support immediately.', 0, '2025-09-12 20:00:18');
 
 -- --------------------------------------------------------
 
@@ -472,6 +475,34 @@ INSERT INTO `service` (`service_id`, `name`, `price`, `status`, `date_created`) 
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `supply`
+--
+
+CREATE TABLE `supply` (
+  `supply_id` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `description` text DEFAULT NULL,
+  `category` varchar(50) DEFAULT NULL,
+  `unit` varchar(20) NOT NULL,
+  `quantity` int(11) NOT NULL DEFAULT 0,
+  `reorder_level` int(11) NOT NULL DEFAULT 0,
+  `expiration_date` date DEFAULT NULL,
+  `branch_id` int(11) NOT NULL,
+  `status` enum('Available','Out of Stock','Inactive') DEFAULT 'Available',
+  `date_created` timestamp NOT NULL DEFAULT current_timestamp(),
+  `date_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `supply`
+--
+
+INSERT INTO `supply` (`supply_id`, `name`, `description`, `category`, `unit`, `quantity`, `reorder_level`, `expiration_date`, `branch_id`, `status`, `date_created`, `date_updated`) VALUES
+(1, 'mask', 'desc', 'cate', 'unit', 12, 12, NULL, 1, 'Available', '2025-09-16 00:20:18', '2025-09-16 00:47:32');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `users`
 --
 
@@ -499,8 +530,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `username`, `password`, `last_name`, `middle_name`, `first_name`, `gender`, `date_of_birth`, `email`, `contact_number`, `address`, `role`, `branch_id`, `date_started`, `status`, `date_created`) VALUES
-(1, 'owner01', '$2y$10$EABxPBtN.h3tZJ635PA61.HsgAlxeTn6bZWxOA4hXTkYX/Ls9pLi.', 'Owner', 'Dummy', 'Sample', 'Male', '0000-00-00', 'josephparchaso@gmail.com', '9998887777', 'decaasdad', 'owner', NULL, NULL, 'Active', '2025-06-14 10:39:32'),
-(2, 'admin01', '$2y$10$fs8iUS2ahGMXZyNsC5C7.uVfOyG.ele6uTjXyrto46PUVFIYcnnEa', 'Potot', 'Travero', 'Rix', 'Female', '2000-04-05', '18102727@usc.edu.ph', '9950217941', 'San Miguel, Cordovaa', 'admin', 1, '2025-08-17', 'Active', '2025-06-14 10:39:32'),
+(1, 'owner01', '$2y$10$EABxPBtN.h3tZJ635PA61.HsgAlxeTn6bZWxOA4hXTkYX/Ls9pLi.', 'Owner', 'Dummy', 'Sample', 'Male', '0000-00-00', 'josephparchaso@gmail.com', '9998887777', 'decaasdadadaa', 'owner', NULL, NULL, 'Active', '2025-06-14 10:39:32'),
+(2, 'admin01', '$2y$10$JtynvoGglxpyos2TNPilSOk1xtuRKwfAeTiaNi2vaFVDIucaHClZO', 'Potot', 'Travero', 'Rix', 'Female', '2000-04-05', '18102727@usc.edu.ph', '9950217941', 'San Miguel, Cordovaaa', 'admin', 1, '2025-08-17', 'Active', '2025-06-14 10:39:32'),
 (3, 'patient01', '$2a$12$RJZbVUZ3JDsUjDB5eFTyiuACuCvxFJyrQI4cE9u8fQ2ChJf/.Srdq', 'Patient', 'Dummy', 'Sample', 'Male', '0000-00-00', '', '9123456789', NULL, 'patient', NULL, NULL, 'Active', '2025-06-14 10:39:32'),
 (8, 'ParchasoJ', '$2y$10$9fqT9Gco1CtAKVKu6bSDgeh9SFZbg/bb8GJR5OJrrVIJycPZgqxWC', 'Parchaso', 'Espana', 'Jhon', 'Male', '0000-00-00', '9055626239', 'josephparc', NULL, 'owner', NULL, NULL, 'Active', '2025-07-11 22:27:56'),
 (9, 'ParchasoJJ', '$2y$10$W.BXzGapcq9J/oxpk1RHYeaYMxBCz0fSTp8YiRh41YSUebQ12Hjhy', 'Parchaso', 'Joseph', 'Jhon', 'Male', '0000-00-00', '9055626239', 'josephparc', NULL, 'owner', NULL, NULL, 'Active', '2025-07-11 22:30:07'),
@@ -522,7 +553,7 @@ INSERT INTO `users` (`user_id`, `username`, `password`, `last_name`, `middle_nam
 (25, 'AchasGG', '$2y$10$csrxQ1iwxHEcfkhQHKf3se586DUSZSK.WhXgNKB39m9js/HfPwuYK', 'Achas', '', 'Gab', 'Male', '0000-00-00', '18100807@usc.edu.ph', '0922626262', NULL, 'patient', NULL, NULL, 'Active', '2025-07-14 10:25:16'),
 (26, 'DazeP', '$2y$10$du.PYFR4vnJv9ecdNWDox.UUDcjoC0cTUAvtnsnSG.tXwdqn5vLKO', 'Daze', '', 'Pretot', 'Male', '0000-00-00', 'parchasoresidence@gmail.com', '9055626239', NULL, 'patient', NULL, NULL, 'Active', '2025-07-14 10:33:22'),
 (27, 'ChikuY', '$2y$10$h7C7FiWzWuf7oS0hUaav/OZwJX4rYOExaPk3NJu3O39mmsutOsUvm', 'Chiku', 'Wix', 'Yel', 'Female', '0000-00-00', 'parchasoresidence@gmail.com', '9055626239', NULL, 'patient', NULL, NULL, 'Active', '2025-07-14 11:14:19'),
-(28, 'Josephp', '$2y$10$WFRSiU6H8ER6LfQ2KYYdWupYZknVTM6WGZl39Lt0glRYJdr7rTpiW', 'Joseph', '', 'parch', 'Male', '1999-08-17', 'theartp1@gmail.com', '9055626239', 'Block 22, Lot 6, Deca 4 Bankal Lapu Lapu City Cebu', 'patient', NULL, NULL, 'Active', '2025-07-14 11:26:32'),
+(28, 'Josephp', '$2y$10$WFRSiU6H8ER6LfQ2KYYdWupYZknVTM6WGZl39Lt0glRYJdr7rTpiW', 'Joseph', '', 'parch', 'Male', '1999-08-17', 'theartp1@gmail.com', '9055626239', 'Block 22, Lot 6, Deca 4 Bankal Lapu Lapu City Cebuua', 'patient', 1, NULL, 'Active', '2025-07-14 11:26:32'),
 (29, 'pototj', '$2y$10$9Swzre20c9pLQ8ejMr1ySufYwaARXiCYpp8sUXyb5CP1oI7xNjtC2', 'potot', '', 'jj', 'Male', '0000-00-00', '18102727@usc.edu.ph', '9527194102', NULL, 'patient', NULL, NULL, 'Active', '2025-07-14 15:48:41'),
 (30, 'pret', '$2y$10$z7r/dpwWQ2m.RZK8EcwJGu2MkUM3tRY2EgG/7OyfSubN.bmXm2yTW', 'pre', '', 'tot', 'Male', '0000-00-00', '18102727@usc.edu.ph', '9205251545', NULL, 'patient', NULL, NULL, 'Active', '2025-07-14 16:03:59'),
 (31, 'Parchaso_J', '$2y$10$14IUZVVauGdjCe04vSuVTechUS8.EYYzOO5yZ0Li6Lq/IUhGx0.Ny', 'Parchaso', 'Espana', 'Jhon', 'Female', '0000-00-00', '18100807@usc.edu.ph', '9055626239', NULL, 'patient', NULL, NULL, 'Active', '2025-07-31 14:32:30'),
@@ -634,6 +665,13 @@ ALTER TABLE `service`
   ADD PRIMARY KEY (`service_id`);
 
 --
+-- Indexes for table `supply`
+--
+ALTER TABLE `supply`
+  ADD PRIMARY KEY (`supply_id`),
+  ADD KEY `fk_supply_branch` (`branch_id`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -691,7 +729,7 @@ ALTER TABLE `dentist`
 -- AUTO_INCREMENT for table `dentist_branch`
 --
 ALTER TABLE `dentist_branch`
-  MODIFY `dentist_branch_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
+  MODIFY `dentist_branch_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;
 
 --
 -- AUTO_INCREMENT for table `dentist_service`
@@ -703,13 +741,19 @@ ALTER TABLE `dentist_service`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70;
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
 
 --
 -- AUTO_INCREMENT for table `service`
 --
 ALTER TABLE `service`
   MODIFY `service_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT for table `supply`
+--
+ALTER TABLE `supply`
+  MODIFY `supply_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -775,6 +819,12 @@ ALTER TABLE `dentist_service`
 --
 ALTER TABLE `notifications`
   ADD CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `supply`
+--
+ALTER TABLE `supply`
+  ADD CONSTRAINT `fk_supply_branch` FOREIGN KEY (`branch_id`) REFERENCES `branch` (`branch_id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `users`
