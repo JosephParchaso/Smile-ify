@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 16, 2025 at 03:10 AM
+-- Generation Time: Sep 16, 2025 at 09:57 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -86,7 +86,9 @@ INSERT INTO `appointment_transaction` (`appointment_transaction_id`, `user_id`, 
 (39, 47, 2, 10, 3, '2025-09-04', '15:00:00', '', '2025-09-01 15:43:24', 'Pending'),
 (40, 28, 2, 10, 3, '2025-09-12', '10:30:00', '', '2025-09-07 19:43:36', 'Pending'),
 (41, 28, 1, 1, 1, '2025-09-11', '10:30:00', '', '2025-09-07 19:44:03', 'Pending'),
-(42, 28, 1, 5, NULL, '2025-09-12', '09:45:00', '', '2025-09-07 19:47:38', 'Pending');
+(42, 28, 1, 5, NULL, '2025-09-12', '09:45:00', '', '2025-09-07 19:47:38', 'Pending'),
+(43, 53, 1, 1, 1, '2025-10-04', '14:15:00', '', '2025-09-16 19:05:45', 'Pending'),
+(44, 54, 1, 1, NULL, '2025-09-19', '09:00:00', '', '2025-09-16 19:22:37', 'Pending');
 
 -- --------------------------------------------------------
 
@@ -440,7 +442,11 @@ INSERT INTO `notifications` (`notification_id`, `user_id`, `message`, `is_read`,
 (68, 28, 'Your appointment on 2025-09-12 at 09:45 was successfully booked!', 1, '2025-09-07 19:47:38'),
 (69, 2, 'Your password was successfully reset on September 8, 2025, 6:12 am. If this wasn’t you, please contact support immediately.', 0, '2025-09-07 22:12:42'),
 (70, 2, 'Your password was successfully reset on September 13, 2025, 3:37 am. If this wasn’t you, please contact support immediately.', 0, '2025-09-12 19:37:06'),
-(71, 2, 'Your password was changed successfully on September 13, 2025, 4:00 am. If this wasn’t you, please contact support immediately.', 0, '2025-09-12 20:00:18');
+(71, 2, 'Your password was changed successfully on September 13, 2025, 4:00 am. If this wasn’t you, please contact support immediately.', 0, '2025-09-12 20:00:18'),
+(72, 53, 'Welcome to Smile-ify! Your account was successfully created.', 0, '2025-09-16 19:05:45'),
+(73, 53, 'Your appointment on 2025-10-04 at 14:15 was successfully booked!', 0, '2025-09-16 19:05:45'),
+(74, 54, 'Welcome to Smile-ify! Your account was created. Username: Tan_P | Password: tan9464%', 0, '2025-09-16 19:22:37'),
+(75, 54, 'Your appointment on 2025-09-19 at 09:00 was successfully booked!', 0, '2025-09-16 19:22:37');
 
 -- --------------------------------------------------------
 
@@ -577,7 +583,9 @@ INSERT INTO `users` (`user_id`, `username`, `password`, `last_name`, `middle_nam
 (49, 'asd_A', '$2y$10$mWpr.dorheR9kWYUjq71n.DYPE98YkIwheXxDpRFejM88d6GLslRq', 'asd', 'asd', 'asd', 'Female', '2025-09-04', 'josephparchasooo@gmail.com', '8481198919', '0', 'admin', 3, '2025-09-24', 'Inactive', '2025-09-07 21:56:18'),
 (50, 'parch_J', '$2y$10$Pnho0/H8Abi2ZzJcSapU8.5YBJJKsLidoJAr1uCfibTzM9MHLZx82', 'parch', '', 'jj', 'Female', '2025-09-04', '21313@gmail.com', '1232141242', '0', 'admin', 3, '2025-09-10', 'Active', '2025-09-07 22:00:07'),
 (51, 'adny_A', '$2y$10$7KPScD0EP86YwVfwAxj7tu50e5rO1dDFfSm1SmjYg1dL66SUDS3QC', 'adny', '', 'adsa', 'Female', '2025-09-09', 'j@gmail.com', '1324412414', '0', 'admin', 1, '2025-09-24', 'Inactive', '2025-09-07 22:03:04'),
-(52, 'potot_R', '$2y$10$mnp55PKAKO0Yawgeg2FWqeE4ejo9aK2RCto5E2EtfWHSY6IqNKwjK', 'potot', '', 'rix', 'Male', '2025-09-02', 'asd@gmail.com', '1243141414', 'deca', 'admin', 1, '2025-09-24', 'Active', '2025-09-07 22:05:06');
+(52, 'potot_R', '$2y$10$mnp55PKAKO0Yawgeg2FWqeE4ejo9aK2RCto5E2EtfWHSY6IqNKwjK', 'potot', '', 'rix', 'Male', '2025-09-02', 'asd@gmail.com', '1243141414', 'deca', 'admin', 1, '2025-09-24', 'Active', '2025-09-07 22:05:06'),
+(53, 'bakol_K', NULL, 'bakol', '', 'kolad', 'Male', '2025-09-16', 'kolado@yahoo.com', '3454353453', NULL, 'patient', 1, NULL, 'Active', '2025-09-16 19:05:45'),
+(54, 'Tan_P', '$2y$10$TZkHD748QzNkgjjvZNpUzOHXTunwayEU9J38.Net11EtuWWWd9lY6', 'Tan', '', 'Pilep', 'Male', '2025-09-11', 'josephparchaso@gmail.com', '1231313131', NULL, 'patient', 1, NULL, 'Active', '2025-09-16 19:22:37');
 
 --
 -- Indexes for dumped tables
@@ -687,7 +695,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `appointment_transaction`
 --
 ALTER TABLE `appointment_transaction`
-  MODIFY `appointment_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `appointment_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT for table `branch`
@@ -741,7 +749,7 @@ ALTER TABLE `dentist_service`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
 
 --
 -- AUTO_INCREMENT for table `service`
@@ -759,7 +767,7 @@ ALTER TABLE `supply`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
 
 --
 -- Constraints for dumped tables

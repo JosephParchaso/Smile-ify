@@ -4,13 +4,25 @@ session_start();
 require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
 
+function isValidEmailDomain($email) {
+    $domain = substr(strrchr($email, "@"), 1);
+    return checkdnsrr($domain, "MX");
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $_SESSION['verified_data'] = $_POST;
+    $email = trim($_POST["email"]);
+
+    if (!isValidEmailDomain($email)) {
+        $_SESSION['otp_error'] = "Email domain is not valid or unreachable.";
+        header("Location: " . BASE_URL . "/index.php");
+        exit();
+    }
 
     $otp = rand(100000, 999999);
     $_SESSION['otp'] = $otp;
     $_SESSION['otp_created'] = time();
-    $_SESSION['mail'] = $_POST["email"];
+    $_SESSION['mail'] = $email;
 
     require BASE_PATH . '/Mail/phpmailer/PHPMailerAutoload.php';
     $mail = new PHPMailer;
@@ -25,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $mail->Password = 'xnlc pyjn okdg ihwd';
 
     $mail->setFrom('theartp2@gmail.com', 'Smile-ify OTP Verification');
-    $mail->addAddress($_POST["email"]);
+    $mail->addAddress($email);
 
     $mail->isHTML(true);
     $mail->Subject = "Smile-ify Verification Code";

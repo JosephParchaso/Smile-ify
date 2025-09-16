@@ -12,8 +12,11 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 }
 require_once BASE_PATH . '/includes/header.php';
 require_once BASE_PATH . '/Admin/includes/navbar.php';
+$updateSuccess = $_SESSION['updateSuccess'] ?? "";
+$updateError = $_SESSION['updateError'] ?? "";
 ?>
 <title>Schedules</title>
+
 <div class="calendar-container">
     <div id="calendar"></div>
 </div>
@@ -21,11 +24,25 @@ require_once BASE_PATH . '/Admin/includes/navbar.php';
 
 <div id="appointmentModalDetails" class="manage-appointment-modal">
     <div class="manage-appointment-modal-content">
-        <div id="modalBody" class="manage-appointment-modal-content-body">
+        <div id="modalBody" class="manage-appointment-modal-content-body">  
             <!-- Appointment info will be loaded here -->
         </div>
     </div>
 </div>
+
+<?php if (!empty($updateSuccess) || !empty($updateError)): ?>
+    <div id="toastContainer">
+        <?php if (!empty($updateSuccess)): ?>
+            <div class="toast success"><?= htmlspecialchars($updateSuccess) ?></div>
+            <?php unset($_SESSION['updateSuccess']); ?>
+        <?php endif; ?>
+
+        <?php if (!empty($updateError)): ?>
+            <div class="toast error"><?= htmlspecialchars($updateError) ?></div>
+            <?php unset($_SESSION['updateError']); ?>
+        <?php endif; ?>
+    </div>
+<?php endif; ?>
 
 <?php require_once BASE_PATH . '/includes/footer.php'; ?>
 

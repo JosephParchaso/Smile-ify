@@ -42,7 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["verify"])) {
         $notes = $_SESSION['verified_data']['notes'];
 
         $username = generateUniqueUsername($lastName, $firstName, $conn);
-        $default_password = "passworduser";
+        $default_password = generatePassword($lastName);
         $hashed_password = password_hash($default_password, PASSWORD_DEFAULT);
 
         try {
@@ -163,5 +163,18 @@ function generateUniqueUsername($lastName, $firstName, $conn) {
     } while ($check_stmt->num_rows > 0);
 
     return $username;
+}
+
+function generatePassword($lastName) {
+    $cleanLastName = preg_replace("/[^a-zA-Z]/", "", $lastName);
+
+    $prefix = strtolower($cleanLastName);
+
+    $number = rand(1000, 9999);
+
+    $specials = ['!', '@', '#', '$', '%'];
+    $symbol = $specials[array_rand($specials)];
+
+    return $prefix . $number . $symbol;
 }
 ?>

@@ -4,6 +4,11 @@ session_start();
 require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
 
+function isValidEmailDomain($email) {
+    $domain = substr(strrchr($email, "@"), 1);
+    return checkdnsrr($domain, "MX");
+}
+
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'owner') {
     header("Location: " . BASE_URL . "/index.php");
     exit();
@@ -21,6 +26,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $status         = $_POST['status'];
     $branches       = $_POST['branches'] ?? [];
 
+    if (!empty($email) && !isValidEmailDomain($email)) {
+        $_SESSION['updateError'] = "Email domain is not valid or unreachable.";
+        header("Location: " . BASE_URL . "/Owner/pages/employees.php?tab=dentist");
+        exit();
+    }
+
     $signatureImage = null;
     if (isset($_FILES['signatureImage']) && $_FILES['signatureImage']['error'] === UPLOAD_ERR_OK) {
         $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/signatures/';
@@ -36,23 +47,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
-            $stmt = $conn->prepare("
-                INSERT INTO dentist (last_name, first_name, middle_name, gender, date_of_birth, email, contact_number, license_number, status, signature_image)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ");
-            $stmt->bind_param(
-                "ssssssssss",
-                $lastName,
-                $firstName,
-                $middleName,
-                $gender,
-                $dateofBirth,
-                $email,
-                $contactNumber,
-                $licenseNumber,
-                $status,
-                $signatureImage
-            );
+        $stmt = $conn->prepare("
+            INSERT INTO dentist (last_name, first_name, middle_name, gender, date_of_birth, email, contact_number, license_number, status, signature_image)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ");
+        $stmt->bind_param(
+            "ssssssssss",
+            $lastName,
+            $firstName,
+            $middleName,
+            $gender,
+            $dateofBirth,
+            $email,
+            $contactNumber,
+            $licenseNumber,
+            $status,
+            $signatureImage
+        );
 
         if ($stmt->execute()) {
             $dentistId = $stmt->insert_id;

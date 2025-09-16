@@ -13,6 +13,9 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 
 $currentPage = 'index';
 
+$updateSuccess = $_SESSION['updateSuccess'] ?? "";
+$updateError = $_SESSION['updateError'] ?? "";
+
 require_once BASE_PATH . '/includes/header.php';
 require_once BASE_PATH . '/Admin/includes/navbar.php';
 
@@ -31,6 +34,20 @@ $totalAppointmentsMonth = 42;
 
 <title>Home</title>
 
+<?php if (!empty($updateSuccess) || !empty($updateError)): ?>
+    <div id="toastContainer">
+        <?php if (!empty($updateSuccess)): ?>
+            <div class="toast success"><?= htmlspecialchars($updateSuccess) ?></div>
+            <?php unset($_SESSION['updateSuccess']); ?>
+        <?php endif; ?>
+
+        <?php if (!empty($updateError)): ?>
+            <div class="toast error"><?= htmlspecialchars($updateError) ?></div>
+            <?php unset($_SESSION['updateError']); ?>
+        <?php endif; ?>
+    </div>
+<?php endif; ?>
+
 <div class="dashboard">
     <div class="cards">
 
@@ -39,8 +56,112 @@ $totalAppointmentsMonth = 42;
             <div class="appointment">Today: <?= $todayCount ?></div>
             <div class="appointment">Tomorrow: <?= $tomorrowCount ?></div>
             <a href="<?= BASE_URL ?>/Admin/pages/calendar.php" class="card-link">View Schedule</a>
-            <a href="<?= BASE_URL ?>/Admin/pages/add_appointment.php" class="card-link">Add Appointment</a>
-        </div>
+            <a href="#" class="card-link" onclick="openBookingModal()"><span class="material-symbols-outlined">calendar_add_on</span> Book Appointment</a>
+        </div>  
+        
+            <div id="bookingModal" class="booking-modal">
+                <div class="booking-modal-content">
+                    
+                    <form action="<?= BASE_URL ?>/Admin/processes/insert_appointment.php" method="POST" autocomplete="off">
+                        <div class="form-group">
+                            <input type="text" id="lastName" name="lastName" class="form-control" placeholder=" " required />
+                            <label for="lastName" class="form-label">Last Name <span class="required">*</span></label>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="text" id="firstName" name="firstName" class="form-control" placeholder=" " required />
+                            <label for="firstName" class="form-label">First Name <span class="required">*</span></label>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="text" id="middleName" name="middleName" class="form-control" placeholder=" " />
+                            <label for="middleName" class="form-label">Middle Name</label>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="email" id="email" name="email" class="form-control" placeholder=" " required autocomplete="off"/>
+                            <label for="email" class="form-label">Email Address <span class="required">*</span></label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <select id="gender" name="gender" class="form-control" required>
+                                <option value="" disabled selected hidden></option>
+                                <option value="female">Female</option>
+                                <option value="male">Male</option>
+                            </select>
+                            <label for="gender" class="form-label">Gender <span class="required">*</span></label>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="date" id="dateofBirth" name="dateofBirth" class="form-control" required />
+                            <label for="dateofBirth" class="form-label">Date of Birth <span class="required">*</span></label>
+                        </div>
+
+                        <div class="form-group phone-group">
+                            <input type="tel" id="contactNumber" name="contactNumber" class="form-control" oninput="this.value = this.value.replace(/[^0-9]/g, '')" pattern="[0-9]{10}" title="Mobile number must be 10 digits" required maxlength="10" />
+                            <label for="contactNumber" class="form-label">Mobile Number <span class="required">*</span></label>
+                            <span class="phone-prefix">+63</span>
+                        </div>
+
+                        <input type="hidden" name="appointmentBranch" value="<?= $_SESSION['branch_id'] ?? '' ?>">
+
+                        <div class="form-group">
+                            <div id="services-container">
+                                <select id="appointmentService" class="form-control" name="appointmentService" required>
+                                    <option value="" disabled selected hidden></option>
+                                    <!-- Options will be populated here via AJAX -->
+                                </select>
+                            <label for="appointmentService" class="form-label">Service <span class="required">*</span></label>
+                            </div>
+                            
+                            <!-- <div class="button-wrapper">
+                                <button type="button" class="add-service-btn">Add Another Service</button>
+                            </div> -->
+                        </div>
+
+                        <div class="form-group">
+                            <input type="date" id="appointmentDate" name="appointmentDate" class="form-control" required />
+                            <label for="appointmentDate" class="form-label">Date <span class="required">*</span></label>
+                            <span id="dateError" class="error-msg-calendar error">
+                                Sundays are not available for appointments. Please select another date.
+                            </span>
+                        </div>
+
+                        <div class="form-group">
+                            <select id="appointmentTime" name="appointmentTime" class="form-control" required>
+                                <option value="" disabled selected hidden></option>
+                                <option value="09:00">9:00 AM</option>
+                                <option value="09:45">9:45 AM</option>
+                                <option value="10:30">10:30 AM</option>
+                                <option value="11:15">11:15 AM</option>
+                                <option value="12:00">12:00 PM</option>
+                                <option value="12:45">12:45 PM</option>
+                                <option value="13:30">1:30 PM</option>
+                                <option value="14:15">2:15 PM</option>
+                                <option value="15:00">3:00 PM</option>
+                            </select>
+                            <label for="appointmentTime" class="form-label">Time <span class="required">*</span></label>
+                        </div>
+
+                        <div class="form-group">
+                            <select id="appointmentDentist" name="appointmentDentist" class="form-control" required>
+                                <option value="" disabled selected hidden></option>
+                            </select>
+                            <label for="appointmentDentist" class="form-label">Dentist <span class="required">*</span></label>
+                        </div>
+
+                        <div class="form-group">
+                            <textarea id="notes" name="notes" class="form-control" rows="3" placeholder=" "autocomplete="off"></textarea>
+                            <label for="notes" class="form-label">Add a note...</label>
+                        </div>
+
+                        <div class="button-group">
+                            <button type="submit" class="form-button confirm-btn">Confirm</button>
+                            <button type="button" class="form-button cancel-btn" onclick="closeBookingModal()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
         <div class="card">
             <h2><span class="material-symbols-outlined">bar_chart</span> Reports</h2>

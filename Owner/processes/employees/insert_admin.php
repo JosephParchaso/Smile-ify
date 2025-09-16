@@ -22,12 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $status         = $_POST['status'] ?? 'Inactive';
     $dateStarted    = $_POST['dateStarted'] ?? null;
 
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $_SESSION['updateError'] = "Invalid email format.";
-        header("Location: " . BASE_URL . "/Owner/pages/employees.php");
-        exit();
-    }
-
     if (!isValidEmailDomain($email)) {
         $_SESSION['updateError'] = "Email domain is not valid or unreachable.";
         header("Location: " . BASE_URL . "/Owner/pages/employees.php");
@@ -47,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $username = generateUniqueUsername($lastName, $firstName, $conn);
 
-        $raw_password = generatePassword(12);
+        $raw_password = generatePasswordFromLastName($lastName);
         $password = password_hash($raw_password, PASSWORD_DEFAULT);
 
         $stmt = $conn->prepare("
@@ -115,13 +109,16 @@ function generateUniqueUsername($lastName, $firstName, $conn) {
     return $username;
 }
 
-function generatePassword($length = 10) {
-    $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
-    $password = '';
-    for ($i = 0; $i < $length; $i++) {
-        $password .= $chars[random_int(0, strlen($chars) - 1)];
-    }
-    return $password;
+function generatePasswordFromLastName($lastName) {
+    $cleanLastName = preg_replace("/[^a-zA-Z]/", "", $lastName);
+    $prefix = strtolower($cleanLastName);
+
+    $number = rand(1000, 9999);
+
+    $specials = ['!', '@', '#', '$', '%'];
+    $symbol = $specials[array_rand($specials)];
+
+    return $prefix . $number . $symbol;
 }
 
 function isValidEmailDomain($email) {

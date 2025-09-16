@@ -37,8 +37,8 @@ $role = $_SESSION['role'] ?? null;
     <script src="<?= BASE_URL ?>/js/openForgotPasswordModal.js?v=<?= time(); ?>"></script>
     <script src="<?= BASE_URL ?>/js/togglePassword.js?v=<?= time(); ?>"></script>
     <script src="<?= BASE_URL ?>/js/loadServices.js?v=<?= time(); ?>"></script>
-    <script src="<?= BASE_URL ?>/js/toggleCalendar.js?v=<?= time(); ?>"></script>
     <script src="<?= BASE_URL ?>/js/loadDentists.js?v=<?= time(); ?>"></script>
+    <script src="<?= BASE_URL ?>/js/toggleCalendar.js?v=<?= time(); ?>"></script>
 
     <!-- JS: Authenticated users -->
     <script src="<?= BASE_URL ?>/js/toggleNavbar.js?v=<?= time(); ?>"></script>
@@ -55,6 +55,8 @@ $role = $_SESSION['role'] ?? null;
     
     <?php elseif ($role === 'admin'): ?>
         <!-- Admin-specific -->
+        <script src="<?= BASE_URL ?>/Admin/js/loadServices.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Admin/js/loadDentists.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/loadCalendar.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/loadProfileDetails.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/loadRegisteredPatients.js?v=<?= time(); ?>"></script>

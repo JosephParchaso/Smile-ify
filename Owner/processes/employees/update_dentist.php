@@ -4,6 +4,11 @@ session_start();
 require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
 
+function isValidEmailDomain($email) {
+    $domain = substr(strrchr($email, "@"), 1);
+    return checkdnsrr($domain, "MX");
+}
+
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'owner') {
     header("Location: " . BASE_URL . "/Owner/pages/employees.php");
     exit();
@@ -22,19 +27,25 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $status         = $_POST['status'];
     $branches       = isset($_POST['branches']) ? array_map('intval', $_POST['branches']) : [];
 
-    $signatureImage = null;
-        if (isset($_FILES['signatureImage']) && $_FILES['signatureImage']['error'] === UPLOAD_ERR_OK) {
-            $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/signatures/';
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0777, true);
-            }
-            $fileName = uniqid() . "_" . basename($_FILES['signatureImage']['name']);
-            $targetPath = $uploadDir . $fileName;
+    if (!empty($email) && !isValidEmailDomain($email)) {
+        $_SESSION['updateError'] = "Email domain is not valid or unreachable.";
+        header("Location: " . BASE_URL . "/Owner/pages/employees.php?tab=dentist");
+        exit();
+    }
 
-            if (move_uploaded_file($_FILES['signatureImage']['tmp_name'], $targetPath)) {
-                $signatureImage = $fileName;
-            }
+    $signatureImage = null;
+    if (isset($_FILES['signatureImage']) && $_FILES['signatureImage']['error'] === UPLOAD_ERR_OK) {
+        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/signatures/';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
         }
+        $fileName = uniqid() . "_" . basename($_FILES['signatureImage']['name']);
+        $targetPath = $uploadDir . $fileName;
+
+        if (move_uploaded_file($_FILES['signatureImage']['tmp_name'], $targetPath)) {
+            $signatureImage = $fileName;
+        }
+    }
 
     if ($signatureImage) {
         $sql = "UPDATE dentist
