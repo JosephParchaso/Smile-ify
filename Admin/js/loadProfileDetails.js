@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const profileCard = document.getElementById("profileCard");
     if (!profileCard) return;
 
-    fetch(`${BASE_URL}/Admin/processes/profile/load_details.php`)
+    fetch(`${BASE_URL}/Admin/processes/profile/get_details.php`)
         .then(response => {
             if (!response.ok) {
                 throw new Error("Forbidden or failed to load.");

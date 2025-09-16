@@ -52,10 +52,10 @@ $updateError   = $_SESSION['updateError'] ?? '';
     </div>
 </div>
 
-<div id="manageModal" class="manage-appointment-modal">
-    <div class="manage-appointment-modal-content">
-        <div id="modalBody" class="manage-appointment-modal-content-body">
-            <!-- Details info will be loaded here -->
+<div id="transactionModal" class="manage-transaction-modal">
+    <div class="manage-transaction-modal-content">
+        <div id="transactionModalBody" class="manage-transaction-modal-content-body">
+            <!-- Transaction details will be loaded here -->
         </div>
     </div>
 </div>

@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (branchId && serviceId) {
             $.ajax({
                 type: "POST",
-                url: `${BASE_URL}/processes/get_dentists.php`,
+                url: `${BASE_URL}/processes/load_dentists.php`,
                 data: {
                     appointmentBranch: branchId,
                     appointmentService: serviceId

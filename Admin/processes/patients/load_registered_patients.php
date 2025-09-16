@@ -34,7 +34,7 @@ while ($row = $result->fetch_assoc()) {
     $patients[] = [
         $row['user_id'],
         $row['name'],
-        '<button class="btn-action" data-type="patient" data-id="'.$row['user_id'].'">Manage</button>'
+        '<a href="' . BASE_URL . '/Admin/pages/manage_patient.php?id=' . $row['user_id'] . '&tab=registered" class="manage-action">Manage</a>'
     ];
 }
 

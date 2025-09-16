@@ -60,7 +60,13 @@ $role = $_SESSION['role'] ?? null;
         <script src="<?= BASE_URL ?>/Admin/js/loadRegisteredPatients.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/loadRecentBookings.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/loadInactivePatients.js?v=<?= time(); ?>"></script>
-        <script src="<?= BASE_URL ?>/Admin/js/showModal.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Admin/js/loadAppointmentDetails.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Admin/js/loadPatientDetails.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Admin/js/loadAppointments.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Admin/js/loadTransactions.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Admin/js/showPatientModal.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Admin/js/loadSupplies.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Admin/js/showSupplyModal.js?v=<?= time(); ?>"></script>
 
     <?php elseif ($role === 'patient'): ?>
         <!-- Patient-specific -->

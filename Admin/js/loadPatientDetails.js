@@ -1,0 +1,63 @@
+document.addEventListener("DOMContentLoaded", function () {
+    const patientCard = document.getElementById("patientCard");
+    if (!patientCard) return;
+
+    fetch(`${BASE_URL}/Admin/processes/manage_patient/get_patient_details.php?id=${userId}`)
+        .then(response => {
+            if (!response.ok) throw new Error("Forbidden or failed to load.");
+            return response.json();
+        })
+        .then(data => {
+            if (data.error) {
+                patientCard.innerHTML = `<p>${data.error}</p>`;
+                return;
+            }
+
+            let buttonsHtml = "";
+            if (data.status.toLowerCase() === "active") {
+                buttonsHtml = `<button type="button" class="confirm-btn" id="setInactiveBtn">Set Inactive</button>`;
+            } else if (data.status.toLowerCase() === "inactive") {
+                buttonsHtml = `<button type="button" class="confirm-btn" id="setActiveBtn">Set Active</button>`;
+            }
+
+            patientCard.innerHTML = `
+                <h3>${data.full_name}</h3>
+                <p><strong>Status:</strong> <span>${data.status}</span></p>
+                <p><strong>Gender:</strong> <span>${data.gender}</span></p>
+                <p><strong>Date of Birth:</strong> <span>${data.date_of_birth}</span></p>
+                <p><strong>Email:</strong> <span>${data.email}</span></p>
+                <p><strong>Contact Number:</strong> <span>${data.contact_number}</span></p>
+                <p><strong>Address:</strong> <span>${data.address}</span></p>
+                <p><strong>Joined:</strong> <span>${data.joined}</span></p>
+                <div class="button-group button-group-profile">
+                    ${buttonsHtml}
+                </div>
+            `;
+
+            const openStatusModal = (status) => {
+                document.getElementById("statusUserId").value = userId;
+                document.getElementById("statusValue").value = status;
+                document.getElementById("statusMessage").textContent =
+                    `Are you sure you want to set this patient as ${status}?`;
+                document.getElementById("setStatusModal").style.display = "block";
+            };
+
+            const setActiveBtn = document.getElementById("setActiveBtn");
+            const setInactiveBtn = document.getElementById("setInactiveBtn");
+
+            if (setActiveBtn) {
+                setActiveBtn.addEventListener("click", () => openStatusModal("active"));
+            }
+            if (setInactiveBtn) {
+                setInactiveBtn.addEventListener("click", () => openStatusModal("inactive"));
+            }
+        })
+        .catch(error => {
+            patientCard.innerHTML = "<p>Error loading profile.</p>";
+            console.error("Fetch error:", error);
+        });
+});
+
+function closeStatusModal() {
+    document.getElementById("setStatusModal").style.display = "none";
+}

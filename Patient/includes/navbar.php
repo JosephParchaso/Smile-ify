@@ -1,7 +1,7 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
-require_once BASE_PATH . '/processes/fetch_notifications.php';
+require_once BASE_PATH . '/processes/load_notifications.php';
 ?>
 <link rel="stylesheet" href="<?= BASE_URL ?>/Patient/css/style.css?v=<?= time(); ?>" />
 

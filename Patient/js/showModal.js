@@ -240,7 +240,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                                 try {
                                     const res = await fetch(
-                                        `${BASE_URL}/Patient/processes/profile/mark_prescription_downloaded.php`,
+                                        `${BASE_URL}/Patient/processes/profile/update_prescription_status.php`,
                                         {
                                             method: "POST",
                                             headers: { "Content-Type": "application/json" },
@@ -257,11 +257,11 @@ document.addEventListener("DOMContentLoaded", () => {
                                         btn.disabled = true;
                                     } else {
                                         console.error("Update failed:", json.error);
-                                        window.location.href = `${BASE_URL}/Patient/processes/profile/mark_prescription_downloaded.php?error=1`;
+                                        window.location.href = `${BASE_URL}/Patient/processes/profile/update_prescription_status.php?error=1`;
                                     }
                                 } catch (err) {
                                     console.error("Update fetch error:", err);
-                                    window.location.href = `${BASE_URL}/Patient/processes/profile/mark_prescription_downloaded.php?error=1`;
+                                    window.location.href = `${BASE_URL}/Patient/processes/profile/update_prescription_status.php?error=1`;
                                 }
                             });
                         }

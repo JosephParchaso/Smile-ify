@@ -6,12 +6,9 @@ $(document).ready(function() {
             "lengthChange": false,
             "ordering": true,
             "searching": true,
-            "order": [[4, "desc"], [5, "desc"]],
             "columns": [
                 { "title": "ID" },
                 { "title": "Patient" },
-                { "title": "Service" },
-                { "title": "Dentist" },
                 { "title": "Date" },
                 { "title": "Time" },
                 { "title": "Status" },

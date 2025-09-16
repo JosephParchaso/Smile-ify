@@ -32,7 +32,7 @@ while ($row = $result->fetch_assoc()) {
     $inactive[] = [
         $row['user_id'],
         $row['name'],
-        '<button class="btn-action" data-type="inactive" data-id="'.$row['user_id'].'">Manage</button>'
+        '<a href="' . BASE_URL . '/Admin/pages/manage_patient.php?id=' . $row['user_id'] . '&tab=inactive" class="manage-action">Manage</a>'
     ];
 }
 

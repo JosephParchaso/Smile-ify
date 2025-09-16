@@ -39,6 +39,16 @@ Patients
 | **JS Files**   | `togglePassword.js`, `openEducationalModal.js` | camelCase (matches function purpose)        |
 
 
+Appointment / Transaction Details (single record)
+✅ Use get → e.g. get_appointment_details.php, get_dental_transaction_details.php
+Reason: These scripts just fetch details for one record, so get matches REST-like conventions.
+Tables (lists of patients, appointments, transactions, admins, etc.)
+✅ Use load → e.g. load_patients.php, load_transactions.php, load_admins.php
+Reason: These endpoints are usually consumed by DataTables or similar, and they load a dataset, not just a single item.
+REST stands for Representational State Transfer.
+It’s an architectural style (not a strict standard) used when designing APIs.
+
+
 Root/
 │
 ├── Admin/

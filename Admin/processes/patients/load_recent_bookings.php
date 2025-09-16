@@ -38,12 +38,10 @@ while ($row = $result->fetch_assoc()) {
     $bookings[] = [
         $row['appointment_transaction_id'],
         $row['patient'],
-        $row['service'] ?: '-',
-        $row['dentist'] ?: '-',
         $row['appointment_date'],
         $row['appointment_time'],
         $row['status'],
-        '<button class="btn-action" data-type="booking" data-id="'.$row['appointment_transaction_id'].'">Manage</button>'
+        '<a href="' . BASE_URL . '/Admin/pages/manage_appointment.php?id=' . $row['appointment_transaction_id'] . '&tab=recent" class="manage-action">Manage</a>'
     ];
 }
 
