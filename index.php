@@ -33,8 +33,9 @@ if (isset($_SESSION['username_error'])) {
     $usernameError = $_SESSION['username_error'];
     unset($_SESSION['username_error']);
 }
-if (isset($_GET['timeout'])) {
-    $timeoutError = "Your session has expired due to inactivity. Please log in again.";
+if (isset($_SESSION['timeoutError'])) {
+    $timeoutError = $_SESSION['timeoutError'];
+    unset($_SESSION['timeoutError']);
 }
 ?>
 <head>    
@@ -50,19 +51,20 @@ if (isset($_GET['timeout'])) {
     <div class="login-container">
         <img src="images/logo/logo_default.png" alt="Logo" class="logo" />
         
-        <?php if (!empty($loginSuccess) || !empty($loginError) || !empty($otpError) || !empty($_SESSION['timeoutError'])): ?>
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                const alerts = document.querySelectorAll(".success, .error");
-                alerts.forEach(alert => {
-                    setTimeout(() => {
-                        alert.style.transition = "opacity 0.5s ease";
-                        alert.style.opacity = "0";
-                        setTimeout(() => alert.remove(), 500);
-                    }, 10000);
-                });
-            });
-        </script>
+        <?php if (!empty($loginSuccess)): ?>
+            <div class="success"><?php echo htmlspecialchars($loginSuccess); ?></div>
+        <?php endif; ?>
+
+        <?php if (!empty($loginError)): ?>
+            <div class="error"><?php echo htmlspecialchars($loginError); ?></div>
+        <?php endif; ?>
+
+        <?php if (!empty($otpError)): ?>
+            <div class="error"><?php echo htmlspecialchars($otpError); ?></div>
+        <?php endif; ?>
+
+        <?php if (!empty($timeoutError)): ?>
+            <div class="error"><?php echo htmlspecialchars($timeoutError); ?></div>
         <?php endif; ?>
 
         <form action="<?= BASE_URL ?>/processes/login.php" method="POST" autocomplete="off">
