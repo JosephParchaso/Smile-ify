@@ -105,6 +105,14 @@ $backTab = $_GET['tab'] ?? 'inactive';
     </div>
 </div>
 
+<div id="manageAppointmentModal" class="manage-appointment-modal">
+    <div class="manage-appointment-modal-content">
+        <div id="appointmentModalBody" class="manage-appointment-modal-content-body">
+            <!-- Patient info will be loaded here -->
+        </div>
+    </div>
+</div>
+
 <script>
     const userId = "<?= htmlspecialchars($userId) ?>";
 </script>

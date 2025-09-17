@@ -15,15 +15,15 @@ $sql = "SELECT
             CONCAT(u.first_name, ' ', IFNULL(u.middle_name, ''), ' ', u.last_name) AS name,
             u.email,
             u.contact_number,
+            u.branch_id,
+            COALESCE(b.name, '-') AS branch_name,
             u.status
         FROM users u
+        LEFT JOIN branch b ON u.branch_id = b.branch_id
         WHERE u.role = 'patient' 
-            AND u.status = 'Inactive'
-            AND u.branch_id = ?
-        ORDER BY u.user_id DESC";
+            AND u.status = 'Inactive'";
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $branch_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -32,6 +32,7 @@ while ($row = $result->fetch_assoc()) {
     $inactive[] = [
         $row['user_id'],
         $row['name'],
+        $row['branch_name'],
         '<a href="' . BASE_URL . '/Admin/pages/manage_patient.php?id=' . $row['user_id'] . '&tab=inactive" class="manage-action">Manage</a>'
     ];
 }

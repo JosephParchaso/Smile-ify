@@ -50,19 +50,19 @@ function generatePassword($lastName) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $branch_id          = $_SESSION['branch_id'] ?? null;
-    $lastName           = trim($_POST['lastName']);
-    $firstName          = trim($_POST['firstName']);
-    $middleName         = trim($_POST['middleName']);
-    $gender             = $_POST['gender'];
-    $dateofBirth        = $_POST['dateofBirth'];
-    $email              = trim($_POST['email']);
-    $contactNumber      = trim($_POST['contactNumber']);
-    $appointmentService = $_POST['appointmentService'];
-    $appointmentDentist = $_POST['appointmentDentist'];
-    $appointmentDate    = $_POST['appointmentDate'];
-    $appointmentTime    = $_POST['appointmentTime'];
-    $notes              = $_POST['notes'];
+    $lastName            = trim($_POST['lastName']);
+    $firstName           = trim($_POST['firstName']);
+    $middleName          = trim($_POST['middleName']);
+    $gender              = $_POST['gender'];
+    $dateofBirth         = $_POST['dateofBirth'];
+    $email               = trim($_POST['email']);
+    $contactNumber       = trim($_POST['contactNumber']);
+    $appointmentBranch   = $_POST['appointmentBranch'];
+    $appointmentService  = $_POST['appointmentService'];
+    $appointmentDentist  = $_POST['appointmentDentist'];
+    $appointmentDate     = $_POST['appointmentDate'];
+    $appointmentTime     = $_POST['appointmentTime'];
+    $notes               = $_POST['notes'];
 
     if ($appointmentDentist === "none" || empty($appointmentDentist)) {
         $appointmentDentist = null;
@@ -89,7 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $insert_patient->bind_param(
             "sssssssssi",
             $username, $hashed_password, $lastName, $firstName, $middleName, $gender,
-            $dateofBirth, $email, $contactNumber, $branch_id
+            $dateofBirth, $email, $contactNumber, $appointmentBranch
         );
         $insert_patient->execute();
         $user_id = $insert_patient->insert_id;
@@ -103,7 +103,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $appointment_stmt = $conn->prepare($appointment_sql);
         $appointment_stmt->bind_param(
             "iiissss",
-            $user_id, $branch_id, $appointmentService,
+            $user_id, $appointmentBranch, $appointmentService,
             $appointmentDentist, $appointmentDate, $appointmentTime, $notes
         );
         $appointment_stmt->execute();

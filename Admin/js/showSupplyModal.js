@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     document.body.addEventListener("click", function (e) {
-        if (e.target.id === "addSupplyBtn") {
+        if (e.target.id === "insertSupplyBtn") {
             renderSupplyForm(null);
             supplyModal.style.display = "block";
         }

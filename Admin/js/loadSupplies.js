@@ -16,6 +16,7 @@ $(document).ready(function() {
                 { "title": "Created", "visible": false, "searchable": false },
                 { "title": "Action", "orderable": false }
             ],
+            "order": [[2, "desc"]],
             "language": {
                 search: "",
                 searchPlaceholder: "Search"
@@ -26,7 +27,7 @@ $(document).ready(function() {
                 $('#suppliesTable_filter label').attr('for', 'suppliesSearch');
 
                 $('#suppliesTable_filter').append(
-                    '<button id="addSupplyBtn">+ Add</button>'
+                    '<button id="insertSupplyBtn">+ Add</button>'
                 );
             }
         });

@@ -67,6 +67,7 @@ $role = $_SESSION['role'] ?? null;
         <script src="<?= BASE_URL ?>/Admin/js/loadAppointments.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/loadTransactions.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/showPatientModal.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Admin/js/showAppointmentModal.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/loadSupplies.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/showSupplyModal.js?v=<?= time(); ?>"></script>
 

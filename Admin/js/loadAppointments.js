@@ -17,6 +17,7 @@ $(document).ready(function() {
                 { "title": "Action", "orderable": false },
                 { "title": "Created", "visible": false, "searchable": false }
             ],
+            "order": [[3, "desc"], [4, "asc"]],
             "language": {
                 search: "",
                 searchPlaceholder: "Search"
@@ -27,6 +28,10 @@ $(document).ready(function() {
                     .attr('id', 'appointmentSearch')
                     .attr('name', 'appointmentSearch');
                 $('#appointmentTable_filter label').attr('for', 'appointmentSearch');
+
+                $('#appointmentTable_filter').append(
+                    '<button id="insertAppointmentBtn">+ Add</button>'
+                );
             }
         });
     }

@@ -70,8 +70,8 @@ require_once BASE_PATH . '/Patient/includes/navbar.php';
         </div>
     </div>
 
-    <div id="bookingModal" class="booking-modal">
-        <div class="booking-modal-content" style="margin: 20vh auto;">
+    <div id="bookingModal" class="manage-appointment-modal">
+        <div class="manage-appointment-modal-content">
             
             <form action="<?= BASE_URL ?>/Patient/processes/insert_appointment.php" method="POST" autocomplete="off">
                 <div class="form-group">

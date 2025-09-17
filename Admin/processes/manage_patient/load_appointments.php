@@ -14,7 +14,6 @@ if (!$patientID || !is_numeric($patientID)) {
     echo json_encode(["data" => []]);
     exit();
 }
-$branch_id = $_SESSION['branch_id'];
 
 $sql = "SELECT 
             a.appointment_transaction_id,
@@ -29,12 +28,10 @@ $sql = "SELECT
         LEFT JOIN branch b ON a.branch_id = b.branch_id
         LEFT JOIN service s ON a.service_id = s.service_id
         LEFT JOIN dentist d ON a.dentist_id = d.dentist_id
-        WHERE a.user_id = ?
-            AND a.branch_id = ?
-        ORDER BY a.date_created DESC";
+        WHERE a.user_id = ?";
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("ii", $patientID, $branch_id);
+$stmt->bind_param("i", $patientID);
 $stmt->execute();
 $result = $stmt->get_result();
 

@@ -123,7 +123,7 @@
     margin: 3% auto ;
 }
 
-#registeredTable_filter, #recentTable_filter, #inactiveTable_filter, #suppliesTable_filter  {
+#registeredTable_filter, #recentTable_filter, #inactiveTable_filter, #suppliesTable_filter, #appointmentTable_filter {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -131,7 +131,8 @@
 
 #registeredTable_filter input[type="search"],
 #recentTable_filter input[type="search"],
-#inactiveTable_filter input[type="search"], 
+#inactiveTable_filter input[type="search"],
+#appointmentTable_filter input[type="search"], 
 #suppliesTable_filter  input[type="search"] {
     height: 38px;
     padding: 6px 12px;
@@ -140,6 +141,7 @@
 #registeredTable_filter button,
 #recentTable_filter button,
 #inactiveTable_filter button,
+#appointmentTable_filter button,
 #suppliesTable_filter button {
     height: 38px;
     padding: 6px 12px;
@@ -152,11 +154,13 @@
 
 #registeredTable th:nth-child(1), #registeredTable td:nth-child(1) { width: 15% !important; text-align: center;}
 #registeredTable th:nth-child(2), #registeredTable td:nth-child(2) { width: 40% !important; }
-#registeredTable th:nth-child(3), #registeredTable td:nth-child(3) { width: 10% !important; text-align: center;}
+#registeredTable th:nth-child(3), #registeredTable td:nth-child(3) { width: 20% !important; }
+#registeredTable th:nth-child(4), #registeredTable td:nth-child(4) { width: 10% !important; text-align: center;}
 
 #inactiveTable th:nth-child(1), #inactiveTable td:nth-child(1) { width: 15% !important; text-align: center;}
 #inactiveTable th:nth-child(2), #inactiveTable td:nth-child(2) { width: 40% !important; }
-#inactiveTable th:nth-child(3), #inactiveTable td:nth-child(3) { width: 10% !important; text-align: center;}
+#inactiveTable th:nth-child(3), #inactiveTable td:nth-child(3) { width: 20% !important; }
+#inactiveTable th:nth-child(4), #inactiveTable td:nth-child(4) { width: 10% !important; text-align: center;}
 
 #recentTable th:nth-child(1), #recentTable td:nth-child(1) { width: 5% !important; text-align: center;}
 #recentTable th:nth-child(2), #recentTable td:nth-child(2) { width: 15% !important; }

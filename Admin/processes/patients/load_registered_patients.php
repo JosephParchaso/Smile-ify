@@ -17,15 +17,15 @@ $sql = "SELECT
             u.date_of_birth,
             u.email,
             u.contact_number,
+            u.branch_id,
+            COALESCE(b.name, '-') AS branch_name,
             u.status
         FROM users u
+        LEFT JOIN branch b ON u.branch_id = b.branch_id
         WHERE u.role = 'patient' 
-            AND u.status = 'Active'
-            AND u.branch_id = ?
-        ORDER BY u.user_id DESC";
+            AND u.status = 'Active'";
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $branch_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -34,6 +34,7 @@ while ($row = $result->fetch_assoc()) {
     $patients[] = [
         $row['user_id'],
         $row['name'],
+        $row['branch_name'],
         '<a href="' . BASE_URL . '/Admin/pages/manage_patient.php?id=' . $row['user_id'] . '&tab=registered" class="manage-action">Manage</a>'
     ];
 }

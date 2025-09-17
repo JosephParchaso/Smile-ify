@@ -14,7 +14,6 @@ if (!$patientID || !is_numeric($patientID)) {
     echo json_encode(["data" => []]);
     exit();
 }
-$branch_id = $_SESSION['branch_id'];
 
 $sql = "SELECT 
             dt.dental_transaction_id,
@@ -37,12 +36,10 @@ $sql = "SELECT
             ON a.service_id = s.service_id
         LEFT JOIN dentist d 
             ON d.dentist_id = COALESCE(dt.dentist_id, a.dentist_id)
-        WHERE a.user_id = ?
-            AND a.branch_id = ?
-        ORDER BY dt.date_created DESC";
+        WHERE a.user_id = ?";
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("ii", $patientID, $branch_id);
+$stmt->bind_param("i", $patientID);
 $stmt->execute();
 $result = $stmt->get_result();
 

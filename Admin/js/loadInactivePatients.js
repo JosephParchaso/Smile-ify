@@ -9,8 +9,10 @@ $(document).ready(function() {
             "columns": [
                 { "title": "ID" },
                 { "title": "Name" },
+                { "title": "Branch Registered" },
                 { "title": "Action", "orderable": false, "searchable": false }
             ],
+            "order": [[1, "asc"]],
             "language": {
                 search: "",
                 searchPlaceholder: "Search"

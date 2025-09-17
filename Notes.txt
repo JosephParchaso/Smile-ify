@@ -146,16 +146,39 @@ doctor availability 9am - 4pm
 doctor branch assignment
 doctor specialization? - consultation all?
 doctor startdate
-doctor resignation
+doctor resignation or leave inactive 
 
 If you’re building for a simple clinic where a dentist is assigned to only one branch, go with Option 1. 1 = 1
 If your clinic has multiple branches and dentists rotate, go with Option 2. many = many
 
 time consume in each service
 
-email checker
-
 dentist owner can edit or admin
+dungan register different user  
 ==========================================================================================================================================================================================
 
-dungan register different user
+
+
+add notif badge on every appointment
+
+service
+
+promo
+
+footer load services and branch
+educ modal load image
+
+assign dentist in services = admin or owner	
+
+record dental transact
+supplies with transact
+
+multiple services
+
+time appointment
+
+home, profile = rix
+
+reports andy, achas
+
+add branch

@@ -52,19 +52,19 @@ if (isset($_SESSION['timeoutError'])) {
         <img src="images/logo/logo_default.png" alt="Logo" class="logo" />
         
         <?php if (!empty($loginSuccess)): ?>
-            <div class="success"><?php echo htmlspecialchars($loginSuccess); ?></div>
+            <div class="success flash-msg"><?php echo htmlspecialchars($loginSuccess); ?></div>
         <?php endif; ?>
 
         <?php if (!empty($loginError)): ?>
-            <div class="error"><?php echo htmlspecialchars($loginError); ?></div>
+            <div class="error flash-msg"><?php echo htmlspecialchars($loginError); ?></div>
         <?php endif; ?>
 
         <?php if (!empty($otpError)): ?>
-            <div class="error"><?php echo htmlspecialchars($otpError); ?></div>
+            <div class="error flash-msg"><?php echo htmlspecialchars($otpError); ?></div>
         <?php endif; ?>
 
         <?php if (!empty($timeoutError)): ?>
-            <div class="error"><?php echo htmlspecialchars($timeoutError); ?></div>
+            <div class="error flash-msg"><?php echo htmlspecialchars($timeoutError); ?></div>
         <?php endif; ?>
 
         <form action="<?= BASE_URL ?>/processes/login.php" method="POST" autocomplete="off">
@@ -349,4 +349,12 @@ document.addEventListener('DOMContentLoaded', function () {
         openForgotPasswordModal();
     <?php endif; ?>
     });
+
+setTimeout(() => {
+    document.querySelectorAll('.flash-msg').forEach(el => {
+        el.style.transition = "opacity 1s ease"; 
+        el.style.opacity = "0";
+        setTimeout(() => el.remove(), 1000);
+    });
+}, 10000);
 </script>

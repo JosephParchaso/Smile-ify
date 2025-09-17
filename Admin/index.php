@@ -103,7 +103,25 @@ $totalAppointmentsMonth = 42;
                             <span class="phone-prefix">+63</span>
                         </div>
 
-                        <input type="hidden" name="appointmentBranch" value="<?= $_SESSION['branch_id'] ?? '' ?>">
+                        <div class="form-group">
+                            <select id="appointmentBranch" name="appointmentBranch" class="form-control" required>
+                                <option value="" disabled selected hidden></option>
+                                <?php
+
+                                $sql = "SELECT branch_id, name FROM branch";
+                                $result = $conn->query($sql);
+
+                                if ($result->num_rows > 0) {
+                                    while($row = $result->fetch_assoc()) {
+                                        echo "<option value='" . $row["branch_id"] . "'>" . htmlspecialchars($row["name"]) . "</option>";
+                                    }
+                                } else {
+                                    echo "<option disabled>No branches available</option>";
+                                }
+                                ?>
+                            </select>
+                            <label for="appointmentBranch" class="form-label">Branch <span class="required">*</span></label>
+                        </div>
 
                         <div class="form-group">
                             <div id="services-container">
@@ -113,10 +131,6 @@ $totalAppointmentsMonth = 42;
                                 </select>
                             <label for="appointmentService" class="form-label">Service <span class="required">*</span></label>
                             </div>
-                            
-                            <!-- <div class="button-wrapper">
-                                <button type="button" class="add-service-btn">Add Another Service</button>
-                            </div> -->
                         </div>
 
                         <div class="form-group">

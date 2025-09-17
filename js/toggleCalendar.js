@@ -2,23 +2,24 @@ document.addEventListener("DOMContentLoaded", function () {
     const dateInput = document.getElementById("appointmentDate");
     const errorMsg = document.getElementById("dateError");
 
-    if (!dateInput) return; 
+    if (!dateInput) return;
 
     const today = new Date();
     today.setDate(today.getDate() + 1);
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
-    const minDate = `${yyyy}-${mm}-${dd}`;
-    dateInput.setAttribute("min", minDate);
+    dateInput.min = today.toISOString().split("T")[0];
 
     dateInput.addEventListener("input", function () {
+        if (!this.value) return;
+
         const selectedDate = new Date(this.value);
-        if (selectedDate.getDay() === 0) {
+        const isSunday = selectedDate.getDay() === 0;
+
+        if (isSunday) {
             errorMsg.style.display = "block";
-            this.value = "";
+            this.classList.add("is-invalid");
         } else {
             errorMsg.style.display = "none";
+            this.classList.remove("is-invalid");
         }
     });
 });

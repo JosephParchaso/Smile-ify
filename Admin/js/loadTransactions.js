@@ -17,6 +17,7 @@ $(document).ready(function() {
                 { "title": "Action", "orderable": false },
                 { "title": "Created", "visible": false, "searchable": false }
             ],
+            "order": [[3, "desc"], [4, "asc"]],
             "language": {
                 search: "",
                 searchPlaceholder: "Search"

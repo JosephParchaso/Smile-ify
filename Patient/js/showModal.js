@@ -137,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                                 doc.setFontSize(14);
                                 doc.setFont("helvetica", "bold");
-                                doc.text("SMILE-IFY DENTAL CLINIC", 105, 15, { align: "center" });
+                                doc.text("Arriesgado Dental Clinic", 105, 15, { align: "center" });
 
                                 doc.setFontSize(11);
                                 doc.setFont("helvetica", "normal");

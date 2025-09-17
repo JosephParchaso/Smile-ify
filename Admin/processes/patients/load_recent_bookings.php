@@ -26,7 +26,16 @@ $sql = "SELECT
         LEFT JOIN service s ON a.service_id = s.service_id
         LEFT JOIN users d ON a.dentist_id = d.user_id
         WHERE a.branch_id = ?
-        AND u.role = 'patient'";
+            AND u.role = 'patient'
+            AND a.appointment_date >= CURDATE()
+        ORDER BY 
+            CASE
+                WHEN a.appointment_date = CURDATE() THEN 1
+                WHEN a.appointment_date = CURDATE() + INTERVAL 1 DAY THEN 2
+                ELSE 3
+            END,
+            a.appointment_date ASC,
+            a.appointment_time ASC";
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $branch_id);
