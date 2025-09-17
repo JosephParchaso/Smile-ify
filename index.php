@@ -50,22 +50,20 @@ if (isset($_GET['timeout'])) {
     <div class="login-container">
         <img src="images/logo/logo_default.png" alt="Logo" class="logo" />
         
-        <?php if (!empty($loginSuccess)): ?>
-            <div class="success"><?php echo htmlspecialchars($loginSuccess); ?></div>
+        <?php if (!empty($loginSuccess) || !empty($loginError) || !empty($otpError) || !empty($_SESSION['timeoutError'])): ?>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const alerts = document.querySelectorAll(".success, .error");
+                alerts.forEach(alert => {
+                    setTimeout(() => {
+                        alert.style.transition = "opacity 0.5s ease";
+                        alert.style.opacity = "0";
+                        setTimeout(() => alert.remove(), 500);
+                    }, 10000);
+                });
+            });
+        </script>
         <?php endif; ?>
-
-        <?php if (!empty($loginError)): ?>
-            <div class="error"><?php echo htmlspecialchars($loginError); ?></div>
-        <?php endif; ?>
-
-        <?php if (!empty($otpError)): ?>
-            <div class="error"><?php echo htmlspecialchars($otpError); ?></div>
-        <?php endif; ?>
-
-    <?php if (!empty($_SESSION['timeoutError'])): ?>
-        <div class="error"><?php echo htmlspecialchars($_SESSION['timeoutError']); ?></div>
-        <?php unset($_SESSION['timeoutError']); ?>
-    <?php endif; ?>
 
         <form action="<?= BASE_URL ?>/processes/login.php" method="POST" autocomplete="off">
             <div class="form-group">

@@ -39,7 +39,17 @@ $maskedEmail = isset($verified_data['email']) ? maskEmail($verified_data['email'
         </p>
 
         <?php if (!empty($error)): ?>
-            <div class="error"><?= htmlspecialchars($error) ?></div>
+            <div class="error" id="otpError"><?= htmlspecialchars($error) ?></div>
+            <script>
+                setTimeout(() => {
+                    const el = document.getElementById("otpError");
+                    if (el) {
+                        el.style.transition = "opacity 0.5s ease";
+                        el.style.opacity = "0";
+                        setTimeout(() => el.remove(), 500);
+                    }
+                }, 10000);
+            </script>
         <?php endif; ?>
 
         <div id="resendMessage" class="error" style="display: none;"></div>
