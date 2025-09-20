@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 18, 2025 at 01:33 AM
+-- Generation Time: Sep 21, 2025 at 01:34 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -120,41 +120,98 @@ INSERT INTO `branch` (`branch_id`, `name`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `branch_promo`
+--
+
+CREATE TABLE `branch_promo` (
+  `branch_promo_id` int(11) NOT NULL,
+  `branch_id` int(11) NOT NULL,
+  `promo_id` int(11) NOT NULL,
+  `status` enum('Active','Inactive') DEFAULT 'Active',
+  `start_date` date DEFAULT NULL,
+  `end_date` date DEFAULT NULL,
+  `date_created` datetime DEFAULT current_timestamp(),
+  `date_updated` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `branch_promo`
+--
+
+INSERT INTO `branch_promo` (`branch_promo_id`, `branch_id`, `promo_id`, `status`, `start_date`, `end_date`, `date_created`, `date_updated`) VALUES
+(1, 1, 1, 'Active', NULL, NULL, '2025-09-21 06:48:42', '2025-09-21 06:48:42'),
+(2, 1, 2, 'Active', NULL, NULL, '2025-09-21 06:54:12', '2025-09-21 06:54:12'),
+(3, 1, 3, 'Inactive', '2025-09-22', '2025-09-27', '2025-09-21 07:11:00', '2025-09-21 07:27:37'),
+(4, 1, 4, 'Active', '2025-09-13', '2025-10-03', '2025-09-21 07:19:41', '2025-09-21 07:28:17');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `branch_service`
 --
 
 CREATE TABLE `branch_service` (
   `branch_services_id` int(11) NOT NULL,
   `branch_id` int(11) NOT NULL,
-  `service_id` int(11) NOT NULL
+  `service_id` int(11) NOT NULL,
+  `status` enum('Active','Inactive') NOT NULL,
+  `date_created` datetime DEFAULT current_timestamp(),
+  `date_updated` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `branch_service`
 --
 
-INSERT INTO `branch_service` (`branch_services_id`, `branch_id`, `service_id`) VALUES
-(1, 1, 1),
-(2, 1, 2),
-(3, 1, 3),
-(4, 1, 4),
-(5, 1, 5),
-(6, 2, 6),
-(7, 2, 7),
-(8, 2, 8),
-(9, 2, 9),
-(10, 2, 10),
-(11, 3, 1),
-(12, 3, 2),
-(13, 3, 3),
-(14, 3, 4),
-(15, 3, 5),
-(16, 3, 6),
-(17, 3, 7),
-(18, 3, 8),
-(19, 3, 9),
-(20, 3, 10),
-(21, 2, 2);
+INSERT INTO `branch_service` (`branch_services_id`, `branch_id`, `service_id`, `status`, `date_created`, `date_updated`) VALUES
+(1, 1, 1, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
+(2, 1, 2, 'Inactive', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
+(3, 1, 3, 'Inactive', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
+(4, 1, 4, 'Inactive', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
+(5, 1, 5, 'Inactive', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
+(6, 2, 6, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
+(7, 2, 7, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
+(8, 2, 8, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
+(9, 2, 9, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
+(10, 2, 10, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
+(11, 3, 1, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
+(12, 3, 2, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
+(13, 3, 3, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
+(14, 3, 4, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
+(15, 3, 5, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
+(16, 3, 6, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
+(17, 3, 7, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
+(18, 3, 8, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
+(19, 3, 9, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
+(20, 3, 10, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
+(21, 2, 2, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
+(22, 1, 11, 'Inactive', '2025-09-21 05:51:14', '2025-09-21 05:51:14');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `branch_supply`
+--
+
+CREATE TABLE `branch_supply` (
+  `branch_supplies_id` int(11) NOT NULL,
+  `branch_id` int(11) NOT NULL,
+  `supply_id` int(11) NOT NULL,
+  `quantity` int(11) DEFAULT 0,
+  `reorder_level` int(11) DEFAULT 0,
+  `expiration_date` date DEFAULT NULL,
+  `status` enum('Available','Unavailable') DEFAULT 'Available',
+  `date_created` datetime DEFAULT current_timestamp(),
+  `date_updated` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `branch_supply`
+--
+
+INSERT INTO `branch_supply` (`branch_supplies_id`, `branch_id`, `supply_id`, `quantity`, `reorder_level`, `expiration_date`, `status`, `date_created`, `date_updated`) VALUES
+(1, 1, 1, 10, 1, '2025-09-25', 'Available', '2025-09-21 05:51:59', '2025-09-21 05:52:30'),
+(2, 3, 2, 5, 10, NULL, 'Available', '2025-09-21 06:05:54', '2025-09-21 06:05:54');
 
 -- --------------------------------------------------------
 
@@ -467,32 +524,56 @@ INSERT INTO `notifications` (`notification_id`, `user_id`, `message`, `is_read`,
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `promo`
+--
+
+CREATE TABLE `promo` (
+  `promo_id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `image_path` varchar(255) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `discount_type` enum('percentage','fixed') NOT NULL DEFAULT 'percentage',
+  `discount_value` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `promo`
+--
+
+INSERT INTO `promo` (`promo_id`, `name`, `image_path`, `description`, `discount_type`, `discount_value`) VALUES
+(1, 'opening', '/uploads/promos/1758408522_images.jpg', '', '', 0.00),
+(2, 'grand opening', '/images/promos/1758408852_images.jpg', '', '', 0.00),
+(3, 'sampleeeeeasdasda', '/Smile-ify/images/promos/promo_68cf3869c31fc.jpg', 'sampleeeeeeeeeeeeeeeeee', 'percentage', 80.00),
+(4, 'sampleeeeee', '/Smile-ify/images/promos/promo_68cf3891a0cea.jpg', 'qwerrt', 'fixed', 123.00);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `service`
 --
 
 CREATE TABLE `service` (
   `service_id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
-  `price` double NOT NULL,
-  `status` enum('active','inactive') NOT NULL,
-  `date_created` timestamp NOT NULL DEFAULT current_timestamp()
+  `price` double NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `service`
 --
 
-INSERT INTO `service` (`service_id`, `name`, `price`, `status`, `date_created`) VALUES
-(1, 'Consultation', 0, 'active', '2025-07-11 19:08:44'),
-(2, 'Tooth Extraction', 0, 'active', '2025-07-11 19:08:44'),
-(3, 'Dental Filling', 0, 'active', '2025-07-11 19:08:44'),
-(4, 'Root Canal Treatment', 0, 'active', '2025-07-11 19:08:44'),
-(5, 'Dental Crown Placement', 0, 'active', '2025-07-11 19:08:44'),
-(6, 'Orthodontic Braces', 0, 'active', '2025-07-11 19:08:44'),
-(7, 'Teeth Whitening', 0, 'active', '2025-07-11 19:08:44'),
-(8, 'Complete Denture', 0, 'active', '2025-07-11 19:08:44'),
-(9, 'Partial Denture', 0, 'active', '2025-07-11 19:08:44'),
-(10, 'Dental Implant', 0, 'active', '2025-07-11 19:08:44');
+INSERT INTO `service` (`service_id`, `name`, `price`) VALUES
+(1, 'Consultation', 0),
+(2, 'Tooth Extraction', 0),
+(3, 'Dental Filling', 0),
+(4, 'Root Canal Treatment', 0),
+(5, 'Dental Crown Placement', 500),
+(6, 'Orthodontic Braces', 0),
+(7, 'Teeth Whitening', 0),
+(8, 'Complete Denture', 0),
+(9, 'Partial Denture', 0),
+(10, 'Dental Implant', 0),
+(11, 'sample', 10);
 
 -- --------------------------------------------------------
 
@@ -502,25 +583,19 @@ INSERT INTO `service` (`service_id`, `name`, `price`, `status`, `date_created`) 
 
 CREATE TABLE `supply` (
   `supply_id` int(11) NOT NULL,
-  `name` varchar(100) NOT NULL,
+  `name` varchar(255) NOT NULL,
   `description` text DEFAULT NULL,
-  `category` varchar(50) DEFAULT NULL,
-  `unit` varchar(20) NOT NULL,
-  `quantity` int(11) NOT NULL DEFAULT 0,
-  `reorder_level` int(11) NOT NULL DEFAULT 0,
-  `expiration_date` date DEFAULT NULL,
-  `branch_id` int(11) NOT NULL,
-  `status` enum('Available','Out of Stock','Inactive') DEFAULT 'Available',
-  `date_created` timestamp NOT NULL DEFAULT current_timestamp(),
-  `date_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `category` varchar(100) DEFAULT NULL,
+  `unit` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `supply`
 --
 
-INSERT INTO `supply` (`supply_id`, `name`, `description`, `category`, `unit`, `quantity`, `reorder_level`, `expiration_date`, `branch_id`, `status`, `date_created`, `date_updated`) VALUES
-(1, 'mask', 'desc', 'cate', 'unit', 12, 12, NULL, 1, 'Available', '2025-09-16 00:20:18', '2025-09-16 00:47:32');
+INSERT INTO `supply` (`supply_id`, `name`, `description`, `category`, `unit`) VALUES
+(1, 'mask', 'mask', 'mask', 'ppe'),
+(2, 'knife', 'talinis', 'tools', 'taya');
 
 -- --------------------------------------------------------
 
@@ -593,7 +668,7 @@ INSERT INTO `users` (`user_id`, `username`, `password`, `last_name`, `middle_nam
 (43, NULL, '$2y$10$aCLfK7EOsfLFyCYFsCDZzO03iVxSaxZ7D9grAp7C1GMnDs2t.YSYi', 'Potot', 'Travero', 'Thamara', 'Female', '2013-09-25', 'maya@gmail.com', '5465464654', 'asdsad', 'admin', 1, '2025-09-25', 'Inactive', '2025-08-30 11:40:50'),
 (44, 'potot_a', '$2y$10$f5shlmN2IMzn1yz/VacRLOjezOmSdU7xPB7kizyd70K0nvpk7e8AK', 'Potot', 'Travero', 'Anna', 'Female', '2025-07-27', 'ana@gmail.com', '1231324654', '0', 'admin', 3, '2025-09-29', 'Inactive', '2025-08-30 11:47:27'),
 (45, 'ttvt_K', '$2y$10$avex/XQe4/bbLQTfGq4vsOeLiFV.SANzStRzaEgpZHUr5kLUuJ1Bq', 'ttvt', 'k', 'kggjkj', 'Female', '2025-09-02', 'josephparchaso@gmail.com', '9055626239', NULL, 'patient', NULL, NULL, 'Inactive', '2025-09-01 10:51:29'),
-(46, 'Achas_J', '$2y$10$YuOFDFrnJFYnE65JjXFChu.WQxRa2okENHtFER9xJPwLN1LM29l1y', 'Achas', 'Pallasigue', 'Joshua Gabriel', 'Male', '1999-04-27', 'gabbyachas99@gmail.com', '9260860681', 'P-1 Base Camp, Maramag, Bukidnon', 'patient', NULL, NULL, 'Active', '2025-09-01 10:54:07'),
+(46, 'Achas_J', '$2y$10$YuOFDFrnJFYnE65JjXFChu.WQxRa2okENHtFER9xJPwLN1LM29l1y', 'Achas', 'Pallasigue', 'Joshua Gabriel', 'Male', '1999-04-27', 'gabbyachas99@gmail.com', '9260860681', 'P-1 Base Camp, Maramag, Bukidnon', 'patient', NULL, NULL, 'Inactive', '2025-09-01 10:54:07'),
 (47, 'Parchaso_J4', '$2y$10$Durf8pKbOk2BG6IioMFST.63gUDR4PRITB5mJbdJrOvg6MfdfZRCK', 'Parchaso', 'Espana', 'Jhon', 'Female', '1999-08-17', '18100807@usc.edu.ph', '9055626239', NULL, 'patient', NULL, NULL, 'Inactive', '2025-09-01 15:43:24'),
 (48, 'Achas_G', '$2y$10$qF68ie3yW6UnvQyTV74O7.zN7PotiUXW0huXAGuMQ5FY4SDxkqXgK', 'Achas', '', 'Gab', 'Male', '2025-09-11', 'josephparchaso@gmail.com', '9055626239', 'deca', 'admin', 3, '2025-09-09', 'Active', '2025-09-07 21:54:27'),
 (49, 'asd_A', '$2y$10$mWpr.dorheR9kWYUjq71n.DYPE98YkIwheXxDpRFejM88d6GLslRq', 'asd', 'asd', 'asd', 'Female', '2025-09-04', 'josephparchasooo@gmail.com', '8481198919', '0', 'admin', 3, '2025-09-24', 'Inactive', '2025-09-07 21:56:18'),
@@ -626,12 +701,28 @@ ALTER TABLE `branch`
   ADD PRIMARY KEY (`branch_id`);
 
 --
+-- Indexes for table `branch_promo`
+--
+ALTER TABLE `branch_promo`
+  ADD PRIMARY KEY (`branch_promo_id`),
+  ADD KEY `promo_id` (`promo_id`),
+  ADD KEY `branch_id` (`branch_id`);
+
+--
 -- Indexes for table `branch_service`
 --
 ALTER TABLE `branch_service`
   ADD PRIMARY KEY (`branch_services_id`),
   ADD KEY `fk_branch` (`branch_id`),
   ADD KEY `fk_service` (`service_id`);
+
+--
+-- Indexes for table `branch_supply`
+--
+ALTER TABLE `branch_supply`
+  ADD PRIMARY KEY (`branch_supplies_id`),
+  ADD KEY `supply_id` (`supply_id`),
+  ADD KEY `branch_id` (`branch_id`);
 
 --
 -- Indexes for table `dental_prescription`
@@ -685,6 +776,12 @@ ALTER TABLE `notifications`
   ADD KEY `user_id` (`user_id`);
 
 --
+-- Indexes for table `promo`
+--
+ALTER TABLE `promo`
+  ADD PRIMARY KEY (`promo_id`);
+
+--
 -- Indexes for table `service`
 --
 ALTER TABLE `service`
@@ -694,8 +791,7 @@ ALTER TABLE `service`
 -- Indexes for table `supply`
 --
 ALTER TABLE `supply`
-  ADD PRIMARY KEY (`supply_id`),
-  ADD KEY `fk_supply_branch` (`branch_id`);
+  ADD PRIMARY KEY (`supply_id`);
 
 --
 -- Indexes for table `users`
@@ -722,10 +818,22 @@ ALTER TABLE `branch`
   MODIFY `branch_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
+-- AUTO_INCREMENT for table `branch_promo`
+--
+ALTER TABLE `branch_promo`
+  MODIFY `branch_promo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- AUTO_INCREMENT for table `branch_service`
 --
 ALTER TABLE `branch_service`
-  MODIFY `branch_services_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `branch_services_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+
+--
+-- AUTO_INCREMENT for table `branch_supply`
+--
+ALTER TABLE `branch_supply`
+  MODIFY `branch_supplies_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `dental_prescription`
@@ -770,16 +878,22 @@ ALTER TABLE `notifications`
   MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=85;
 
 --
+-- AUTO_INCREMENT for table `promo`
+--
+ALTER TABLE `promo`
+  MODIFY `promo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- AUTO_INCREMENT for table `service`
 --
 ALTER TABLE `service`
-  MODIFY `service_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `service_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `supply`
 --
 ALTER TABLE `supply`
-  MODIFY `supply_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `supply_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -801,11 +915,25 @@ ALTER TABLE `appointment_transaction`
   ADD CONSTRAINT `appointment_transaction_ibfk_4` FOREIGN KEY (`dentist_id`) REFERENCES `dentist` (`dentist_id`);
 
 --
+-- Constraints for table `branch_promo`
+--
+ALTER TABLE `branch_promo`
+  ADD CONSTRAINT `branch_promo_ibfk_1` FOREIGN KEY (`promo_id`) REFERENCES `promo` (`promo_id`),
+  ADD CONSTRAINT `branch_promo_ibfk_2` FOREIGN KEY (`branch_id`) REFERENCES `branch` (`branch_id`);
+
+--
 -- Constraints for table `branch_service`
 --
 ALTER TABLE `branch_service`
   ADD CONSTRAINT `fk_branch` FOREIGN KEY (`branch_id`) REFERENCES `branch` (`branch_id`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_service` FOREIGN KEY (`service_id`) REFERENCES `service` (`service_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `branch_supply`
+--
+ALTER TABLE `branch_supply`
+  ADD CONSTRAINT `branch_supply_ibfk_1` FOREIGN KEY (`supply_id`) REFERENCES `supply` (`supply_id`),
+  ADD CONSTRAINT `branch_supply_ibfk_2` FOREIGN KEY (`branch_id`) REFERENCES `branch` (`branch_id`);
 
 --
 -- Constraints for table `dental_prescription`
@@ -845,12 +973,6 @@ ALTER TABLE `dentist_service`
 --
 ALTER TABLE `notifications`
   ADD CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
-
---
--- Constraints for table `supply`
---
-ALTER TABLE `supply`
-  ADD CONSTRAINT `fk_supply_branch` FOREIGN KEY (`branch_id`) REFERENCES `branch` (`branch_id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `users`
