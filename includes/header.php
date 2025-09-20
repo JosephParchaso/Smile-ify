@@ -55,7 +55,7 @@ $role = $_SESSION['role'] ?? null;
     
     <?php elseif ($role === 'admin'): ?>
         <!-- Admin-specific -->
-        <script src="<?= BASE_URL ?>/Admin/js/loadServices.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Admin/js/loadServicesAppointment.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/loadDentists.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/loadCalendar.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/loadProfileDetails.js?v=<?= time(); ?>"></script>
@@ -68,9 +68,10 @@ $role = $_SESSION['role'] ?? null;
         <script src="<?= BASE_URL ?>/Admin/js/loadTransactions.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/showPatientModal.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/showAppointmentModal.js?v=<?= time(); ?>"></script>
-        <script src="<?= BASE_URL ?>/Admin/js/loadSupplies.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Admin/js/loadTables.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/showSupplyModal.js?v=<?= time(); ?>"></script>
-
+        <script src="<?= BASE_URL ?>/Admin/js/showServiceModal.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Admin/js/showPromoModal.js?v=<?= time(); ?>"></script>
     <?php elseif ($role === 'patient'): ?>
         <!-- Patient-specific -->
         <script src="<?= BASE_URL ?>/Patient/js/loadCalendar.js?v=<?= time(); ?>"></script>

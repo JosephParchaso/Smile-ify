@@ -12,12 +12,12 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 if (!isset($_GET['id'])) {
-    echo json_encode(["error" => "No supply ID provided"]);
+    echo json_encode(["error" => "No service ID provided"]);
     exit();
 }
 
 $branch_id = $_SESSION['branch_id'] ?? null;
-$supplyId = intval($_GET['id']);
+$serviceId = intval($_GET['id']);
 
 if (!$branch_id) {
     echo json_encode(["error" => "Branch not set"]);
@@ -25,31 +25,25 @@ if (!$branch_id) {
 }
 
 $sql = "SELECT 
-            s.supply_id,
+            s.service_id,
             s.name,
-            s.description,
-            s.category,
-            s.unit,
-            bs.quantity,
-            bs.reorder_level,
-            bs.expiration_date,
+            s.price,
             bs.status,
-            bs.date_created,
-            bs.date_updated
-        FROM supply s
-        INNER JOIN branch_supply bs ON s.supply_id = bs.supply_id
-        WHERE s.supply_id = ? AND bs.branch_id = ?
+            bs.date_created
+        FROM service s
+        INNER JOIN branch_service bs ON s.service_id = bs.service_id
+        WHERE s.service_id = ? AND bs.branch_id = ?
         LIMIT 1";
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("ii", $supplyId, $branch_id);
+$stmt->bind_param("ii", $serviceId, $branch_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
 if ($row = $result->fetch_assoc()) {
     echo json_encode($row);
 } else {
-    echo json_encode(["error" => "Supply not found"]);
+    echo json_encode(["error" => "Service not found"]);
 }
 
 $conn->close();

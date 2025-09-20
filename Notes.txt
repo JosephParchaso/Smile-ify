@@ -158,27 +158,25 @@ dungan register different user
 ==========================================================================================================================================================================================
 
 
-
 add notif badge on every appointment
 
-service
-
-promo
+service diff prices?
 
 footer load services and branch
-educ modal load image
+
+home display images
 
 assign dentist in services = admin or owner	
 
+time appointment
+
 record dental transact
 supplies with transact
-
-multiple services
-
-time appointment
+apply promo
+cancel appointment notify user
 
 home, profile = rix
 
 reports andy, achas
 
-add branch
+crud branch

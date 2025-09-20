@@ -296,7 +296,7 @@ form {
     width: 500px;
 }
 
-.booking-modal, .forgot-password-modal, .edit-profile-modal, .change-password-modal, .manage-appointment-modal, .transaction-record-modal, .manage-employee-modal, .manage-supply-modal {
+.booking-modal, .forgot-password-modal, .edit-profile-modal, .change-password-modal, .manage-appointment-modal, .transaction-record-modal, .manage-employee-modal, .manage-supply-modal, .manage-service-modal, .manage-promo-modal {
     display: none;
     position: fixed;
     z-index: 1000;
@@ -308,7 +308,7 @@ form {
     background-color: rgba(0, 0, 0, 0.5);
 }
 
-.booking-modal-content, .edit-profile-modal-content, .change-password-modal-content, .manage-appointment-modal-content, .transaction-record-modal-content, .manage-employee-modal-content, .manage-supply-modal-content {
+.booking-modal-content, .edit-profile-modal-content, .change-password-modal-content, .manage-appointment-modal-content, .transaction-record-modal-content, .manage-employee-modal-content, .manage-supply-modal-content, .manage-service-modal-content, .manage-promo-modal-content {
     background: #fff;
     border-radius: 4px;
     max-width: 900px;
@@ -336,7 +336,7 @@ form {
     overflow: hidden;
 }
 
-.change-password-modal-content, .edit-profile-modal-content, .manage-appointment-modal-content {
+.change-password-modal-content, .edit-profile-modal-content, .manage-appointment-modal-content, .manage-service-modal-content {
     max-width: 500px;
     max-height: 150vh;
     width: 100%;
@@ -350,7 +350,7 @@ form {
     text-align: center;
 }
 
-.manage-employee-modal-content h2, .manage-supply-modal-content h2  {
+.manage-employee-modal-content h2, .manage-supply-modal-content h2, .manage-service-modal-content h2, .manage-promo-modal-content h2 {
     padding-bottom: 2%;
     margin: 0;
     text-align: center;

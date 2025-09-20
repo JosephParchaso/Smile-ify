@@ -10,7 +10,7 @@ if (isset($_POST['appointmentBranch'])) {
         SELECT s.service_id, s.name
         FROM service s
         INNER JOIN branch_service bs ON s.service_id = bs.service_id
-        WHERE bs.branch_id = ? AND s.status = 'Active'
+        WHERE bs.branch_id = ? AND bs.status = 'Active'
         ORDER BY s.name ASC
     ");
     $stmt->bind_param("i", $branchId);

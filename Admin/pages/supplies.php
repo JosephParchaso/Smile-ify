@@ -17,6 +17,7 @@ require_once BASE_PATH . '/Admin/includes/navbar.php';
 $updateSuccess = $_SESSION['updateSuccess'] ?? '';
 $updateError   = $_SESSION['updateError'] ?? '';
 ?>
+
 <title>Supplies</title>
 
 <?php if (!empty($updateSuccess) || !empty($updateError)): ?>

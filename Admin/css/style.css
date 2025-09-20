@@ -109,7 +109,7 @@
     width: 80%;
 }
 
-#registeredTable, #recentTable, #inactiveTable, #suppliesTable {
+#registeredTable, #recentTable, #inactiveTable, #suppliesTable, #servicesTable, #promosTable {
     width: 100% !important;
 }
 
@@ -117,13 +117,12 @@
     width: 100% !important;
 }
 
-
-.supplies-table{
+.supplies-table, .services-table, .promos-table {
     width: 80% !important;
     margin: 3% auto ;
 }
 
-#registeredTable_filter, #recentTable_filter, #inactiveTable_filter, #suppliesTable_filter, #appointmentTable_filter {
+#registeredTable_filter, #recentTable_filter, #inactiveTable_filter, #suppliesTable_filter, #servicesTable_filter, #promosTable_filter, #appointmentTable_filter {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -133,7 +132,9 @@
 #recentTable_filter input[type="search"],
 #inactiveTable_filter input[type="search"],
 #appointmentTable_filter input[type="search"], 
-#suppliesTable_filter  input[type="search"] {
+#suppliesTable_filter  input[type="search"],
+#servicesTable_filter  input[type="search"],
+#promosTable_filter  input[type="search"] {
     height: 38px;
     padding: 6px 12px;
 }
@@ -142,7 +143,9 @@
 #recentTable_filter button,
 #inactiveTable_filter button,
 #appointmentTable_filter button,
-#suppliesTable_filter button {
+#suppliesTable_filter button,
+#servicesTable_filter button,
+#promosTable_filter button {
     height: 38px;
     padding: 6px 12px;
     border: 1px solid #1e293b;
@@ -175,6 +178,19 @@
 #suppliesTable th:nth-child(4), #suppliesTable td:nth-child(4) { width: 15% !important; }
 #suppliesTable th:nth-child(5), #suppliesTable td:nth-child(5) { width: 15% !important; }
 #suppliesTable th:nth-child(6), #suppliesTable td:nth-child(6) { width: 20% !important; text-align: center;}
+
+#servicesTable th:nth-child(1), #servicesTable td:nth-child(1) { width: 5% !important; text-align: center;}
+#servicesTable th:nth-child(2), #servicesTable td:nth-child(2) { width: 25% !important; }
+#servicesTable th:nth-child(3), #servicesTable td:nth-child(3) { width: 10% !important; }
+#servicesTable th:nth-child(4), #servicesTable td:nth-child(4) { width: 15% !important; }
+#servicesTable th:nth-child(5), #servicesTable td:nth-child(5) { width: 20% !important; text-align: center;}
+
+#promosTable_filter th:nth-child(1), #promosTable_filter td:nth-child(1) { width: 5% !important; text-align: center;}
+#promosTable_filter th:nth-child(2), #promosTable_filter td:nth-child(2) { width: 25% !important; }
+#promosTable_filter th:nth-child(3), #promosTable_filter td:nth-child(3) { width: 10% !important; }
+#promosTable_filter th:nth-child(4), #promosTable_filter td:nth-child(4) { width: 15% !important; }
+#promosTable_filter th:nth-child(5), #promosTable_filter td:nth-child(5) { width: 15% !important; }
+#promosTable_filter th:nth-child(6), #promosTable_filter td:nth-child(6) { width: 20% !important; text-align: center;}
 
 .transaction-table th:nth-child(1), .transaction-table td:nth-child(1) { width: 5% !important; text-align: center;}
 .transaction-table th:nth-child(2), .transaction-table td:nth-child(2) { width: 20% !important; }
