@@ -52,8 +52,19 @@ if ($row = $result->fetch_assoc()) {
     while ($branchRow = $branchResult->fetch_assoc()) {
         $branches[] = (int)$branchRow['branch_id'];
     }
-
     $row['branches'] = $branches;
+
+    $serviceSql = "SELECT service_id FROM dentist_service WHERE dentist_id = ?";
+    $serviceStmt = $conn->prepare($serviceSql);
+    $serviceStmt->bind_param("i", $dentistId);
+    $serviceStmt->execute();
+    $serviceResult = $serviceStmt->get_result();
+
+    $services = [];
+    while ($serviceRow = $serviceResult->fetch_assoc()) {
+        $services[] = (int)$serviceRow['service_id'];
+    }
+    $row['services'] = $services;
 
     echo json_encode($row);
 } else {

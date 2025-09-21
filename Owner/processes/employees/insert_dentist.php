@@ -25,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $licenseNumber  = trim($_POST['licenseNumber']);
     $status         = $_POST['status'];
     $branches       = $_POST['branches'] ?? [];
+    $services       = $_POST['services'] ?? [];
 
     if (!empty($email) && !isValidEmailDomain($email)) {
         $_SESSION['updateError'] = "Email domain is not valid or unreachable.";
@@ -48,7 +49,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         $stmt = $conn->prepare("
-            INSERT INTO dentist (last_name, first_name, middle_name, gender, date_of_birth, email, contact_number, license_number, status, signature_image)
+            INSERT INTO dentist 
+                (last_name, first_name, middle_name, gender, date_of_birth, email, contact_number, license_number, status, signature_image)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
         $stmt->bind_param(
@@ -76,6 +78,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
                 $stmt2->close();
             }
+
+            if (!empty($services)) {
+                $stmt3 = $conn->prepare("INSERT INTO dentist_service (dentist_id, service_id) VALUES (?, ?)");
+                foreach ($services as $serviceId) {
+                    $stmt3->bind_param("ii", $dentistId, $serviceId);
+                    $stmt3->execute();
+                }
+                $stmt3->close();
+            }
+
             $_SESSION['updateSuccess'] = "Dentist added successfully!";
         } else {
             $_SESSION['updateError'] = "Failed to add dentist.";

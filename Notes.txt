@@ -157,18 +157,13 @@ dentist owner can edit or admin
 dungan register different user  
 ==========================================================================================================================================================================================
 
+time appointment
 
-add notif badge on every appointment
+crud services owner? admin? status for footer
 
-service diff prices?
-
-footer load services and branch
+crud branch
 
 home display images
-
-assign dentist in services = admin or owner	
-
-time appointment
 
 record dental transact
 supplies with transact
@@ -178,5 +173,3 @@ cancel appointment notify user
 home, profile = rix
 
 reports andy, achas
-
-crud branch

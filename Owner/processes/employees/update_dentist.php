@@ -26,6 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $licenseNumber  = trim($_POST['licenseNumber']);
     $status         = $_POST['status'];
     $branches       = isset($_POST['branches']) ? array_map('intval', $_POST['branches']) : [];
+    $services       = isset($_POST['services']) ? array_map('intval', $_POST['services']) : [];
 
     if (!empty($email) && !isValidEmailDomain($email)) {
         $_SESSION['updateError'] = "Email domain is not valid or unreachable.";
@@ -116,6 +117,38 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $insertStmt = $conn->prepare($insertSql);
                 foreach ($branches as $branchId) {
                     $insertStmt->bind_param("ii", $dentistId, $branchId);
+                    $insertStmt->execute();
+                }
+                $insertStmt->close();
+            }
+            $changed = true;
+        }
+
+        $currentServices = [];
+        $res = $conn->prepare("SELECT service_id FROM dentist_service WHERE dentist_id = ?");
+        $res->bind_param("i", $dentistId);
+        $res->execute();
+        $result = $res->get_result();
+        while ($row = $result->fetch_assoc()) {
+            $currentServices[] = (int)$row['service_id'];
+        }
+        $res->close();
+
+        sort($currentServices);
+        sort($services);
+
+        if ($currentServices !== $services) {
+            $deleteSql = "DELETE FROM dentist_service WHERE dentist_id = ?";
+            $deleteStmt = $conn->prepare($deleteSql);
+            $deleteStmt->bind_param("i", $dentistId);
+            $deleteStmt->execute();
+            $deleteStmt->close();
+
+            if (!empty($services)) {
+                $insertSql = "INSERT INTO dentist_service (dentist_id, service_id) VALUES (?, ?)";
+                $insertStmt = $conn->prepare($insertSql);
+                foreach ($services as $serviceId) {
+                    $insertStmt->bind_param("ii", $dentistId, $serviceId);
                     $insertStmt->execute();
                 }
                 $insertStmt->close();

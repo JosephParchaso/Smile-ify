@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email          = trim($_POST['email'] ?? '');
     $contactNumber  = trim($_POST['contactNumber'] ?? '');
     $address        = trim($_POST['address'] ?? '');
-    $branch_id      = $_POST['appointmentBranch'] ?? null;
+    $branch_id      = $_POST['branchAssignment'] ?? null;
     $status         = $_POST['status'] ?? 'Inactive';
     $dateStarted    = $_POST['dateStarted'] ?? null;
 
@@ -70,11 +70,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($stmt->execute()) {
             if ($stmt->affected_rows > 0) {
                 $_SESSION['updateSuccess'] = "Admin updated successfully!";
+
+                $forceStmt = $conn->prepare("UPDATE users SET force_logout = 1 WHERE user_id = ?");
+                $forceStmt->bind_param("i", $user_id);
+                $forceStmt->execute();
+                $forceStmt->close();
             }
         } else {
-            $_SESSION['updateError'] = "Failed to update dentist.";
+            $_SESSION['updateError'] = "Failed to update admin.";
         }
-
         $stmt->close();
     } catch (Exception $e) {
         $_SESSION['updateError'] = "Error: " . $e->getMessage();

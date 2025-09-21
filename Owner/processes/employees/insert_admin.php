@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email          = trim($_POST['email'] ?? '');
     $contactNumber  = trim($_POST['contactNumber'] ?? '');
     $address        = trim($_POST['address'] ?? '');
-    $branch_id      = $_POST['appointmentBranch'] ?? null;
+    $branch_id      = $_POST['branchAssignment'] ?? null;
     $status         = $_POST['status'] ?? 'Inactive';
     $dateStarted    = $_POST['dateStarted'] ?? null;
 

@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 ${isEdit ? `
                 <div class="form-group">
-                    <input type="text" id="userName" class="form-control" value="${data.username}" disabled>
+                    <input type="text" id="userName" class="form-control" value="${data.username}" disabled  autocomplete="off">
                     <label for="userName" class="form-label">Username</label>
                 </div>` : ""}
 
@@ -115,10 +115,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
 
                 <div class="form-group">
-                    <select id="appointmentBranch" name="appointmentBranch" class="form-control" required>
+                    <select id="branchAssignment" name="branchAssignment" class="form-control" required>
                         <option value="" disabled selected hidden></option>
                     </select>
-                    <label for="appointmentBranch" class="form-label">Branch <span class="required">*</span></label>
+                    <label for="branchAssignment" class="form-label">Branch <span class="required">*</span></label>
                 </div>
 
                 <div class="form-group">
@@ -152,7 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
         fetch(`${BASE_URL}/Owner/processes/employees/get_branches.php`)
         .then(res => res.json())
         .then(branches => {
-            const branchSelect = document.getElementById("appointmentBranch");
+            const branchSelect = document.getElementById("branchAssignment");
             branches.forEach(branch => {
                 const option = document.createElement("option");
                 option.value = branch.branch_id;
@@ -166,6 +166,8 @@ document.addEventListener("DOMContentLoaded", () => {
     function renderDentistForm(data) {
         const isEdit = !!data;
         const selectedBranches = isEdit && data.branches ? data.branches.map(b => parseInt(b)) : [];
+        const selectedServices = isEdit && data.services ? data.services.map(s => parseInt(s)) : [];
+        
         employeeBody.innerHTML = `
             <h2>${isEdit ? "Manage Dentist" : "Add Dentist"}</h2>
             <form id="dentistForm" action="${BASE_URL}/Owner/processes/employees/${isEdit ? "update_dentist.php" : "insert_dentist.php"}" method="POST" enctype="multipart/form-data" autocomplete="off">
@@ -224,7 +226,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
 
                 <div class="form-group">
-                    <div id="appointmentBranchesCheckboxes" class="checkbox-group"></div>
+                    <div id="branchAssignment" class="checkbox-group"></div>
+                </div>
+
+                <div class="form-group">
+                    <div id="servicesCheckboxes" class="checkbox-group"></div>
                 </div>
 
                 <div class="form-group">
@@ -271,7 +277,7 @@ document.addEventListener("DOMContentLoaded", () => {
         fetch(`${BASE_URL}/Owner/processes/employees/get_branches.php`)
         .then(res => res.json())
         .then(branches => {
-            const container = document.getElementById("appointmentBranchesCheckboxes");
+            const container = document.getElementById("branchAssignment");
             container.innerHTML = "";
 
             branches.forEach(branch => {
@@ -284,6 +290,25 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
             `;
             container.appendChild(wrapper);
+            });
+        });
+
+        fetch(`${BASE_URL}/Owner/processes/employees/get_services.php`)
+        .then(res => res.json())
+        .then(services => {
+            const container = document.getElementById("servicesCheckboxes");
+            container.innerHTML = "";
+
+            services.forEach(service => {
+                const wrapper = document.createElement("div");
+                wrapper.innerHTML = `
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="service_${service.service_id}" name="services[]" value="${service.service_id}"
+                            ${isEdit && selectedServices.includes(parseInt(service.service_id)) ? "checked" : ""}>
+                        <label for="service_${service.service_id}">${service.name}</label>
+                    </div>
+                `;
+                container.appendChild(wrapper);
             });
         });
     }

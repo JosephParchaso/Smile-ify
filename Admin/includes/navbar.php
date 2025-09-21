@@ -15,7 +15,7 @@ require_once BASE_PATH . '/processes/load_notifications.php';
             </li>
             <li>
                 <a href="<?= BASE_URL ?>/Admin/pages/calendar.php" class="<?= ($currentPage == 'calendar') ? 'active' : '' ?>">
-                    <span class="link-text">Schedules</span>
+                    <span class="link-text">Calendar</span>
                 </a>
             </li>
             <li>
@@ -26,6 +26,7 @@ require_once BASE_PATH . '/processes/load_notifications.php';
             <li>
                 <a href="<?= BASE_URL ?>/Admin/pages/patients.php" class="<?= ($currentPage == 'patients') ? 'active' : '' ?>">
                     <span class="link-text">Patients</span>
+                    <span class="patient-badge" id="patientsBadge" style="display:none;">0</span>
                 </a>
             </li>
             <li>

@@ -1,11 +1,40 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
+require_once BASE_PATH . '/includes/db.php';
 
 header("Cache-Control: no-cache, no-store, must-revalidate");
 header("Pragma: no-cache");
 header("Expires: 0");
 
 $role = $_SESSION['role'] ?? null;
+
+if (isset($_SESSION['user_id'])) {
+    $checkStmt = $conn->prepare("SELECT force_logout FROM users WHERE user_id = ?");
+    $checkStmt->bind_param("i", $_SESSION['user_id']);
+    $checkStmt->execute();
+    $result = $checkStmt->get_result();
+    $row = $result->fetch_assoc();
+    $checkStmt->close();
+
+    if ($row && $row['force_logout'] == 1) {
+        $userId = $_SESSION['user_id'];
+
+        session_unset();
+        session_destroy();
+
+        $resetStmt = $conn->prepare("UPDATE users SET force_logout = 0 WHERE user_id = ?");
+        $resetStmt->bind_param("i", $userId);
+        $resetStmt->execute();
+        $resetStmt->close();
+
+        session_start();
+        $_SESSION['login_error'] = "Your account was updated. Please log in again.";
+
+        header("Location: " . BASE_URL . "/index.php");
+        exit();
+    }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -33,6 +62,7 @@ $role = $_SESSION['role'] ?? null;
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"></script>
 
     <!-- JS: All users -->
+    <script src="<?= BASE_URL ?>/js/loadFooter.js?v=<?= time(); ?>"></script>
     <script src="<?= BASE_URL ?>/js/openBookingModal.js?v=<?= time(); ?>"></script>
     <script src="<?= BASE_URL ?>/js/openForgotPasswordModal.js?v=<?= time(); ?>"></script>
     <script src="<?= BASE_URL ?>/js/togglePassword.js?v=<?= time(); ?>"></script>

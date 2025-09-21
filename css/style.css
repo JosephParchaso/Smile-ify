@@ -179,9 +179,9 @@ form {
 }
 
 .checkbox-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px 16px;
 }
 
 .checkbox-item {
@@ -189,17 +189,31 @@ form {
     align-items: center;
     background: #f8f9fa;
     padding: 8px 12px;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
+    border-radius: 6px;
+    border: 1px solid #e1e4e8;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    cursor: pointer;
 }
 
 .checkbox-item:hover {
     background: #eef3f7;
+    border-color: #cbd3da;
 }
 
 .checkbox-item input[type="checkbox"] {
     margin-right: 8px;
     accent-color: #007bff;
+}
+
+.checkbox-item label {
+    cursor: pointer;
+    flex: 1;
+    padding: 6px 0;
+}
+
+.checkbox-item input[type="checkbox"]:checked + label {
+    font-weight: 600;
+    color: #007bff;
 }
 
 .divider {
@@ -227,6 +241,12 @@ form {
 .divider span {
     color: #666;
     font-size: 14px;
+}
+
+#servicesCheckboxes {
+    border-top: 1px solid #ddd;
+    padding-top: 12px;
+    margin-top: 12px;
 }
 
 .otp-verification-modal, .reset-password-modal {
@@ -754,7 +774,8 @@ nav {
 }
 
 .nav-menu li a {
-    display: flex;
+    display: inline-block;
+    position: relative;
     align-items: center;
     gap: 6px;
     padding: 10px 16px;
@@ -795,7 +816,18 @@ nav {
     position: absolute;
     top: -5px;
     right: -5px;
-    }
+}
+
+.patient-badge {
+    background-color: red;
+    color: white;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 12px;
+    position: absolute;
+    top: -5px;
+    right: -5px;
+}
 
 .notif-dropdown {
     display: none;

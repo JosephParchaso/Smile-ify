@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (!this.classList.contains('unread')) {
                     return;
                 }
-                
+
                 const id = this.getAttribute('data-id');
 
                 fetch(`${BASE_URL}/processes/read_notification.php`, {
@@ -34,17 +34,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 })
                     .then(response => response.text())
                     .then(data => {
-                        console.log('Marked as read:', data);
                         if (data.trim() === "success") {
                             this.classList.remove('unread');
 
-                            const badge = document.querySelector('.notif-badge');
-                            if (badge) {
-                                let count = parseInt(badge.textContent);
+                            const notifBadge = document.querySelector('#notifDropdownToggle .notif-badge');
+                            if (notifBadge) {
+                                const count = parseInt(notifBadge.textContent || '0', 10) || 0;
                                 if (count > 1) {
-                                    badge.textContent = count - 1;
+                                    notifBadge.textContent = count - 1;
                                 } else {
-                                    badge.remove();
+                                    notifBadge.remove();
                                 }
                             }
                         }
@@ -69,11 +68,31 @@ document.addEventListener('DOMContentLoaded', function () {
                             item.classList.remove('unread');
                         });
 
-                        const badge = document.querySelector('.notif-badge');
-                        if (badge) badge.remove();
+                        const notifBadge = document.querySelector('#notifDropdownToggle .notif-badge');
+                        if (notifBadge) notifBadge.remove();
                     }
                 })
                 .catch(err => console.error('Failed to mark all as read:', err));
         });
     }
+
+    function updatePatientsBadge() {
+        fetch(`${BASE_URL}/Admin/processes/get_booking_notification.php`)
+            .then(res => res.json())
+            .then(data => {
+                const badge = document.getElementById('patientsBadge');
+                if (!badge) return;
+
+                if (data.count > 0) {
+                    badge.textContent = data.count;
+                    badge.style.display = "inline-block";
+                } else {
+                    badge.style.display = "none";
+                }
+            })
+            .catch(err => console.error("Error updating patients badge:", err));
+    }
+
+    updatePatientsBadge();
+    setInterval(updatePatientsBadge, 10000);
 });
