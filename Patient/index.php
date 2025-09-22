@@ -102,10 +102,13 @@ require_once BASE_PATH . '/Patient/includes/navbar.php';
                         </select>
                     <label for="appointmentService" class="form-label">Service <span class="required">*</span></label>
                     </div>
-                    
-                    <!-- <div class="button-wrapper">
-                        <button type="button" class="add-service-btn">Add Another Service</button>
-                    </div> -->
+                </div>
+
+                <div class="form-group">
+                    <select id="appointmentDentist" class="form-control" name="appointmentDentist" required>
+                        <option value="" disabled selected hidden></option>
+                    </select>
+                    <label for="appointmentDentist" class="form-label">Dentist <span class="required">*</span></label>
                 </div>
 
                 <div class="form-group">
@@ -130,13 +133,6 @@ require_once BASE_PATH . '/Patient/includes/navbar.php';
                         <option value="15:00">3:00 PM</option>
                     </select>
                     <label for="appointmentTime" class="form-label">Time <span class="required">*</span></label>
-                </div>
-
-                <div class="form-group">
-                    <select id="appointmentDentist" class="form-control" name="appointmentDentist" required>
-                        <option value="" disabled selected hidden></option>
-                    </select>
-                    <label for="appointmentDentist" class="form-label">Dentist <span class="required">*</span></label>
                 </div>
 
                 <div class="form-group">

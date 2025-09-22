@@ -1,22 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const branchInputs = document.querySelectorAll("input[name='appointmentBranch']");
-    const serviceSelects = document.querySelectorAll("#appointmentService");
-    const dentistSelects = document.querySelectorAll("#appointmentDentist");
-
-    branchInputs.forEach((branchInput, index) => {
-        const branchId = branchInput.value;
-        const serviceSelect = serviceSelects[index];
-        const dentistSelect = dentistSelects[index];
-
-        if (branchId && serviceSelect) {
-            loadServices(branchId, serviceSelect);
-
-            serviceSelect.addEventListener("change", function () {
-                loadDentists(branchId, serviceSelect.value, dentistSelect);
-            });
-        }
-    });
-
     const bookingModal = document.getElementById("manageAppointmentModal");
     const bookingBody = document.getElementById("appointmentModalBody");
 
@@ -25,19 +7,32 @@ document.addEventListener("DOMContentLoaded", function () {
             renderAppointmentForm();
             bookingModal.style.display = "block";
 
-            const branchSelect = bookingBody.querySelector("#appointmentBranch");
+            const branchSelect  = bookingBody.querySelector("#appointmentBranch");
             const serviceSelect = bookingBody.querySelector("#appointmentService");
             const dentistSelect = bookingBody.querySelector("#appointmentDentist");
+            const dateSelect    = bookingBody.querySelector("#appointmentDate");
+            const timeSelect    = bookingBody.querySelector("#appointmentTime");
 
-            if (branchSelect && serviceSelect) {
+            if (branchSelect) {
                 loadBranches(branchSelect);
 
-                branchSelect.addEventListener("change", function () {
+                branchSelect.addEventListener("change", () => {
                     loadServices(branchSelect.value, serviceSelect);
+                    resetDentist(dentistSelect);
+                    resetDateAndTime(dateSelect, timeSelect);
+                });
 
-                    serviceSelect.addEventListener("change", function () {
-                        loadDentists(branchSelect.value, serviceSelect.value, dentistSelect);
-                    });
+                serviceSelect.addEventListener("change", () => {
+                    loadDentists(branchSelect.value, serviceSelect.value, dentistSelect);
+                    resetDateAndTime(dateSelect, timeSelect);
+                });
+
+                dentistSelect.addEventListener("change", () => {
+                    resetDateAndTime(dateSelect, timeSelect);
+                });
+
+                dateSelect.addEventListener("change", () => {
+                    loadAvailableTimes(branchSelect.value, dateSelect.value, timeSelect);
                 });
             }
         }
@@ -57,12 +52,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 </div>
 
                 <div class="form-group">
-                    <div id="services-container">
-                        <select id="appointmentService" class="form-control" name="appointmentService" required>
-                            <option value="" disabled selected hidden></option>
-                        </select>
-                        <label for="appointmentService" class="form-label">Service <span class="required">*</span></label>
-                    </div>
+                    <select id="appointmentService" class="form-control" name="appointmentService" required>
+                        <option value="" disabled selected hidden></option>
+                    </select>
+                    <label for="appointmentService" class="form-label">Service <span class="required">*</span></label>
                 </div>
 
                 <div class="form-group">
@@ -121,7 +114,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const selectedDate = new Date(this.value);
                 if (selectedDate.getDay() === 0) {
                     errorMsg.style.display = "block";
-                    this.value = ""; // clear invalid selection
+                    this.value = ""; 
                     this.classList.add("is-invalid");
                 } else {
                     errorMsg.style.display = "none";
@@ -138,8 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
             success: function (response) {
                 branchSelect.innerHTML = response;
             },
-            error: function (xhr, status, error) {
-                console.error("Error fetching branches:", error);
+            error: function () {
                 branchSelect.innerHTML = '<option disabled>Error loading branches</option>';
             }
         });
@@ -148,13 +140,12 @@ document.addEventListener("DOMContentLoaded", function () {
     function loadServices(branchId, serviceSelect) {
         $.ajax({
             type: "POST",
-            url: `${BASE_URL}/Admin/processes/load_services.php`,
+            url: `${BASE_URL}/processes/load_services.php`,
             data: { appointmentBranch: branchId },
             success: function (response) {
                 serviceSelect.innerHTML = response;
             },
-            error: function (xhr, status, error) {
-                console.error("Error fetching services:", error);
+            error: function () {
                 serviceSelect.innerHTML = '<option disabled>Error loading services</option>';
             }
         });
@@ -168,7 +159,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         $.ajax({
             type: "POST",
-            url: `${BASE_URL}/Admin/processes/load_dentists.php`,
+            url: `${BASE_URL}/processes/load_dentists.php`,
             data: {
                 appointmentBranch: branchId,
                 appointmentService: serviceId
@@ -176,19 +167,58 @@ document.addEventListener("DOMContentLoaded", function () {
             success: function (response) {
                 dentistSelect.innerHTML = response;
             },
-            error: function (xhr, status, error) {
-                console.error("Error fetching dentists:", error, xhr.responseText);
+            error: function () {
                 dentistSelect.innerHTML = '<option disabled>Error loading dentists</option>';
             }
         });
     }
-});
 
+    function loadAvailableTimes(branchId, date, timeSelect) {
+        if (branchId && date) {
+            fetch(`${BASE_URL}/processes/load_booked_times.php`, {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `branch_id=${branchId}&appointment_date=${date}`
+            })
+            .then(res => res.json())
+            .then(bookedTimes => {
+                [...timeSelect.options].forEach(opt => {
+                    if (opt.value && bookedTimes.includes(opt.value)) {
+                        opt.disabled = true;
+                        opt.style.color = "#999";
+                    } else {
+                        opt.disabled = false;
+                        opt.style.color = "#000";
+                    }
+                });
+
+                if (timeSelect.value && bookedTimes.includes(timeSelect.value)) {
+                    timeSelect.value = "";
+                }
+            })
+            .catch(err => console.error("Error fetching times:", err));
+        }
+    }
+
+    function resetDentist(dentistSelect) {
+        dentistSelect.innerHTML = '<option value="" disabled selected hidden></option>';
+    }
+
+    function resetDateAndTime(dateSelect, timeSelect) {
+        if (dateSelect) dateSelect.value = "";
+        if (timeSelect) {
+            timeSelect.value = "";
+            [...timeSelect.options].forEach(opt => {
+                opt.disabled = false;
+                opt.style.color = "#000";
+            });
+        }
+    }
+});
 
 function closeBookingModal() {
     document.getElementById("bookingModal").style.display = "none";
 }
-
 function closePatientBookingModal() {
     document.getElementById("manageAppointmentModal").style.display = "none";
 }

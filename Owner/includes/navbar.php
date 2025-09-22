@@ -19,6 +19,11 @@ require_once BASE_PATH . '/processes/load_notifications.php';
                 </a>
             </li>
             <li>
+                <a href="<?= BASE_URL ?>/Owner/pages/branches.php" class="<?= ($currentPage == 'branches') ? 'active' : '' ?>">
+                    <span class="link-text">Branches</span>
+                </a>
+            </li>
+            <li>
                 <a href="<?= BASE_URL ?>/Owner/pages/calendar.php" class="<?= ($currentPage == 'calendar') ? 'active' : '' ?>">
                     <span class="link-text">Calendar</span>
                 </a>

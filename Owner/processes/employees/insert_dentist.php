@@ -24,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $contactNumber  = trim($_POST['contactNumber']);
     $licenseNumber  = trim($_POST['licenseNumber']);
     $status         = $_POST['status'];
+    $dateStarted    = $_POST['dateStarted'] ?? null;
     $branches       = $_POST['branches'] ?? [];
     $services       = $_POST['services'] ?? [];
 
@@ -50,11 +51,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $stmt = $conn->prepare("
             INSERT INTO dentist 
-                (last_name, first_name, middle_name, gender, date_of_birth, email, contact_number, license_number, status, signature_image)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                (last_name, first_name, middle_name, gender, date_of_birth, email, contact_number, license_number, date_started, status, signature_image)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
         $stmt->bind_param(
-            "ssssssssss",
+            "sssssssssss",
             $lastName,
             $firstName,
             $middleName,
@@ -63,6 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $email,
             $contactNumber,
             $licenseNumber,
+            $dateStarted,
             $status,
             $signatureImage
         );

@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(res => res.json())
         .then(services => {
             const container = document.getElementById("footerServices");
+            if (!container) return;
             container.innerHTML = "";
             services.forEach(service => {
                 const p = document.createElement("p");
@@ -16,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(res => res.json())
         .then(branches => {
             const container = document.getElementById("footerBranches");
+            if (!container) return;
             container.innerHTML = "";
             branches.forEach(branch => {
                 const a = document.createElement("a");

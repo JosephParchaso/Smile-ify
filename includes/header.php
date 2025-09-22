@@ -66,8 +66,6 @@ if (isset($_SESSION['user_id'])) {
     <script src="<?= BASE_URL ?>/js/openBookingModal.js?v=<?= time(); ?>"></script>
     <script src="<?= BASE_URL ?>/js/openForgotPasswordModal.js?v=<?= time(); ?>"></script>
     <script src="<?= BASE_URL ?>/js/togglePassword.js?v=<?= time(); ?>"></script>
-    <script src="<?= BASE_URL ?>/js/loadServices.js?v=<?= time(); ?>"></script>
-    <script src="<?= BASE_URL ?>/js/loadDentists.js?v=<?= time(); ?>"></script>
     <script src="<?= BASE_URL ?>/js/toggleCalendar.js?v=<?= time(); ?>"></script>
 
     <!-- JS: Authenticated users -->
@@ -77,11 +75,13 @@ if (isset($_SESSION['user_id'])) {
 
     <?php if ($role === 'owner'): ?>
         <!-- Owner-specific -->
+        <script src="<?= BASE_URL ?>/Owner/js/loadBranches.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Owner/js/loadCalendar.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Owner/js/loadProfileDetails.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Owner/js/loadAdmins.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Owner/js/loadDentists.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Owner/js/showModal.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Owner/js/showBranchModal.js?v=<?= time(); ?>"></script>
     
     <?php elseif ($role === 'admin'): ?>
         <!-- Admin-specific -->

@@ -4,7 +4,10 @@ require_once BASE_PATH . '/includes/db.php';
 
 header('Content-Type: application/json');
 
-$sql = "SELECT branch_id, name, map_url FROM branch ORDER BY name ASC";
+$sql = "SELECT branch_id, name, map_url 
+        FROM branch 
+        WHERE status = 'Active' 
+        ORDER BY name ASC";
 $result = $conn->query($sql);
 
 $branches = [];

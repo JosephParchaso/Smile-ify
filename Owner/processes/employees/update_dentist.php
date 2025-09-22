@@ -24,6 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $email          = trim($_POST['email']);
     $contactNumber  = trim($_POST['contactNumber']);
     $licenseNumber  = trim($_POST['licenseNumber']);
+    $dateStarted    = trim($_POST['dateStarted']);
     $status         = $_POST['status'];
     $branches       = isset($_POST['branches']) ? array_map('intval', $_POST['branches']) : [];
     $services       = isset($_POST['services']) ? array_map('intval', $_POST['services']) : [];
@@ -50,7 +51,26 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     if ($signatureImage) {
         $sql = "UPDATE dentist
-                SET last_name=?, first_name=?, middle_name=?, gender=?, date_of_birth=?, email=?, contact_number=?, license_number=?, status=?, signature_image=?
+                SET last_name=?, first_name=?, middle_name=?, gender=?, date_of_birth=?, email=?, contact_number=?, license_number=?, date_started = ?, status=?, signature_image=?
+                WHERE dentist_id=?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sssssssssssi",
+            $lastName,
+            $firstName,
+            $middleName,
+            $gender,
+            $dateofBirth,
+            $email,
+            $contactNumber,
+            $licenseNumber,
+            $dateStarted,
+            $status,
+            $signatureImage,
+            $dentistId
+        );
+    } else {
+        $sql = "UPDATE dentist
+                SET last_name=?, first_name=?, middle_name=?, gender=?, date_of_birth=?, email=?, contact_number=?, license_number=?, date_started = ?, status=?
                 WHERE dentist_id=?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("ssssssssssi",
@@ -62,24 +82,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $email,
             $contactNumber,
             $licenseNumber,
-            $status,
-            $signatureImage,
-            $dentistId
-        );
-    } else {
-        $sql = "UPDATE dentist
-                SET last_name=?, first_name=?, middle_name=?, gender=?, date_of_birth=?, email=?, contact_number=?, license_number=?, status=?
-                WHERE dentist_id=?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssssssssi",
-            $lastName,
-            $firstName,
-            $middleName,
-            $gender,
-            $dateofBirth,
-            $email,
-            $contactNumber,
-            $licenseNumber,
+            $dateStarted,
             $status,
             $dentistId
         );

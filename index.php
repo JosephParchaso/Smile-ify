@@ -164,10 +164,13 @@ if (isset($_SESSION['timeoutError'])) {
                     </select>
                 <label for="appointmentService" class="form-label">Service <span class="required">*</span></label>
                 </div>
-                
-                <!-- <div class="button-wrapper">
-                    <button type="button" class="add-service-btn">Add Another Service</button>
-                </div> -->
+            </div>
+
+            <div class="form-group">
+                <select id="appointmentDentist" name="appointmentDentist" class="form-control" required>
+                    <option value="" disabled selected hidden></option>
+                </select>
+                <label for="appointmentDentist" class="form-label">Dentist <span class="required">*</span></label>
             </div>
 
             <div class="form-group">
@@ -192,13 +195,6 @@ if (isset($_SESSION['timeoutError'])) {
                     <option value="15:00">3:00 PM</option>
                 </select>
                 <label for="appointmentTime" class="form-label">Time <span class="required">*</span></label>
-            </div>
-
-            <div class="form-group">
-                <select id="appointmentDentist" name="appointmentDentist" class="form-control" required>
-                    <option value="" disabled selected hidden></option>
-                </select>
-                <label for="appointmentDentist" class="form-label">Dentist <span class="required">*</span></label>
             </div>
 
             <div class="form-group">

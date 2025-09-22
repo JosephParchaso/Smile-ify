@@ -148,20 +148,15 @@ doctor specialization? - consultation all?
 doctor startdate
 doctor resignation or leave inactive 
 
-If you’re building for a simple clinic where a dentist is assigned to only one branch, go with Option 1. 1 = 1
-If your clinic has multiple branches and dentists rotate, go with Option 2. many = many
-
 time consume in each service
 
-dentist owner can edit or admin
 dungan register different user  
 ==========================================================================================================================================================================================
 
-time appointment
+presctiption load branch
+tabs branch reports owner
 
-crud services owner? admin? status for footer
-
-crud branch
++63 in profiles and tables
 
 home display images
 
@@ -169,6 +164,7 @@ record dental transact
 supplies with transact
 apply promo
 cancel appointment notify user
+receipt
 
 home, profile = rix
 

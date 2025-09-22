@@ -87,18 +87,23 @@
     width: 100% !important;
 }
 
-#adminsTable_filter, #dentistsTable_filter {
+.branches-table {
+    width: 80% !important;
+    margin: 3% auto ;
+}
+
+#adminsTable_filter, #dentistsTable_filter, #branchesTable_filter {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-#adminsTable_filter input[type="search"], #dentistsTable_filter input[type="search"] {
+#adminsTable_filter input[type="search"], #dentistsTable_filter input[type="search"], #branchesTable_filter input[type="search"] {
     height: 38px;
     padding: 6px 12px;
 }
 
-#adminsTable_filter button, #dentistsTable_filter button {
+#adminsTable_filter button, #dentistsTable_filter button, #branchesTable_filter button {
     height: 38px;
     padding: 6px 12px;
     border: 1px solid #1e293b;
@@ -107,6 +112,13 @@
     color: #fff;
     cursor: pointer;
 }
+
+#branchesTable th:nth-child(1), #branchesTable td:nth-child(1) { width: 5% !important; text-align: center;}
+#branchesTable th:nth-child(2), #branchesTable td:nth-child(2) { width: 20% !important; }
+#branchesTable th:nth-child(3), #branchesTable td:nth-child(3) { width: 30% !important; }
+#branchesTable th:nth-child(4), #branchesTable td:nth-child(4) { width: 15% !important; }
+#branchesTable th:nth-child(5), #branchesTable td:nth-child(5) { width: 10% !important; }
+#branchesTable th:nth-child(6), #branchesTable td:nth-child(6) { width: 10% !important; text-align: center;}
 
 .transaction-table th:nth-child(1),.transaction-table td:nth-child(1) { width: 10% !important; text-align: center;}
 .transaction-table th:nth-child(2),.transaction-table td:nth-child(2) { width: 30% !important; }

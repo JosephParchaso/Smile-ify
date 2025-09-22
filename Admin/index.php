@@ -134,6 +134,13 @@ $totalAppointmentsMonth = 42;
                         </div>
 
                         <div class="form-group">
+                            <select id="appointmentDentist" name="appointmentDentist" class="form-control" required>
+                                <option value="" disabled selected hidden></option>
+                            </select>
+                            <label for="appointmentDentist" class="form-label">Dentist <span class="required">*</span></label>
+                        </div>
+
+                        <div class="form-group">
                             <input type="date" id="appointmentDate" name="appointmentDate" class="form-control" required />
                             <label for="appointmentDate" class="form-label">Date <span class="required">*</span></label>
                             <span id="dateError" class="error-msg-calendar error">
@@ -155,13 +162,6 @@ $totalAppointmentsMonth = 42;
                                 <option value="15:00">3:00 PM</option>
                             </select>
                             <label for="appointmentTime" class="form-label">Time <span class="required">*</span></label>
-                        </div>
-
-                        <div class="form-group">
-                            <select id="appointmentDentist" name="appointmentDentist" class="form-control" required>
-                                <option value="" disabled selected hidden></option>
-                            </select>
-                            <label for="appointmentDentist" class="form-label">Dentist <span class="required">*</span></label>
                         </div>
 
                         <div class="form-group">
