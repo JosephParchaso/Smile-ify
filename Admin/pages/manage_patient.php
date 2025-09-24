@@ -105,10 +105,10 @@ $backTab = $_GET['tab'] ?? 'inactive';
     </div>
 </div>
 
-<div id="manageAppointmentModal" class="manage-appointment-modal">
-    <div class="manage-appointment-modal-content">
-        <div id="appointmentModalBody" class="manage-appointment-modal-content-body">
-            <!-- Patient info will be loaded here -->
+<div id="manageAppointmentModal" class="manage-patient-modal">
+    <div class="manage-patient-modal-content">
+        <div id="appointmentModalBody" class="manage-patient-modal-content-body">
+            <!-- Appointment Booking info will be loaded here -->
         </div>
     </div>
 </div>

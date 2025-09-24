@@ -152,6 +152,12 @@ time consume in each service
 
 dungan register different user  
 ==========================================================================================================================================================================================
+one add vitals and transaction only 
+isswelling..., promo, notes transaction
+promo no startdate enddate
+cancel
+
+update status when status is inactive in booking appointment
 
 presctiption load branch
 tabs branch reports owner
@@ -169,3 +175,5 @@ receipt
 home, profile = rix
 
 reports andy, achas
+
+family

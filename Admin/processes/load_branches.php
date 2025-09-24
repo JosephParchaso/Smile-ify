@@ -3,8 +3,9 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
 
 $stmt = $conn->prepare("
-    SELECT branch_id, name 
+    SELECT branch_id, name, status
     FROM branch
+    WHERE status = 'Active'
     ORDER BY name ASC
 ");
 $stmt->execute();

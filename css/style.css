@@ -316,7 +316,7 @@ form {
     width: 500px;
 }
 
-.booking-modal, .forgot-password-modal, .edit-profile-modal, .change-password-modal, .manage-appointment-modal, .transaction-record-modal, .manage-employee-modal, .manage-supply-modal, .manage-service-modal, .manage-promo-modal, .manage-branch-modal {
+.booking-modal, .forgot-password-modal, .edit-profile-modal, .change-password-modal, .manage-appointment-modal, .transaction-record-modal, .manage-patient-modal, .manage-employee-modal, .manage-supply-modal, .manage-service-modal, .manage-promo-modal, .manage-branch-modal {
     display: none;
     position: fixed;
     z-index: 1000;
@@ -328,7 +328,7 @@ form {
     background-color: rgba(0, 0, 0, 0.5);
 }
 
-.booking-modal-content, .edit-profile-modal-content, .change-password-modal-content, .manage-appointment-modal-content, .transaction-record-modal-content, .manage-employee-modal-content, .manage-supply-modal-content, .manage-service-modal-content, .manage-promo-modal-content, .manage-branch-modal-content {
+.booking-modal-content, .edit-profile-modal-content, .change-password-modal-content, .manage-appointment-modal-content, .transaction-record-modal-content, .manage-patient-modal-content, .manage-employee-modal-content, .manage-supply-modal-content, .manage-service-modal-content, .manage-promo-modal-content, .manage-branch-modal-content {
     background: #fff;
     border-radius: 4px;
     max-width: 900px;
@@ -356,11 +356,11 @@ form {
     overflow: hidden;
 }
 
-.change-password-modal-content, .edit-profile-modal-content, .manage-appointment-modal-content, .manage-service-modal-content, .manage-branch-modal-content  {
+.change-password-modal-content, .edit-profile-modal-content, .manage-appointment-modal-content, .manage-service-modal-content {
     max-width: 500px;
     max-height: 150vh;
     width: 100%;
-    margin: 20vh auto;
+    margin: 10vh auto;
 }
 
 .manage-appointment-modal-content h2, .transaction-record-modal-content h2 {
@@ -370,7 +370,7 @@ form {
     text-align: center;
 }
 
-.manage-employee-modal-content h2, .manage-supply-modal-content h2, .manage-service-modal-content h2, .manage-promo-modal-content h2, .manage-branch-modal-content h2 {
+.manage-employee-modal-content h2, .manage-patient-modal-content h2, .manage-supply-modal-content h2, .manage-service-modal-content h2, .manage-promo-modal-content h2, .manage-branch-modal-content h2 {
     padding-bottom: 2%;
     margin: 0;
     text-align: center;
@@ -442,6 +442,21 @@ form {
 
 .confirm-btn:hover, .add-service-btn:hover {
     background-color: #243b53;
+    transition: background-color 0.3s ease;
+}
+
+.cancel-btn-appointment {
+    background-color: #ffe6e6;
+    color: #b00020;
+    border: 1px solid #b00020;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.cancel-btn-appointment:hover {
+    background-color: #b00020;
+    color: #ffe6e6;
     transition: background-color 0.3s ease;
 }
 

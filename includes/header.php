@@ -85,19 +85,18 @@ if (isset($_SESSION['user_id'])) {
     
     <?php elseif ($role === 'admin'): ?>
         <!-- Admin-specific -->
-        <script src="<?= BASE_URL ?>/Admin/js/loadServicesAppointment.js?v=<?= time(); ?>"></script>
-        <script src="<?= BASE_URL ?>/Admin/js/loadDentists.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/loadCalendar.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/loadProfileDetails.js?v=<?= time(); ?>"></script>
-        <script src="<?= BASE_URL ?>/Admin/js/loadRegisteredPatients.js?v=<?= time(); ?>"></script>
-        <script src="<?= BASE_URL ?>/Admin/js/loadRecentBookings.js?v=<?= time(); ?>"></script>
-        <script src="<?= BASE_URL ?>/Admin/js/loadInactivePatients.js?v=<?= time(); ?>"></script>
-        <script src="<?= BASE_URL ?>/Admin/js/loadAppointmentDetails.js?v=<?= time(); ?>"></script>
-        <script src="<?= BASE_URL ?>/Admin/js/loadPatientDetails.js?v=<?= time(); ?>"></script>
-        <script src="<?= BASE_URL ?>/Admin/js/loadAppointments.js?v=<?= time(); ?>"></script>
-        <script src="<?= BASE_URL ?>/Admin/js/loadTransactions.js?v=<?= time(); ?>"></script>
-        <script src="<?= BASE_URL ?>/Admin/js/showPatientModal.js?v=<?= time(); ?>"></script>
-        <script src="<?= BASE_URL ?>/Admin/js/showAppointmentModal.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Admin/js/patients/loadRegisteredPatients.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Admin/js/patients/loadRecentBookings.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Admin/js/patients/loadInactivePatients.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Admin/js/manage_appointment/showPatientModal.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Admin/js/manage_appointment/showTransactionModal.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Admin/js/manage_appointment/loadAppointmentDetails.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Admin/js/manage_appointment/loadTransactions.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Admin/js/manage_patient/loadPatientDetails.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Admin/js/manage_patient/loadAppointmentsTransactions.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Admin/js/manage_patient/showAppointmentModal.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/loadTables.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/showSupplyModal.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/showServiceModal.js?v=<?= time(); ?>"></script>

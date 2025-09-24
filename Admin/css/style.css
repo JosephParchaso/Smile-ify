@@ -109,11 +109,25 @@
     width: 80%;
 }
 
-#registeredTable, #recentTable, #inactiveTable, #suppliesTable, #servicesTable, #promosTable {
+#dental_transactions.tab-content,
+#vitals.tab-content,
+#prescriptions.tab-content {
     width: 100% !important;
 }
 
-#appointmentTable, #appointment_history, #transactionTable, #dental_transaction {
+#registeredTable, 
+#recentTable, 
+#inactiveTable, 
+#suppliesTable, 
+#servicesTable, 
+#promosTable, 
+#appointmentTable, 
+#appointment_history, 
+#transactionTable, 
+#dental_transaction,  
+#dentaltransactionTable, 
+#vitalTable, 
+#prescriptionTable {
     width: 100% !important;
 }
 
@@ -122,7 +136,29 @@
     margin: 3% auto ;
 }
 
-#registeredTable_filter, #recentTable_filter, #inactiveTable_filter, #suppliesTable_filter, #servicesTable_filter, #promosTable_filter, #appointmentTable_filter {
+.table-action {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+}
+
+.table-action button {
+    height: 38px;
+    padding: 6px 12px;
+    border: 1px solid #1e293b;
+    border-radius: 4px;
+    background-color: #1e293b;
+    color: #fff;
+    cursor: pointer;
+}
+
+#registeredTable_filter,
+#recentTable_filter,
+#inactiveTable_filter,
+#suppliesTable_filter,
+#servicesTable_filter,
+#promosTable_filter,
+#appointmentTable_filter {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -132,9 +168,9 @@
 #recentTable_filter input[type="search"],
 #inactiveTable_filter input[type="search"],
 #appointmentTable_filter input[type="search"], 
-#suppliesTable_filter  input[type="search"],
-#servicesTable_filter  input[type="search"],
-#promosTable_filter  input[type="search"] {
+#suppliesTable_filter input[type="search"],
+#servicesTable_filter input[type="search"],
+#promosTable_filter input[type="search"] {
     height: 38px;
     padding: 6px 12px;
 }
@@ -145,7 +181,10 @@
 #appointmentTable_filter button,
 #suppliesTable_filter button,
 #servicesTable_filter button,
-#promosTable_filter button {
+#promosTable_filter button,
+#dentaltransactionTable_filter button,
+#vitalTable_filter button,
+#prescriptionTable_filter button {
     height: 38px;
     padding: 6px 12px;
     border: 1px solid #1e293b;
@@ -171,6 +210,24 @@
 #recentTable th:nth-child(4), #recentTable td:nth-child(4) { width: 15% !important; }
 #recentTable th:nth-child(5), #recentTable td:nth-child(5) { width: 15% !important; }
 #recentTable th:nth-child(6), #recentTable td:nth-child(6) { width: 10% !important; text-align: center;}
+
+#dentaltransactionTable th:nth-child(1), #dentaltransactionTable td:nth-child(1) { width: 5% !important; text-align: center;}
+#dentaltransactionTable th:nth-child(2), #dentaltransactionTable td:nth-child(2) { width: 40% !important; }
+#dentaltransactionTable th:nth-child(3), #dentaltransactionTable td:nth-child(3) { width: 20% !important; }
+#dentaltransactionTable th:nth-child(4), #dentaltransactionTable td:nth-child(4) { width: 10% !important; text-align: center;}
+
+#vitalTable th:nth-child(1), #vitalTable td:nth-child(1) { width: 5% !important; text-align: center; }
+#vitalTable th:nth-child(2), #vitalTable td:nth-child(2) { width: 20% !important; }
+#vitalTable th:nth-child(3), #vitalTable td:nth-child(3) { width: 20% !important; }
+#vitalTable th:nth-child(4), #vitalTable td:nth-child(4) { width: 20% !important; }
+#vitalTable th:nth-child(5), #vitalTable td:nth-child(5) { width: 10% !important; text-align: center; }
+
+#prescriptionTable th:nth-child(1), #prescriptionTable td:nth-child(1) { width: 5% !important; text-align: center; }
+#prescriptionTable th:nth-child(2), #prescriptionTable td:nth-child(2) { width: 20% !important; }
+#prescriptionTable th:nth-child(3), #prescriptionTable td:nth-child(3) { width: 15% !important; }
+#prescriptionTable th:nth-child(4), #prescriptionTable td:nth-child(4) { width: 15% !important; }
+#prescriptionTable th:nth-child(5), #prescriptionTable td:nth-child(5) { width: 15% !important; }
+#prescriptionTable th:nth-child(6), #prescriptionTable td:nth-child(6) { width: 10% !important; text-align: center; }
 
 #suppliesTable th:nth-child(1), #suppliesTable td:nth-child(1) { width: 5% !important; text-align: center;}
 #suppliesTable th:nth-child(2), #suppliesTable td:nth-child(2) { width: 25% !important; }

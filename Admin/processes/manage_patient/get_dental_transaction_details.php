@@ -60,7 +60,7 @@ $sql = "SELECT
             ON a.branch_id = b.branch_id
         LEFT JOIN dentist d 
             ON d.dentist_id = COALESCE(dt.dentist_id, a.dentist_id)
-        LEFT JOIN dental_vitals dv
+        LEFT JOIN dental_vital dv
             ON dv.appointment_transaction_id = a.appointment_transaction_id
         LEFT JOIN users u
             ON a.user_id = u.user_id

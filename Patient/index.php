@@ -70,8 +70,8 @@ require_once BASE_PATH . '/Patient/includes/navbar.php';
         </div>
     </div>
 
-    <div id="bookingModal" class="manage-appointment-modal">
-        <div class="manage-appointment-modal-content">
+    <div id="bookingModal" class="booking-modal">
+        <div class="booking-modal-content">
             
             <form action="<?= BASE_URL ?>/Patient/processes/insert_appointment.php" method="POST" autocomplete="off">
                 <div class="form-group">
@@ -79,7 +79,7 @@ require_once BASE_PATH . '/Patient/includes/navbar.php';
                         <option value="" disabled selected hidden></option>
                         <?php
 
-                        $sql = "SELECT branch_id, name FROM branch";
+                        $sql = "SELECT branch_id, name, status FROM branch WHERE status = 'Active' ";
                         $result = $conn->query($sql);
 
                         if ($result->num_rows > 0) {

@@ -15,26 +15,26 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        employeeBody.innerHTML = `<p style="color:red;">${data.error}</p>`;
-                        employeeModal.style.display = "block";
-                        return;
-                    }
-
-                    if (type === "admin") {
-                        renderAdminForm(data);
-                    } else if (type === "dentist") {
-                        renderDentistForm(data);
-                    }
-
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    employeeBody.innerHTML = `<p style="color:red;">${data.error}</p>`;
                     employeeModal.style.display = "block";
-                })
-                .catch(() => {
-                    employeeBody.innerHTML = `<p style="color:red;">Error loading details</p>`;
-                    employeeModal.style.display = "block";
-                });
+                    return;
+                }
+
+                if (type === "admin") {
+                    renderAdminForm(data);
+                } else if (type === "dentist") {
+                    renderDentistForm(data);
+                }
+
+                employeeModal.style.display = "block";
+            })
+            .catch(() => {
+                employeeBody.innerHTML = `<p style="color:red;">Error loading details</p>`;
+                employeeModal.style.display = "block";
+            });
         }
     });
 

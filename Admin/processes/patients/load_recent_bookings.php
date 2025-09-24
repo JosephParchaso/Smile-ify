@@ -30,6 +30,8 @@ $sql = "SELECT
             AND a.appointment_date >= CURDATE()
         ORDER BY 
             CASE
+                WHEN TIMESTAMP(a.appointment_date, a.appointment_time) >= NOW() - INTERVAL 12 HOUR
+                    AND TIMESTAMP(a.appointment_date, a.appointment_time) < NOW() THEN 0
                 WHEN a.appointment_date = CURDATE() THEN 1
                 WHEN a.appointment_date = CURDATE() + INTERVAL 1 DAY THEN 2
                 ELSE 3
@@ -50,7 +52,7 @@ while ($row = $result->fetch_assoc()) {
         $row['appointment_date'],
         $row['appointment_time'],
         $row['status'],
-        '<a href="' . BASE_URL . '/Admin/pages/manage_appointment.php?id=' . $row['appointment_transaction_id'] . '&tab=recent" class="manage-action">Manage</a>'
+        '<a href="' . BASE_URL . '/Admin/pages/manage_appointment.php?id=' . $row['appointment_transaction_id'] . '&tab=dental_transactions" class="manage-action">Manage</a>'
     ];
 }
 

@@ -23,7 +23,7 @@ if (!$appointmentId) {
 $updateSuccess = $_SESSION['updateSuccess'] ?? "";
 $updateError   = $_SESSION['updateError'] ?? "";
 
-$backTab = $_GET['tab'] ?? 'recent';
+$activeTab = $_GET['tab'] ?? 'dental_transactions';
 ?>
 <title>Appointment Details</title>
 
@@ -55,87 +55,34 @@ $backTab = $_GET['tab'] ?? 'recent';
         <?php endif; ?>
     </div>
 
-    <div id="recordVitalsModal" class="edit-profile-modal">
-        <div class="edit-profile-modal-content">
-            <form id="recordVitals" method="POST" action="<?= BASE_URL ?>/Admin/processes/manage_appointment/record_vitals.php" autocomplete="off">
-                
-                <div class="form-group">
-                    <input type="number" step="0.1" id="bodyTemp" class="form-control" name="body_temp" required />
-                    <label for="bodyTemp" class="form-label">Body Temperature (°C) <span class="required">*</span></label>
-                </div>
+    <div class="tabs-container">
+        <div class="tabs-patient">
+            <div class="tab <?= $activeTab === 'dental_transactions' ? 'active' : '' ?>" onclick="switchTab('dental_transactions')">Transaction</div>
+            <div class="tab <?= $activeTab === 'vitals' ? 'active' : '' ?>" onclick="switchTab('vitals')">Vitals</div>
+            <div class="tab <?= $activeTab === 'prescriptions' ? 'active' : '' ?>" onclick="switchTab('prescriptions')">Prescriptions</div>
+        </div> 
+        
+        <div class="tab-content <?= $activeTab === 'dental_transactions' ? 'active' : '' ?>" id="dental_transactions">
+            <table id="dentaltransactionTable" class="transaction-table">
+            </table>
+        </div>
 
-                <div class="form-group">
-                    <input type="number" id="pulseRate" class="form-control" name="pulse_rate" required />
-                    <label for="pulseRate" class="form-label">Pulse Rate (bpm) <span class="required">*</span></label>
-                </div>
+        <div class="tab-content <?= $activeTab === 'vitals' ? 'active' : '' ?>" id="vitals">
+            <table id="vitalTable" class="transaction-table">
+            </table>
+        </div>
 
-                <div class="form-group">
-                    <input type="number" id="respiratoryRate" class="form-control" name="respiratory_rate" required />
-                    <label for="respiratoryRate" class="form-label">Respiratory Rate (breaths/min) <span class="required">*</span></label>
-                </div>
-
-                <div class="form-group">
-                    <input type="text" id="bloodPressure" class="form-control" name="blood_pressure" placeholder="e.g. 120/80" required />
-                    <label for="bloodPressure" class="form-label">Blood Pressure <span class="required">*</span></label>
-                </div>
-
-                <div class="form-group">
-                    <input type="number" step="0.1" id="height" class="form-control" name="height" required />
-                    <label for="height" class="form-label">Height (cm) <span class="required">*</span></label>
-                </div>
-
-                <div class="form-group">
-                    <input type="number" step="0.1" id="weight" class="form-control" name="weight" required />
-                    <label for="weight" class="form-label">Weight (kg) <span class="required">*</span></label>
-                </div>
-
-                <div class="button-group">
-                    <button type="submit" class="form-button confirm-btn">Save Vitals</button>
-                    <button type="button" class="form-button cancel-btn" onclick="closeRecordVitalsModal()">Cancel</button>
-                </div>
-            </form>
+        <div class="tab-content <?= $activeTab === 'prescriptions' ? 'active' : '' ?>" id="prescriptions">
+            <table id="prescriptionTable" class="transaction-table">
+            </table>
         </div>
     </div>
 
-    <div id="recordPrescriptionModal" class="edit-profile-modal">
-        <div class="edit-profile-modal-content">
-            <form id="recordPrescription" method="POST" action="<?= BASE_URL ?>/Admin/processes/manage_appointment/record_prescription.php" autocomplete="off">
-                
-                <div class="form-group">
-                    <input type="text" id="drug" class="form-control" name="drug" required />
-                    <label for="drug" class="form-label">Drug <span class="required">*</span></label>
-                </div>
-
-                <div class="form-group">
-                    <input type="text" id="route" class="form-control" name="route" required />
-                    <label for="route" class="form-label">Route <span class="required">*</span></label>
-                </div>
-
-                <div class="form-group">
-                    <input type="text" id="frequency" class="form-control" name="frequency" required />
-                    <label for="frequency" class="form-label">Frequency <span class="required">*</span></label>
-                </div>
-
-                <div class="form-group">
-                    <input type="text" id="dosage" class="form-control" name="dosage" required />
-                    <label for="dosage" class="form-label">Dosage <span class="required">*</span></label>
-                </div>
-
-                <div class="form-group">
-                    <input type="text" id="duration" class="form-control" name="duration" required />
-                    <label for="duration" class="form-label">Duration <span class="required">*</span></label>
-                </div>
-
-                <div class="form-group">
-                    <textarea id="instructions" class="form-control" name="instructions" rows="3" required></textarea>
-                    <label for="instructions" class="form-label">Instructions <span class="required">*</span></label>
-                </div>
-
-                <div class="button-group">
-                    <button type="submit" class="form-button confirm-btn">Save Prescription</button>
-                    <button type="button" class="form-button cancel-btn" onclick="closeRecordPrescriptionModal()">Cancel</button>
-                </div>
-            </form>
+    <div id="manageRecordModal" class="manage-appointment-modal">
+        <div class="manage-appointment-modal-content">
+            <div id="modalRecordBody" class="manage-appointment-modal-content-body">
+                <!-- Vitals info will be loaded here -->
+            </div>
         </div>
     </div>
 </div>

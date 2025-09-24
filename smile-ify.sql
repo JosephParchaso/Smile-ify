@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 23, 2025 at 01:22 AM
+-- Generation Time: Sep 24, 2025 at 04:12 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -109,7 +109,8 @@ INSERT INTO `appointment_transaction` (`appointment_transaction_id`, `user_id`, 
 (68, 59, 1, 1, 1, '2025-09-24', '12:00:00', '', '2025-09-22 22:02:03', 'Pending'),
 (69, 59, 1, 2, 8, '2025-09-24', '12:45:00', '', '2025-09-22 22:02:52', 'Pending'),
 (70, 28, 1, 1, NULL, '2025-09-24', '14:15:00', '', '2025-09-22 22:03:11', 'Pending'),
-(71, 28, 1, 2, 4, '2025-09-24', '13:30:00', '', '2025-09-22 22:03:24', 'Pending');
+(71, 28, 1, 2, 4, '2025-09-24', '13:30:00', '', '2025-09-22 22:03:24', 'Pending'),
+(72, 59, 3, 3, 2, '2025-09-25', '09:00:00', '', '2025-09-24 00:03:02', 'Pending');
 
 -- --------------------------------------------------------
 
@@ -166,7 +167,8 @@ INSERT INTO `branch_promo` (`branch_promo_id`, `branch_id`, `promo_id`, `status`
 (1, 1, 1, 'Active', NULL, NULL, '2025-09-21 06:48:42', '2025-09-21 06:48:42'),
 (2, 1, 2, 'Active', NULL, NULL, '2025-09-21 06:54:12', '2025-09-21 06:54:12'),
 (3, 1, 3, 'Inactive', '2025-09-22', '2025-09-27', '2025-09-21 07:11:00', '2025-09-21 07:27:37'),
-(4, 1, 4, 'Active', '2025-09-13', '2025-10-03', '2025-09-21 07:19:41', '2025-09-21 07:28:17');
+(4, 1, 4, 'Active', '2025-09-13', '2025-10-03', '2025-09-21 07:19:41', '2025-09-21 07:28:17'),
+(5, 1, 5, 'Active', '2025-09-25', '2025-10-03', '2025-09-24 08:30:01', '2025-09-24 08:30:01');
 
 -- --------------------------------------------------------
 
@@ -275,7 +277,9 @@ INSERT INTO `dental_prescription` (`prescription_id`, `appointment_transaction_i
 (13, 24, 'Mefenamic Acid', 'Oral', '3x/day', '500mg', '5 days', 'Take only when needed for severe pain', '2025-09-07 19:57:34'),
 (14, 24, 'Chlorhexidine Mouthwash', 'Oral Rinse', '2x/day', '15ml', '7 days', 'Rinse for 30 seconds, do not swallow', '2025-09-07 19:57:34'),
 (15, 24, 'Prednisone', 'Oral', '1x/day', '10mg', '3 days', 'Take in the morning to reduce swelling', '2025-09-07 19:57:34'),
-(16, 24, 'Metronidazole', 'Oral', '3x/day', '500mg', '7 days', 'Take after meals, avoid alcohol', '2025-09-07 19:57:34');
+(16, 24, 'Metronidazole', 'Oral', '3x/day', '500mg', '7 days', 'Take after meals, avoid alcohol', '2025-09-07 19:57:34'),
+(17, 61, '1', '1', '1', '1', '1', '1', '2025-09-24 01:11:28'),
+(18, 61, '2', '2', '2', '2', '2', '2', '2025-09-24 01:12:26');
 
 -- --------------------------------------------------------
 
@@ -311,10 +315,10 @@ INSERT INTO `dental_transaction` (`dental_transaction_id`, `appointment_transact
 -- --------------------------------------------------------
 
 --
--- Table structure for table `dental_vitals`
+-- Table structure for table `dental_vital`
 --
 
-CREATE TABLE `dental_vitals` (
+CREATE TABLE `dental_vital` (
   `vitals_id` int(11) NOT NULL,
   `appointment_transaction_id` int(11) NOT NULL,
   `body_temp` decimal(4,1) DEFAULT NULL,
@@ -327,10 +331,10 @@ CREATE TABLE `dental_vitals` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `dental_vitals`
+-- Dumping data for table `dental_vital`
 --
 
-INSERT INTO `dental_vitals` (`vitals_id`, `appointment_transaction_id`, `body_temp`, `pulse_rate`, `respiratory_rate`, `blood_pressure`, `height`, `weight`, `date_created`) VALUES
+INSERT INTO `dental_vital` (`vitals_id`, `appointment_transaction_id`, `body_temp`, `pulse_rate`, `respiratory_rate`, `blood_pressure`, `height`, `weight`, `date_created`) VALUES
 (1, 21, 36.7, 72, 18, '120/80', 168.00, 65.00, '2025-08-23 18:53:50'),
 (2, 22, 37.2, 80, 20, '130/85', 175.00, 70.00, '2025-08-23 18:53:50'),
 (3, 23, 36.5, 70, 19, '115/75', 160.00, 55.00, '2025-08-23 18:53:50'),
@@ -338,7 +342,13 @@ INSERT INTO `dental_vitals` (`vitals_id`, `appointment_transaction_id`, `body_te
 (5, 25, 36.8, 74, 17, '122/82', 172.00, 68.00, '2025-08-23 18:53:50'),
 (6, 26, 37.1, 82, 21, '135/90', 178.00, 80.00, '2025-08-23 18:53:50'),
 (7, 27, 36.6, 68, 16, '110/70', 158.00, 50.00, '2025-08-23 18:53:50'),
-(8, 28, 37.3, 85, 22, '140/95', 182.00, 85.00, '2025-08-23 18:53:50');
+(8, 28, 37.3, 85, 22, '140/95', 182.00, 85.00, '2025-08-23 18:53:50'),
+(10, 61, 25.0, 25, 25, '25', 25.00, 25.00, '2025-09-24 00:50:19'),
+(11, 61, 25.0, 25, 25, '25', 25.00, 25.00, '2025-09-24 00:53:07'),
+(12, 61, 1.0, 1, 1, '1', 1.00, 1.00, '2025-09-24 00:54:46'),
+(13, 61, 2.0, 2, 2, '2', 2.00, 2.00, '2025-09-24 00:55:32'),
+(14, 61, 3.0, 3, 3, '3', 3.00, 3.00, '2025-09-24 01:10:03'),
+(15, 61, 4.0, 4, 4, '4', 4.00, 4.00, '2025-09-24 01:12:49');
 
 -- --------------------------------------------------------
 
@@ -373,7 +383,7 @@ INSERT INTO `dentist` (`dentist_id`, `last_name`, `middle_name`, `first_name`, `
 (4, 'San Jose', '', 'Solene', 'Female', '2025-09-12', 'solene@gmail.com', '0912345681', 'LIC-1004', '2023-04-01', 'Active', '68be0b34297fb_sol.png', '2025-07-11 19:40:26'),
 (5, 'San Jose', 'Codm', 'Yel', 'Female', '2025-09-04', 'yel@gmail.com', '9123456789', 'LIC-100322', '2023-05-20', 'Active', '68be0b3d5870b_yel.png', '2025-08-30 00:24:25'),
 (6, 'Achas', '', 'Gab', 'Male', '2025-08-02', 'achas@gmail.com', '7864515665', '123123', '0000-00-00', 'Active', NULL, '2025-08-30 12:07:53'),
-(7, 'Menano', '', 'Andy', 'Male', '2025-08-29', 'adny@gmail.com', '8756465486', '123321', '0000-00-00', 'Inactive', NULL, '2025-08-30 12:17:41'),
+(7, 'Menano', '', 'Andy', 'Male', '2025-08-29', 'adny@gmail.com', '8756465486', '123321', '2025-09-25', 'Active', NULL, '2025-08-30 12:17:41'),
 (8, 'asd', 'sad', 'asdas', 'Female', '2025-09-08', 'sample@gmail.com', '1241421241', '1221211', '2025-09-25', 'Active', '68be08a6d924a_gary-vaynerchuk-signature-0.png', '2025-09-07 22:35:18');
 
 -- --------------------------------------------------------
@@ -554,7 +564,8 @@ INSERT INTO `notifications` (`notification_id`, `user_id`, `message`, `is_read`,
 (98, 59, 'Your appointment on 2025-09-24 at 12:00 was successfully booked!', 0, '2025-09-22 22:02:03'),
 (99, 59, 'Your appointment on 2025-09-24 at 12:45 was successfully booked!', 0, '2025-09-22 22:02:52'),
 (100, 28, 'Your appointment on 2025-09-24 at 14:15 was successfully booked!', 1, '2025-09-22 22:03:11'),
-(101, 28, 'Your appointment on 2025-09-24 at 13:30 was successfully booked!', 1, '2025-09-22 22:03:24');
+(101, 28, 'Your appointment on 2025-09-24 at 13:30 was successfully booked!', 1, '2025-09-22 22:03:24'),
+(102, 59, 'Your appointment on 2025-09-25 at 09:00 was successfully booked!', 0, '2025-09-24 00:03:02');
 
 -- --------------------------------------------------------
 
@@ -579,7 +590,8 @@ INSERT INTO `promo` (`promo_id`, `name`, `image_path`, `description`, `discount_
 (1, 'opening', '/uploads/promos/1758408522_images.jpg', '', '', 0.00),
 (2, 'grand opening', '/images/promos/1758408852_images.jpg', '', '', 0.00),
 (3, 'sampleeeeeasdasda', '/Smile-ify/images/promos/promo_68cf3869c31fc.jpg', 'sampleeeeeeeeeeeeeeeeee', 'percentage', 80.00),
-(4, 'sampleeeeee', '/Smile-ify/images/promos/promo_68cf3891a0cea.jpg', 'qwerrt', 'fixed', 123.00);
+(4, 'sampleeeeee', '/Smile-ify/images/promos/promo_68cf3891a0cea.jpg', 'qwerrt', 'fixed', 123.00),
+(5, 'senior', NULL, '60 above', 'percentage', 75.00);
 
 -- --------------------------------------------------------
 
@@ -779,9 +791,9 @@ ALTER TABLE `dental_transaction`
   ADD KEY `dentist_id` (`dentist_id`);
 
 --
--- Indexes for table `dental_vitals`
+-- Indexes for table `dental_vital`
 --
-ALTER TABLE `dental_vitals`
+ALTER TABLE `dental_vital`
   ADD PRIMARY KEY (`vitals_id`),
   ADD KEY `appointment_transaction_id` (`appointment_transaction_id`);
 
@@ -848,7 +860,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `appointment_transaction`
 --
 ALTER TABLE `appointment_transaction`
-  MODIFY `appointment_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
+  MODIFY `appointment_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
 
 --
 -- AUTO_INCREMENT for table `branch`
@@ -860,7 +872,7 @@ ALTER TABLE `branch`
 -- AUTO_INCREMENT for table `branch_promo`
 --
 ALTER TABLE `branch_promo`
-  MODIFY `branch_promo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `branch_promo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `branch_service`
@@ -878,7 +890,7 @@ ALTER TABLE `branch_supply`
 -- AUTO_INCREMENT for table `dental_prescription`
 --
 ALTER TABLE `dental_prescription`
-  MODIFY `prescription_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `prescription_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `dental_transaction`
@@ -887,10 +899,10 @@ ALTER TABLE `dental_transaction`
   MODIFY `dental_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
--- AUTO_INCREMENT for table `dental_vitals`
+-- AUTO_INCREMENT for table `dental_vital`
 --
-ALTER TABLE `dental_vitals`
-  MODIFY `vitals_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+ALTER TABLE `dental_vital`
+  MODIFY `vitals_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `dentist`
@@ -914,13 +926,13 @@ ALTER TABLE `dentist_service`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=102;
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=103;
 
 --
 -- AUTO_INCREMENT for table `promo`
 --
 ALTER TABLE `promo`
-  MODIFY `promo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `promo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `service`
@@ -988,10 +1000,10 @@ ALTER TABLE `dental_transaction`
   ADD CONSTRAINT `dental_transaction_ibfk_2` FOREIGN KEY (`dentist_id`) REFERENCES `dentist` (`dentist_id`);
 
 --
--- Constraints for table `dental_vitals`
+-- Constraints for table `dental_vital`
 --
-ALTER TABLE `dental_vitals`
-  ADD CONSTRAINT `dental_vitals_ibfk_1` FOREIGN KEY (`appointment_transaction_id`) REFERENCES `appointment_transaction` (`appointment_transaction_id`);
+ALTER TABLE `dental_vital`
+  ADD CONSTRAINT `dental_vital_ibfk_1` FOREIGN KEY (`appointment_transaction_id`) REFERENCES `appointment_transaction` (`appointment_transaction_id`);
 
 --
 -- Constraints for table `dentist_branch`

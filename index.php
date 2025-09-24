@@ -141,7 +141,7 @@ if (isset($_SESSION['timeoutError'])) {
                     <option value="" disabled selected hidden></option>
                     <?php
 
-                    $sql = "SELECT branch_id, name FROM branch";
+                    $sql = "SELECT branch_id, name, status FROM branch WHERE status = 'Active' ";
                     $result = $conn->query($sql);
 
                     if ($result->num_rows > 0) {

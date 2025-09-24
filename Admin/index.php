@@ -108,7 +108,7 @@ $totalAppointmentsMonth = 42;
                                 <option value="" disabled selected hidden></option>
                                 <?php
 
-                                $sql = "SELECT branch_id, name FROM branch";
+                                $sql = "SELECT branch_id, name, status FROM branch WHERE status = 'Active' ";
                                 $result = $conn->query($sql);
 
                                 if ($result->num_rows > 0) {
@@ -201,6 +201,15 @@ $totalAppointmentsMonth = 42;
                 <?php endforeach; ?>
             <?php endif; ?>
             <a href="<?= BASE_URL ?>/Admin/pages/supplies.php" class="card-link">Manage Supplies</a>
+        </div>   
+
+        <div class="card">
+            <h2><span class="material-symbols-outlined">bolt</span> Quick Links</h2>
+            <div class="quick-links">
+                <a href="<?= BASE_URL ?>/Admin/pages/services.php"><span class="material-symbols-outlined">medical_services</span> Manage Services</a>
+                <a href="<?= BASE_URL ?>/Admin/pages/promos.php"><span class="material-symbols-outlined">local_offer</span> Manage Promos</a>
+                <a href="<?= BASE_URL ?>/Admin/pages/profile.php"><span class="material-symbols-outlined">manage_accounts</span> Profile Settings</a>
+            </div>
         </div>
 
         <div class="card">
@@ -216,17 +225,7 @@ $totalAppointmentsMonth = 42;
                     </div>
                 <?php endforeach; ?>
             <?php endif; ?>
-        </div>        
-
-        <div class="card">
-            <h2><span class="material-symbols-outlined">bolt</span> Quick Links</h2>
-            <div class="quick-links">
-                <a href="<?= BASE_URL ?>/Admin/pages/services.php"><span class="material-symbols-outlined">medical_services</span> Manage Services</a>
-                <a href="<?= BASE_URL ?>/Admin/pages/promos.php"><span class="material-symbols-outlined">local_offer</span> Manage Promos</a>
-                <a href="<?= BASE_URL ?>/Admin/pages/profile.php"><span class="material-symbols-outlined">contact_emergency</span> View Doctors</a>
-                <a href="<?= BASE_URL ?>/Admin/pages/profile.php"><span class="material-symbols-outlined">manage_accounts</span> Profile Settings</a>
-            </div>
-        </div>
+        </div>     
 
     </div>
 </div>
