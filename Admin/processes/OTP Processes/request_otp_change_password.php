@@ -40,10 +40,10 @@ $mail->Port = 587;
 $mail->SMTPAuth = true;
 $mail->SMTPSecure = 'tls';
 
-$mail->Username = 'theartp2@gmail.com';
-$mail->Password = 'xnlcpyjnokdgihwd';
+$mail->Username = 'smileify.clinic@gmail.com';
+$mail->Password = 'ynecojolefyxdosu';
 
-$mail->setFrom('theartp2@gmail.com', 'Smile-ify OTP Verification');
+$mail->setFrom('smileify.clinic@gmail.com', 'Smile-ify OTP Verification');
 $mail->addAddress($email);
 
 $mail->isHTML(true);
@@ -58,7 +58,7 @@ $mail->Body = "
 ";
 
 if (!$mail->send()) {
-    $_SESSION['updateError'] = "Failed to send OTP email. Please check your email setup or contact support.";
+    $_SESSION['updateError'] = "Failed to send OTP email. Please check your email setup or contact clinic.";
     header("Location: " . BASE_URL . "/Admin/pages/profile.php");
     exit;
 }

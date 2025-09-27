@@ -28,7 +28,8 @@ $sql = "SELECT
         LEFT JOIN branch b ON a.branch_id = b.branch_id
         LEFT JOIN service s ON a.service_id = s.service_id
         LEFT JOIN dentist d ON a.dentist_id = d.dentist_id
-        WHERE a.user_id = ?";
+        WHERE a.user_id = ?
+            AND a.status <> 'Completed'";
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $patientID);

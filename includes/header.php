@@ -90,10 +90,10 @@ if (isset($_SESSION['user_id'])) {
         <script src="<?= BASE_URL ?>/Admin/js/patients/loadRegisteredPatients.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/patients/loadRecentBookings.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/patients/loadInactivePatients.js?v=<?= time(); ?>"></script>
-        <script src="<?= BASE_URL ?>/Admin/js/manage_appointment/showPatientModal.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/manage_appointment/showTransactionModal.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/manage_appointment/loadAppointmentDetails.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/manage_appointment/loadTransactions.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Admin/js/manage_patient/showPatientModal.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/manage_patient/loadPatientDetails.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/manage_patient/loadAppointmentsTransactions.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/manage_patient/showAppointmentModal.js?v=<?= time(); ?>"></script>

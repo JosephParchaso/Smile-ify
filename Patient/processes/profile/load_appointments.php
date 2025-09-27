@@ -25,6 +25,7 @@ $sql = "SELECT
         LEFT JOIN service s ON a.service_id = s.service_id
         LEFT JOIN dentist d ON a.dentist_id = d.dentist_id
         WHERE a.user_id = ?
+            AND a.status <> 'Completed'
         ORDER BY a.date_created DESC";
 
 $stmt = $conn->prepare($sql);

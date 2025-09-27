@@ -23,7 +23,10 @@ if (!$appointmentId) {
 $updateSuccess = $_SESSION['updateSuccess'] ?? "";
 $updateError   = $_SESSION['updateError'] ?? "";
 
-$activeTab = $_GET['tab'] ?? 'dental_transactions';
+$backTab = $_GET['backTab'] ?? 'recent';
+
+$validTabs = ['dental_transactions', 'vitals', 'prescriptions'];
+$activeTab = in_array($_GET['tab'] ?? '', $validTabs) ? $_GET['tab'] : 'dental_transactions';
 ?>
 <title>Appointment Details</title>
 

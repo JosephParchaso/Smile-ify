@@ -40,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $stmt->bind_param("si", $hashedPassword, $userId);
 
     if ($stmt->execute()) {
-        $msg = "Your password was changed successfully on " . date("F j, Y, g:i a") . ". If this wasn’t you, please contact support immediately.";
+        $msg = "Your password was changed successfully on " . date("F j, Y, g:i a") . ". If this wasn’t you, please contact clinic immediately.";
         $notif_sql = "INSERT INTO notifications (user_id, message) VALUES (?, ?)";
         $notif_stmt = $conn->prepare($notif_sql);
         $notif_stmt->bind_param("is", $userId, $msg);

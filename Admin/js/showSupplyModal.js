@@ -2,6 +2,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const supplyModal = document.getElementById("manageSupplyModal");
     const supplyBody = document.getElementById("supplyModalBody");
 
+    const today = new Date().toISOString().split("T")[0];
+
     document.body.addEventListener("click", function (e) {
         if (e.target.classList.contains("btn-supply")) {
             const id = e.target.getAttribute("data-id");
@@ -17,6 +19,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     renderSupplyForm(data);
                     supplyModal.style.display = "block";
+
+                    const expInput = document.getElementById("expiration_date");
+                    if (expInput) expInput.setAttribute("min", today);
                 })
                 .catch(() => {
                     supplyBody.innerHTML = `<p style="color:red;">Error loading details</p>`;
@@ -29,6 +34,24 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.target.id === "insertSupplyBtn") {
             renderSupplyForm(null);
             supplyModal.style.display = "block";
+
+            const expInput = document.getElementById("expiration_date");
+            if (expInput) expInput.setAttribute("min", today);
+        }
+    });
+
+    document.body.addEventListener("change", function (e) {
+        if (e.target && e.target.id === "expiration_date") {
+            const expInput = e.target;
+            if (expInput.value) {
+                const selected = new Date(expInput.value);
+                const now = new Date(today);
+
+                if (selected < now) {
+                    alert("Expiration date cannot be in the past.");
+                    expInput.value = "";
+                }
+            }
         }
     });
 

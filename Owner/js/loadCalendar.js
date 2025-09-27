@@ -15,9 +15,24 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         height: 650,
         events: `${BASE_URL}/Owner/processes/calendar/load_calendar.php`,
+
+        eventOrder: "branch",
+
+        eventDidMount: function(info) {
+            if (info.event.extendedProps.branchColor) {
+                let color = info.event.extendedProps.branchColor;
+
+                info.el.style.backgroundColor = color + "20";
+                info.el.style.borderLeft = "6px solid " + color;
+                info.el.style.borderRadius = "4px";
+                info.el.style.padding = "2px 4px";
+                let timeEl = info.el.querySelector(".fc-event-time");
+                if (timeEl) timeEl.style.color = "#000";
+            }
+        },
+
         eventClick: function(info) {
             const appointment = info.event.extendedProps;
-
             const modalBody = document.getElementById('modalBody');
             modalBody.innerHTML = `
                 <h2>Appointment Details</h2>
@@ -31,16 +46,51 @@ document.addEventListener('DOMContentLoaded', function() {
                 <p><strong>Status:</strong> ${appointment.status}</p>
                 <p><strong>Date Booked:</strong> ${appointment.date_created}</p>
             `;
-
             document.getElementById('appointmentModalDetails').style.display = "block";
         }
     });
 
     calendar.render();
 
+    calendar.on('eventsSet', function(events) {
+        const legend = document.getElementById("calendarLegend");
+        legend.innerHTML = '';
+
+        const branches = {};
+        events.forEach(e => {
+            if (e.extendedProps.branch && e.extendedProps.branchColor) {
+                branches[e.extendedProps.branch] = e.extendedProps.branchColor;
+            }
+        });
+
+        Object.keys(branches).forEach(branch => {
+            const item = document.createElement("div");
+            item.classList.add("legend-item");
+            item.innerHTML = `
+                <span class="legend-color" style="background:${branches[branch]}"></span>
+                ${branch}
+            `;
+            legend.appendChild(item);
+        });
+
+        const statusColors = {
+            "Pending": "#fe9705",
+            "Completed": "#3ac430",
+            "Cancelled": "#d11313"
+        };
+        Object.keys(statusColors).forEach(status => {
+            const item = document.createElement("div");
+            item.classList.add("legend-item");
+            item.innerHTML = `
+                <span class="legend-color" style="background:${statusColors[status]}"></span>
+                ${status}
+            `;
+            legend.appendChild(item);
+        });
+    });
+
     window.addEventListener('click', function(event) {
         const modal = document.getElementById('appointmentModalDetails');
-        const modalContent = document.querySelector('.booking-modal-content');
         if (event.target === modal) {
             modal.style.display = 'none';
         }

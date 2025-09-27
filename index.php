@@ -128,6 +128,9 @@ if (isset($_SESSION['timeoutError'])) {
             <div class="form-group">
                 <input type="date" id="dateofBirth" name="dateofBirth" class="form-control" required />
                 <label for="dateofBirth" class="form-label">Date of Birth <span class="required">*</span></label>
+                <span id="dobError" class="error-msg-calendar error" style="display: none;">
+                    Date of birth cannot be in the future.
+                </span>
             </div>
 
             <div class="form-group phone-group">

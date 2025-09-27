@@ -88,10 +88,10 @@ document.addEventListener("DOMContentLoaded", () => {
                                 prescriptionHtml += `
                                     <div class="prescription-item">
                                         <p><strong>Drug:</strong> <span>${p.drug}</span></p>
-                                        <p><strong>Route:</strong> <span>${p.route ?? '-'}</span></p>
                                         <p><strong>Frequency:</strong> <span>${p.frequency ?? '-'}</span></p>
                                         <p><strong>Dosage:</strong> <span>${p.dosage ?? '-'}</span></p>
                                         <p><strong>Duration:</strong> <span>${p.duration ?? '-'}</span></p>
+                                        <p><strong>Quantity:</strong> <span>${p.quantity ?? '-'}</span></p>
                                         <p><strong>Instructions:</strong> <span>${p.instructions ?? '-'}</span></p>
                                         <hr>
                                     </div>

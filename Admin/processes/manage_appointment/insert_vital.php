@@ -19,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     if (!$appointment_id || !$body_temp || !$pulse_rate || !$respiratory_rate || !$blood_pressure || !$height || !$weight) {
         $_SESSION['updateError'] = "Missing required vital fields.";
-        header("Location: " . BASE_URL . "/Admin/pages/manage_appointment.php?id=" . $appointment_id . "&tab=vitals");
+        header("Location: " . BASE_URL . "/Admin/pages/manage_appointment.php?id=" . $appointment_id . "&backTab=recent&tab=vitals");
         exit();
     }
 
@@ -39,6 +39,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $_SESSION['updateError'] = "Failed to add vitals.";
     }
 
-    header("Location: " . BASE_URL . "/Admin/pages/manage_appointment.php?id=" . $appointment_id . "&tab=vitals");
+    header("Location: " . BASE_URL . "/Admin/pages/manage_appointment.php?id=" . $appointment_id . "&backTab=recent&tab=vitals");
     exit();
 }

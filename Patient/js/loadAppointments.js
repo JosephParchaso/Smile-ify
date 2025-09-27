@@ -7,12 +7,12 @@ $(document).ready(function() {
         "searching": true,
         "order": [[7, "desc"]],
         "columns": [
-            { "title": "Dentist" },
+            { "title": "Dentist" , "searchable": false },
             { "title": "Branch" },
             { "title": "Service" },
-            { "title": "Date" },
-            { "title": "Time" },
-            { "title": "Status" },
+            { "title": "Date" , "searchable": false },
+            { "title": "Time" , "searchable": false },
+            { "title": "Status" , "searchable": false },
             { "title": "Action", "orderable": false },
             { "title": "Created", "visible": false, "searchable": false }
         ],

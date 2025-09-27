@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['userName'], $_POST['p
             $user = $result->fetch_assoc();
 
             if (strtolower($user['status']) !== 'active') {
-                $_SESSION['login_error'] = "Account is inactive. Please contact support.";
+                $_SESSION['login_error'] = "Account is inactive. Please contact clinic.";
                 header("Location: " . BASE_URL . "/index.php");
                 exit;
             }

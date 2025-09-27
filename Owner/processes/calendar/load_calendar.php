@@ -5,8 +5,14 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'owner') {
-    http_response_code(403);
-    exit('Unauthorized');
+    header("Location: " . BASE_URL . "/index.php");
+    exit();
+}
+
+function stringToColorCode($str) {
+    $code = dechex(crc32($str));
+    $code = str_pad($code, 6, '0', STR_PAD_LEFT);
+    return '#' . substr($code, 0, 6);
 }
 
 $sql = "SELECT DISTINCT
@@ -31,13 +37,14 @@ $result = $conn->query($sql);
 
 $events = [];
 while ($row = $result->fetch_assoc()) {
-
     $statusColor = '#fe9705';
     if (strcasecmp($row['status'], 'Completed') === 0) {
         $statusColor = '#3ac430';
     } elseif (strcasecmp($row['status'], 'Cancelled') === 0) {
         $statusColor = '#d11313';
     }
+
+    $branchColor = stringToColorCode($row['branch']);
 
     $events[] = [
         'id' => $row['appointment_transaction_id'],
@@ -50,7 +57,8 @@ while ($row = $result->fetch_assoc()) {
         'notes' => $row['notes'],
         'status' => $row['status'],
         'date_created' => $row['date_created'],
-        'color' => $statusColor
+        'color' => $statusColor,
+        'branchColor' => $branchColor
     ];
 }
 

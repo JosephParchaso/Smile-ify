@@ -23,8 +23,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $email = $row["email"];
     $status = $row["status"];
 
-    if (strtolower($status) !== "active") {
-        $_SESSION['username_error'] = "Account is inactive. Please contact support.";
+    if ($status !== "Active") {
+        $_SESSION['username_error'] = "Account is inactive. Please contact clinic.";
         $_SESSION['show_forgot_modal'] = true;
         header("Location: " . BASE_URL . "/index.php");
         exit;
@@ -49,10 +49,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $mail->SMTPAuth = true;
     $mail->SMTPSecure = 'tls';
 
-    $mail->Username = 'theartp2@gmail.com';
-    $mail->Password = 'xnlcpyjnokdgihwd';
+    $mail->Username = 'smileify.clinic@gmail.com';
+    $mail->Password = 'ynecojolefyxdosu';
 
-    $mail->setFrom('theartp2@gmail.com', 'Smile-ify OTP Verification');
+    $mail->setFrom('smileify.clinic@gmail.com', 'Smile-ify OTP Verification');
     $mail->addAddress($email);
 
     $mail->isHTML(true);

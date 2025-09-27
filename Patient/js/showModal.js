@@ -96,10 +96,10 @@ document.addEventListener("DOMContentLoaded", () => {
                                 prescriptionHtml += `
                                     <div class="prescription-item">
                                         <p><strong>Drug:</strong> <span>${p.drug}</span></p>
-                                        <p><strong>Route:</strong> <span>${p.route ?? '-'}</span></p>
                                         <p><strong>Frequency:</strong> <span>${p.frequency ?? '-'}</span></p>
                                         <p><strong>Dosage:</strong> <span>${p.dosage ?? '-'}</span></p>
                                         <p><strong>Duration:</strong> <span>${p.duration ?? '-'}</span></p>
+                                        <p><strong>Quantity:</strong> <span>${p.quantity ?? '-'}</span></p>
                                         <p><strong>Instructions:</strong> <span>${p.instructions ?? '-'}</span></p>
                                         <hr>
                                     </div>
@@ -111,6 +111,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         document.getElementById("prescriptionList").innerHTML = prescriptionHtml;
                         transactionModal.style.display = "block";
+
+                        async function getBranches() {
+                            const response = await fetch(`${BASE_URL}/Patient/processes/profile/get_branches.php`);
+                            const data = await response.json();
+                            return data.branches || [];
+                        }
 
                         // ========= DOWNLOAD PRESCRIPTION =========
                         const btn = document.getElementById("downloadPrescription");
@@ -130,6 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                     });
                                 }
 
+                                const pageHeight = doc.internal.pageSize.getHeight();
                                 // ===== HEADER =====
                                 const logoUrl = `${BASE_URL}/images/logo/logo_default.png`;
                                 const logoBase64 = await getBase64ImageFromUrl(logoUrl);
@@ -139,9 +146,13 @@ document.addEventListener("DOMContentLoaded", () => {
                                 doc.setFont("helvetica", "bold");
                                 doc.text("Arriesgado Dental Clinic", 105, 15, { align: "center" });
 
+                                // Branches
+                                const branches = await getBranches();
+                                const branchesText = branches.length > 0 ? branches.join(" • ") : "-";
+
                                 doc.setFontSize(11);
                                 doc.setFont("helvetica", "normal");
-                                doc.text("Mandaue • Pusok • Babag", 105, 22, { align: "center" });
+                                doc.text(branchesText, 105, 22, { align: "center" });
                                 doc.text("Contact Us: 09955446451", 105, 28, { align: "center" });
                                 doc.text("Smile-ify@gmail.com", 105, 34, { align: "center" });
                                 doc.text("Clinic Hours: 9AM - 3PM | Mon–Sun (All Branches)", 105, 40, { align: "center" });
@@ -158,61 +169,77 @@ document.addEventListener("DOMContentLoaded", () => {
                                 }
 
                                 doc.setFontSize(12);
+                                const leftLabelX = 10;
+                                const leftValueX = 45;
+                                const leftLineEndX = 115;
+
+                                const rightLabelX = 125;
+                                const rightValueX = 145;
+                                const rightLineEndX = 190;
+
+                               // === Row 1: Patient Name & Age ===
                                 doc.setFont("helvetica", "bold");
+                                doc.text("Patient Name:", leftLabelX, 55);
+                                doc.line(leftValueX, 55, leftLineEndX, 55);
 
-                                // Row 1
-                                doc.text("Patient Name:", 10, 55);
-                                doc.line(45, 55, 100, 55);
-
-                                doc.text("Age:", 110, 55);
-                                doc.line(122, 55, 145, 55);
-
-                                doc.text("Gender:", 155, 55);
-                                doc.line(178, 55, 200, 55);
+                                doc.text("Age:", rightLabelX, 55);
+                                doc.line(rightValueX, 55, rightLineEndX, 55);
 
                                 doc.setFont("helvetica", "normal");
-                                doc.text(patientFullName || "-", 47, 54);
-                                doc.text(patientAge || "-", 124, 54);
-                                doc.text(data.gender ?? "-", 180, 54);
+                                doc.text(patientFullName || "-", leftValueX + 2, 54);
+                                doc.text(patientAge || "-", rightValueX + 2, 54);
 
-                                // Row 2
+                                // === Row 2: Service & Branch ===
+                                const row2Y = 67;
                                 doc.setFont("helvetica", "bold");
-                                doc.text("Service:", 10, 70);
-                                doc.line(35, 70, 100, 70);
+                                doc.text("Service:", leftLabelX, row2Y);
+                                doc.line(leftValueX, row2Y, leftLineEndX, row2Y);
 
-                                doc.text("Branch:", 110, 70);
-                                doc.line(140, 70, 190, 70);
+                                doc.text("Branch:", rightLabelX, row2Y);
+                                doc.line(rightValueX, row2Y, rightLineEndX, row2Y);
 
                                 doc.setFont("helvetica", "normal");
-                                doc.text(data.service || "-", 37, 69);
-                                doc.text(data.branch || "-", 142, 69);
+                                doc.text(data.service || "-", leftValueX + 2, row2Y - 1);
+                                doc.text(data.branch || "-", rightValueX + 2, row2Y - 1);
 
+                               // === Row 3: Date Issued ===
+                                const row3Y = 79;
                                 doc.setFont("helvetica", "bold");
-                                doc.text("Date:", 10, 85);
-                                doc.line(30, 85, 80, 85);
-
-                                doc.text("Time:", 110, 85);
-                                doc.line(135, 85, 190, 85);
+                                doc.text("Date Issued:", leftLabelX, row3Y);
+                                doc.line(leftValueX, row3Y, leftLineEndX, row3Y);
 
                                 doc.setFont("helvetica", "normal");
-                                doc.text(data.appointment_date || "-", 32, 84);
-                                doc.text(data.appointment_time || "-", 137, 84);
+                                const formattedDate = data.date_created
+                                    ? new Date(data.date_created).toLocaleDateString("en-US", {
+                                        year: "numeric",
+                                        month: "long",
+                                        day: "numeric"
+                                    })
+                                    : "-";
+                                doc.text(formattedDate, leftValueX + 2, row3Y - 1);
 
                                 // ===== PRESCRIPTIONS =====
+                                const prescripY = row3Y + 15;
                                 doc.setFont("helvetica", "bold");
-                                doc.text("Prescription:", 10, 110);
+                                doc.text("Prescription:", 10, prescripY);
 
                                 doc.setFont("helvetica", "normal");
-                                let y = 120;
+                                let y = prescripY + 10;
                                 if (data.prescriptions && data.prescriptions.length > 0) {
                                     data.prescriptions.forEach((p, index) => {
-                                        if (index > 0) y += 3;
-                                        doc.text(`• ${p.drug} | ${p.dosage} | ${p.frequency} | ${p.duration}`, 10, y);
-                                        y += 7;
-                                        if (p.instructions) {
-                                            doc.text(`  Notes: ${p.instructions}`, 15, y);
-                                            y += 7;
+                                        if (y > pageHeight - 40) {
+                                            doc.addPage();
+                                            y = 20;
                                         }
+
+                                        doc.text(`${index + 1}. ${p.drug} | ${p.dosage} | ${p.frequency} | ${p.duration} | Qty: ${p.quantity ?? '-'}`, 10, y);
+                                        y += 6;
+
+                                        if (p.instructions) {
+                                            doc.text(`   Notes: ${p.instructions}`, 15, y);
+                                            y += 6;
+                                        }
+                                        y += 3;
                                     });
                                 } else {
                                     doc.text("No prescriptions recorded.", 10, y);
@@ -220,24 +247,44 @@ document.addEventListener("DOMContentLoaded", () => {
 
                                 // ===== SIGNATURE =====
                                 if (data.signature_image) {
+                                    let sigY = y + 5;
+                                    if (sigY < 60) sigY = 60;
+
+                                    if (sigY > pageHeight - 80) {
+                                        doc.addPage();
+                                        sigY = 50;
+                                    }
+
                                     const sigUrl = `${BASE_URL}/images/signatures/${data.signature_image}`;
                                     try {
                                         const sigBase64 = await getBase64ImageFromUrl(sigUrl);
-                                        doc.addImage(sigBase64, "PNG", 130, 220, 60, 40);
+                                        doc.addImage(sigBase64, "PNG", 125, sigY, 50, 30);
                                     } catch (err) {
                                         console.warn("Could not load signature", err);
                                     }
+
+                                    doc.line(120, sigY + 32, 200, sigY + 32);
+                                    const dentistFullName = `${data.dentist_last_name}, ${data.dentist_first_name} ${data.dentist_middle_name ? data.dentist_middle_name[0] + '.' : ''}`;
+                                    doc.text("Dr. " + dentistFullName, 160, sigY + 42, { align: "center" });
+                                    doc.text("License No: " + (data.license_number ?? "-"), 160, sigY + 52, { align: "center" });
                                 }
 
-                                doc.line(120, 250, 200, 250);
-                                const dentistFullName = `${data.dentist_last_name}, ${data.dentist_first_name} ${data.dentist_middle_name ? data.dentist_middle_name[0] + '.' : ''}`;
-                                doc.text("Dr. " + dentistFullName, 160, 260, { align: "center" });
-                                doc.text("License No: " + (data.license_number ?? "-"), 160, 270, { align: "center" });
+                                // ===== PAGE NUMBERS =====
+                                const pageCount = doc.internal.getNumberOfPages();
+                                for (let i = 1; i <= pageCount; i++) {
+                                    doc.setPage(i);
+                                    doc.setFontSize(10);
+                                    doc.setFont("helvetica", "normal");
+                                    doc.text(`Page ${i} of ${pageCount}`, 105, pageHeight - 10, { align: "center" });
+                                }
 
-                                // Save PD
-                                const fileName = `${data.patient_last_name}_${data.date_created.split(" ")[0]}.pdf`;
+                                // Save PDF
+                                const safeName = (data.patient_last_name || "patient").replace(/\s+/g, "_");
+                                const safeDate = (data.date_created ? data.date_created.split(" ")[0] : "unknown");
+                                const fileName = `${safeName}_${safeDate}.pdf`;
                                 doc.save(fileName);
 
+                                // ===== UPDATE STATUS =====
                                 try {
                                     const res = await fetch(
                                         `${BASE_URL}/Patient/processes/profile/update_prescription_status.php`,

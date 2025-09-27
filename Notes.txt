@@ -152,28 +152,54 @@ time consume in each service
 
 dungan register different user  
 ==========================================================================================================================================================================================
-one add vitals and transaction only 
-isswelling..., promo, notes transaction
-promo no startdate enddate
-cancel
 
-update status when status is inactive in booking appointment
+home, profile = rix 💖
+reports andy, achas 
+Contact Fr. Peter for the database hosting 💖
 
-presctiption load branch
-tabs branch reports owner
+Switch status from pending ->> booked 🫥
+In the Home: place Welcome Joseph on the side, (left) add for the promos home display images 🫥
+In profile, center and add picture no picutres lng🫥
+tabs branch reports owner 🫥
+update status when status is inactive in booking appointment 🫥
+Add the change email function in profile with otp verification 🫥
+one add vitals and transaction only 🫥
+add list for supplies used in service dapat automatic?🫥
 
-+63 in profiles and tables
+Owner - OTP Every Login 🥶
+Admin - OTP Every Login 🥶
+Patient - 2FA 🥶
+Hash patient username in db 🥶
 
-home display images
+supplies with transact / add and link the service materials per transaction🥶
+apply promo transact 🥶
+receipt 🥶
+cancel appointment and complete appointment / to save transaction and status completed notify user 🥶
 
-record dental transact
-supplies with transact
-apply promo
-cancel appointment notify user
-receipt
+family 🥶
+Minimum of 5 minutes for OTP time remaining expiration time 😨
 
-home, profile = rix
-
-reports andy, achas
-
-family
+Error on change password OTP Fix 👍
+Validation for the Date of Birth, so that it will not accept 0000 👍
+In adding dentist for the owner, autocheck services all by default, and the owner will just uncheck on what the dentist's non specialty 👍
+Disable future dates in choosing date of birth 👍
+Suggestion: Change the color / change the symbol or an indicator which will distinguish by branch 👍 with legend
+Disable letter input in OTP verification 👍
+Change joined in profile to Registered 👍
+appointment Search/' : Service , Branch, Service 👍dentist di lng?
+Completed should not be in the appointment history👍
+Remove Route from prescription 👍
+Prescription Download: Digital Prescription, alignment changes 👍
+Not bullet, but number in the digital prescription 👍
+Signature will adjust on the layput 👍
+Time and Gender will be removed 👍
+Add Quantity of drugs in prescription👍
+Change the Date to date Issued : extraction date In the release of prescription 👍
+pages 👍
+In teh footer, make it formal, and aligned properly Remove space of the branch 👍
+In forgot password, Change the please contact support to please contact the clinic. 👍
+change the view password (eye) to individual 👍
+Adding Branch- Owner Google Maps URL : Cannot be null 👍
+In adding admin, cannot allow multiple unless specified. 👍
+In adding the past dates should not be clickable 👍
+Add Start date in managing of admin by default/ 👍

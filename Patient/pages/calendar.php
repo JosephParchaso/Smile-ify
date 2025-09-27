@@ -18,6 +18,7 @@ $updateError = $_SESSION['updateError'] ?? "";
 <title>My Schedule</title>
 
 <div class="calendar-container">
+    <div id="calendarLegend" class="legend"></div>
     <div id="calendar"></div>
 </div>
 

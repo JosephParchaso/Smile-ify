@@ -112,7 +112,7 @@ require_once BASE_PATH . '/Patient/includes/navbar.php';
                 </div>
 
                 <div class="form-group">
-                    <input type="date" id="appointmentDate" class="form-control" name="appointmentDate" required />
+                    <input type="date" id="appointmentDate" name="appointmentDate" class="form-control" required />
                     <label for="appointmentDate" class="form-label">Date <span class="required">*</span></label>
                     <span id="dateError" class="error-msg-calendar error">
                         Sundays are not available for appointments. Please select another date.

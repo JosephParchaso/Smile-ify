@@ -95,6 +95,7 @@ $totalAppointmentsMonth = 42;
                         <div class="form-group">
                             <input type="date" id="dateofBirth" name="dateofBirth" class="form-control" required />
                             <label for="dateofBirth" class="form-label">Date of Birth <span class="required">*</span></label>
+                            <span id="dobError" class="error-msg-calendar error" style="display: none;"></span>
                         </div>
 
                         <div class="form-group phone-group">

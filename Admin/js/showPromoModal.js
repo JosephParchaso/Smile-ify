@@ -2,6 +2,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const promoModal = document.getElementById("managePromoModal");
     const promoBody = document.getElementById("promoModalBody");
 
+    const today = new Date().toISOString().split("T")[0];
+
     document.body.addEventListener("click", function (e) {
         if (e.target.classList.contains("btn-promo")) {
             const id = e.target.getAttribute("data-id");
@@ -26,6 +28,57 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.target.id === "insertPromoBtn") {
             renderPromoForm(null);
             promoModal.style.display = "block";
+        }
+    });
+
+    document.body.addEventListener("focusin", function (e) {
+        if (e.target && e.target.id === "startDate") {
+            e.target.setAttribute("min", today);
+        }
+        if (e.target && e.target.id === "endDate") {
+            e.target.setAttribute("min", today);
+        }
+    });
+
+    document.body.addEventListener("change", function (e) {
+        if (e.target && e.target.id === "startDate") {
+            const startInput = e.target;
+            const errorEl = document.getElementById("startDateError");
+
+            if (startInput.value) {
+                const selectedDate = new Date(startInput.value);
+
+                if (selectedDate < new Date(today)) {
+                    errorEl.textContent = "Please enter a valid date.";
+                    errorEl.style.display = "block";
+                    startInput.value = "";
+                } else {
+                    errorEl.style.display = "none";
+                }
+            }
+        }
+
+        if (e.target && e.target.id === "endDate") {
+            const startInput = document.getElementById("startDate");
+            const endInput = e.target;
+            const errorEl = document.getElementById("endDateError");
+
+            if (endInput.value) {
+                const startDate = startInput.value ? new Date(startInput.value) : null;
+                const endDate = new Date(endInput.value);
+
+                if (endDate < new Date(today)) {
+                    errorEl.textContent = "Please enter a valid date.";
+                    errorEl.style.display = "block";
+                    endInput.value = "";
+                } else if (startDate && endDate < startDate) {
+                    errorEl.textContent = "Please enter a valid date.";
+                    errorEl.style.display = "block";
+                    endInput.value = "";
+                } else {
+                    errorEl.style.display = "none";
+                }
+            }
         }
     });
 
@@ -77,13 +130,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="form-group">
                     <input type="date" id="startDate" name="startDate" class="form-control"
                         value="${isEdit ? data.start_date : ""}" required>
-                    <label for="startDate" class="form-label">Start Date <span class="required">*</span></label>
+                    <label for="startDate" class="form-label">Start Date </label>
+                    <span id="startDateError" class="error-msg-calendar error" style="display: none;"></span>
                 </div>
 
                 <div class="form-group">
                     <input type="date" id="endDate" name="endDate" class="form-control"
                         value="${isEdit ? data.end_date : ""}" required>
-                    <label for="endDate" class="form-label">End Date <span class="required">*</span></label>
+                    <label for="endDate" class="form-label">End Date </label>
+                    <span id="endDateError" class="error-msg-calendar error" style="display: none;"></span>
                 </div>
 
                 <div class="form-group">

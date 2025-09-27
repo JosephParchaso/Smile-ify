@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <h2>${isEdit ? "Manage Transaction" : "Add Transaction"}</h2>
             <form id="transactionForm" 
                 action="${BASE_URL}/Admin/processes/manage_appointment/${isEdit ? 'update_transaction.php' : 'insert_transaction.php'}" 
-                method="POST">
+                method="POST" autocomplete="off" />
                 
                 ${isEdit ? `<input type="hidden" name="dental_transaction_id" value="${data.dental_transaction_id}">` : ""}
                 <input type="hidden" name="appointment_transaction_id" value="${appointmentId}">
@@ -144,7 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <h2>${isEdit ? "Manage Vitals" : "Add Vitals"}</h2>
             <form id="vitalForm" 
                 action="${BASE_URL}/Admin/processes/manage_appointment/${isEdit ? 'update_vital.php' : 'insert_vital.php'}" 
-                method="POST">
+                method="POST" autocomplete="off" />
                 
                 ${isEdit ? `<input type="hidden" name="vitals_id" value="${data.vitals_id}">` : ""}
                 <input type="hidden" name="appointment_transaction_id" value="${appointmentId}">
@@ -200,7 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <h2>${isEdit ? "Manage Prescription" : "Add Prescription"}</h2>
             <form id="prescriptionForm" 
                 action="${BASE_URL}/Admin/processes/manage_appointment/${isEdit ? 'update_prescription.php' : 'insert_prescription.php'}" 
-                method="POST">
+                method="POST" autocomplete="off" />
                 
                 ${isEdit ? `<input type="hidden" name="prescription_id" value="${data.prescription_id}">` : ""}
                 <input type="hidden" name="appointment_transaction_id" value="${appointmentId}">
@@ -209,12 +209,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     <input type="text" id="drug" class="form-control" name="drug"
                         value="${isEdit ? data.drug : ""}" required />
                     <label for="drug" class="form-label">Drug <span class="required">*</span></label>
-                </div>
-
-                <div class="form-group">
-                    <input type="text" id="route" class="form-control" name="route"
-                        value="${isEdit ? data.route : ""}" required />
-                    <label for="route" class="form-label">Route <span class="required">*</span></label>
                 </div>
 
                 <div class="form-group">
@@ -233,6 +227,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     <input type="text" id="duration" class="form-control" name="duration"
                         value="${isEdit ? data.duration : ""}" required />
                     <label for="duration" class="form-label">Duration <span class="required">*</span></label>
+                </div>
+
+                
+                <div class="form-group">
+                    <input type="text" id="quantity" class="form-control" name="quantity"
+                        value="${isEdit ? data.quantity : ""}" required />
+                    <label for="quantity" class="form-label">Quantity <span class="required">*</span></label>
                 </div>
 
                 <div class="form-group">

@@ -16,6 +16,7 @@ require_once BASE_PATH . '/Owner/includes/navbar.php';
 <title>Schedules</title>
 
 <div class="calendar-container">
+    <div id="calendarLegend" class="legend"></div>
     <div id="calendar"></div>
 </div>
 

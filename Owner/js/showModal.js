@@ -2,6 +2,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const employeeModal = document.getElementById("manageModal");
     const employeeBody = document.getElementById("modalBody");
 
+    const today = new Date().toISOString().split("T")[0];
+
+    document.body.addEventListener("focusin", function (e) {
+        if (e.target && e.target.id === "dateofBirth") {
+            e.target.setAttribute("min", "1900-01-01");
+            e.target.setAttribute("max", today);
+        }
+        if (e.target && e.target.id === "dateStarted") {
+            e.target.setAttribute("min", today);
+        }
+    });
+
     document.body.addEventListener("click", function (e) {
         if (e.target.classList.contains("btn-action")) {
             const id = e.target.getAttribute("data-id");
@@ -49,6 +61,49 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    document.body.addEventListener("change", function (e) {
+        if (e.target && e.target.id === "dateofBirth") {
+            const dobInput = e.target;
+            const errorEl = document.getElementById("dobError");
+            const todayDate = new Date();
+
+            if (dobInput.value) {
+                const selectedDate = new Date(dobInput.value);
+
+                if (selectedDate.getFullYear() === 1) {
+                    errorEl.textContent = "Please enter a valid date of birth.";
+                    errorEl.style.display = "block";
+                    dobInput.value = "";
+                } else if (selectedDate > todayDate || selectedDate.getFullYear() < 1900) {
+                    errorEl.textContent = "Please enter a valid date of birth.";
+                    errorEl.style.display = "block";
+                    dobInput.value = "";
+                } else {
+                    errorEl.style.display = "none";
+                }
+            }
+        }
+    });
+
+    document.body.addEventListener("change", function (e) {
+        if (e.target && e.target.id === "dateStarted") {
+            const dateInput = e.target;
+            const errorEl = document.getElementById("dateError");
+
+            if (dateInput.value) {
+                const selectedDate = new Date(dateInput.value);
+                const day = selectedDate.getUTCDay();
+
+                if (day === 0) { // Sunday
+                    errorEl.style.display = "block";
+                    dateInput.value = "";
+                } else {
+                    errorEl.style.display = "none";
+                }
+            }
+        }
+    });
+
     function renderAdminForm(data) {
         const isEdit = !!data;
         employeeBody.innerHTML = `
@@ -90,9 +145,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
 
                 <div class="form-group">
-                    <input type="date" id="dateofBirth" name="dateofBirth"  class="form-control"
+                    <input type="date" id="dateofBirth" name="dateofBirth" class="form-control"
                         value="${isEdit ? data.date_of_birth : ""}" required autocomplete="off">
                     <label for="dateofBirth" class="form-label">Date of Birth <span class="required">*</span></label>
+                    <span id="dobError" class="error-msg-calendar error" style="display: none;"></span>
                 </div>
 
                 <div class="form-group">
@@ -132,8 +188,11 @@ document.addEventListener("DOMContentLoaded", () => {
                             
                 <div class="form-group">
                     <input type="date" id="dateStarted" name="dateStarted" class="form-control"
-                        value="${isEdit ? data.date_started : ""}" required autocomplete="off">
+                        value="${isEdit ? data.date_started : ''}" required autocomplete="off">
                     <label for="dateStarted" class="form-label">Start Date <span class="required">*</span></label>
+                    <span id="dateError" class="error-msg-calendar error" style="display: none;">
+                        Sundays are not available for appointments. Please select another date.
+                    </span>
                 </div>
 
                 ${isEdit ? `
@@ -201,9 +260,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
 
                 <div class="form-group">
-                    <input type="date" id="dateofBirth" name="dateofBirth"  class="form-control"
+                    <input type="date" id="dateofBirth" name="dateofBirth" class="form-control"
                         value="${isEdit ? data.date_of_birth : ""}" required autocomplete="off">
                     <label for="dateofBirth" class="form-label">Date of Birth <span class="required">*</span></label>
+                    <span id="dobError" class="error-msg-calendar error" style="display: none;">
+                        Date of birth cannot be in the future.
+                    </span>
                 </div>
 
                 <div class="form-group">
@@ -257,8 +319,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 
                 <div class="form-group">
                     <input type="date" id="dateStarted" name="dateStarted" class="form-control"
-                        value="${isEdit ? data.date_started : ""}" required autocomplete="off">
+                        value="${isEdit ? data.date_started : ''}" required autocomplete="off">
                     <label for="dateStarted" class="form-label">Start Date <span class="required">*</span></label>
+                    <span id="dateError" class="error-msg-calendar error" style="display: none;">
+                        Sundays are not available for appointments. Please select another date.
+                    </span>
                 </div>
 
                 ${isEdit ? `
@@ -304,7 +369,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 wrapper.innerHTML = `
                     <div class="checkbox-item">
                         <input type="checkbox" id="service_${service.service_id}" name="services[]" value="${service.service_id}"
-                            ${isEdit && selectedServices.includes(parseInt(service.service_id)) ? "checked" : ""}>
+                            ${isEdit ? (selectedServices.includes(parseInt(service.service_id)) ? "checked" : "") : "checked"}>
                         <label for="service_${service.service_id}">${service.name}</label>
                     </div>
                 `;

@@ -75,7 +75,7 @@ $result = $stmt->get_result();
 if ($row = $result->fetch_assoc()) {
     $appointmentTransactionId = $row['appointment_transaction_id'];
 
-    $prescriptionsSql = "SELECT drug, route, frequency, dosage, duration, instructions 
+    $prescriptionsSql = "SELECT drug, frequency, dosage, duration, quantity, instructions 
                             FROM dental_prescription 
                             WHERE appointment_transaction_id = ?";
     $stmt2 = $conn->prepare($prescriptionsSql);

@@ -77,7 +77,7 @@ if (!$data) {
     exit();
 }
 
-$presSql = "SELECT drug, route, frequency, dosage, duration, instructions
+$presSql = "SELECT drug, frequency, dosage, duration, quantity, instructions
             FROM dental_prescription
             WHERE appointment_transaction_id = ?";
 $stmtPres = $conn->prepare($presSql);

@@ -52,7 +52,7 @@ while ($row = $result->fetch_assoc()) {
         $row['appointment_date'],
         $row['appointment_time'],
         $row['status'],
-        '<a href="' . BASE_URL . '/Admin/pages/manage_appointment.php?id=' . $row['appointment_transaction_id'] . '&tab=dental_transactions" class="manage-action">Manage</a>'
+        '<a href="' . BASE_URL . '/Admin/pages/manage_appointment.php?id=' . $row['appointment_transaction_id'] . '&backTab=recent&tab=dental_transactions" class="manage-action">Manage</a>'
     ];
 }
 

@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="form-group">
                     <input type="url" id="map_url" name="map_url" class="form-control"
                         value="${isEdit ? (data.map_url || '') : ''}" placeholder=" ">
-                    <label for="map_url" class="form-label">Google Maps URL</label>
+                    <label for="map_url" class="form-label">Google Maps URL <span class="required">*</span></label>
                 </div>
 
                 <div class="form-group">

@@ -23,7 +23,7 @@ if (!$userId) {
 $updateSuccess = $_SESSION['updateSuccess'] ?? "";
 $updateError   = $_SESSION['updateError'] ?? "";
 
-$backTab = $_GET['tab'] ?? 'inactive';
+$backTab = $_GET['tab'] ?? 'recent';
 ?>
 <title>Patient Details</title>
 
