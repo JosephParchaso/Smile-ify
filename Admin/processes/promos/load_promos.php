@@ -30,7 +30,6 @@ $result = $stmt->get_result();
 
 $promos = [];
 while ($row = $result->fetch_assoc()) {
-    // Format discount (e.g. "10%" or "₱500")
     $discount = $row['discount_type'] === 'percentage' 
         ? $row['discount_value'] . '%'
         : '₱' . number_format($row['discount_value'], 2);

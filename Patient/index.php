@@ -19,15 +19,27 @@ if (isset($_SESSION['error_msg'])) {
 
 require_once BASE_PATH . '/includes/header.php';
 require_once BASE_PATH . '/Patient/includes/navbar.php';
+
 ?>
 
 <body>
     <title>Home</title>
 
     <div class="dashboard">
-        <div class="welcome">
-            <h1>👋 Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h1>
-            <p>You are logged in as <strong><?php echo htmlspecialchars($_SESSION['role']); ?></strong>.</p>
+        <div class="top-section">
+            <div class="welcome">
+                <h1>👋 Welcome, <?= htmlspecialchars($_SESSION['username']); ?>!</h1>
+            </div>
+
+            <div class="promos swiper promo-slider">
+                <div class="swiper-wrapper" id="promoWrapper">
+                    <!-- promos will be loaded here via JS -->
+                </div>
+
+                <div class="swiper-pagination"></div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+            </div>
         </div>
 
         <div class="cards">
@@ -154,4 +166,5 @@ require_once BASE_PATH . '/Patient/includes/navbar.php';
     </div>
 
     <?php require_once BASE_PATH . '/includes/footer.php'; ?>
+
 </body>

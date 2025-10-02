@@ -1,7 +1,7 @@
 $(document).ready(function() {
     if (!$.fn.DataTable.isDataTable('#branchesTable')) {
         $('#branchesTable').DataTable({
-            "ajax": `${BASE_URL}/Owner/processes/branches/load_branches.php`,
+            "ajax": `${BASE_URL}/Owner/processes/profile/branches/load_branches.php`,
             "pageLength": 20,
             "lengthChange": false,
             "ordering": true,

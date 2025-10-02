@@ -27,6 +27,7 @@ $sql = "SELECT
             closing_time,
             map_url,
             status,
+            date_updated,
             date_created
         FROM branch
         WHERE branch_id = ?

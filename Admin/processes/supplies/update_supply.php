@@ -30,37 +30,88 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     try {
-        $sql1 = "UPDATE supply 
-                    SET name = ?, description = ?, category = ?, unit = ? 
-                    WHERE supply_id = ?";
-        $stmt1 = $conn->prepare($sql1);
-        if (!$stmt1) {
-            throw new Exception("Prepare failed (supply): " . $conn->error);
-        }
-        $stmt1->bind_param("ssssi", $name, $description, $category, $unit, $supply_id);
-        $stmt1->execute();
-        $stmt1->close();
+        $affected1 = 0;
+        $affected2 = 0;
 
-        $sql2 = "UPDATE branch_supply 
-                        SET quantity = ?, reorder_level = ?, expiration_date = ?, status = ?, date_updated = NOW() 
-                    WHERE supply_id = ? AND branch_id = ?";
-        $stmt2 = $conn->prepare($sql2);
-        if (!$stmt2) {
-            throw new Exception("Prepare failed (branch_supply): " . $conn->error);
-        }
-        $stmt2->bind_param("iissii", $quantity, $reorderLevel, $expirationDate, $status, $supply_id, $branch_id);
+        $sqlCheck1 = "SELECT name, description, category, unit FROM supply WHERE supply_id = ?";
+        $stmtCheck1 = $conn->prepare($sqlCheck1);
+        $stmtCheck1->bind_param("i", $supply_id);
+        $stmtCheck1->execute();
+        $res1 = $stmtCheck1->get_result();
+        $currentSupply = $res1->fetch_assoc();
+        $stmtCheck1->close();
 
-        if ($stmt2->execute()) {
-            if ($stmt2->affected_rows > 0) {
-                $_SESSION['updateSuccess'] = "Supply updated successfully!";
-            } else {
-                $_SESSION['updateError'] = "No changes were made.";
+        $supplyChanged = false;
+        if ($currentSupply) {
+            if (
+                $currentSupply['name'] !== $name ||
+                $currentSupply['description'] !== $description ||
+                $currentSupply['category'] !== $category ||
+                $currentSupply['unit'] !== $unit
+            ) {
+                $supplyChanged = true;
             }
-        } else {
-            $_SESSION['updateError'] = "Failed to update branch supply: " . $stmt2->error;
         }
 
-        $stmt2->close();
+        if ($supplyChanged) {
+            $sql1 = "UPDATE supply 
+                        SET name = ?, description = ?, category = ?, unit = ? 
+                        WHERE supply_id = ?";
+            $stmt1 = $conn->prepare($sql1);
+            if (!$stmt1) {
+                throw new Exception("Prepare failed (supply): " . $conn->error);
+            }
+            $stmt1->bind_param("ssssi", $name, $description, $category, $unit, $supply_id);
+            $stmt1->execute();
+            $affected1 = $stmt1->affected_rows;
+            $stmt1->close();
+        }
+
+        $sqlCheck2 = "SELECT quantity, reorder_level, expiration_date, status 
+                        FROM branch_supply 
+                        WHERE supply_id = ? AND branch_id = ?";
+        $stmtCheck2 = $conn->prepare($sqlCheck2);
+        $stmtCheck2->bind_param("ii", $supply_id, $branch_id);
+        $stmtCheck2->execute();
+        $res2 = $stmtCheck2->get_result();
+        $currentBranch = $res2->fetch_assoc();
+        $stmtCheck2->close();
+
+        $branchChanged = false;
+        if ($currentBranch) {
+            if (
+                (int)$currentBranch['quantity'] !== $quantity ||
+                (int)$currentBranch['reorder_level'] !== $reorderLevel ||
+                ($currentBranch['expiration_date'] !== $expirationDate &&
+                !($currentBranch['expiration_date'] === null && $expirationDate === null)) ||
+                $currentBranch['status'] !== $status
+            ) {
+                $branchChanged = true;
+            }
+        }
+
+        if ($branchChanged) {
+            $sql2 = "UPDATE branch_supply 
+                        SET quantity = ?, 
+                            reorder_level = ?, 
+                            expiration_date = ?, 
+                            status = ?, 
+                            date_updated = NOW()
+                    WHERE supply_id = ? AND branch_id = ?";
+            $stmt2 = $conn->prepare($sql2);
+            if (!$stmt2) {
+                throw new Exception("Prepare failed (branch_supply): " . $conn->error);
+            }
+            $stmt2->bind_param("iissii", $quantity, $reorderLevel, $expirationDate, $status, $supply_id, $branch_id);
+            $stmt2->execute();
+            $affected2 = $stmt2->affected_rows;
+            $stmt2->close();
+        }
+
+        if ($affected1 > 0 || $affected2 > 0) {
+            $_SESSION['updateSuccess'] = "Supply updated successfully!";
+        }
+
     } catch (Exception $e) {
         $_SESSION['updateError'] = "Database error: " . $e->getMessage();
     }

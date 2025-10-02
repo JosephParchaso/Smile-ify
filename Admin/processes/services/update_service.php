@@ -19,28 +19,39 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     try {
         $sql = "UPDATE service 
-                    SET name = ?, price = ? 
-                    WHERE service_id = ?";
+                SET name = ?, price = ? 
+                WHERE service_id = ?";
         $stmt = $conn->prepare($sql);
         if (!$stmt) {
             throw new Exception("Prepare failed (service): " . $conn->error);
         }
         $stmt->bind_param("sdi", $name, $price, $service_id);
         $stmt->execute();
+        $affected1 = $stmt->affected_rows;
         $stmt->close();
 
         $sql2 = "UPDATE branch_service 
-                        SET status = ?, date_updated = NOW() 
+                    SET status = ?, 
+                        date_updated = CASE 
+                        WHEN status <> ? THEN NOW() 
+                        ELSE date_updated 
+                        END
                     WHERE branch_id = ? AND service_id = ?";
         $stmt2 = $conn->prepare($sql2);
         if (!$stmt2) {
             throw new Exception("Prepare failed (branch_service): " . $conn->error);
         }
-        $stmt2->bind_param("sii", $status, $branch_id, $service_id);
+        $stmt2->bind_param("ssii", $status, $status, $branch_id, $service_id);
         $stmt2->execute();
+        $affected2 = $stmt2->affected_rows;
         $stmt2->close();
 
-        $_SESSION['updateSuccess'] = "Service updated successfully!";
+        if ($affected1 > 0 || $affected2 > 0) {
+            $_SESSION['updateSuccess'] = "Service updated successfully!";
+        } else {
+            $_SESSION['updateInfo'] = "No changes were made.";
+        }
+
     } catch (Exception $e) {
         $_SESSION['updateError'] = "Database error: " . $e->getMessage();
     }

@@ -1,15 +1,46 @@
 .dashboard {
-    padding: 5rem;
+    padding: 4rem 5rem;
+}
+
+.top-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    gap: 40px;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+    width: 45px;
+    height: 45px;
+    color: #2C3E50;
+    transition: transform 0.25s ease, background 0.25s ease;
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+    transform: scale(1.1);
 }
 
 .welcome {
-    text-align: center;
-    margin-bottom: 2rem;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .welcome h1 {
     font-size: 2.5rem;
     color: #2C3E50;
+    font-weight: 700;
+    text-align: center;
 }
 
 .cards {

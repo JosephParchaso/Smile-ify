@@ -292,6 +292,19 @@ if (isset($_SESSION['timeoutError'])) {
     </div>
 </div>
 
+<div class="promo-container">
+    <div class="welcome-text">Promos</div>
+    <div class="promos swiper promo-slider">
+        <div class="swiper-wrapper" id="promoWrapper">
+            <!-- promos will be loaded here via JS -->
+        </div>
+
+        <div class="swiper-pagination"></div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+    </div>
+</div>
+
 <div class="aboutus-wrapper">
     <div class="aboutus-info">
         <p class="aboutus-heading">About Us</p>
@@ -331,6 +344,9 @@ if (isset($_SESSION['timeoutError'])) {
             <p>Room 306, Mondejar Bldg., Pusok, Lapu-Lapu City, Cebu</p>
         </div>
     </div>
+
+
+
 </div>
 
 <div id="educationalModal" class="educational-modal">

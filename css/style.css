@@ -578,6 +578,140 @@ form {
     opacity: 0.5;
 }
 
+.promos {
+    max-width: 1000px;
+}
+
+.swiper-wrapper {
+    display: flex;
+    align-items: stretch;
+}
+
+.swiper-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.promo-container .swiper-button-next,
+.promo-container .swiper-button-prev {
+    width: 45px;
+    height: 45px;
+    color: #2C3E50;
+    transition: transform 0.25s ease, background 0.25s ease;
+}
+
+.promo-container .swiper-button-next::after,
+.promo-container .swiper-button-prev::after {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.promo-container .swiper-button-next:hover,
+.promo-container .swiper-button-prev:hover {
+    transform: scale(1.1);
+}
+
+.promo-container {
+    margin: 3rem auto;
+    max-width: 1100px;
+}
+
+.promo-container .promo-card {
+    width: 300px;
+    height: 420px;
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.promo-container .promo-card img.promo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #fff;
+    padding: 10px;
+}
+
+.promo-card {
+    background: #fff;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    width: 280px;
+    height: 350px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    cursor: pointer;
+}
+
+.promo-card:hover {
+    box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+}
+
+.promo-card img.promo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+}
+
+.promo-card:hover .promo-img {
+    transform: scale(1.05);
+}
+
+.promo-container .promo-card img.promo-img {
+    object-fit: contain;
+    background: #fff;
+}
+
+.promo-overlay {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 12px 14px;
+    background: linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0));
+    color: #fff;
+    text-align: left;
+    opacity: 0;
+    transform: translateY(25px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    pointer-events: none;
+}
+
+.promo-card:hover .promo-overlay {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.promo-overlay h4 {
+    margin: 0 0 6px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.promo-overlay p {
+    margin: 0;
+    font-size: 13px;
+    opacity: 0.9;
+}
+
+.no-promo {
+    font-style: italic;
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+}
+
 .aboutus-wrapper {
     display: flex;
     flex-direction: row;

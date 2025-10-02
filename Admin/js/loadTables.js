@@ -77,7 +77,7 @@ $(document).ready(function() {
                 { "title": "Status" },
                 { "title": "Action", "orderable": false }
             ],
-            "order": [[3, "desc"]],
+            "order": [[0, "asc"]],
             "language": {
                 search: "",
                 searchPlaceholder: "Search"

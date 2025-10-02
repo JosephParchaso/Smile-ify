@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.target.classList.contains("btn-branch")) {
             const id = e.target.getAttribute("data-id");
 
-            fetch(`${BASE_URL}/Owner/processes/branches/get_branch_details.php?id=${id}`)
+            fetch(`${BASE_URL}/Owner/processes/profile/branches/get_branch_details.php?id=${id}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {
@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const isEdit = !!data;
         branchBody.innerHTML = `
             <h2>${isEdit ? "Manage Branch" : "Add Branch"}</h2>
-            <form id="branchForm" action="${BASE_URL}/Owner/processes/branches/${isEdit ? "update_branch.php" : "insert_branch.php"}" method="POST" autocomplete="off">
+            <form id="branchForm" action="${BASE_URL}/Owner/processes/profile/branches/${isEdit ? "update_branch.php" : "insert_branch.php"}" method="POST" autocomplete="off">
                 ${isEdit ? `<input type="hidden" name="branch_id" value="${data.branch_id}">` : ""}
 
                 <div class="form-group">
@@ -97,6 +97,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="form-group">
                     <input type="text" id="dateCreated" class="form-control" value="${data.date_created}" disabled>
                     <label for="dateCreated" class="form-label">Date Created</label>
+                </div>` : ""}
+
+                ${isEdit ? `
+                <div class="form-group">
+                    <input type="text" id="dateUpdated" class="form-control" value="${data.date_updated}" disabled>
+                    <label for="dateUpdated" class="form-label">Date Updated</label>
                 </div>` : ""}
 
                 <div class="button-group button-group-profile">

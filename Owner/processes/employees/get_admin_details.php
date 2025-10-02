@@ -34,6 +34,7 @@ $sql = "SELECT
             b.name AS branch,
             u.status,
             u.date_started,
+            u.date_updated,
             u.date_created
         FROM users u
         LEFT JOIN branch b ON u.branch_id = b.branch_id

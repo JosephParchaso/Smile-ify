@@ -84,6 +84,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function renderPromoForm(data) {
         const isEdit = !!data;
+            
+        const startDate = isEdit && data.start_date ? data.start_date : "";
+        const endDate   = isEdit && data.end_date   ? data.end_date   : "";
+
         promoBody.innerHTML = `
             <h2>${isEdit ? "Manage Promo" : "Add Promo"}</h2>
             <form id="promoForm" action="${BASE_URL}/Admin/processes/promos/${isEdit ? "update_promo.php" : "insert_promo.php"}" method="POST" enctype="multipart/form-data" autocomplete="off">
@@ -104,12 +108,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     <input type="file" id="promoImage" name="promoImage" class="form-control" accept="image/*">
                     <label for="promoImage" class="form-label">Promo Image</label>
                     ${isEdit && data.image_path 
-                        ? `<div style="margin-top:10px;">
-                            <img src="${data.image_path}" 
-                                    alt="Promo Image" 
-                                    style="max-width:300px; max-height:300px; border-radius:4px; object-fit:cover; display:block;">
-                        </div>` 
-                        : ""}
+                    ? `<div style="margin-top:10px;">
+                        <img src="${BASE_URL}${data.image_path}" 
+                            alt="Promo Image" 
+                            style="max-width:300px; max-height:300px; border-radius:4px; object-fit:cover; display:block;">
+                    </div>` 
+                    : ""}
                 </div>
 
                 <div class="form-group">
@@ -129,14 +133,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 <div class="form-group">
                     <input type="date" id="startDate" name="startDate" class="form-control"
-                        value="${isEdit ? data.start_date : ""}" required>
+                        value="${startDate}">
                     <label for="startDate" class="form-label">Start Date </label>
                     <span id="startDateError" class="error-msg-calendar error" style="display: none;"></span>
                 </div>
 
                 <div class="form-group">
                     <input type="date" id="endDate" name="endDate" class="form-control"
-                        value="${isEdit ? data.end_date : ""}" required>
+                        value="${endDate}">
                     <label for="endDate" class="form-label">End Date </label>
                     <span id="endDateError" class="error-msg-calendar error" style="display: none;"></span>
                 </div>
@@ -154,6 +158,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="form-group">
                     <input type="text" id="dateCreated" class="form-control" value="${data.date_created}" disabled>
                     <label for="dateCreated" class="form-label">Date Created</label>
+                </div>` : ""}
+
+                ${isEdit ? `
+                <div class="form-group">
+                    <input type="text" id="dateUpdated" class="form-control" value="${data.date_updated}" disabled>
+                    <label for="dateUpdated" class="form-label">Date Updated</label>
                 </div>` : ""}
 
                 <div class="button-group button-group-profile">

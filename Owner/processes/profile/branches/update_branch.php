@@ -15,30 +15,32 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     try {
         $sql = "UPDATE branch 
-                    SET name = ?, 
-                        address = ?, 
-                        phone_number = ?, 
-                        opening_time = ?, 
-                        closing_time = ?, 
-                        status = ?, 
-                        map_url = ?, 
-                        date_updated = NOW() 
-                    WHERE branch_id = ?";
+                SET name = ?, 
+                    address = ?, 
+                    phone_number = ?, 
+                    opening_time = ?, 
+                    closing_time = ?, 
+                    status = ?, 
+                    map_url = ? 
+                WHERE branch_id = ?";
         $stmt = $conn->prepare($sql);
         if (!$stmt) {
             throw new Exception("Prepare failed: " . $conn->error);
         }
 
-        $stmt->bind_param("sssssssi", $branchName, $address, $phone_number, $opening_time, $closing_time, $status, $map_url, $branch_id);
+        $stmt->bind_param(
+            "sssssssi", 
+            $branchName, $address, $phone_number, 
+            $opening_time, $closing_time, 
+            $status, $map_url, $branch_id
+        );
 
         if ($stmt->execute()) {
             if ($stmt->affected_rows > 0) {
                 $_SESSION['updateSuccess'] = "Branch updated successfully!";
-            } else {
-                $_SESSION['updateError'] = "No changes were made.";
             }
         } else {
-            $_SESSION['updateError'] = "Failed to update branch: " . $stmt->error;
+            $_SESSION['updateError'] = "Failed to update branch.";
         }
 
         $stmt->close();
@@ -46,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $_SESSION['updateError'] = "Database error: " . $e->getMessage();
     }
 
-    header("Location: " . BASE_URL . "/Owner/pages/branches.php");
+    header("Location: " . BASE_URL . "/Owner/pages/profile.php");
     exit;
 } else {
     header("Location: " . BASE_URL . "/index.php");

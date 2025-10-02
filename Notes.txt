@@ -157,14 +157,13 @@ home, profile = rix 💖
 reports andy, achas 
 Contact Fr. Peter for the database hosting 💖
 
-Switch status from pending ->> booked 🫥
-In the Home: place Welcome Joseph on the side, (left) add for the promos home display images 🫥
-In profile, center and add picture no picutres lng🫥
-tabs branch reports owner 🫥
+In profile, center and add picture no picutres lng🫥 admin nlng 
+date_updated in patients,denitists,admins after booking and updating 🫥
 update status when status is inactive in booking appointment 🫥
 Add the change email function in profile with otp verification 🫥
 one add vitals and transaction only 🫥
 add list for supplies used in service dapat automatic?🫥
+Switch status from pending ->> booked 🫥
 
 Owner - OTP Every Login 🥶
 Admin - OTP Every Login 🥶
@@ -203,3 +202,7 @@ Adding Branch- Owner Google Maps URL : Cannot be null 👍
 In adding admin, cannot allow multiple unless specified. 👍
 In adding the past dates should not be clickable 👍
 Add Start date in managing of admin by default/ 👍
+
+
+In the Home: place Welcome Joseph on the side, (left) add for the promos home display images 👍
+tabs branch reports owner 👍

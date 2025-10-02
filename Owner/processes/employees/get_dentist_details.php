@@ -31,6 +31,7 @@ $sql = "SELECT
             status,
             signature_image,
             date_started,
+            date_updated,
             date_created
         FROM dentist
         WHERE dentist_id = ?

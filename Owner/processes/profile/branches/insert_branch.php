@@ -44,7 +44,7 @@ try {
     $_SESSION['updateError'] = "Database error: " . $e->getMessage();
 }
 
-header("Location: " . BASE_URL . "/Owner/pages/branches.php");
+header("Location: " . BASE_URL . "/Owner/pages/profile.php");
 exit;
 
 $conn->close();

@@ -53,13 +53,15 @@ if (isset($_SESSION['user_id'])) {
 
     <!-- Global Styles -->
     <link rel="stylesheet" href="<?= BASE_URL ?>/css/style.css?v=<?= time(); ?>" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
     <!-- Libraries -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
     <!-- JS: All users -->
     <script src="<?= BASE_URL ?>/js/loadFooter.js?v=<?= time(); ?>"></script>
@@ -67,6 +69,7 @@ if (isset($_SESSION['user_id'])) {
     <script src="<?= BASE_URL ?>/js/openForgotPasswordModal.js?v=<?= time(); ?>"></script>
     <script src="<?= BASE_URL ?>/js/togglePassword.js?v=<?= time(); ?>"></script>
     <script src="<?= BASE_URL ?>/js/toggleCalendar.js?v=<?= time(); ?>"></script>
+    <script src="<?= BASE_URL ?>/js/loadPromos.js?v=<?= time(); ?>"></script>
 
     <!-- JS: Authenticated users -->
     <script src="<?= BASE_URL ?>/js/toggleNavbar.js?v=<?= time(); ?>"></script>
@@ -101,6 +104,7 @@ if (isset($_SESSION['user_id'])) {
         <script src="<?= BASE_URL ?>/Admin/js/showSupplyModal.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/showServiceModal.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/showPromoModal.js?v=<?= time(); ?>"></script>
+
     <?php elseif ($role === 'patient'): ?>
         <!-- Patient-specific -->
         <script src="<?= BASE_URL ?>/Patient/js/loadCalendar.js?v=<?= time(); ?>"></script>

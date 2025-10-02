@@ -18,13 +18,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $discount_type  = trim($_POST["discountType"]);
     $discount_value = floatval($_POST["discountValue"]);
     $status         = trim($_POST["status"]);
-    $start_date = !empty($_POST["startDate"]) ? $_POST["startDate"] : null;
-    $end_date   = !empty($_POST["endDate"])   ? $_POST["endDate"]   : null;
+    $start_date     = !empty($_POST["startDate"]) ? $_POST["startDate"] : null;
+    $end_date       = !empty($_POST["endDate"])   ? $_POST["endDate"]   : null;
 
     $image_path = null;
+
     if (isset($_FILES['promoImage']) && $_FILES['promoImage']['error'] === UPLOAD_ERR_OK) {
         $allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-        $maxFileSize = 5 * 1024 * 1024;
+        $maxFileSize  = 5 * 1024 * 1024;
 
         $fileTmpPath = $_FILES['promoImage']['tmp_name'];
         $fileType    = mime_content_type($fileTmpPath);
@@ -47,45 +48,64 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             mkdir($uploadDir, 0777, true);
         }
 
-        $extension = pathinfo($_FILES["promoImage"]["name"], PATHINFO_EXTENSION);
-        $fileName = uniqid("promo_") . "." . strtolower($extension);
+        $extension = strtolower(pathinfo($_FILES["promoImage"]["name"], PATHINFO_EXTENSION));
+        $fileName  = "promo_" . $promo_id . "." . $extension;
         $targetPath = $uploadDir . $fileName;
 
+        $oldFiles = glob($uploadDir . "promo_" . $promo_id . ".*");
+        foreach ($oldFiles as $oldFile) {
+            if (is_file($oldFile)) unlink($oldFile);
+        }
+
         if (move_uploaded_file($fileTmpPath, $targetPath)) {
-            $image_path = BASE_URL . "/images/promos/" . $fileName;
-        } else {
-            $_SESSION['updateError'] = "Image upload failed.";
-            header("Location: " . BASE_URL . "/Admin/pages/promos.php");
-            exit;
+            $image_path = "/images/promos/" . $fileName;
         }
     }
 
     try {
         if ($image_path) {
             $sql = "UPDATE promo 
-                        SET name = ?, image_path = ?, description = ?, discount_type = ?, discount_value = ? 
-                        WHERE promo_id = ?";
+                    SET name = ?, image_path = ?, description = ?, discount_type = ?, discount_value = ? 
+                    WHERE promo_id = ?";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("ssssdi", $name, $image_path, $description, $discount_type, $discount_value, $promo_id);
         } else {
             $sql = "UPDATE promo 
-                        SET name = ?, description = ?, discount_type = ?, discount_value = ? 
-                        WHERE promo_id = ?";
+                    SET name = ?, description = ?, discount_type = ?, discount_value = ? 
+                    WHERE promo_id = ?";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("sssdi", $name, $description, $discount_type, $discount_value, $promo_id);
         }
         $stmt->execute();
+        $affected1 = $stmt->affected_rows;
         $stmt->close();
 
         $sql2 = "UPDATE branch_promo 
-                        SET status = ?, start_date = ?, end_date = ?, date_updated = NOW() 
+                    SET status = ?, 
+                        start_date = ?, 
+                        end_date = ?, 
+                        date_updated = CASE
+                            WHEN status <> ? OR start_date <> ? OR end_date <> ?
+                            THEN NOW()
+                            ELSE date_updated
+                        END
                     WHERE branch_id = ? AND promo_id = ?";
         $stmt2 = $conn->prepare($sql2);
-        $stmt2->bind_param("sssii", $status, $start_date, $end_date, $branch_id, $promo_id);
+        $stmt2->bind_param("ssssssii", 
+            $status, $start_date, $end_date,
+            $status, $start_date, $end_date,
+            $branch_id, $promo_id
+        );
         $stmt2->execute();
+        $affected2 = $stmt2->affected_rows;
         $stmt2->close();
 
-        $_SESSION['updateSuccess'] = "Promo updated successfully!";
+        if ($affected1 > 0 || $affected2 > 0) {
+            $_SESSION['updateSuccess'] = "Promo updated successfully!";
+        } else {
+            $_SESSION['updateInfo'] = "No changes were made.";
+        }
+
     } catch (Exception $e) {
         $_SESSION['updateError'] = "Database error: " . $e->getMessage();
     }

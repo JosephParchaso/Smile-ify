@@ -201,6 +201,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     <label for="dateCreated" class="form-label">Date Created</label>
                 </div>` : ""}
 
+                ${isEdit ? `
+                <div class="form-group">
+                    <input type="text" id="dateUpdated" class="form-control" value="${data.date_updated}" disabled>
+                    <label for="dateUpdated" class="form-label">Date Updated</label>
+                </div>` : ""}
+
                 <div class="button-group button-group-profile">
                     <button type="submit" class="form-button confirm-btn">${isEdit ? "Save Changes" : "Add Admin"}</button>
                     <button type="button" class="form-button cancel-btn" onclick="closeEmployeeModal()">Cancel</button>
@@ -330,6 +336,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="form-group">
                     <input type="text" id="dateCreated" class="form-control" value="${data.date_created}" disabled>
                     <label for="dateCreated" class="form-label">Date Created</label>
+                </div>` : ""}
+
+                ${isEdit ? `
+                <div class="form-group">
+                    <input type="text" id="dateUpdated" class="form-control" value="${data.date_updated}" disabled>
+                    <label for="dateUpdated" class="form-label">Date Updated</label>
                 </div>` : ""}
 
                 <div class="button-group button-group-profile">

@@ -88,8 +88,7 @@
 }
 
 .branches-table {
-    width: 80% !important;
-    margin: 3% auto ;
+    width: 75% !important;
 }
 
 #adminsTable_filter, #dentistsTable_filter, #branchesTable_filter {
