@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         const statusColors = {
-            "Pending": "#fe9705",
+            "Booked": "#fe9705",
             "Completed": "#3ac430",
             "Cancelled": "#d11313"
         };

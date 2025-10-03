@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
-        $stmt = $conn->prepare("UPDATE users SET status = ? WHERE user_id = ?");
+        $stmt = $conn->prepare("UPDATE users SET status = ?, date_updated = NOW() WHERE user_id = ?");
         $stmt->bind_param("si", $status, $user_id);
 
         if ($stmt->execute()) {

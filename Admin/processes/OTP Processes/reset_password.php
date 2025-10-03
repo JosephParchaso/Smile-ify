@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['otp_verified']) || $_SESSI
 }
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $newPassword = $_POST['new_password'] ?? '';
+    $newPassword     = $_POST['new_password'] ?? '';
     $confirmPassword = $_POST['confirm_password'] ?? '';
 
     if ($newPassword !== $confirmPassword) {
@@ -36,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
 
-    $stmt = $conn->prepare("UPDATE users SET password = ? WHERE user_id = ?");
+    $stmt = $conn->prepare("UPDATE users SET password = ?, date_updated = NOW() WHERE user_id = ?");
     $stmt->bind_param("si", $hashedPassword, $userId);
 
     if ($stmt->execute()) {

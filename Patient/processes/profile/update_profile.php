@@ -17,8 +17,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $address = trim($_POST['address'] ?? '');
 
     try {
-        $stmt = $conn->prepare("UPDATE users SET contact_number = ?, address = ? WHERE user_id = ?");
-        $stmt->bind_param("ssi", $contact, $address, $user_id);
+        $stmt = $conn->prepare("
+            UPDATE users 
+            SET contact_number = ?, address = ?, date_updated = NOW() 
+            WHERE user_id = ? 
+                AND (contact_number <> ? OR address <> ?)
+        ");
+        $stmt->bind_param("ssiss", $contact, $address, $user_id, $contact, $address);
 
         if ($stmt->execute()) {
             if ($stmt->affected_rows > 0) {
@@ -26,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         } else {
             $_SESSION['updateError'] = "Failed to update profile. Please try again.";
-    }
+        }
         $stmt->close();
     } catch (Exception $e) {
         $_SESSION['updateError'] = "Database error: " . $e->getMessage();

@@ -16,7 +16,7 @@ $sql = "SELECT COUNT(*) AS cnt
         WHERE a.branch_id = ?
             AND u.role = 'patient'
             AND a.appointment_date >= CURDATE()
-            AND a.status = 'Pending'";
+            AND a.status = 'Booked'";
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $branch_id);

@@ -27,6 +27,7 @@ $sql = "SELECT
             u.contact_number, 
             u.address,
             u.date_created AS user_created,
+            u.date_updated,
             a.appointment_date,
             a.appointment_time,
             a.status,
@@ -57,6 +58,7 @@ if ($row = $result->fetch_assoc()) {
         'contact_number'  => $row['contact_number'],
         'address'         => $row['address'],
         'joined'          => date("F d, Y", strtotime($row['user_created'])),
+        "date_updated"    => $row['date_updated'] ? date("F d, Y", strtotime($row['date_updated'])) : "-",
 
         'appointment_date' => $row['appointment_date'],
         'appointment_time' => $row['appointment_time'],

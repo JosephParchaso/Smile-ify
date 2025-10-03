@@ -56,6 +56,10 @@
     flex-wrap: wrap;
 }
 
+.profile-container-admin {
+    padding: 40px;
+}
+
 .profile-section {
     position: relative;
 }

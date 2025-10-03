@@ -157,23 +157,19 @@ home, profile = rix 💖
 reports andy, achas 
 Contact Fr. Peter for the database hosting 💖
 
-In profile, center and add picture no picutres lng🫥 admin nlng 
-date_updated in patients,denitists,admins after booking and updating 🫥
-update status when status is inactive in booking appointment 🫥
 Add the change email function in profile with otp verification 🫥
 one add vitals and transaction only 🫥
 add list for supplies used in service dapat automatic?🫥
-Switch status from pending ->> booked 🫥
 
 Owner - OTP Every Login 🥶
 Admin - OTP Every Login 🥶
-Patient - 2FA 🥶
-Hash patient username in db 🥶
+Patient - OTP Every Login 🥶
 
 supplies with transact / add and link the service materials per transaction🥶
 apply promo transact 🥶
 receipt 🥶
 cancel appointment and complete appointment / to save transaction and status completed notify user 🥶
+Hash patient username in db 🥶
 
 family 🥶
 Minimum of 5 minutes for OTP time remaining expiration time 😨
@@ -206,3 +202,7 @@ Add Start date in managing of admin by default/ 👍
 
 In the Home: place Welcome Joseph on the side, (left) add for the promos home display images 👍
 tabs branch reports owner 👍
+In profile, center and add picture no picutres lng 👍
+date_updated in patients,denitists,admins after booking and updating 👍
+update status when status is inactive in booking appointment 👍
+Switch status from pending ->> booked 👍

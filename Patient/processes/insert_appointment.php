@@ -27,14 +27,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $appointment_sql = "INSERT INTO appointment_transaction 
             (user_id, branch_id, service_id, dentist_id, appointment_date, appointment_time, notes, status)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'Pending')";
-
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'Booked')";
         $appointment_stmt = $conn->prepare($appointment_sql);
-        $appointment_stmt->bind_param("iiissss", $user_id, $appointmentBranch, $appointmentService, $appointmentDentist, $appointmentDate, $appointmentTime, $notes);
+        $appointment_stmt->bind_param(
+            "iiissss",
+            $user_id,
+            $appointmentBranch,
+            $appointmentService,
+            $appointmentDentist,
+            $appointmentDate,
+            $appointmentTime,
+            $notes
+        );
 
         if (!$appointment_stmt->execute()) {
             throw new Exception("Failed to book appointment: " . $appointment_stmt->error);
         }
+
+        $user_update_sql = "UPDATE users SET date_updated = NOW() WHERE user_id = ?";
+        $user_update_stmt = $conn->prepare($user_update_sql);
+        $user_update_stmt->bind_param("i", $user_id);
+        $user_update_stmt->execute();
 
         $notif_sql = "INSERT INTO notifications (user_id, message) VALUES (?, ?)";
         $notif_stmt = $conn->prepare($notif_sql);

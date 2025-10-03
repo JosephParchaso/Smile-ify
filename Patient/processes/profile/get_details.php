@@ -20,7 +20,8 @@ $sql = "SELECT
             email, 
             contact_number,
             address, 
-            date_created 
+            date_created,
+            date_updated 
         FROM users 
         WHERE user_id = ?";
 
@@ -37,7 +38,8 @@ if ($row = $result->fetch_assoc()) {
         'email' => $row['email'],
         'contact_number' => $row['contact_number'],
         'address' => $row['address'],
-        'joined' => date("F d, Y", strtotime($row['date_created']))
+        'joined' => date("F d, Y", strtotime($row['date_created'])),
+        "date_updated"   => $row['date_updated'] ? date("F d, Y", strtotime($row['date_updated'])) : "-",
     ];
 
     header('Content-Type: application/json');

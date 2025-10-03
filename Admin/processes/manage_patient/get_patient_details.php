@@ -20,7 +20,7 @@ if (!$userId) {
     exit();
 }
 
-$sql = "SELECT user_id, first_name, middle_name, last_name, gender, date_of_birth, email, contact_number, address, date_created, status 
+$sql = "SELECT user_id, first_name, middle_name, last_name, gender, date_of_birth, email, contact_number, address, date_created, date_updated, status 
         FROM users 
         WHERE user_id = ?";
 $stmt = $conn->prepare($sql);
@@ -44,6 +44,7 @@ if ($row = $result->fetch_assoc()) {
         "contact_number" => $row['contact_number'] ?? "-",
         "address"        => $row['address'] ?? "-",
         "joined"         => $row['date_created'] ? date("F d, Y", strtotime($row['date_created'])) : "-",
+        "date_updated"   => $row['date_updated'] ? date("F d, Y", strtotime($row['date_updated'])) : "-",
         "status"         => ucfirst($row['status'])
     ];
 

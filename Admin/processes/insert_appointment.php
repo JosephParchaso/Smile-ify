@@ -98,7 +98,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $appointment_sql = "
             INSERT INTO appointment_transaction 
             (user_id, branch_id, service_id, dentist_id, appointment_date, appointment_time, notes, status) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'Pending')
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'Booked')
         ";
         $appointment_stmt = $conn->prepare($appointment_sql);
         $appointment_stmt->bind_param(

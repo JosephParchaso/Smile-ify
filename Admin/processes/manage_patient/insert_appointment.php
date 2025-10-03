@@ -30,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt = $conn->prepare("
             INSERT INTO appointment_transaction 
             (user_id, branch_id, service_id, dentist_id, appointment_date, appointment_time, notes, status)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'Pending')
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'Booked')
         ");
         $stmt->bind_param(
             "iiiisss",
@@ -39,6 +39,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         );
         $stmt->execute();
         $stmt->close();
+
+        $update_user = $conn->prepare("UPDATE users SET status = 'Active', date_updated = NOW() WHERE user_id = ?");
+        $update_user->bind_param("i", $user_id);
+        $update_user->execute();
+        $update_user->close();
 
         $msg = "Your appointment on $appointment_date at $appointment_time was successfully booked!";
         $notif_sql = "INSERT INTO notifications (user_id, message) VALUES (?, ?)";

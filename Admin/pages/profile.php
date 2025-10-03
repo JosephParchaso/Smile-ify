@@ -17,7 +17,7 @@ $updateError = $_SESSION['updateError'] ?? "";
 ?>
 <title>Profile</title>
 
-<div class="profile-container">
+<div class="profile-container-admin">
     <div class="profile-section">
         <div class="profile-card" id="profileCard">
             <p>Loading profile...</p>

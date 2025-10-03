@@ -11,7 +11,7 @@ if ($branchId && $appointmentDate) {
         FROM appointment_transaction
         WHERE branch_id = ?
             AND appointment_date = ?
-            AND status IN ('Pending','Approved','Confirmed')
+            AND status IN ('Booked','Approved','Confirmed')
     ");
     $stmt->bind_param("is", $branchId, $appointmentDate);
 

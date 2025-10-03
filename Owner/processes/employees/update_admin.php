@@ -35,51 +35,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
-        $stmt = $conn->prepare("
-            UPDATE users 
-            SET last_name = ?, 
-                first_name = ?, 
-                middle_name = ?, 
-                gender = ?, 
-                date_of_birth = ?, 
-                email = ?, 
-                contact_number = ?, 
-                address = ?, 
-                branch_id = ?, 
-                status = ?, 
-                date_started = ?
-            WHERE user_id = ?
-        ");
+        $checkSql = "SELECT last_name, first_name, middle_name, gender, date_of_birth, email, 
+                            contact_number, address, branch_id, status, date_started 
+                            FROM users WHERE user_id = ?";
+        $checkStmt = $conn->prepare($checkSql);
+        $checkStmt->bind_param("i", $user_id);
+        $checkStmt->execute();
+        $result = $checkStmt->get_result();
+        $current = $result->fetch_assoc();
+        $checkStmt->close();
 
-        $stmt->bind_param(
-            "ssssssssissi",
-            $lastName,
-            $firstName,
-            $middleName,
-            $gender,
-            $dateofBirth,
-            $email,
-            $contactNumber,
-            $address,
-            $branch_id,
-            $status,
-            $dateStarted,
-            $user_id
-        );
+        if ($current &&
+            ($current['last_name'] !== $lastName ||
+            $current['first_name'] !== $firstName ||
+            $current['middle_name'] !== $middleName ||
+            $current['gender'] !== $gender ||
+            $current['date_of_birth'] !== $dateofBirth ||
+            $current['email'] !== $email ||
+            $current['contact_number'] !== $contactNumber ||
+            $current['address'] !== $address ||
+            $current['branch_id'] != $branch_id ||
+            $current['status'] !== $status ||
+            $current['date_started'] !== $dateStarted)) {
 
-        if ($stmt->execute()) {
-            if ($stmt->affected_rows > 0) {
+            $sql = "UPDATE users 
+                    SET last_name = ?, 
+                        first_name = ?, 
+                        middle_name = ?, 
+                        gender = ?, 
+                        date_of_birth = ?, 
+                        email = ?, 
+                        contact_number = ?, 
+                        address = ?, 
+                        branch_id = ?, 
+                        status = ?, 
+                        date_started = ?, 
+                        date_updated = NOW()
+                    WHERE user_id = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param(
+                "ssssssssissi",
+                $lastName, $firstName, $middleName, $gender, $dateofBirth,
+                $email, $contactNumber, $address, $branch_id, $status, $dateStarted,
+                $user_id
+            );
+
+            if ($stmt->execute()) {
                 $_SESSION['updateSuccess'] = "Admin updated successfully!";
 
                 $forceStmt = $conn->prepare("UPDATE users SET force_logout = 1 WHERE user_id = ?");
                 $forceStmt->bind_param("i", $user_id);
                 $forceStmt->execute();
                 $forceStmt->close();
+            } else {
+                $_SESSION['updateError'] = "Failed to update admin.";
             }
-        } else {
-            $_SESSION['updateError'] = "Failed to update admin.";
+            $stmt->close();
         }
-        $stmt->close();
     } catch (Exception $e) {
         $_SESSION['updateError'] = "Error: " . $e->getMessage();
     }
