@@ -67,11 +67,23 @@ $updateError = $_SESSION['updateError'] ?? "";
 
 <div id="changePasswordModal" class="change-password-modal">
     <div class="change-password-modal-content">
-        <form id="requestOtpForm" method="POST" action="<?= BASE_URL ?>/Owner/processes/OTP Processes/request_otp_change_password.php">
+        <form id="requestOtpForm" method="POST" action="<?= BASE_URL ?>/processes/OTP Processes/change_password/request_otp_change_password.php">
             <p style="text-align:center;">Click below to request an OTP for password change.</p>
             <div class="button-group">
                 <button type="submit" class="form-button confirm-btn">Send OTP</button>
                 <button type="button" class="form-button cancel-btn" onclick="closeChangePasswordModal()">Cancel</button>
+            </div>
+        </form> 
+    </div>
+</div>
+    
+<div id="changeEmailModal" class="change-password-modal">
+    <div class="change-password-modal-content">
+        <form id="requestOtpForm" method="POST" action="<?= BASE_URL ?>/processes/OTP Processes/change_email/request_otp_change_email.php">
+            <p style="text-align:center;">Click below to request an OTP for email change.</p>
+            <div class="button-group">
+                <button type="submit" class="form-button confirm-btn">Send OTP</button>
+                <button type="button" class="form-button cancel-btn" onclick="closeChangeEmailModal()">Cancel</button>
             </div>
         </form> 
     </div>

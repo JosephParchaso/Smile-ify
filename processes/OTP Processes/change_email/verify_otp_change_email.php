@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!isset($_SESSION['otp']) || !isset($_SESSION['otp_created'])) {
         $_SESSION['otp_error'] = "OTP session expired.";
-        header("Location: " . BASE_URL . "/Owner/includes/OTP Includes/otp_verification_change_password.php");
+        header("Location: " . BASE_URL . "/includes/OTP Includes/change_email/otp_verification_change_email.php");
         exit;
     }
 
@@ -18,13 +18,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (($currentTime - $otpCreatedTime) > 60) {
         $_SESSION['otp_error'] = "OTP expired. Please request a new one.";
-        header("Location: " . BASE_URL . "/Owner/includes/OTP Includes/otp_verification_change_password.php");
+        header("Location: " . BASE_URL . "/includes/OTP Includes/change_email/otp_verification_change_email.php");
         exit;
     }
 
     if ((string)$enteredOtp !== $originalOtp) {
         $_SESSION['otp_error'] = "Incorrect OTP. Please try again.";
-        header("Location: " . BASE_URL . "/Owner/includes/OTP Includes/otp_verification_change_password.php");
+        header("Location: " . BASE_URL . "/includes/OTP Includes/change_email/otp_verification_change_email.php");
         exit;
     }
 
@@ -32,6 +32,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_SESSION['verified_data']['username'])) {
         $_SESSION['reset_username'] = $_SESSION['verified_data']['username'];
     }
-    header("Location: " . BASE_URL . "/Owner/includes/OTP Includes/reset_password.php");
+    header("Location: " . BASE_URL . "/includes/OTP Includes/change_email/reset_email.php");
     exit;
 }

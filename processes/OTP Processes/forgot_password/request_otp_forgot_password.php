@@ -37,7 +37,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $_SESSION['verified_data'] = [
         'username' => $username,
         'email' => $email,
-        'context' => 'password_reset'
     ];
 
     require BASE_PATH . '/Mail/phpmailer/PHPMailerAutoload.php';
@@ -72,7 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit;
     }
 
-    header("Location: " . BASE_URL . "/includes/OTP Includes/otp_verification_forgot_password.php");
+    header("Location: " . BASE_URL . "/includes/OTP Includes/forgot_password/otp_verification_forgot_password.php");
     exit;
 }
 ?>

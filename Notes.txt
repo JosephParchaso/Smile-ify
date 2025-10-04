@@ -156,23 +156,20 @@ dungan register different user
 home, profile = rix 💖
 reports andy, achas 
 Contact Fr. Peter for the database hosting 💖
+Minimum of 5 minutes for OTP time remaining expiration time 💖
 
-Add the change email function in profile with otp verification 🫥
 one add vitals and transaction only 🫥
-add list for supplies used in service dapat automatic?🫥
+apply promo transact 🥶
+supplies with transact / add and link the service materials per transaction🥶
+receipt 🥶
+cancel appointment and complete appointment / to save transaction and status completed notify user 🥶
 
 Owner - OTP Every Login 🥶
 Admin - OTP Every Login 🥶
 Patient - OTP Every Login 🥶
 
-supplies with transact / add and link the service materials per transaction🥶
-apply promo transact 🥶
-receipt 🥶
-cancel appointment and complete appointment / to save transaction and status completed notify user 🥶
-Hash patient username in db 🥶
-
+Hash EVERYTHING in db after deployment?🥶
 family 🥶
-Minimum of 5 minutes for OTP time remaining expiration time 😨
 
 Error on change password OTP Fix 👍
 Validation for the Date of Birth, so that it will not accept 0000 👍
@@ -206,3 +203,4 @@ In profile, center and add picture no picutres lng 👍
 date_updated in patients,denitists,admins after booking and updating 👍
 update status when status is inactive in booking appointment 👍
 Switch status from pending ->> booked 👍
+Add the change email function in profile with otp verification 👍

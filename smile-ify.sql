@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 04, 2025 at 01:47 AM
+-- Generation Time: Oct 04, 2025 at 09:24 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -590,16 +590,26 @@ INSERT INTO `notifications` (`notification_id`, `user_id`, `message`, `is_read`,
 (104, 60, 'Your appointment on 2025-09-25 at 11:15 was successfully booked!', 0, '2025-09-24 07:32:21'),
 (105, 28, 'Your appointment on 2025-09-25 at 09:45 was successfully booked!', 1, '2025-09-24 07:37:01'),
 (106, 28, 'Your password was successfully reset on September 24, 2025, 4:10 pm. If this wasn’t you, please contact support immediately.', 1, '2025-09-24 08:10:56'),
-(107, 28, 'Your password was changed successfully on September 26, 2025, 10:49 pm. If this wasn’t you, please contact clinic immediately.', 0, '2025-09-26 14:49:45'),
-(108, 28, 'Your password was changed successfully on September 26, 2025, 11:27 pm. If this wasn’t you, please contact clinic immediately.', 0, '2025-09-26 15:27:12'),
-(109, 28, 'Your appointment on 2025-10-31 at 09:00 was successfully booked!', 0, '2025-10-03 21:22:21'),
-(110, 28, 'Your password was changed successfully on October 4, 2025, 5:30 am. If this wasn’t you, please contact clinic immediately.', 0, '2025-10-03 21:30:15'),
-(111, 28, 'Your appointment on 2025-10-31 at 09:45 was successfully booked!', 0, '2025-10-03 21:42:30'),
+(107, 28, 'Your password was changed successfully on September 26, 2025, 10:49 pm. If this wasn’t you, please contact clinic immediately.', 1, '2025-09-26 14:49:45'),
+(108, 28, 'Your password was changed successfully on September 26, 2025, 11:27 pm. If this wasn’t you, please contact clinic immediately.', 1, '2025-09-26 15:27:12'),
+(109, 28, 'Your appointment on 2025-10-31 at 09:00 was successfully booked!', 1, '2025-10-03 21:22:21'),
+(110, 28, 'Your password was changed successfully on October 4, 2025, 5:30 am. If this wasn’t you, please contact clinic immediately.', 1, '2025-10-03 21:30:15'),
+(111, 28, 'Your appointment on 2025-10-31 at 09:45 was successfully booked!', 1, '2025-10-03 21:42:30'),
 (112, 27, 'Your appointment on 2025-10-31 at 10:30 was successfully booked!', 0, '2025-10-03 21:43:55'),
 (113, 54, 'Your appointment on 2025-10-31 at 11:15 was successfully booked!', 0, '2025-10-03 21:44:25'),
 (114, 54, 'Your appointment on 2025-10-31 at 12:00 was successfully booked!', 0, '2025-10-03 21:46:53'),
 (115, 2, 'Your password was changed successfully on October 4, 2025, 6:03 am. If this wasn’t you, please contact clinic immediately.', 0, '2025-10-03 22:03:33'),
-(116, 1, 'Your password was changed successfully on October 4, 2025, 6:10 am. If this wasn’t you, please contact clinic immediately.', 0, '2025-10-03 22:10:31');
+(116, 1, 'Your password was changed successfully on October 4, 2025, 6:10 am. If this wasn’t you, please contact clinic immediately.', 0, '2025-10-03 22:10:31'),
+(117, 28, 'Your password was changed successfully on October 5, 2025, 1:21 am. If this wasn’t you, please contact clinic immediately.', 1, '2025-10-04 17:21:34'),
+(118, 28, 'Your password was changed successfully on October 5, 2025, 1:40 am. If this wasn’t you, please contact clinic immediately.', 1, '2025-10-04 17:40:24'),
+(119, 28, 'Your password was changed successfully on October 5, 2025, 1:56 am. If this wasn’t you, please contact the clinic immediately.', 0, '2025-10-04 17:56:40'),
+(120, 2, 'Your password was changed successfully on October 5, 2025, 2:01 am. If this wasn’t you, please contact the clinic immediately.', 0, '2025-10-04 18:01:29'),
+(121, 1, 'Your password was changed successfully on October 5, 2025, 2:02 am. If this wasn’t you, please contact the clinic immediately.', 0, '2025-10-04 18:02:35'),
+(122, 28, 'Your password was changed successfully on October 5, 2025, 2:25 am. If this wasn’t you, please contact clinic immediately.', 0, '2025-10-04 18:25:25'),
+(123, 28, 'Your email was successfully updated to 18100807@usc.edu.ph on October 5, 2025, 2:51 am. If this wasn’t you, please contact the clinic immediately.', 0, '2025-10-04 18:51:41'),
+(124, 28, 'Your email was successfully updated to josephparchaso@gmail.com on October 5, 2025, 2:54 am. If this wasn’t you, please contact the clinic immediately.', 0, '2025-10-04 18:54:59'),
+(125, 2, 'Your email was successfully updated to 18102727@usc.edu.ph on October 5, 2025, 3:02 am. If this wasn’t you, please contact the clinic immediately.', 0, '2025-10-04 19:02:32'),
+(126, 1, 'Your email was successfully updated to 18100807@usc.edu.ph on October 5, 2025, 3:09 am. If this wasn’t you, please contact the clinic immediately.', 0, '2025-10-04 19:09:00');
 
 -- --------------------------------------------------------
 
@@ -709,8 +719,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `username`, `password`, `last_name`, `middle_name`, `first_name`, `gender`, `date_of_birth`, `email`, `contact_number`, `address`, `role`, `branch_id`, `date_started`, `status`, `date_created`, `date_updated`, `force_logout`) VALUES
-(1, 'owner01', '$2y$10$ghSNQ.rsGM1HnSDeQviA7uwSkcOw8sLWHjmOg7glYSCLwS7UXaUKi', 'Owner', 'Dummy', 'Sample', 'Male', '0000-00-00', 'josephparchaso@gmail.com', '9998887777', 'decaasdadadaaaa', 'owner', NULL, NULL, 'Active', '2025-06-14 10:39:32', '2025-10-04 06:10:31', 0),
-(2, 'admin01', '$2y$10$WPhHqvinl9NbARAkJMZh6eZWAXGJQ/HuP4a7ZX5cuCTK3FieEJuCS', 'Potot', 'Travero', 'Rixx', 'Female', '2000-04-05', '18102727@usc.edu.ph', '9950217941', 'San Miguel, Cordovaaa', 'admin', 1, '2025-09-30', 'Active', '2025-06-14 10:39:32', '2025-10-04 06:19:44', 0),
+(1, 'owner01', '$2y$10$YmX8WyBrkWa5.K1su6H4uez6cxNHkIpp4ZYcA/uPytMaVWeI0adD.', 'Owner', 'Dummy', 'Sample', 'Male', '0000-00-00', '18100807@usc.edu.ph', '9998887777', 'deca', 'owner', NULL, NULL, 'Active', '2025-06-14 10:39:32', '2025-10-05 03:09:00', 0),
+(2, 'admin01', '$2y$10$l04Ft/fD3o4E8XBHrHe.vOjpKZ/qIN.OG75zufwNAzkNY15xConea', 'Potot', 'Travero', 'Rix', 'Female', '2000-04-05', '18102727@usc.edu.ph', '9950217941', 'San Miguel, Cordova', 'admin', 1, '2025-09-30', 'Active', '2025-06-14 10:39:32', '2025-10-05 03:02:32', 0),
 (3, 'patient01', '$2a$12$RJZbVUZ3JDsUjDB5eFTyiuACuCvxFJyrQI4cE9u8fQ2ChJf/.Srdq', 'Patient', 'Dummy', 'Sample', 'Male', '0000-00-00', '', '9123456789', NULL, 'patient', NULL, NULL, 'Inactive', '2025-06-14 10:39:32', NULL, 0),
 (8, 'ParchasoJ', '$2y$10$9fqT9Gco1CtAKVKu6bSDgeh9SFZbg/bb8GJR5OJrrVIJycPZgqxWC', 'Parchaso', 'Espana', 'Jhon', 'Male', '0000-00-00', '9055626239', 'josephparc', NULL, 'owner', NULL, NULL, 'Inactive', '2025-07-11 22:27:56', NULL, 0),
 (9, 'ParchasoJJ', '$2y$10$W.BXzGapcq9J/oxpk1RHYeaYMxBCz0fSTp8YiRh41YSUebQ12Hjhy', 'Parchaso', 'Joseph', 'Jhon', 'Male', '0000-00-00', '9055626239', 'josephparc', NULL, 'owner', NULL, NULL, 'Inactive', '2025-07-11 22:30:07', NULL, 0),
@@ -732,7 +742,7 @@ INSERT INTO `users` (`user_id`, `username`, `password`, `last_name`, `middle_nam
 (25, 'AchasGG', '$2y$10$csrxQ1iwxHEcfkhQHKf3se586DUSZSK.WhXgNKB39m9js/HfPwuYK', 'Achas', '', 'Gab', 'Male', '0000-00-00', '18100807@usc.edu.ph', '0922626262', NULL, 'patient', NULL, NULL, 'Inactive', '2025-07-14 10:25:16', NULL, 0),
 (26, 'DazeP', '$2y$10$du.PYFR4vnJv9ecdNWDox.UUDcjoC0cTUAvtnsnSG.tXwdqn5vLKO', 'Daze', '', 'Pretot', 'Male', '0000-00-00', 'parchasoresidence@gmail.com', '9055626239', NULL, 'patient', NULL, NULL, 'Inactive', '2025-07-14 10:33:22', NULL, 0),
 (27, 'ChikuY', '$2y$10$h7C7FiWzWuf7oS0hUaav/OZwJX4rYOExaPk3NJu3O39mmsutOsUvm', 'Chiku', 'Wix', 'Yel', 'Female', '0000-00-00', 'parchasoresidence@gmail.com', '9055626239', NULL, 'patient', NULL, NULL, 'Inactive', '2025-07-14 11:14:19', '2025-10-04 05:51:10', 0),
-(28, 'Josephp', '$2y$10$zHpdy.9BdsVQZpCU9Jzgg.ULyXzGmQKOSfgj5TwNV5le40z7ln8Si', 'Joseph', '', 'parch', 'Male', '1999-08-17', 'josephparchaso@gmail.com', '9055626237', 'Block 22, Lot 6, Deca 4 Bankal Lapu Lapu City Cebu', 'patient', 1, NULL, 'Active', '2025-07-14 11:26:32', '2025-10-04 05:30:15', 0),
+(28, 'Josephp', '$2y$10$OYynxpSPEJmsmDYgUlzNh.bnp1SH8.yJNckex9WXSvwA79LxPQ4Wm', 'Joseph', '', 'parch', 'Male', '1999-08-17', 'josephparchaso@gmail.com', '9055626237', 'Block 22, Lot 6, Deca 4 Bankal Lapu Lapu City Cebu', 'patient', 1, NULL, 'Active', '2025-07-14 11:26:32', '2025-10-05 02:54:59', 0),
 (29, 'pototj', '$2y$10$9Swzre20c9pLQ8ejMr1ySufYwaARXiCYpp8sUXyb5CP1oI7xNjtC2', 'potot', '', 'jj', 'Male', '0000-00-00', '18102727@usc.edu.ph', '9527194102', NULL, 'patient', NULL, NULL, 'Inactive', '2025-07-14 15:48:41', NULL, 0),
 (30, 'pret', '$2y$10$z7r/dpwWQ2m.RZK8EcwJGu2MkUM3tRY2EgG/7OyfSubN.bmXm2yTW', 'pre', '', 'tot', 'Male', '0000-00-00', '18102727@usc.edu.ph', '9205251545', NULL, 'patient', NULL, NULL, 'Inactive', '2025-07-14 16:03:59', NULL, 0),
 (31, 'Parchaso_J', '$2y$10$14IUZVVauGdjCe04vSuVTechUS8.EYYzOO5yZ0Li6Lq/IUhGx0.Ny', 'Parchaso', 'Espana', 'Jhon', 'Female', '0000-00-00', '18100807@usc.edu.ph', '9055626239', NULL, 'patient', NULL, NULL, 'Inactive', '2025-07-31 14:32:30', NULL, 0),
@@ -962,7 +972,7 @@ ALTER TABLE `dentist_service`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=117;
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=127;
 
 --
 -- AUTO_INCREMENT for table `promo`

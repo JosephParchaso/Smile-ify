@@ -14,7 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     if ($newPassword !== $confirmPassword) {
         $_SESSION['password_error'] = "Passwords do not match.";
-        header("Location: " . BASE_URL . "/includes/OTP Includes/reset_password.php");
+        header("Location: " . BASE_URL . "/includes/OTP Includes/forgot_password/reset_password.php");
         exit;
     }
 
@@ -48,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     if (password_verify($newPassword, $currentHashedPassword)) {
         $_SESSION['password_error'] = "New password cannot be the same as your previous password.";
-        header("Location: " . BASE_URL . "/includes/OTP Includes/reset_password.php");
+        header("Location: " . BASE_URL . "/includes/OTP Includes/forgot_password/reset_password.php");
         exit;
     }
 
@@ -71,7 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit;
     } else {
         $_SESSION['password_error'] = "Failed to reset password.";
-        header("Location: " . BASE_URL . "/includes/OTP Includes/reset_password.php");
+        header("Location: " . BASE_URL . "/includes/OTP Includes/forgot_password/reset_password.php");
         exit;
     }
 }

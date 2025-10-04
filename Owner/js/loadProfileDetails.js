@@ -22,16 +22,17 @@ document.addEventListener("DOMContentLoaded", function () {
                 <p><strong>Email:</strong><span>${data.email}</p></span> 
                 <p><strong>Contact Number:</strong><span>${data.contact_number}</p></span> 
                 <p><strong>Address:</strong><span>${data.address}</p></span> 
-                <p><strong>Registered:</strong><span>${data.joined}</p> </span> 
+                <p><strong>Registered:</strong><span>${data.joined}</p> </span>
                 <p><strong>Last Update:</strong> <span>${data.date_updated}</span></p>
                 <div class="button-group button-group-profile">
                     <button class="confirm-btn" id="editDetails">Edit Profile</button>
                     <button class="confirm-btn" id="changePasswordBtn">Change Password</button>
+                    <button class="confirm-btn" id="changeEmailBtn">Change Email</button>
                 </div>
             `;
-            const editBtn = document.getElementById("editDetails");
-            if (editBtn) {
-                editBtn.addEventListener("click", () => {
+            const editDetails = document.getElementById("editDetails");
+            if (editDetails) {
+                editDetails.addEventListener("click", () => {
                     document.getElementById("contactNumber").value = data.contact_number || "";
                     document.getElementById("address").value = data.address || "";
                     document.getElementById("editProfileModal").style.display = "block";
@@ -42,6 +43,13 @@ document.addEventListener("DOMContentLoaded", function () {
             if (changePasswordBtn) {
                 changePasswordBtn.addEventListener("click", () => {
                     document.getElementById("changePasswordModal").style.display = "block";
+                });
+            }
+
+            const changeEmailBtn = document.getElementById("changeEmailBtn");
+            if (changeEmailBtn) {
+                changeEmailBtn.addEventListener("click", () => {
+                    document.getElementById("changeEmailModal").style.display = "block";
                 });
             }
         })
@@ -56,4 +64,7 @@ function closeEditProfileModal() {
 }
 function closeChangePasswordModal() {
     document.getElementById("changePasswordModal").style.display = "none";
+}
+function closeChangeEmailModal() {
+    document.getElementById("changeEmailModal").style.display = "none";
 }

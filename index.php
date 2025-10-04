@@ -218,7 +218,7 @@ if (isset($_SESSION['timeoutError'])) {
         <?php if (!empty($usernameError)): ?>
             <div class="error"><?php echo htmlspecialchars($usernameError); ?></div>
         <?php endif; ?>
-        <form action="<?= BASE_URL ?>/processes/OTP Processes/request_otp_forgot_password.php" method="POST">
+        <form action="<?= BASE_URL ?>/processes/OTP Processes/forgot_password/request_otp_forgot_password.php" method="POST">
             <div class="form-group">
                 <input type="text" id="username" name="username" class="form-control" placeholder=" " required autocomplete="off"/>
                 <label for="username" class="form-label">Enter Username <span class="required">*</span></label>

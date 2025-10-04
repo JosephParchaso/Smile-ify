@@ -44,7 +44,7 @@ $maskedEmail = isset($verified_data['email']) ? maskEmail($verified_data['email'
 
         <div id="resendMessage" class="error" style="display: none;"></div>
 
-        <form action="<?= BASE_URL ?>/processes/OTP Processes/verify_otp_forgot_password.php" method="POST" autocomplete="off">
+        <form action="<?= BASE_URL ?>/processes/OTP Processes/forgot_password/verify_otp_forgot_password.php" method="POST" autocomplete="off">
             <div class="form-group">
             <input type="text" id="otpCode" class="form-control" name="otpCode" placeholder=" " required maxlength="6" pattern="[0-9]{6}" inputmode="numeric" title="Please enter a 6-digit number" oninput="this.value=this.value.replace(/[^0-9]/g,'')" />
                 <label for="otpCode" class="form-label">OTP <span class="required">*</span></label>

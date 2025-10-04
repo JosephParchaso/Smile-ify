@@ -23,10 +23,20 @@ function maskEmail($email, $visibleCount = 3) {
 }
 
 $maskedEmail = isset($verified_data['email']) ? maskEmail($verified_data['email']) : '';
+
+$role = $_SESSION['role'] ?? 'patient';
+
+$redirects = [
+    'admin' => BASE_URL . '/Admin/pages/profile.php',
+    'owner' => BASE_URL . '/Owner/pages/profile.php',
+    'patient' => BASE_URL . '/Patient/pages/profile.php'
+];
+
+$cancelRedirect = $redirects[$role] ?? BASE_URL . '/Patient/pages/profile.php';
 ?>
 
 <head>
-    <title>OTP Verification - Forgot Password</title>
+    <title>OTP Verification - Change Password</title>
 </head>
 <body>
 
@@ -44,7 +54,7 @@ $maskedEmail = isset($verified_data['email']) ? maskEmail($verified_data['email'
 
         <div id="resendMessage" class="error" style="display: none;"></div>
 
-        <form action="<?= BASE_URL ?>/Admin/processes/OTP Processes/verify_otp_change_password.php" method="POST" autocomplete="off">
+        <form action="<?= BASE_URL ?>/processes/OTP Processes/change_password/verify_otp_change_password.php" method="POST" autocomplete="off">
             <div class="form-group">
                 <input type="text" id="otpCode" class="form-control" name="otpCode" placeholder=" " required maxlength="6" pattern="[0-9]{6}" inputmode="numeric" title="Please enter a 6-digit number" oninput="this.value=this.value.replace(/[^0-9]/g,'')" />
                 <label for="otpCode" class="form-label">OTP <span class="required">*</span></label>
@@ -56,7 +66,7 @@ $maskedEmail = isset($verified_data['email']) ? maskEmail($verified_data['email'
 
             <div class="button-group">
                 <button type="button" id="resendOTPButton" class="form-button cancel-btn" disabled>Resend</button>
-                <button type="button" onclick="sessionStorage.clear(); window.location.href='<?= BASE_URL ?>/Admin/pages/profile.php'" class="form-button cancel-btn">Cancel</button>
+                <button type="button" onclick="sessionStorage.clear(); window.location.href='<?= $cancelRedirect ?>'" class="form-button cancel-btn">Cancel</button>
                 <button type="submit" name="verify" class="form-button confirm-btn" id="confirmButton">Confirm</button>
             </div>
         </form>
