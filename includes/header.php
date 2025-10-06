@@ -88,6 +88,7 @@ if (isset($_SESSION['user_id'])) {
     
     <?php elseif ($role === 'admin'): ?>
         <!-- Admin-specific -->
+        <script src="<?= BASE_URL ?>/Admin/js/loadDataIndex.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/loadCalendar.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/loadProfileDetails.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/patients/loadRegisteredPatients.js?v=<?= time(); ?>"></script>
@@ -107,6 +108,7 @@ if (isset($_SESSION['user_id'])) {
 
     <?php elseif ($role === 'patient'): ?>
         <!-- Patient-specific -->
+        <script src="<?= BASE_URL ?>/Patient/js/loadDataIndex.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Patient/js/loadCalendar.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Patient/js/loadProfileDetails.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Patient/js/loadAppointments.js?v=<?= time(); ?>"></script>

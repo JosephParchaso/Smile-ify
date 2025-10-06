@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function updatePatientsBadge() {
-        fetch(`${BASE_URL}/Admin/processes/get_booking_notification.php`)
+        fetch(`${BASE_URL}/Admin/processes/index/get_booking_notification.php`)
             .then(res => res.json())
             .then(data => {
                 const badge = document.getElementById('patientsBadge');

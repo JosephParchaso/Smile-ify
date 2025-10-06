@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function loadBranches(branchSelect) {
         $.ajax({
             type: "GET",
-            url: `${BASE_URL}/Admin/processes/load_branches.php`,
+            url: `${BASE_URL}/Admin/processes/index/load_branches.php`,
             success: function (response) {
                 branchSelect.innerHTML = response;
             },

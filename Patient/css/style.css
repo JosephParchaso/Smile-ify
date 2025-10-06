@@ -59,6 +59,7 @@
 .card h2 {
     color: #122130;
     margin-bottom: 1rem;
+    font-size: 1.2rem;
 }
 
 .appointment,
@@ -69,6 +70,7 @@
     border-left: 4px solid #122130;
     background: #ddebff;
     border-radius: 4px;
+    font-size: 0.95rem;
 }
 
 .quick-links a {

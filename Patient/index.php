@@ -45,13 +45,8 @@ require_once BASE_PATH . '/Patient/includes/navbar.php';
         <div class="cards">
             <div class="card">
                 <h2><span class="material-symbols-outlined">calendar_month</span> Upcoming Appointments</h2>
-                <div class="appointment">
-                    <strong>July 25, 2025</strong> at 10:00 AM<br>
-                    with Dr. Smith (Mandaue Branch)
-                </div>
-                <div class="appointment">
-                    <strong>August 5, 2025</strong> at 2:30 PM<br>
-                    with Dr. Cruz (Babag Branch)
+                <div id="patientUpcomingAppointments">
+                    <div class="appointment">Loading...</div>
                 </div>
             </div>
 

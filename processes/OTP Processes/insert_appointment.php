@@ -105,10 +105,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["verify"])) {
         $mail->SMTPAuth = true;
         $mail->SMTPSecure = 'tls';
 
-        $mail->Username = 'theartp2@gmail.com';
-        $mail->Password = 'xnlc pyjn okdg ihwd';
+        $mail->Username = 'smileify.clinic@gmail.com';
+        $mail->Password = 'ynecojolefyxdosu';
 
-        $mail->setFrom('theartp2@gmail.com', 'Smile-ify Team');
+        $mail->setFrom('smileify.clinic@gmail.com', 'Smile-ify Team');
         $mail->addAddress($email);
 
         $mail->isHTML(true);

@@ -2,6 +2,7 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
 require_once BASE_PATH . '/processes/load_notifications.php';
+require_once BASE_PATH . '/Owner/processes/load_employees_status.php';
 ?>
 <link rel="stylesheet" href="<?= BASE_URL ?>/Owner/css/style.css?v=<?= time(); ?>" />
 <nav>
@@ -47,10 +48,7 @@ require_once BASE_PATH . '/processes/load_notifications.php';
                             <li class="notif-item">No notifications</li>
                         <?php else: ?>
                             <?php foreach ($notifications as $n): ?>
-                                <li 
-                                    class="notif-item <?= $n['is_read'] ? '' : 'unread' ?>" 
-                                    data-id="<?= $n['notification_id'] ?>"
-                                >
+                                <li class="notif-item <?= $n['is_read'] ? '' : 'unread' ?>" data-id="<?= $n['notification_id'] ?>" >
                                     <span class="notif-message"><?= htmlspecialchars($n['message']) ?></span>
                                     <span class="notif-date"><?= date('M d, Y H:i', strtotime($n['created_at'])) ?></span>
                                 </li>

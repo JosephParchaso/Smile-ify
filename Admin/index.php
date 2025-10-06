@@ -19,15 +19,6 @@ $updateError = $_SESSION['updateError'] ?? "";
 require_once BASE_PATH . '/includes/header.php';
 require_once BASE_PATH . '/Admin/includes/navbar.php';
 
-$todayCount     = 5;
-$tomorrowCount  = 3;
-$newPatients    = 12;
-$totalPatients  = 230;
-$lowSupplies    = [
-    ['name' => 'Dental Gloves', 'quantity' => 15],
-    ['name' => 'Anesthetic', 'quantity' => 5],
-    ['name' => 'Face Masks', 'quantity' => 20],
-];
 $monthlyRevenue = "₱120,000";
 $totalAppointmentsMonth = 42;
 ?>
@@ -52,131 +43,131 @@ $totalAppointmentsMonth = 42;
     <div class="cards">
 
         <div class="card">
-            <h2><span class="material-symbols-outlined">calendar_month</span> Today's Appointments</h2>
-            <div class="appointment">Today: <?= $todayCount ?></div>
-            <div class="appointment">Tomorrow: <?= $tomorrowCount ?></div>
+            <h2><span class="material-symbols-outlined">calendar_month</span> Upcoming Appointments</h2>
+            <div class="appointment">Today: <span id="todayCount">0</span></div>
+            <div class="appointment">Tomorrow: <span id="tomorrowCount">0</span></div>
             <a href="<?= BASE_URL ?>/Admin/pages/calendar.php" class="card-link">View Schedule</a>
             <a href="#" class="card-link" onclick="openBookingModal()"><span class="material-symbols-outlined">calendar_add_on</span> Book Appointment</a>
         </div>  
         
-            <div id="bookingModal" class="booking-modal">
-                <div class="booking-modal-content">
+        <div id="bookingModal" class="booking-modal">
+            <div class="booking-modal-content">
+                
+                <form action="<?= BASE_URL ?>/Admin/processes/index/insert_appointment.php" method="POST" autocomplete="off">
+                    <div class="form-group">
+                        <input type="text" id="lastName" name="lastName" class="form-control" placeholder=" " required />
+                        <label for="lastName" class="form-label">Last Name <span class="required">*</span></label>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" id="firstName" name="firstName" class="form-control" placeholder=" " required />
+                        <label for="firstName" class="form-label">First Name <span class="required">*</span></label>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" id="middleName" name="middleName" class="form-control" placeholder=" " />
+                        <label for="middleName" class="form-label">Middle Name</label>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="email" id="email" name="email" class="form-control" placeholder=" " required autocomplete="off"/>
+                        <label for="email" class="form-label">Email Address <span class="required">*</span></label>
+                    </div>
                     
-                    <form action="<?= BASE_URL ?>/Admin/processes/insert_appointment.php" method="POST" autocomplete="off">
-                        <div class="form-group">
-                            <input type="text" id="lastName" name="lastName" class="form-control" placeholder=" " required />
-                            <label for="lastName" class="form-label">Last Name <span class="required">*</span></label>
-                        </div>
+                    <div class="form-group">
+                        <select id="gender" name="gender" class="form-control" required>
+                            <option value="" disabled selected hidden></option>
+                            <option value="female">Female</option>
+                            <option value="male">Male</option>
+                        </select>
+                        <label for="gender" class="form-label">Gender <span class="required">*</span></label>
+                    </div>
 
-                        <div class="form-group">
-                            <input type="text" id="firstName" name="firstName" class="form-control" placeholder=" " required />
-                            <label for="firstName" class="form-label">First Name <span class="required">*</span></label>
-                        </div>
+                    <div class="form-group">
+                        <input type="date" id="dateofBirth" name="dateofBirth" class="form-control" required />
+                        <label for="dateofBirth" class="form-label">Date of Birth <span class="required">*</span></label>
+                        <span id="dobError" class="error-msg-calendar error" style="display: none;"></span>
+                    </div>
 
-                        <div class="form-group">
-                            <input type="text" id="middleName" name="middleName" class="form-control" placeholder=" " />
-                            <label for="middleName" class="form-label">Middle Name</label>
-                        </div>
+                    <div class="form-group phone-group">
+                        <input type="tel" id="contactNumber" name="contactNumber" class="form-control" oninput="this.value = this.value.replace(/[^0-9]/g, '')" pattern="[0-9]{10}" title="Mobile number must be 10 digits" required maxlength="10" />
+                        <label for="contactNumber" class="form-label">Mobile Number <span class="required">*</span></label>
+                        <span class="phone-prefix">+63</span>
+                    </div>
 
-                        <div class="form-group">
-                            <input type="email" id="email" name="email" class="form-control" placeholder=" " required autocomplete="off"/>
-                            <label for="email" class="form-label">Email Address <span class="required">*</span></label>
-                        </div>
-                        
-                        <div class="form-group">
-                            <select id="gender" name="gender" class="form-control" required>
-                                <option value="" disabled selected hidden></option>
-                                <option value="female">Female</option>
-                                <option value="male">Male</option>
-                            </select>
-                            <label for="gender" class="form-label">Gender <span class="required">*</span></label>
-                        </div>
+                    <div class="form-group">
+                        <select id="appointmentBranch" name="appointmentBranch" class="form-control" required>
+                            <option value="" disabled selected hidden></option>
+                            <?php
 
-                        <div class="form-group">
-                            <input type="date" id="dateofBirth" name="dateofBirth" class="form-control" required />
-                            <label for="dateofBirth" class="form-label">Date of Birth <span class="required">*</span></label>
-                            <span id="dobError" class="error-msg-calendar error" style="display: none;"></span>
-                        </div>
+                            $sql = "SELECT branch_id, name, status FROM branch WHERE status = 'Active' ";
+                            $result = $conn->query($sql);
 
-                        <div class="form-group phone-group">
-                            <input type="tel" id="contactNumber" name="contactNumber" class="form-control" oninput="this.value = this.value.replace(/[^0-9]/g, '')" pattern="[0-9]{10}" title="Mobile number must be 10 digits" required maxlength="10" />
-                            <label for="contactNumber" class="form-label">Mobile Number <span class="required">*</span></label>
-                            <span class="phone-prefix">+63</span>
-                        </div>
-
-                        <div class="form-group">
-                            <select id="appointmentBranch" name="appointmentBranch" class="form-control" required>
-                                <option value="" disabled selected hidden></option>
-                                <?php
-
-                                $sql = "SELECT branch_id, name, status FROM branch WHERE status = 'Active' ";
-                                $result = $conn->query($sql);
-
-                                if ($result->num_rows > 0) {
-                                    while($row = $result->fetch_assoc()) {
-                                        echo "<option value='" . $row["branch_id"] . "'>" . htmlspecialchars($row["name"]) . "</option>";
-                                    }
-                                } else {
-                                    echo "<option disabled>No branches available</option>";
+                            if ($result->num_rows > 0) {
+                                while($row = $result->fetch_assoc()) {
+                                    echo "<option value='" . $row["branch_id"] . "'>" . htmlspecialchars($row["name"]) . "</option>";
                                 }
-                                ?>
-                            </select>
-                            <label for="appointmentBranch" class="form-label">Branch <span class="required">*</span></label>
-                        </div>
+                            } else {
+                                echo "<option disabled>No branches available</option>";
+                            }
+                            ?>
+                        </select>
+                        <label for="appointmentBranch" class="form-label">Branch <span class="required">*</span></label>
+                    </div>
 
-                        <div class="form-group">
-                            <div id="services-container">
-                                <select id="appointmentService" class="form-control" name="appointmentService" required>
-                                    <option value="" disabled selected hidden></option>
-                                    <!-- Options will be populated here via AJAX -->
-                                </select>
-                            <label for="appointmentService" class="form-label">Service <span class="required">*</span></label>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <select id="appointmentDentist" name="appointmentDentist" class="form-control" required>
+                    <div class="form-group">
+                        <div id="services-container">
+                            <select id="appointmentService" class="form-control" name="appointmentService" required>
                                 <option value="" disabled selected hidden></option>
+                                <!-- Options will be populated here via AJAX -->
                             </select>
-                            <label for="appointmentDentist" class="form-label">Dentist <span class="required">*</span></label>
+                        <label for="appointmentService" class="form-label">Service <span class="required">*</span></label>
                         </div>
+                    </div>
 
-                        <div class="form-group">
-                            <input type="date" id="appointmentDate" name="appointmentDate" class="form-control" required />
-                            <label for="appointmentDate" class="form-label">Date <span class="required">*</span></label>
-                            <span id="dateError" class="error-msg-calendar error">
-                                Sundays are not available for appointments. Please select another date.
-                            </span>
-                        </div>
+                    <div class="form-group">
+                        <select id="appointmentDentist" name="appointmentDentist" class="form-control" required>
+                            <option value="" disabled selected hidden></option>
+                        </select>
+                        <label for="appointmentDentist" class="form-label">Dentist <span class="required">*</span></label>
+                    </div>
 
-                        <div class="form-group">
-                            <select id="appointmentTime" name="appointmentTime" class="form-control" required>
-                                <option value="" disabled selected hidden></option>
-                                <option value="09:00">9:00 AM</option>
-                                <option value="09:45">9:45 AM</option>
-                                <option value="10:30">10:30 AM</option>
-                                <option value="11:15">11:15 AM</option>
-                                <option value="12:00">12:00 PM</option>
-                                <option value="12:45">12:45 PM</option>
-                                <option value="13:30">1:30 PM</option>
-                                <option value="14:15">2:15 PM</option>
-                                <option value="15:00">3:00 PM</option>
-                            </select>
-                            <label for="appointmentTime" class="form-label">Time <span class="required">*</span></label>
-                        </div>
+                    <div class="form-group">
+                        <input type="date" id="appointmentDate" name="appointmentDate" class="form-control" required />
+                        <label for="appointmentDate" class="form-label">Date <span class="required">*</span></label>
+                        <span id="dateError" class="error-msg-calendar error">
+                            Sundays are not available for appointments. Please select another date.
+                        </span>
+                    </div>
 
-                        <div class="form-group">
-                            <textarea id="notes" name="notes" class="form-control" rows="3" placeholder=" "autocomplete="off"></textarea>
-                            <label for="notes" class="form-label">Add a note...</label>
-                        </div>
+                    <div class="form-group">
+                        <select id="appointmentTime" name="appointmentTime" class="form-control" required>
+                            <option value="" disabled selected hidden></option>
+                            <option value="09:00">9:00 AM</option>
+                            <option value="09:45">9:45 AM</option>
+                            <option value="10:30">10:30 AM</option>
+                            <option value="11:15">11:15 AM</option>
+                            <option value="12:00">12:00 PM</option>
+                            <option value="12:45">12:45 PM</option>
+                            <option value="13:30">1:30 PM</option>
+                            <option value="14:15">2:15 PM</option>
+                            <option value="15:00">3:00 PM</option>
+                        </select>
+                        <label for="appointmentTime" class="form-label">Time <span class="required">*</span></label>
+                    </div>
 
-                        <div class="button-group">
-                            <button type="submit" class="form-button confirm-btn">Confirm</button>
-                            <button type="button" class="form-button cancel-btn" onclick="closeBookingModal()">Cancel</button>
-                        </div>
-                    </form>
-                </div>
+                    <div class="form-group">
+                        <textarea id="notes" name="notes" class="form-control" rows="3" placeholder=" "autocomplete="off"></textarea>
+                        <label for="notes" class="form-label">Add a note...</label>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" class="form-button confirm-btn">Confirm</button>
+                        <button type="button" class="form-button cancel-btn" onclick="closeBookingModal()">Cancel</button>
+                    </div>
+                </form>
             </div>
+        </div>
 
         <div class="card">
             <h2><span class="material-symbols-outlined">bar_chart</span> Reports</h2>
@@ -187,20 +178,16 @@ $totalAppointmentsMonth = 42;
 
         <div class="card">
             <h2><span class="material-symbols-outlined">groups</span> Patients</h2>
-            <div class="appointment">New This Month: <?= $newPatients ?></div>
-            <div class="appointment">Total: <?= $totalPatients ?></div>
+            <div class="appointment">New This Month: <span id="newPatientsCount">0</span></div>
+            <div class="appointment">Total: <span id="totalPatientsCount">0</span></div>
             <a href="<?= BASE_URL ?>/Admin/pages/patients.php" class="card-link">Manage Patients</a>
         </div>
 
         <div class="card">
             <h2><span class="material-symbols-outlined">inventory_2</span> Supplies</h2>
-            <?php if (empty($lowSupplies)): ?>
-                <div class="announcement">All supplies stocked</div>
-            <?php else: ?>
-                <?php foreach ($lowSupplies as $s): ?>
-                    <div class="announcement"><?= htmlspecialchars($s['name']) ?> - <?= $s['quantity'] ?> left</div>
-                <?php endforeach; ?>
-            <?php endif; ?>
+            <div id="lowSuppliesContainer">
+                <div class="announcement">Loading...</div>
+            </div>
             <a href="<?= BASE_URL ?>/Admin/pages/supplies.php" class="card-link">Manage Supplies</a>
         </div>   
 
