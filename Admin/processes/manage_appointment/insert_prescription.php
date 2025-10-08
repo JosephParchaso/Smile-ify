@@ -17,12 +17,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $quantity    = trim($_POST['quantity'] ?? '');
     $instructions= trim($_POST['instructions'] ?? '');
 
-    if (!$appointment_id || !$drug || !$frequency || !$dosage || !$duration || !$quantity || !$instructions) {
-        $_SESSION['updateError'] = "Missing required prescription fields.";
-        header("Location: " . BASE_URL . "/Admin/pages/manage_appointment.php?id=" . $appointment_id . "&backTab=recent&tab=prescriptions");
-        exit();
-    }
-
     try {
         $stmt = $conn->prepare("
             INSERT INTO dental_prescription 

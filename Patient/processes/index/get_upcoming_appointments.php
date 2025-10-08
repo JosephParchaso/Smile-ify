@@ -4,9 +4,10 @@ session_start();
 require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
 
+header('Content-Type: application/json; charset=utf-8');
+
 $response = ['appointments' => []];
 
-// ✅ Check if logged in and role is patient
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'patient') {
     echo json_encode(['error' => 'Unauthorized']);
     exit;

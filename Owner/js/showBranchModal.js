@@ -87,8 +87,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="form-group">
                     <select id="status" name="status" class="form-control" required>
                         <option value="" disabled ${!isEdit ? "selected" : ""}></option>
-                        <option value="active" ${isEdit && data.status === "active" ? "selected" : ""}>Active</option>
-                        <option value="inactive" ${isEdit && data.status === "inactive" ? "selected" : ""}>Inactive</option>
+                        <option value="Active" ${isEdit && data.status === "Active" ? "selected" : ""}>Active</option>
+                        <option value="Inactive" ${isEdit && data.status === "Inactive" ? "selected" : ""}>Inactive</option>
                     </select>
                     <label for="status" class="form-label">Status <span class="required">*</span></label>
                 </div>

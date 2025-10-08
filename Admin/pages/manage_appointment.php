@@ -92,6 +92,8 @@ $activeTab = in_array($_GET['tab'] ?? '', $validTabs) ? $_GET['tab'] : 'dental_t
 
 <script>
     const appointmentId = "<?= htmlspecialchars($appointmentId) ?>";
+    const branchId = "<?= htmlspecialchars($branch_id ?? '') ?>";
 </script>
 
 <?php require_once BASE_PATH . '/includes/footer.php'; ?>
+

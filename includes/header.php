@@ -90,7 +90,9 @@ if (isset($_SESSION['user_id'])) {
         <!-- Admin-specific -->
         <script src="<?= BASE_URL ?>/Admin/js/loadDataIndex.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/loadCalendar.js?v=<?= time(); ?>"></script>
-        <script src="<?= BASE_URL ?>/Admin/js/loadProfileDetails.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Admin/js/profile/loadProfileDetails.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Admin/js/profile/loadAnnouncements.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Admin/js/profile/showAnnouncementModal.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/patients/loadRegisteredPatients.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/patients/loadRecentBookings.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Admin/js/patients/loadInactivePatients.js?v=<?= time(); ?>"></script>

@@ -49,6 +49,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
 
                 <div class="form-group">
+                    <input type="number" id="duration_minutes" name="duration_minutes" class="form-control"
+                        value="${isEdit ? data.duration_minutes : ""}" required placeholder=" " min="0">
+                    <label for="duration_minutes" class="form-label">Duration (minutes)<span class="required">*</span></label>
+                </div>
+
+                <div class="form-group">
                     <select id="status" name="status" class="form-control" required>
                         <option value="" disabled ${!isEdit ? "selected" : ""}></option>
                         <option value="Active" ${isEdit && data.status === "Active" ? "selected" : ""}>Active</option>

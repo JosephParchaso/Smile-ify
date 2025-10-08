@@ -21,7 +21,7 @@ $sql = "SELECT
             p.drug,
             p.dosage,
             p.frequency,
-            p.date_created
+            p.duration
         FROM dental_prescription p
         WHERE p.appointment_transaction_id = ?";
 
@@ -34,12 +34,11 @@ $prescriptions = [];
 while ($row = $result->fetch_assoc()) {
     $prescriptions[] = [
         $row['prescription_id'],
-        $row['appointment_transaction_id'],
         $row['drug'],
         $row['dosage'],
         $row['frequency'],
-        '<button class="btn-action" data-type="prescription" data-id="'.$row['prescription_id'].'">Manage</button>',
-        $row['date_created']
+        $row['duration'],
+        '<button class="btn-action" data-type="prescription" data-id="'.$row['prescription_id'].'">Manage</button>'
     ];
 }
 

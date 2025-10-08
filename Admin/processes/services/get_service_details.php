@@ -28,6 +28,7 @@ $sql = "SELECT
             s.service_id,
             s.name,
             s.price,
+            s.duration_minutes,
             bs.status,
             bs.date_created,
             bs.date_updated

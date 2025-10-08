@@ -52,15 +52,16 @@ require_once BASE_PATH . '/Patient/includes/navbar.php';
 
             <div class="card">
                 <h2><span class="material-symbols-outlined">campaign</span> Announcements</h2>
-                <div class="announcement">Get 10% off on Root Canal Treatment until August 31!</div>
-                <div class="announcement">We’re closed on August 21 for National Holiday.</div>
+                <div id="patientAnnouncements">
+                    <div class="announcement">Loading ...</div>
+                </div>
             </div>
 
             <div class="card">
                 <h2><span class="material-symbols-outlined">dentistry</span> Dental Care Tips</h2>
-                <div class="tip">Brush at least twice a day with fluoride toothpaste.</div>
-                <div class="tip">Floss daily to remove plaque between your teeth.</div>
-                <div class="tip">Avoid sugary drinks and snacks between meals.</div>
+                <div id="patientTips">
+                    <div class="tip">Loading...</div>
+                </div>
             </div>
 
             <div class="card">
@@ -101,15 +102,15 @@ require_once BASE_PATH . '/Patient/includes/navbar.php';
                     <label for="appointmentBranch" class="form-label">Branch <span class="required">*</span></label>
                 </div>
 
-                <div class="form-group">
-                    <div id="services-container">
-                        <select id="appointmentService" class="form-control" name="appointmentService" required>
-                            <option value="" disabled selected hidden></option>
-                            <!-- Options will be populated here via AJAX -->
-                        </select>
-                    <label for="appointmentService" class="form-label">Service <span class="required">*</span></label>
-                    </div>
+            <div class="form-group">
+                <div id="services-container">
+                    <select id="appointmentService" class="form-control" name="appointmentService[]" multiple required>
+                        <!-- Options will be populated via AJAX -->
+                    </select>
+                    <label for="appointmentService" class="form-label">Services <span class="required">*</span></label>
+                    <small class="form-hint">Hold <b>Ctrl</b> (Windows) or <b>Cmd</b> (Mac) to select multiple</small>
                 </div>
+            </div>
 
                 <div class="form-group">
                     <select id="appointmentDentist" class="form-control" name="appointmentDentist" required>
@@ -152,6 +153,17 @@ require_once BASE_PATH . '/Patient/includes/navbar.php';
                     <button type="button" class="form-button cancel-btn" onclick="closeBookingModal()">Cancel</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <div id="promoModal" class="promo-modal">
+        <div class="promo-modal-content">
+            <img id="promoModalImg" src="" alt="Promo Image" class="modal-img">
+            <div class="modal-details">
+                <h3 id="promoTitle"></h3>
+                <p id="promoDesc"></p>
+                <p id="promoDate"></p>
+            </div>
         </div>
     </div>
 

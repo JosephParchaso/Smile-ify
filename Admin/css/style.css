@@ -56,10 +56,6 @@
     flex-wrap: wrap;
 }
 
-.profile-container-admin {
-    padding: 40px;
-}
-
 .profile-section {
     position: relative;
 }
@@ -113,6 +109,10 @@
     width: 80%;
 }
 
+.announcements-table {
+    width: 65% !important;
+}
+
 #dental_transactions.tab-content,
 #vitals.tab-content,
 #prescriptions.tab-content {
@@ -162,7 +162,8 @@
 #suppliesTable_filter,
 #servicesTable_filter,
 #promosTable_filter,
-#appointmentTable_filter {
+#appointmentTable_filter,
+#announcementsTable_filter {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -174,7 +175,8 @@
 #appointmentTable_filter input[type="search"], 
 #suppliesTable_filter input[type="search"],
 #servicesTable_filter input[type="search"],
-#promosTable_filter input[type="search"] {
+#promosTable_filter input[type="search"],
+#announcementsTable_filter input[type="search"] {
     height: 38px;
     padding: 6px 12px;
 }
@@ -188,7 +190,8 @@
 #promosTable_filter button,
 #dentaltransactionTable_filter button,
 #vitalTable_filter button,
-#prescriptionTable_filter button {
+#prescriptionTable_filter button,
+#announcementsTable_filter button {
     height: 38px;
     padding: 6px 12px;
     border: 1px solid #1e293b;
@@ -243,8 +246,9 @@
 #servicesTable th:nth-child(1), #servicesTable td:nth-child(1) { width: 5% !important; text-align: center;}
 #servicesTable th:nth-child(2), #servicesTable td:nth-child(2) { width: 25% !important; }
 #servicesTable th:nth-child(3), #servicesTable td:nth-child(3) { width: 10% !important; }
-#servicesTable th:nth-child(4), #servicesTable td:nth-child(4) { width: 15% !important; }
-#servicesTable th:nth-child(5), #servicesTable td:nth-child(5) { width: 20% !important; text-align: center;}
+#servicesTable th:nth-child(4), #servicesTable td:nth-child(4) { width: 10% !important; }
+#servicesTable th:nth-child(5), #servicesTable td:nth-child(5) { width: 10% !important; }
+#servicesTable th:nth-child(6), #servicesTable td:nth-child(6) { width: 10% !important; text-align: center;}
 
 #promosTable_filter th:nth-child(1), #promosTable_filter td:nth-child(1) { width: 5% !important; text-align: center;}
 #promosTable_filter th:nth-child(2), #promosTable_filter td:nth-child(2) { width: 25% !important; }
@@ -252,6 +256,13 @@
 #promosTable_filter th:nth-child(4), #promosTable_filter td:nth-child(4) { width: 15% !important; }
 #promosTable_filter th:nth-child(5), #promosTable_filter td:nth-child(5) { width: 15% !important; }
 #promosTable_filter th:nth-child(6), #promosTable_filter td:nth-child(6) { width: 20% !important; text-align: center;}
+
+#announcementsTable th:nth-child(1), #announcementsTable td:nth-child(1) { width: 5% !important; text-align: center; }
+#announcementsTable th:nth-child(2), #announcementsTable td:nth-child(2) { width: 20% !important; }
+#announcementsTable th:nth-child(3), #announcementsTable td:nth-child(3) { width: 10% !important; }
+#announcementsTable th:nth-child(4), #announcementsTable td:nth-child(4) { width: 10% !important; }
+#announcementsTable th:nth-child(5), #announcementsTable td:nth-child(5) { width: 10% !important; }
+#announcementsTable th:nth-child(6), #announcementsTable td:nth-child(6) { width: 10% !important; text-align: center; }
 
 .transaction-table th:nth-child(1), .transaction-table td:nth-child(1) { width: 5% !important; text-align: center;}
 .transaction-table th:nth-child(2), .transaction-table td:nth-child(2) { width: 20% !important; }
@@ -282,4 +293,38 @@
         width: 90%;
         max-width: 400px;
     }
+}
+
+
+/* Services section */
+#serviceContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.service-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.service-row select {
+    flex: 1;
+}
+
+.add-service-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    transition: background-color 0.2s ease;
+}
+
+.add-service-btn:hover {
+    background-color: #0056b3;
 }

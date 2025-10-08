@@ -19,8 +19,7 @@ $sql = "SELECT
             t.dental_transaction_id,
             t.appointment_transaction_id,
             CONCAT('Dr. ', d.last_name, ', ', d.first_name, ' ', IFNULL(d.middle_name, '')) AS dentist,
-            t.amount_paid,
-            t.date_created
+            t.amount_paid
         FROM dental_transaction t
         LEFT JOIN dentist d ON t.dentist_id = d.dentist_id
         WHERE t.appointment_transaction_id = ?";

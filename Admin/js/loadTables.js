@@ -42,6 +42,7 @@ $(document).ready(function() {
                 { "title": "ID" },
                 { "title": "Service Name" },
                 { "title": "Price" },
+                { "title": "Duration" },
                 { "title": "Status" },
                 { "title": "Action", "orderable": false }
             ],

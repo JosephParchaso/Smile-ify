@@ -2,6 +2,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const manageModal = document.getElementById("manageRecordModal");
     const modalBody = document.getElementById("modalRecordBody");
 
+    if (!manageModal || !modalBody) return;
+    
     document.body.addEventListener("click", function (e) {
         if (e.target.classList.contains("btn-action")) {
             const id = e.target.getAttribute("data-id");
@@ -59,6 +61,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    let cachedServices = [];
+
     function renderTransactionForm(data) {
         const isEdit = !!data;
 
@@ -66,8 +70,8 @@ document.addEventListener("DOMContentLoaded", () => {
             <h2>${isEdit ? "Manage Transaction" : "Add Transaction"}</h2>
             <form id="transactionForm" 
                 action="${BASE_URL}/Admin/processes/manage_appointment/${isEdit ? 'update_transaction.php' : 'insert_transaction.php'}" 
-                method="POST" autocomplete="off" />
-                
+                method="POST" autocomplete="off">
+
                 ${isEdit ? `<input type="hidden" name="dental_transaction_id" value="${data.dental_transaction_id}">` : ""}
                 <input type="hidden" name="appointment_transaction_id" value="${appointmentId}">
 
@@ -79,45 +83,44 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
 
                 <div class="form-group">
-                    <select id="transactionPromo" class="form-control" name="promo_id" required>
-                        <option value="" disabled ${isEdit ? "" : "selected"} hidden></option>
+                    <div id="serviceContainer">
+                        <div class="service-row">
+                            <select id="transactionService" class="form-control transactionServiceSelect" name="service_ids[]" required>
+                            </select>
+                            <label for="transactionService" class="form-label">Services <span class="required">*</span></label>
+                            <button type="button" class="add-service-btn" title="Add another service">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <select id="transactionPromo" class="form-control" name="promo_id">
+                        <option value="" selected hidden>None</option>
                     </select>
-                    <label for="transactionPromo" class="form-label">Promo <span class="required">*</span></label>
+                    <label for="transactionPromo" class="form-label">Promo </label>
                 </div>
 
                 <div class="form-group">
-                    <input type="number" step="0.01" id="amountPaid" class="form-control" name="amount_paid"
-                        value="${isEdit ? data.amount_paid : ""}" required />
-                    <label for="amountPaid" class="form-label">Amount Paid <span class="required">*</span></label>
-                </div>
-
-                <div class="form-group">
-                    <select id="isSwelling" class="form-control" name="is_swelling" required>
-                        <option value="No" ${isEdit && data.is_swelling === "No" ? "selected" : ""}>No</option>
-                        <option value="Yes" ${isEdit && data.is_swelling === "Yes" ? "selected" : ""}>Yes</option>
-                    </select>
-                    <label for="isSwelling" class="form-label">Swelling <span class="required">*</span></label>
-                </div>
-
-                <div class="form-group">
-                    <select id="isSensitive" class="form-control" name="is_sensitive" required>
-                        <option value="No" ${isEdit && data.is_sensitive === "No" ? "selected" : ""}>No</option>
-                        <option value="Yes" ${isEdit && data.is_sensitive === "Yes" ? "selected" : ""}>Yes</option>
-                    </select>
-                    <label for="isSensitive" class="form-label">Sensitive <span class="required">*</span></label>
-                </div>
-
-                <div class="form-group">
-                    <select id="isBleeding" class="form-control" name="is_bleeding" required>
-                        <option value="No" ${isEdit && data.is_bleeding === "No" ? "selected" : ""}>No</option>
-                        <option value="Yes" ${isEdit && data.is_bleeding === "Yes" ? "selected" : ""}>Yes</option>
-                    </select>
-                    <label for="isBleeding" class="form-label">Bleeding <span class="required">*</span></label>
-                </div>
-
-                <div class="form-group">
-                    <textarea id="notes" class="form-control" name="notes" rows="3">${isEdit ? data.notes : ""}</textarea>
+                    <textarea id="notes" class="form-control" name="notes" rows="3">${isEdit ? data.notes || "" : ""}</textarea>
                     <label for="notes" class="form-label">Notes</label>
+                </div>
+
+                <div class="checkout-summary">
+                    <h3>Transaction Summary</h3>
+                    <div id="servicesList"></div> 
+                    <div class="summary-item">
+                        <span>Subtotal:</span>
+                        <span id="subtotalDisplay">₱0.00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Discount:</span>
+                        <span id="discountDisplay">₱0.00</span>
+                    </div>
+                    <hr>
+                    <div class="summary-item total">
+                        <span>Total Payment:</span>
+                        <span id="totalDisplay">₱0.00</span>
+                    </div>
                 </div>
 
                 <div class="button-group">
@@ -126,15 +129,138 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
             </form>
         `;
+
         const dentistSelect = modalBody.querySelector("#transactionDentist");
-        if (dentistSelect) {
-            loadDentistsByAppointment(appointmentId, dentistSelect, isEdit ? data.dentist_id : null);
-        }
-        
+        if (dentistSelect) loadDentistsByAppointment(appointmentId, dentistSelect, isEdit ? data.dentist_id : null);
+
         const promoSelect = modalBody.querySelector("#transactionPromo");
-            if (promoSelect) {
-                loadPromos(promoSelect, isEdit ? data.promo_id : null, appointmentId);
+        if (promoSelect) loadPromos(promoSelect, isEdit ? data.promo_id : null, appointmentId);
+
+        const serviceContainer = modalBody.querySelector("#serviceContainer");
+
+        // ✅ Load all services ONCE then populate first dropdown
+        loadAllServicesOnce(branchId, serviceContainer.querySelector(".transactionServiceSelect"));
+
+        // Handle add/remove service rows
+        serviceContainer.addEventListener("click", (e) => {
+            if (e.target.classList.contains("add-service-btn")) {
+                const newRow = document.createElement("div");
+                newRow.classList.add("service-row");
+                newRow.innerHTML = `
+                    <select class="form-control transactionServiceSelect" name="service_ids[]" required>
+                    </select>
+                    <button type="button" class="remove-service-btn">–</button>
+                `;
+                serviceContainer.appendChild(newRow);
+
+                // ✅ Use cached services
+                populateServicesDropdown(newRow.querySelector(".transactionServiceSelect"));
+            }
+
+            if (e.target.classList.contains("remove-service-btn")) {
+                e.target.closest(".service-row").remove();
+                updateServicesSummary();
+            }
+        });
+
+        serviceContainer.addEventListener("change", (e) => {
+            if (e.target.classList.contains("transactionServiceSelect")) {
+                updateServicesSummary();
+            }
+        });
+    }
+
+    function updateCheckoutSummary(data) {
+        data = data || {};
+
+        // Assume `data.services` is an array of booked services like:
+        // [ { name: "Cleaning", price: 500 }, { name: "Extraction", price: 1200 } ]
+        const services = data.services || [];
+
+        const servicesList = document.getElementById("servicesList");
+        const subtotalEl = document.getElementById("subtotalDisplay");
+        const discountEl = document.getElementById("discountDisplay");
+        const totalEl = document.getElementById("totalDisplay");
+
+        // Clear previous list
+        if (servicesList) servicesList.innerHTML = "";
+
+        // Render each service in summary
+        let subtotal = 0;
+        services.forEach(service => {
+            const price = parseFloat(service.price) || 0;
+            subtotal += price;
+
+            const item = document.createElement("div");
+            item.classList.add("summary-item");
+            item.innerHTML = `
+                <span>${service.name}</span>
+                <span>₱${price.toFixed(2)}</span>
+            `;
+            servicesList.appendChild(item);
+        });
+
+        // Apply promo discount if any
+        const promoDiscount = data.promo_discount ? parseFloat(data.promo_discount) : 0;
+        const discount = promoDiscount > 0 ? (subtotal * (promoDiscount / 100)) : 0;
+        const total = subtotal - discount;
+
+        // Update totals
+        if (subtotalEl) subtotalEl.textContent = `₱${subtotal.toFixed(2)}`;
+        if (discountEl) discountEl.textContent = `₱${discount.toFixed(2)}`;
+        if (totalEl) totalEl.textContent = `₱${total.toFixed(2)}`;
+    }
+
+    function updateServicesSummary() {
+        const serviceSelects = document.querySelectorAll(".transactionServiceSelect");
+        const services = [];
+
+        serviceSelects.forEach(sel => {
+            const opt = sel.selectedOptions[0];
+            if (opt && opt.value) {
+                services.push({
+                    name: opt.dataset.name,
+                    price: parseFloat(opt.dataset.price)
+                });
+            }
+        });
+
+        const promoSelect = document.getElementById("transactionPromo");
+        const discount = promoSelect?.selectedOptions[0]?.dataset?.discount 
+            ? parseFloat(promoSelect.selectedOptions[0].dataset.discount)
+            : 0;
+
+        updateCheckoutSummary({
+            services: services,
+            promo_discount: discount
+        });
+    }
+
+    function loadAllServicesOnce(branchId, firstSelectEl) {
+        if (cachedServices.length > 0) {
+            populateServicesDropdown(firstSelectEl);
+            return;
         }
+
+        fetch(`${BASE_URL}/Admin/processes/manage_appointment/get_services_by_branch.php?branch_id=${branchId}`)
+            .then(res => res.json())
+            .then(services => {
+                cachedServices = services; // cache for reuse
+                populateServicesDropdown(firstSelectEl);
+            })
+            .catch(err => console.error("Failed to load services:", err));
+    }
+
+    function populateServicesDropdown(selectEl) {
+        if (!selectEl) return;
+
+        selectEl.innerHTML = `
+            ${cachedServices.map(s => `
+                <option value="${s.service_id}" data-name="${s.name}" data-price="${s.price}">
+                    ${s.name} — ₱${parseFloat(s.price).toFixed(2)}
+                </option>
+            `).join("")}
+        `;
     }
 
     function renderVitalForm(data) {
@@ -169,7 +295,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 <div class="form-group">
                     <input type="text" id="bloodPressure" class="form-control" name="blood_pressure"
-                        value="${isEdit ? data.blood_pressure : ""}" placeholder="e.g. 120/80" required autocomplete="off" />
+                        value="${isEdit ? data.blood_pressure : ""}" required autocomplete="off" />
                     <label for="bloodPressure" class="form-label">Blood Pressure <span class="required">*</span></label>
                 </div>
 
@@ -183,6 +309,30 @@ document.addEventListener("DOMContentLoaded", () => {
                     <input type="number" step="0.1" id="weight" class="form-control" name="weight"
                         value="${isEdit ? data.weight : ""}" required />
                     <label for="weight" class="form-label">Weight (kg) <span class="required">*</span></label>
+                </div>
+
+                <div class="form-group">
+                    <select id="isSwelling" class="form-control" name="is_swelling" required>
+                        <option value="No" ${isEdit && data.is_swelling === "No" ? "selected" : ""}>No</option>
+                        <option value="Yes" ${isEdit && data.is_swelling === "Yes" ? "selected" : ""}>Yes</option>
+                    </select>
+                    <label for="isSwelling" class="form-label">Swelling <span class="required">*</span></label>
+                </div>
+
+                <div class="form-group">
+                    <select id="isSensitive" class="form-control" name="is_sensitive" required>
+                        <option value="No" ${isEdit && data.is_sensitive === "No" ? "selected" : ""}>No</option>
+                        <option value="Yes" ${isEdit && data.is_sensitive === "Yes" ? "selected" : ""}>Yes</option>
+                    </select>
+                    <label for="isSensitive" class="form-label">Sensitive <span class="required">*</span></label>
+                </div>
+
+                <div class="form-group">
+                    <select id="isBleeding" class="form-control" name="is_bleeding" required>
+                        <option value="No" ${isEdit && data.is_bleeding === "No" ? "selected" : ""}>No</option>
+                        <option value="Yes" ${isEdit && data.is_bleeding === "Yes" ? "selected" : ""}>Yes</option>
+                    </select>
+                    <label for="isBleeding" class="form-label">Bleeding <span class="required">*</span></label>
                 </div>
 
                 <div class="button-group">
@@ -309,8 +459,29 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
+    function checkVitalStatus() {
+        fetch(`${BASE_URL}/Admin/processes/manage_appointment/check_vital_exists.php?appointment_id=${appointmentId}`)
+            .then(res => res.json())
+            .then(data => {
+                const insertVitalBtn = document.getElementById("insertVitalBtn");
+                if (!insertVitalBtn) return;
+
+                if (data.exists) {
+                    insertVitalBtn.style.display = "none";
+                } else {
+                    insertVitalBtn.style.display = "inline-block";
+                }
+            })
+            .catch(err => console.error("Error checking vital status:", err));
+    }
+    
+    checkVitalStatus();
 });
+
 
 function closeManageModal() {
     document.getElementById("manageRecordModal").style.display = "none";
 }
+
+

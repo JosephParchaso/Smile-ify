@@ -17,7 +17,7 @@ $updateError = $_SESSION['updateError'] ?? "";
 ?>
 <title>Profile</title>
 
-<div class="profile-container-admin">
+<div class="profile-container">
     <div class="profile-section">
         <div class="profile-card" id="profileCard">
             <p>Loading profile...</p>
@@ -36,6 +36,10 @@ $updateError = $_SESSION['updateError'] ?? "";
                 <?php endif; ?>
             </div>
         <?php endif; ?>
+    </div>
+    
+    <div class="announcements-table">
+        <table id="announcementsTable" class="transaction-table"></table>
     </div>
 </div>
 
@@ -84,6 +88,15 @@ $updateError = $_SESSION['updateError'] ?? "";
         </form> 
     </div>
 </div>
+
+<div id="manageAnnouncementModal" class="manage-announcement-modal">
+    <div class="manage-announcement-modal-content">
+        <div id="announcementModalBody" class="manage-announcement-modal-content-body">
+            <!-- Announcements info will be loaded here -->
+        </div>
+    </div>
+</div>
+
 
 
 <?php require_once BASE_PATH . '/includes/footer.php'; ?>

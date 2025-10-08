@@ -17,28 +17,26 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $duration    = trim($_POST['duration'] ?? '');
     $instructions= trim($_POST['instructions'] ?? '');
 
-    if (!$appointment_id || !$prescription_id || !$drug || !$frequency || !$dosage || !$duration || !$instructions) {
-        $_SESSION['updateError'] = "Missing required prescription fields.";
-        header("Location: " . BASE_URL . "/Admin/pages/appointments.php");
-        exit();
-    }
-
     try {
         $stmt = $conn->prepare("
             UPDATE dental_prescription
             SET drug=?, frequency=?, dosage=?, duration=?, instructions=?
             WHERE prescription_id=? AND appointment_transaction_id=?
         ");
-        $stmt->bind_param("ssssssii", $drug, $frequency, $dosage, $duration, $instructions, $prescription_id, $appointment_id);
+        $stmt->bind_param("ssssssi", $drug, $frequency, $dosage, $duration, $instructions, $prescription_id, $appointment_id);
         $stmt->execute();
-        $stmt->close();
 
-        $_SESSION['updateSuccess'] = "Prescription updated successfully!";
+        if ($stmt->affected_rows > 0) {
+            $_SESSION['updateSuccess'] = "Prescription updated successfully!";
+        }
+
+        $stmt->close();
     } catch (Exception $e) {
         error_log("Error updating prescription: " . $e->getMessage());
         $_SESSION['updateError'] = "Failed to update prescription.";
     }
 
-    header("Location: " . BASE_URL . "/Admin/pages/appointments.php");
+    header("Location: " . BASE_URL . "/Admin/pages/manage_appointment.php?id=" . $appointment_id . "&backTab=recent&tab=prescriptions");
     exit();
 }
+?>

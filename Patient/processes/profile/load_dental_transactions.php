@@ -19,9 +19,6 @@ $sql = "SELECT
             a.appointment_date,
             a.appointment_time,
             dt.amount_paid,
-            dt.is_swelling,
-            dt.is_sensitive,
-            dt.is_bleeding,
             dt.date_created
         FROM dental_transaction dt
         INNER JOIN appointment_transaction a 

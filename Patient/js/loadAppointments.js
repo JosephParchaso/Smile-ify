@@ -5,7 +5,7 @@ $(document).ready(function() {
         "lengthChange": false,
         "ordering": true,
         "searching": true,
-        "order": [[7, "desc"]],
+        "order": [[3, "desc"], [4, "asc"]],
         "columns": [
             { "title": "Dentist" , "searchable": false },
             { "title": "Branch" },

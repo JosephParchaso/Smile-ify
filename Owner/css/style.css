@@ -31,7 +31,8 @@
     font-size: 0.95rem;
 }
 
-.quick-links a {
+.quick-links a,
+.card-link {
     display: inline-block;
     margin: 0.5rem 0.3rem;
     padding: 0.8rem 1.2rem;
@@ -88,7 +89,7 @@
 }
 
 .branches-table {
-    width: 75% !important;
+    width: 65% !important;
 }
 
 #adminsTable_filter, #dentistsTable_filter, #branchesTable_filter {

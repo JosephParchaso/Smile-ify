@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 06, 2025 at 11:18 PM
+-- Generation Time: Oct 08, 2025 at 03:58 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,6 +20,34 @@ SET time_zone = "+00:00";
 --
 -- Database: `smile-ify`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `announcements`
+--
+
+CREATE TABLE `announcements` (
+  `announcement_id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text NOT NULL,
+  `start_date` date DEFAULT NULL,
+  `end_date` date DEFAULT NULL,
+  `date_created` datetime DEFAULT current_timestamp(),
+  `date_updated` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `status` enum('Active','Inactive') DEFAULT 'Active'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `announcements`
+--
+
+INSERT INTO `announcements` (`announcement_id`, `title`, `description`, `start_date`, `end_date`, `date_created`, `date_updated`, `status`) VALUES
+(1, 'Holiday', 'Christmas', '2025-12-25', '2026-01-03', '2025-10-07 23:09:49', '2025-10-07 23:52:00', 'Active'),
+(2, 'Get 10% Off on Root Canal Treatments!', 'Enjoy a 10% discount on all Root Canal services this October. Book your appointment now!', '2025-10-01', '2025-10-31', '2025-10-07 23:39:46', '2025-10-07 23:51:50', 'Active'),
+(3, 'New Dental Branch Now Open!', 'We’re excited to announce that our new branch in Talamban is now open to serve you!', '2025-09-15', NULL, '2025-10-07 23:39:46', '2025-10-08 00:06:28', 'Active'),
+(4, 'Free Dental Check-up for New Patients!', 'All new patients can avail a free dental check-up this month. Walk-ins are welcome!', NULL, NULL, '2025-10-07 23:39:46', '2025-10-07 23:39:46', 'Active'),
+(5, 'System Maintenance Notice', 'Our online booking system will be under maintenance this weekend. Sorry for the inconvenience!', '2025-10-10', '2025-10-12', '2025-10-07 23:39:46', '2025-10-07 23:46:39', 'Active');
 
 -- --------------------------------------------------------
 
@@ -136,8 +164,8 @@ CREATE TABLE `branch` (
   `opening_time` time DEFAULT NULL,
   `closing_time` time DEFAULT NULL,
   `status` enum('Active','Inactive') DEFAULT 'Active',
-  `date_created` timestamp NOT NULL DEFAULT current_timestamp(),
-  `date_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `date_created` datetime NOT NULL DEFAULT current_timestamp(),
+  `date_updated` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `map_url` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -146,12 +174,12 @@ CREATE TABLE `branch` (
 --
 
 INSERT INTO `branch` (`branch_id`, `name`, `address`, `phone_number`, `opening_time`, `closing_time`, `status`, `date_created`, `date_updated`, `map_url`) VALUES
-(1, 'Babag', 'Babag 2', '9876543210', NULL, NULL, 'Active', '2025-09-22 22:16:53', '2025-10-02 00:08:18', 'https://www.google.com/maps?s=web&rlz=1C1CHBF_enPH1076PH1076&vet=12ahUKEwjuncvMhquCAxXyZWwGHf0oB6AQ5OUKegQIDhAO..i&cs=0&um=1&ie=UTF-8&fb=1&gl=ph&sa=X&geocode=KeXXQbw9mKkzMZ8SM-2MbRRa&daddr=8XW6%2BG37,+42+Zone+Ube,+Mandaue+City,+6014+Cebu'),
-(2, 'Pusok', NULL, NULL, NULL, NULL, 'Active', '2025-09-22 22:16:53', '2025-09-22 22:41:26', 'https://www.google.com/maps/dir//Mondejar+Bldg.,+8X97%2B4VH,+M.L.+Quezon+National+Highway,+Lapu-Lapu+City,+6015+Cebu/@10.3178978,123.9235228,13z/data=!3m1!4b1!4m9!4m8!1m1!4e2!1m5!1m1!1s0x33a999daa69f9d7d:0xe953442899b16cf7!2m2!1d123.9647064!2d10.3178364?e'),
-(3, 'Mandaue', 'Mandaue', '9123456789', NULL, NULL, 'Active', '2025-09-22 22:16:53', '2025-10-02 00:10:25', 'https://www.google.com/maps/dir//7WHV%2BRP3,+Babang+II+Rd,+Lapu-Lapu+City,+6015+Cebu/@10.2795046,123.8619066,12z/data=!4m8!4m7!1m0!1m5!1m1!1s0x33a99a3a552c12d3:0x4f3b0cb463cfb86d!2m2!1d123.9443073!2d10.2795147?entry=ttu'),
-(4, 'sample 1', 'sample', '2222222222', '07:18:00', '19:18:00', 'Inactive', '2025-09-22 22:16:53', '2025-10-02 00:10:35', 'https://www.google.com/maps/place/Mactan-Cebu+International+Airport/@10.3153664,123.9858731,4277m/data=!3m1!1e3!4m6!3m5!1s0x33a997613bbd25df:0x8bd061454b8432c1!8m2!3d10.3136169!4d123.9833557!16s%2Fg%2F12322vj76?entry=ttu&g_ep=EgoyMDI1MDkxNy4wIKXMDSoASAFQA'),
-(5, 'sample 2', 'sample insert', '1111111111', '07:09:00', '19:09:00', 'Inactive', '2025-09-22 23:09:30', '2025-10-01 23:55:15', ''),
-(6, 'Talambann', 'Talamban, Cebu', '4564656664', NULL, NULL, 'Active', '2025-09-24 08:25:59', '2025-09-24 08:26:29', 'https://www.google.com/maps/dir//8XW6%2BG37,+42+Zone+Ube,+Mandaue+City,+6014+Cebu/@10.3557436,123.8524778,22362m/data=!3m1!1e3!4m8!4m7!1m0!1m5!1m1!1s0x33a9983dbc41d7e5:0x5a146d8ced33129f!2m2!1d123.9601141!2d10.3462534?entry=ttu&g_ep=EgoyMDI1MDkyMi4wIKXMDS');
+(1, 'Babag', 'Babag 2', '9876543211', NULL, NULL, 'Active', '2025-09-23 06:16:53', '2025-10-07 23:21:24', 'https://www.google.com/maps?s=web&rlz=1C1CHBF_enPH1076PH1076&vet=12ahUKEwjuncvMhquCAxXyZWwGHf0oB6AQ5OUKegQIDhAO..i&cs=0&um=1&ie=UTF-8&fb=1&gl=ph&sa=X&geocode=KeXXQbw9mKkzMZ8SM-2MbRRa&daddr=8XW6%2BG37,+42+Zone+Ube,+Mandaue+City,+6014+Cebu'),
+(2, 'Pusok', NULL, NULL, NULL, NULL, 'Active', '2025-09-23 06:16:53', '2025-09-23 06:41:26', 'https://www.google.com/maps/dir//Mondejar+Bldg.,+8X97%2B4VH,+M.L.+Quezon+National+Highway,+Lapu-Lapu+City,+6015+Cebu/@10.3178978,123.9235228,13z/data=!3m1!4b1!4m9!4m8!1m1!4e2!1m5!1m1!1s0x33a999daa69f9d7d:0xe953442899b16cf7!2m2!1d123.9647064!2d10.3178364?e'),
+(3, 'Mandaue', 'Mandaue', '9123456789', NULL, NULL, 'Active', '2025-09-23 06:16:53', '2025-10-02 08:10:25', 'https://www.google.com/maps/dir//7WHV%2BRP3,+Babang+II+Rd,+Lapu-Lapu+City,+6015+Cebu/@10.2795046,123.8619066,12z/data=!4m8!4m7!1m0!1m5!1m1!1s0x33a99a3a552c12d3:0x4f3b0cb463cfb86d!2m2!1d123.9443073!2d10.2795147?entry=ttu'),
+(4, 'sample 1', 'sample', '2222222222', '07:18:00', '19:18:00', 'Inactive', '2025-09-23 06:16:53', '2025-10-08 09:56:55', 'https://www.google.com/maps/place/Mactan-Cebu+International+Airport/@10.3153664,123.9858731,4277m/data=!3m1!1e3!4m6!3m5!1s0x33a997613bbd25df:0x8bd061454b8432c1!8m2!3d10.3136169!4d123.9833557!16s%2Fg%2F12322vj76?entry=ttu&g_ep=EgoyMDI1MDkxNy4wIKXMDSoASAFQA'),
+(5, 'sample 2', 'sample insert', '1111111111', '07:09:00', '19:09:00', 'Inactive', '2025-09-23 07:09:30', '2025-10-07 23:44:04', ''),
+(6, 'Talamban', 'Talamban, Cebu', '4564656664', NULL, NULL, 'Active', '2025-09-24 16:25:59', '2025-10-08 09:57:04', 'https://www.google.com/maps/dir//8XW6%2BG37,+42+Zone+Ube,+Mandaue+City,+6014+Cebu/@10.3557436,123.8524778,22362m/data=!3m1!1e3!4m8!4m7!1m0!1m5!1m1!1s0x33a9983dbc41d7e5:0x5a146d8ced33129f!2m2!1d123.9601141!2d10.3462534?entry=ttu&g_ep=EgoyMDI1MDkyMi4wIKXMDS');
 
 -- --------------------------------------------------------
 
@@ -175,11 +203,12 @@ CREATE TABLE `branch_promo` (
 --
 
 INSERT INTO `branch_promo` (`branch_promo_id`, `branch_id`, `promo_id`, `status`, `start_date`, `end_date`, `date_created`, `date_updated`) VALUES
-(1, 1, 1, 'Active', NULL, NULL, '2025-09-21 06:48:42', '2025-10-04 07:08:12'),
+(1, 1, 1, 'Inactive', NULL, NULL, '2025-09-21 06:48:42', '2025-10-07 23:44:40'),
 (2, 1, 2, 'Active', NULL, NULL, '2025-09-21 06:54:12', '2025-10-04 07:06:41'),
 (3, 1, 3, 'Active', '2025-10-01', '2025-10-27', '2025-09-21 07:11:00', '2025-10-02 06:15:45'),
-(4, 1, 4, 'Active', '2025-09-13', '2025-10-03', '2025-09-21 07:19:41', '2025-10-02 06:18:16'),
-(5, 1, 5, 'Active', NULL, NULL, '2025-09-24 08:30:01', '2025-10-02 06:18:16');
+(4, 1, 4, 'Active', '2025-10-07', '2025-10-31', '2025-09-21 07:19:41', '2025-10-07 23:53:21'),
+(5, 1, 5, 'Active', NULL, NULL, '2025-09-24 08:30:01', '2025-10-02 06:18:16'),
+(6, 2, 6, 'Active', NULL, NULL, '2025-10-07 23:59:49', '2025-10-08 00:00:32');
 
 -- --------------------------------------------------------
 
@@ -201,7 +230,7 @@ CREATE TABLE `branch_service` (
 --
 
 INSERT INTO `branch_service` (`branch_services_id`, `branch_id`, `service_id`, `status`, `date_created`, `date_updated`) VALUES
-(1, 1, 1, 'Active', '2025-09-21 05:51:14', '2025-10-04 06:57:01'),
+(1, 1, 1, 'Active', '2025-09-21 05:51:14', '2025-10-08 08:30:14'),
 (2, 1, 2, 'Active', '2025-09-21 05:51:14', '2025-10-04 06:59:02'),
 (3, 1, 3, 'Active', '2025-09-21 05:51:14', '2025-10-04 06:59:13'),
 (4, 1, 4, 'Active', '2025-09-21 05:51:14', '2025-10-04 06:59:21'),
@@ -221,7 +250,8 @@ INSERT INTO `branch_service` (`branch_services_id`, `branch_id`, `service_id`, `
 (18, 3, 8, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
 (19, 3, 9, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
 (20, 3, 10, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
-(21, 2, 2, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14');
+(21, 2, 2, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
+(23, 1, 12, 'Inactive', '2025-10-08 08:30:24', '2025-10-08 08:30:29');
 
 -- --------------------------------------------------------
 
@@ -301,7 +331,36 @@ INSERT INTO `dental_prescription` (`prescription_id`, `appointment_transaction_i
 (26, 24, 'Amoxicillin', 'Oral', '3x/day', '500mg', '7 days', '21', 'Take after meals, complete the course', '2025-09-26 23:46:41'),
 (27, 24, 'Mefenamic Acid', 'Oral', '2x/day', '500mg', '3 days', '6', 'Take only when needed for pain', '2025-09-26 23:46:41'),
 (28, 24, 'Chlorhexidine Mouthwash', 'Oral Rinse', '2x/day', '15ml', '7 days', '14', 'Rinse for 30 seconds, do not swallow', '2025-09-26 23:46:41'),
-(29, 24, 'Paracetamol', 'Oral', '3x/day', '500mg', '5 days', '15', 'Take for pain and fever', '2025-09-26 23:46:41');
+(29, 24, 'Paracetamol', 'Oral', '3x/day', '500mg', '5 days', '15', 'Take for pain and fever', '2025-09-26 23:46:41'),
+(30, 80, 'Paracetamol', NULL, '3x/day', '500mgg', '7 dayss', '21', 'Take after mealssss', '2025-10-07 21:32:57');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `dental_tips`
+--
+
+CREATE TABLE `dental_tips` (
+  `tip_id` int(11) NOT NULL,
+  `tip_text` varchar(255) NOT NULL,
+  `date_created` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `dental_tips`
+--
+
+INSERT INTO `dental_tips` (`tip_id`, `tip_text`, `date_created`) VALUES
+(1, '🦷 Brush twice a day — morning and night!', '2025-10-08 00:03:23'),
+(2, '😁 Floss daily to keep the spaces clean.', '2025-10-08 00:03:23'),
+(3, '🪥 Change your toothbrush every 3 months.', '2025-10-08 00:03:23'),
+(4, '🚫 Avoid too much sugar — your teeth will thank you!', '2025-10-08 00:03:23'),
+(5, '💧 Drink more water, it helps wash away bacteria.', '2025-10-08 00:03:23'),
+(6, '🦷 Visit your dentist every 6 months for a check-up.', '2025-10-08 00:03:23'),
+(7, '🍎 Crunch on apples or carrots — nature’s toothbrush!', '2025-10-08 00:03:23'),
+(8, '😬 Don’t ignore bleeding gums — it’s a sign to visit us!', '2025-10-08 00:03:23'),
+(9, '💤 Brush before bedtime — no sleeping with sugar bugs!', '2025-10-08 00:03:23'),
+(10, '💎 A healthy smile is your best accessory!', '2025-10-08 00:03:23');
 
 -- --------------------------------------------------------
 
@@ -314,9 +373,6 @@ CREATE TABLE `dental_transaction` (
   `appointment_transaction_id` int(11) NOT NULL,
   `dentist_id` int(11) NOT NULL,
   `amount_paid` decimal(10,2) NOT NULL,
-  `is_swelling` enum('Yes','No') DEFAULT 'No',
-  `is_sensitive` enum('Yes','No') DEFAULT 'No',
-  `is_bleeding` enum('Yes','No') DEFAULT 'No',
   `notes` text DEFAULT NULL,
   `date_created` timestamp NOT NULL DEFAULT current_timestamp(),
   `prescription_downloaded` tinyint(1) DEFAULT 0
@@ -326,13 +382,25 @@ CREATE TABLE `dental_transaction` (
 -- Dumping data for table `dental_transaction`
 --
 
-INSERT INTO `dental_transaction` (`dental_transaction_id`, `appointment_transaction_id`, `dentist_id`, `amount_paid`, `is_swelling`, `is_sensitive`, `is_bleeding`, `notes`, `date_created`, `prescription_downloaded`) VALUES
-(1, 21, 3, 1500.00, 'Yes', 'No', 'No', 'Tooth #12 extraction, mild swelling.', '2025-08-23 19:37:15', 0),
-(2, 22, 3, 2000.00, 'No', 'Yes', 'No', 'Tooth filling, slight sensitivity.', '2025-08-23 19:37:15', 1),
-(3, 23, 1, 1200.00, 'No', 'No', 'No', 'Routine cleaning, no complications.', '2025-08-23 19:37:15', 1),
-(4, 24, 4, 1800.00, 'Yes', 'No', 'Yes', 'Wisdom tooth removal, moderate bleeding.', '2025-08-23 19:37:15', 1),
-(5, 25, 3, 2500.00, 'No', 'No', 'No', 'Root canal treatment, stable condition.', '2025-08-23 19:37:15', 0),
-(8, 28, 1, 3000.00, 'Yes', 'Yes', 'Yes', 'Complex surgical extraction with swelling & bleeding.', '2025-08-23 19:37:15', 0);
+INSERT INTO `dental_transaction` (`dental_transaction_id`, `appointment_transaction_id`, `dentist_id`, `amount_paid`, `notes`, `date_created`, `prescription_downloaded`) VALUES
+(1, 21, 3, 1500.00, 'Tooth #12 extraction, mild swelling.', '2025-08-23 19:37:15', 0),
+(2, 22, 3, 2000.00, 'Tooth filling, slight sensitivity.', '2025-08-23 19:37:15', 1),
+(3, 23, 1, 1200.00, 'Routine cleaning, no complications.', '2025-08-23 19:37:15', 1),
+(4, 24, 4, 1800.00, 'Wisdom tooth removal, moderate bleeding.', '2025-08-23 19:37:15', 1),
+(5, 25, 3, 2500.00, 'Root canal treatment, stable condition.', '2025-08-23 19:37:15', 0),
+(8, 28, 1, 3000.00, 'Complex surgical extraction with swelling & bleeding.', '2025-08-23 19:37:15', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `dental_transaction_service`
+--
+
+CREATE TABLE `dental_transaction_service` (
+  `id` int(11) NOT NULL,
+  `dental_transaction_id` int(11) NOT NULL,
+  `service_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -349,6 +417,9 @@ CREATE TABLE `dental_vital` (
   `blood_pressure` varchar(10) DEFAULT NULL,
   `height` decimal(5,2) DEFAULT NULL,
   `weight` decimal(5,2) DEFAULT NULL,
+  `is_swelling` enum('Yes','No') NOT NULL,
+  `is_bleeding` enum('Yes','No') NOT NULL,
+  `is_sensitive` enum('Yes','No') NOT NULL,
   `date_created` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -356,23 +427,24 @@ CREATE TABLE `dental_vital` (
 -- Dumping data for table `dental_vital`
 --
 
-INSERT INTO `dental_vital` (`vitals_id`, `appointment_transaction_id`, `body_temp`, `pulse_rate`, `respiratory_rate`, `blood_pressure`, `height`, `weight`, `date_created`) VALUES
-(1, 21, 36.7, 72, 18, '120/80', 168.00, 65.00, '2025-08-23 18:53:50'),
-(2, 22, 37.2, 80, 20, '130/85', 175.00, 70.00, '2025-08-23 18:53:50'),
-(3, 23, 36.5, 70, 19, '115/75', 160.00, 55.00, '2025-08-23 18:53:50'),
-(4, 24, 37.0, 76, 18, '118/78', 165.00, 60.00, '2025-08-23 18:53:50'),
-(5, 25, 36.8, 74, 17, '122/82', 172.00, 68.00, '2025-08-23 18:53:50'),
-(6, 26, 37.1, 82, 21, '135/90', 178.00, 80.00, '2025-08-23 18:53:50'),
-(7, 27, 36.6, 68, 16, '110/70', 158.00, 50.00, '2025-08-23 18:53:50'),
-(8, 28, 37.3, 85, 22, '140/95', 182.00, 85.00, '2025-08-23 18:53:50'),
-(10, 61, 25.0, 25, 25, '25', 25.00, 25.00, '2025-09-24 00:50:19'),
-(11, 61, 25.0, 25, 25, '25', 25.00, 25.00, '2025-09-24 00:53:07'),
-(12, 61, 1.0, 1, 1, '1', 1.00, 1.00, '2025-09-24 00:54:46'),
-(13, 61, 2.0, 2, 2, '2', 2.00, 2.00, '2025-09-24 00:55:32'),
-(14, 61, 3.0, 3, 3, '3', 3.00, 3.00, '2025-09-24 01:10:03'),
-(15, 61, 4.0, 4, 4, '4', 4.00, 4.00, '2025-09-24 01:12:49'),
-(16, 52, 5.0, 5, 5, '5', 5.00, 5.00, '2025-09-26 15:52:13'),
-(17, 52, 6.0, 6, 6, '6', 6.00, 6.00, '2025-09-26 16:16:15');
+INSERT INTO `dental_vital` (`vitals_id`, `appointment_transaction_id`, `body_temp`, `pulse_rate`, `respiratory_rate`, `blood_pressure`, `height`, `weight`, `is_swelling`, `is_bleeding`, `is_sensitive`, `date_created`) VALUES
+(1, 21, 36.7, 72, 18, '120/80', 168.00, 65.00, 'Yes', 'Yes', 'Yes', '2025-08-23 18:53:50'),
+(2, 22, 37.2, 80, 20, '130/85', 175.00, 70.00, 'No', 'No', 'No', '2025-08-23 18:53:50'),
+(3, 23, 36.5, 70, 19, '115/75', 160.00, 55.00, 'Yes', 'Yes', 'Yes', '2025-08-23 18:53:50'),
+(4, 24, 37.0, 76, 18, '118/78', 165.00, 60.00, 'Yes', 'Yes', 'Yes', '2025-08-23 18:53:50'),
+(5, 25, 36.8, 74, 17, '122/82', 172.00, 68.00, 'Yes', 'Yes', 'Yes', '2025-08-23 18:53:50'),
+(6, 26, 37.1, 82, 21, '135/90', 178.00, 80.00, 'Yes', 'Yes', 'Yes', '2025-08-23 18:53:50'),
+(7, 27, 36.6, 68, 16, '110/70', 158.00, 50.00, 'Yes', 'Yes', 'Yes', '2025-08-23 18:53:50'),
+(8, 28, 37.3, 85, 22, '140/95', 182.00, 85.00, 'Yes', 'Yes', 'Yes', '2025-08-23 18:53:50'),
+(10, 61, 25.0, 25, 25, '25', 25.00, 25.00, 'Yes', 'Yes', 'Yes', '2025-09-24 00:50:19'),
+(11, 61, 25.0, 25, 25, '25', 25.00, 25.00, 'Yes', 'Yes', 'Yes', '2025-09-24 00:53:07'),
+(12, 61, 1.0, 1, 1, '1', 1.00, 1.00, 'Yes', 'Yes', 'Yes', '2025-09-24 00:54:46'),
+(13, 61, 2.0, 2, 2, '2', 2.00, 2.00, 'Yes', 'Yes', 'Yes', '2025-09-24 00:55:32'),
+(14, 61, 3.0, 3, 3, '3', 3.00, 3.00, 'Yes', 'Yes', 'Yes', '2025-09-24 01:10:03'),
+(15, 61, 4.0, 4, 4, '4', 4.00, 4.00, 'Yes', 'Yes', 'Yes', '2025-09-24 01:12:49'),
+(16, 52, 5.0, 5, 5, '5', 5.00, 5.00, 'Yes', 'Yes', 'Yes', '2025-09-26 15:52:13'),
+(17, 52, 6.0, 6, 6, '6', 6.00, 6.00, 'Yes', 'Yes', 'Yes', '2025-09-26 16:16:15'),
+(18, 80, 120.0, 120, 120, '1201', 120.00, 120.00, 'No', 'No', 'No', '2025-10-07 21:33:40');
 
 -- --------------------------------------------------------
 
@@ -407,9 +479,9 @@ INSERT INTO `dentist` (`dentist_id`, `last_name`, `middle_name`, `first_name`, `
 (3, 'Summers', '', 'Daze', 'Female', '2025-09-09', 'daze@gmail.com', '0912345680', 'LIC-1003', '2023-03-05', 'Active', '68be0b26e6fc2_daze.png', '2025-07-11 19:40:26', NULL),
 (4, 'San Jose', '', 'Solene', 'Female', '2025-09-12', 'solene@gmail.com', '0912345681', 'LIC-1004', '2023-04-01', 'Active', '68be0b34297fb_sol.png', '2025-07-11 19:40:26', NULL),
 (5, 'San Jose', 'Codm', 'Yel', 'Female', '2025-09-04', 'yel@gmail.com', '9123456789', 'LIC-100322', '2023-05-20', 'Active', '68be0b3d5870b_yel.png', '2025-08-30 00:24:25', NULL),
-(6, 'Achas', '', 'Gab', 'Male', '2025-08-02', 'achas@gmail.com', '7864515665', '123123', '0000-00-00', 'Active', NULL, '2025-08-30 12:07:53', NULL),
+(6, 'Achas', '', 'Gab', 'Male', '2025-08-02', 'achas@gmail.com', '7864515665', '123123', '2025-10-31', 'Active', NULL, '2025-08-30 12:07:53', '2025-10-08 08:57:54'),
 (7, 'Menano', '', 'Andy', 'Male', '2025-08-29', 'adny@gmail.com', '8756465486', '123321', '2025-09-25', 'Active', NULL, '2025-08-30 12:17:41', NULL),
-(8, 'asd', 'sad', 'asdas', 'Female', '2025-09-08', 'sample@gmail.com', '1241421241', '1221211', '2025-09-25', 'Active', '68be08a6d924a_gary-vaynerchuk-signature-0.png', '2025-09-07 22:35:18', NULL);
+(8, 'asd', 'sad', 'asdas', 'Female', '2025-09-08', 'sample@gmail.com', '1241421241', '1221211', '2025-09-25', 'Inactive', '68be08a6d924a_gary-vaynerchuk-signature-0.png', '2025-09-07 22:35:18', '2025-10-08 08:57:16');
 
 -- --------------------------------------------------------
 
@@ -428,19 +500,14 @@ CREATE TABLE `dentist_branch` (
 --
 
 INSERT INTO `dentist_branch` (`dentist_branch_id`, `dentist_id`, `branch_id`) VALUES
-(7, 5, 2),
-(18, 4, 1),
-(19, 4, 3),
-(28, 2, 3),
-(29, 2, 2),
-(35, 7, 3),
-(78, 6, 2),
-(84, 3, 2),
 (85, 8, 1),
-(86, 1, 1),
-(87, 1, 2),
-(88, 1, 3),
-(89, 1, 6);
+(93, 6, 6),
+(94, 7, 6),
+(95, 5, 3),
+(96, 4, 3),
+(99, 2, 1),
+(100, 1, 2),
+(101, 3, 1);
 
 -- --------------------------------------------------------
 
@@ -459,15 +526,49 @@ CREATE TABLE `dentist_service` (
 --
 
 INSERT INTO `dentist_service` (`dentist_services_id`, `dentist_id`, `service_id`) VALUES
-(2, 2, 2),
-(3, 2, 3),
-(4, 2, 6),
-(19, 3, 1),
-(24, 4, 2),
-(25, 4, 5),
-(26, 4, 7),
 (27, 8, 2),
-(31, 1, 1);
+(32, 7, 1),
+(33, 7, 2),
+(34, 7, 3),
+(35, 7, 4),
+(36, 7, 5),
+(37, 7, 6),
+(38, 7, 7),
+(39, 7, 8),
+(40, 7, 9),
+(41, 7, 10),
+(42, 6, 1),
+(43, 6, 2),
+(44, 6, 3),
+(45, 6, 4),
+(46, 6, 5),
+(47, 6, 6),
+(48, 6, 7),
+(49, 6, 8),
+(50, 6, 9),
+(51, 6, 10),
+(72, 3, 6),
+(74, 1, 6),
+(75, 1, 7),
+(78, 2, 1),
+(79, 5, 1),
+(80, 5, 2),
+(81, 5, 3),
+(82, 5, 4),
+(83, 5, 5),
+(84, 5, 6),
+(85, 5, 7),
+(86, 5, 9),
+(87, 5, 10),
+(88, 4, 1),
+(89, 4, 2),
+(90, 4, 3),
+(91, 4, 4),
+(92, 4, 5),
+(93, 4, 7),
+(94, 4, 8),
+(95, 4, 9),
+(96, 4, 10);
 
 -- --------------------------------------------------------
 
@@ -605,15 +706,15 @@ INSERT INTO `notifications` (`notification_id`, `user_id`, `message`, `is_read`,
 (116, 1, 'Your password was changed successfully on October 4, 2025, 6:10 am. If this wasn’t you, please contact clinic immediately.', 1, '2025-10-03 22:10:31'),
 (117, 28, 'Your password was changed successfully on October 5, 2025, 1:21 am. If this wasn’t you, please contact clinic immediately.', 1, '2025-10-04 17:21:34'),
 (118, 28, 'Your password was changed successfully on October 5, 2025, 1:40 am. If this wasn’t you, please contact clinic immediately.', 1, '2025-10-04 17:40:24'),
-(119, 28, 'Your password was changed successfully on October 5, 2025, 1:56 am. If this wasn’t you, please contact the clinic immediately.', 0, '2025-10-04 17:56:40'),
+(119, 28, 'Your password was changed successfully on October 5, 2025, 1:56 am. If this wasn’t you, please contact the clinic immediately.', 1, '2025-10-04 17:56:40'),
 (120, 2, 'Your password was changed successfully on October 5, 2025, 2:01 am. If this wasn’t you, please contact the clinic immediately.', 0, '2025-10-04 18:01:29'),
 (121, 1, 'Your password was changed successfully on October 5, 2025, 2:02 am. If this wasn’t you, please contact the clinic immediately.', 1, '2025-10-04 18:02:35'),
-(122, 28, 'Your password was changed successfully on October 5, 2025, 2:25 am. If this wasn’t you, please contact clinic immediately.', 0, '2025-10-04 18:25:25'),
-(123, 28, 'Your email was successfully updated to 18100807@usc.edu.ph on October 5, 2025, 2:51 am. If this wasn’t you, please contact the clinic immediately.', 0, '2025-10-04 18:51:41'),
-(124, 28, 'Your email was successfully updated to josephparchaso@gmail.com on October 5, 2025, 2:54 am. If this wasn’t you, please contact the clinic immediately.', 0, '2025-10-04 18:54:59'),
+(122, 28, 'Your password was changed successfully on October 5, 2025, 2:25 am. If this wasn’t you, please contact clinic immediately.', 1, '2025-10-04 18:25:25'),
+(123, 28, 'Your email was successfully updated to 18100807@usc.edu.ph on October 5, 2025, 2:51 am. If this wasn’t you, please contact the clinic immediately.', 1, '2025-10-04 18:51:41'),
+(124, 28, 'Your email was successfully updated to josephparchaso@gmail.com on October 5, 2025, 2:54 am. If this wasn’t you, please contact the clinic immediately.', 1, '2025-10-04 18:54:59'),
 (125, 2, 'Your email was successfully updated to 18102727@usc.edu.ph on October 5, 2025, 3:02 am. If this wasn’t you, please contact the clinic immediately.', 0, '2025-10-04 19:02:32'),
 (126, 1, 'Your email was successfully updated to 18100807@usc.edu.ph on October 5, 2025, 3:09 am. If this wasn’t you, please contact the clinic immediately.', 1, '2025-10-04 19:09:00'),
-(127, 28, 'Your appointment on 2025-10-08 at 09:00 was successfully booked!', 0, '2025-10-06 19:50:46'),
+(127, 28, 'Your appointment on 2025-10-08 at 09:00 was successfully booked!', 1, '2025-10-06 19:50:46'),
 (128, 62, 'Welcome to Smile-ify! Your account was created.', 0, '2025-10-06 20:35:12'),
 (129, 62, 'Your appointment on 2025-10-07 at 15:00 was successfully booked!', 0, '2025-10-06 20:35:12'),
 (130, 63, 'Welcome to Smile-ify! Your account was created.', 0, '2025-10-06 20:41:29'),
@@ -643,7 +744,8 @@ INSERT INTO `promo` (`promo_id`, `name`, `image_path`, `description`, `discount_
 (2, 'Grand Openingg', '/images/promos/promo_2.jpg', 'Grand Openinggg', 'fixed', 45.00),
 (3, 'joseph', '/images/promos/promo_3.jpg', 'jj', 'percentage', 80.00),
 (4, 'sample', '/images/promos/promo_4.jpg', 'qwerrt', 'fixed', 123.00),
-(5, 'Senior', '/images/promos/promo_5.jpeg', '60 above', 'percentage', 25.00);
+(5, 'Senior', '/images/promos/promo_5.jpeg', '60 above', 'percentage', 25.00),
+(6, 'pusok', '/images/promos/promo_6.jpg', 'sample', 'fixed', 500.00);
 
 -- --------------------------------------------------------
 
@@ -654,24 +756,26 @@ INSERT INTO `promo` (`promo_id`, `name`, `image_path`, `description`, `discount_
 CREATE TABLE `service` (
   `service_id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
-  `price` double NOT NULL
+  `price` double NOT NULL,
+  `duration_minutes` int(11) NOT NULL DEFAULT 45
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `service`
 --
 
-INSERT INTO `service` (`service_id`, `name`, `price`) VALUES
-(1, 'Consultation', 300),
-(2, 'Tooth Extraction', 5000),
-(3, 'Dental Filling', 3000),
-(4, 'Root Canal Treatment', 10000),
-(5, 'Dental Crown Placement', 500),
-(6, 'Orthodontic Braces', 0),
-(7, 'Teeth Whitening', 0),
-(8, 'Complete Denture', 0),
-(9, 'Partial Denture', 0),
-(10, 'Dental Implant', 0);
+INSERT INTO `service` (`service_id`, `name`, `price`, `duration_minutes`) VALUES
+(1, 'Consultation', 300, 50),
+(2, 'Tooth Extraction', 1200, 45),
+(3, 'Dental Filling', 1500, 60),
+(4, 'Root Canal Treatment', 7000, 120),
+(5, 'Dental Crown Placement', 10000, 90),
+(6, 'Orthodontic Braces', 45000, 60),
+(7, 'Teeth Whitening', 6000, 60),
+(8, 'Complete Denture', 15000, 90),
+(9, 'Partial Denture', 8000, 60),
+(10, 'Dental Implant', 70000, 120),
+(12, 'sample', 100, 15);
 
 -- --------------------------------------------------------
 
@@ -792,6 +896,12 @@ INSERT INTO `users` (`user_id`, `username`, `password`, `last_name`, `middle_nam
 --
 
 --
+-- Indexes for table `announcements`
+--
+ALTER TABLE `announcements`
+  ADD PRIMARY KEY (`announcement_id`);
+
+--
 -- Indexes for table `appointment_transaction`
 --
 ALTER TABLE `appointment_transaction`
@@ -839,12 +949,26 @@ ALTER TABLE `dental_prescription`
   ADD KEY `appointment_transaction_id` (`appointment_transaction_id`);
 
 --
+-- Indexes for table `dental_tips`
+--
+ALTER TABLE `dental_tips`
+  ADD PRIMARY KEY (`tip_id`);
+
+--
 -- Indexes for table `dental_transaction`
 --
 ALTER TABLE `dental_transaction`
   ADD PRIMARY KEY (`dental_transaction_id`),
   ADD KEY `appointment_transaction_id` (`appointment_transaction_id`),
   ADD KEY `dentist_id` (`dentist_id`);
+
+--
+-- Indexes for table `dental_transaction_service`
+--
+ALTER TABLE `dental_transaction_service`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `dental_transaction_id` (`dental_transaction_id`),
+  ADD KEY `service_id` (`service_id`);
 
 --
 -- Indexes for table `dental_vital`
@@ -913,6 +1037,12 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT for table `announcements`
+--
+ALTER TABLE `announcements`
+  MODIFY `announcement_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- AUTO_INCREMENT for table `appointment_transaction`
 --
 ALTER TABLE `appointment_transaction`
@@ -928,13 +1058,13 @@ ALTER TABLE `branch`
 -- AUTO_INCREMENT for table `branch_promo`
 --
 ALTER TABLE `branch_promo`
-  MODIFY `branch_promo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `branch_promo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `branch_service`
 --
 ALTER TABLE `branch_service`
-  MODIFY `branch_services_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `branch_services_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `branch_supply`
@@ -946,7 +1076,13 @@ ALTER TABLE `branch_supply`
 -- AUTO_INCREMENT for table `dental_prescription`
 --
 ALTER TABLE `dental_prescription`
-  MODIFY `prescription_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `prescription_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+
+--
+-- AUTO_INCREMENT for table `dental_tips`
+--
+ALTER TABLE `dental_tips`
+  MODIFY `tip_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `dental_transaction`
@@ -955,10 +1091,16 @@ ALTER TABLE `dental_transaction`
   MODIFY `dental_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
+-- AUTO_INCREMENT for table `dental_transaction_service`
+--
+ALTER TABLE `dental_transaction_service`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `dental_vital`
 --
 ALTER TABLE `dental_vital`
-  MODIFY `vitals_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `vitals_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `dentist`
@@ -970,13 +1112,13 @@ ALTER TABLE `dentist`
 -- AUTO_INCREMENT for table `dentist_branch`
 --
 ALTER TABLE `dentist_branch`
-  MODIFY `dentist_branch_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=90;
+  MODIFY `dentist_branch_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=102;
 
 --
 -- AUTO_INCREMENT for table `dentist_service`
 --
 ALTER TABLE `dentist_service`
-  MODIFY `dentist_services_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `dentist_services_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=97;
 
 --
 -- AUTO_INCREMENT for table `notifications`
@@ -988,13 +1130,13 @@ ALTER TABLE `notifications`
 -- AUTO_INCREMENT for table `promo`
 --
 ALTER TABLE `promo`
-  MODIFY `promo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `promo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `service`
 --
 ALTER TABLE `service`
-  MODIFY `service_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `service_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `supply`
@@ -1054,6 +1196,13 @@ ALTER TABLE `dental_prescription`
 ALTER TABLE `dental_transaction`
   ADD CONSTRAINT `dental_transaction_ibfk_1` FOREIGN KEY (`appointment_transaction_id`) REFERENCES `appointment_transaction` (`appointment_transaction_id`),
   ADD CONSTRAINT `dental_transaction_ibfk_2` FOREIGN KEY (`dentist_id`) REFERENCES `dentist` (`dentist_id`);
+
+--
+-- Constraints for table `dental_transaction_service`
+--
+ALTER TABLE `dental_transaction_service`
+  ADD CONSTRAINT `dental_transaction_service_ibfk_1` FOREIGN KEY (`dental_transaction_id`) REFERENCES `dental_transaction` (`dental_transaction_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `dental_transaction_service_ibfk_2` FOREIGN KEY (`service_id`) REFERENCES `service` (`service_id`);
 
 --
 -- Constraints for table `dental_vital`

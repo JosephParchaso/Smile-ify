@@ -5,6 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const transactionModal = document.getElementById("transactionModal");
     const transactionBody = document.getElementById("transactionModalBody");
 
+    if (!appointmentModal && !transactionModal) return;
+
     document.body.addEventListener("click", function (e) {
         if (e.target.classList.contains("btn-action")) {
             const id = e.target.getAttribute("data-id");
@@ -63,15 +65,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
                                 <div class="transaction-section">
                                     <h3>Vitals</h3>
-                                    <p><strong>Swelling:</strong> <span>${data.is_swelling}</span></p>
-                                    <p><strong>Sensitivity:</strong> <span>${data.is_sensitive}</span></p>
-                                    <p><strong>Bleeding:</strong> <span>${data.is_bleeding}</span></p>
                                     <p><strong>Body Temp:</strong> <span>${data.body_temp ?? '-'}</span></p>
                                     <p><strong>Pulse Rate:</strong> <span>${data.pulse_rate ?? '-'}</span></p>
                                     <p><strong>Respiratory Rate:</strong> <span>${data.respiratory_rate ?? '-'}</span></p>
                                     <p><strong>Blood Pressure:</strong> <span>${data.blood_pressure ?? '-'}</span></p>
                                     <p><strong>Height:</strong> <span>${data.height ?? '-'}</span></p>
                                     <p><strong>Weight:</strong> <span>${data.weight ?? '-'}</span></p>
+                                    <p><strong>Swelling:</strong> <span>${data.is_swelling}</span></p>
+                                    <p><strong>Sensitivity:</strong> <span>${data.is_sensitive}</span></p>
+                                    <p><strong>Bleeding:</strong> <span>${data.is_bleeding}</span></p>
                                 </div>
 
                                 <div class="transaction-section">

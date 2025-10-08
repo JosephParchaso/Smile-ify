@@ -160,13 +160,15 @@ Minimum of 5 minutes for OTP time remaining expiration time 💖
 
 home/index reports = achas
 
-announcements and tips = rix
-
 one add vitals and transaction only 🫥
+add admin or prepared by admin 🫥
 apply promo transact 🥶
 supplies with transact / add and link the service materials per transaction🥶
 receipt 🥶
 cancel appointment and complete appointment / to save transaction and status completed notify user 🥶
+
+release again the prescription
+add update dentist - modify load services based on branch selected
 
 Owner - OTP Every Login 🥶
 Admin - OTP Every Login 🥶

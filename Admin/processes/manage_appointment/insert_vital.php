@@ -10,26 +10,37 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $appointment_id   = intval($_POST['appointment_transaction_id'] ?? 0);
-    $body_temp        = $_POST['body_temp'] ?? null;
-    $pulse_rate       = $_POST['pulse_rate'] ?? null;
-    $respiratory_rate = $_POST['respiratory_rate'] ?? null;
-    $blood_pressure   = $_POST['blood_pressure'] ?? null;
-    $height           = $_POST['height'] ?? null;
-    $weight           = $_POST['weight'] ?? null;
-
-    if (!$appointment_id || !$body_temp || !$pulse_rate || !$respiratory_rate || !$blood_pressure || !$height || !$weight) {
-        $_SESSION['updateError'] = "Missing required vital fields.";
-        header("Location: " . BASE_URL . "/Admin/pages/manage_appointment.php?id=" . $appointment_id . "&backTab=recent&tab=vitals");
-        exit();
-    }
+    $body_temp        = floatval($_POST['body_temp'] ?? 0);
+    $pulse_rate       = intval($_POST['pulse_rate'] ?? 0);
+    $respiratory_rate = intval($_POST['respiratory_rate'] ?? 0);
+    $blood_pressure   = trim($_POST['blood_pressure'] ?? '');
+    $height           = floatval($_POST['height'] ?? 0);
+    $weight           = floatval($_POST['weight'] ?? 0);
+    $is_swelling  = ($_POST['is_swelling'] ?? 'No') === 'Yes' ? 'Yes' : 'No';
+    $is_bleeding  = ($_POST['is_bleeding'] ?? 'No') === 'Yes' ? 'Yes' : 'No';
+    $is_sensitive = ($_POST['is_sensitive'] ?? 'No') === 'Yes' ? 'Yes' : 'No';
 
     try {
         $stmt = $conn->prepare("
             INSERT INTO dental_vital 
-            (appointment_transaction_id, body_temp, pulse_rate, respiratory_rate, blood_pressure, height, weight, date_created)
-            VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
+            (appointment_transaction_id, body_temp, pulse_rate, respiratory_rate, blood_pressure, height, weight, is_swelling, is_bleeding, is_sensitive, date_created)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
         ");
-        $stmt->bind_param("idiisdd", $appointment_id, $body_temp, $pulse_rate, $respiratory_rate, $blood_pressure, $height, $weight);
+
+        $stmt->bind_param(
+            "idiisddsss",
+            $appointment_id,
+            $body_temp,
+            $pulse_rate,
+            $respiratory_rate,
+            $blood_pressure,
+            $height,
+            $weight,
+            $is_swelling,
+            $is_bleeding,
+            $is_sensitive
+        );
+
         $stmt->execute();
         $stmt->close();
 
@@ -42,3 +53,4 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     header("Location: " . BASE_URL . "/Admin/pages/manage_appointment.php?id=" . $appointment_id . "&backTab=recent&tab=vitals");
     exit();
 }
+?>

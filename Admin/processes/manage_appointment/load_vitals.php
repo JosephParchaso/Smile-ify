@@ -19,11 +19,7 @@ $sql = "SELECT
             v.vitals_id,
             v.body_temp,
             v.pulse_rate,
-            v.respiratory_rate,
-            v.blood_pressure,
-            v.height,
-            v.weight,
-            v.date_created
+            v.blood_pressure
         FROM dental_vital v
         WHERE v.appointment_transaction_id = ?";
         
@@ -39,8 +35,7 @@ while ($row = $result->fetch_assoc()) {
         $row['body_temp'],
         $row['pulse_rate'],
         $row['blood_pressure'],
-        '<button class="btn-action" data-type="vital" data-id="'.$row['vitals_id'].'">Manage</button>',
-        $row['date_created']
+        '<button class="btn-action" data-type="vital" data-id="'.$row['vitals_id'].'">Manage</button>'
     ];
 }
 

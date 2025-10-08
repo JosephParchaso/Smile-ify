@@ -1,5 +1,4 @@
 <?php
-
 require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
 
@@ -17,14 +16,17 @@ if (isset($_POST['appointmentBranch'])) {
     $stmt->execute();
     $result = $stmt->get_result();
 
-    echo '<option value="" disabled selected hidden></option>';
-
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            echo "<option value='" . $row['service_id'] . "'>" . htmlspecialchars($row['name']) . "</option>";
+            echo "
+            <div class='checkbox-item'>
+                <input type='checkbox' id='service_" . $row['service_id'] . "' 
+                    name='appointmentServices[]' value='" . $row['service_id'] . "' required>
+                <label for='service_" . $row['service_id'] . "'>" . htmlspecialchars($row['name']) . "</label>
+            </div>";
         }
     } else {
-        echo '<option disabled>No services available for this branch</option>';
+        echo '<p class="error-msg">No services available for this branch</p>';
     }
 
     $stmt->close();

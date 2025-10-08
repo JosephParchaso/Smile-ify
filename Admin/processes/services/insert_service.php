@@ -12,25 +12,26 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit;
     }
 
-    $name   = trim($_POST["serviceName"]);
-    $price  = floatval($_POST["price"]);
-    $status = trim($_POST["status"]);
+    $name     = trim($_POST["serviceName"]);
+    $price    = floatval($_POST["price"]);
+    $status   = trim($_POST["status"]);
+    $duration = intval($_POST["duration_minutes"]);
 
     try {
-        $sql = "INSERT INTO service (name, price) VALUES (?, ?)";
+        $sql = "INSERT INTO service (name, price, duration_minutes) VALUES (?, ?, ?)";
         $stmt = $conn->prepare($sql);
         if (!$stmt) {
             throw new Exception("Prepare failed: " . $conn->error);
         }
-        $stmt->bind_param("sd", $name, $price);
+        $stmt->bind_param("sdi", $name, $price, $duration);
 
         if ($stmt->execute()) {
             $service_id = $stmt->insert_id;
             $stmt->close();
 
             $sql2 = "INSERT INTO branch_service 
-                            (branch_id, service_id, status, date_created, date_updated) 
-                        VALUES (?, ?, ?, NOW(), NOW())";
+                    (branch_id, service_id, status, date_created, date_updated) 
+                    VALUES (?, ?, ?, NOW(), NOW())";
             $stmt2 = $conn->prepare($sql2);
             if (!$stmt2) {
                 throw new Exception("Prepare failed: " . $conn->error);

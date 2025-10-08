@@ -16,9 +16,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $name       = trim($_POST["serviceName"]);
     $price      = floatval($_POST["price"]);
     $status     = trim($_POST["status"]);
+    $duration   = intval($_POST["duration_minutes"]);
 
     try {
-        $checkSql = "SELECT s.name, s.price, bs.status
+        $checkSql = "SELECT s.name, s.price, s.duration_minutes, bs.status
                         FROM service s
                         JOIN branch_service bs ON s.service_id = bs.service_id
                         WHERE s.service_id = ? AND bs.branch_id = ?";
@@ -37,19 +38,25 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if (
             $current['name'] === $name &&
             floatval($current['price']) === $price &&
+            intval($current['duration_minutes']) === $duration &&
             $current['status'] === $status
         ) {
             $_SESSION['updateInfo'] = "No changes were made.";
         } else {
-            if ($current['name'] !== $name || floatval($current['price']) !== $price) {
+            if (
+                $current['name'] !== $name ||
+                floatval($current['price']) !== $price ||
+                intval($current['duration_minutes']) !== $duration
+            ) {
                 $sql = "UPDATE service 
-                        SET name = ?, price = ?
+                        SET name = ?, price = ?, duration_minutes = ?
                         WHERE service_id = ?";
                 $stmt = $conn->prepare($sql);
-                $stmt->bind_param("sdi", $name, $price, $service_id);
+                $stmt->bind_param("sdii", $name, $price, $duration, $service_id);
                 $stmt->execute();
                 $stmt->close();
             }
+
             $sql2 = "UPDATE branch_service 
                     SET status = ?, date_updated = NOW()
                     WHERE branch_id = ? AND service_id = ?";

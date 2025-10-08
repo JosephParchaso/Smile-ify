@@ -35,6 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <p><strong>Notes:</strong> <span>${data.notes || '-'}</span></p>
                 <p><strong>Date Booked:</strong> <span>${data.date_created}</span></p>
                 <div class="button-group button-group-profile">
+                    <button class="confirm-btn" id="downloadReceipt">Download Receipt</button>
                     <button class="confirm-btn" id="markDone">Complete Appointment</button>
                     <button class="cancel-btn-appointment" id="markCancel">Cancel Appointment</button>
                 </div>

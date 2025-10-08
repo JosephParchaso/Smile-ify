@@ -39,9 +39,6 @@ $sql = "SELECT
         dt.dental_transaction_id,
         dt.notes,
         dt.amount_paid,
-        dt.is_swelling,
-        dt.is_sensitive,
-        dt.is_bleeding,
         dt.date_created,
         dt.prescription_downloaded,
 
@@ -50,7 +47,10 @@ $sql = "SELECT
         dv.respiratory_rate,
         dv.blood_pressure,
         dv.height,
-        dv.weight
+        dv.weight,
+        dv.is_swelling,
+        dv.is_sensitive,
+        dv.is_bleeding
     FROM dental_transaction dt
     INNER JOIN appointment_transaction a 
         ON dt.appointment_transaction_id = a.appointment_transaction_id
