@@ -5,6 +5,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'patient') {
+    http_response_code(401);
     echo json_encode(["error" => "Unauthorized"]);
     exit();
 }
@@ -17,9 +18,10 @@ if (!isset($_GET['id'])) {
 $transactionId = intval($_GET['id']);
 $userId = $_SESSION['user_id'];
 
-$sql = "SELECT 
+$sql = "
+    SELECT 
         b.name AS branch,
-        s.name AS service,
+        GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR '\n') AS services,
         CONCAT('Dr. ', d.last_name, ', ', d.first_name, ' ', IFNULL(d.middle_name, '')) AS dentist,
         d.last_name AS dentist_last_name,
         d.first_name AS dentist_first_name,
@@ -56,8 +58,10 @@ $sql = "SELECT
         ON dt.appointment_transaction_id = a.appointment_transaction_id
     LEFT JOIN branch b 
         ON a.branch_id = b.branch_id
+    LEFT JOIN appointment_services aps 
+        ON a.appointment_transaction_id = aps.appointment_transaction_id
     LEFT JOIN service s 
-        ON a.service_id = s.service_id
+        ON aps.service_id = s.service_id
     LEFT JOIN dentist d 
         ON d.dentist_id = COALESCE(dt.dentist_id, a.dentist_id)
     LEFT JOIN dental_vital dv
@@ -65,7 +69,9 @@ $sql = "SELECT
     LEFT JOIN users u 
         ON a.user_id = u.user_id
     WHERE dt.dental_transaction_id = ? 
-    AND a.user_id = ?";
+    AND a.user_id = ?
+    GROUP BY dt.dental_transaction_id
+";
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("ii", $transactionId, $userId);
@@ -73,6 +79,9 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 if ($row = $result->fetch_assoc()) {
+    
+    $row['services'] = $row['services'] ?: '-';
+
     $appointmentTransactionId = $row['appointment_transaction_id'];
 
     $prescriptionsSql = "SELECT drug, frequency, dosage, duration, quantity, instructions 
@@ -87,6 +96,7 @@ if ($row = $result->fetch_assoc()) {
     while ($p = $prescriptionsResult->fetch_assoc()) {
         $prescriptions[] = $p;
     }
+
     $row['dental_transaction_id'] = $transactionId;
     $row['prescriptions'] = $prescriptions;
 
@@ -96,3 +106,4 @@ if ($row = $result->fetch_assoc()) {
 }
 
 $conn->close();
+?>

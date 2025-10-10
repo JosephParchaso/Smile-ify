@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const selectedDate = new Date(dateInput.value);
                 const day = selectedDate.getUTCDay();
 
-                if (day === 0) { // Sunday
+                if (day === 0) {
                     errorEl.style.display = "block";
                     dateInput.value = "";
                 } else {

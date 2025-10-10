@@ -59,7 +59,7 @@
         <p>Dentists offer guidance on maintaining proper oral hygiene, dietary choices, and lifestyle habits that impact oral health.</p>
         </ol>
 
-    <p>It's important to emphasize that dental care encompasses not only the management of issues as they arise but also the implementation of preventive measures to sustain optimal oral health...</p>
+    <p>It's important to emphasize that dental care encompasses not only the management of issues as they arise but also the implementation of preventive measures to sustain optimal oral health</p>
     </section>
 </main>
 

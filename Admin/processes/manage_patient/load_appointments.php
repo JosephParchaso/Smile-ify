@@ -15,21 +15,25 @@ if (!$patientID || !is_numeric($patientID)) {
     exit();
 }
 
-$sql = "SELECT 
-            a.appointment_transaction_id,
-            b.name AS branch,
-            s.name AS service,
-            CONCAT('Dr. ', d.last_name, ', ', d.first_name, ' ', IFNULL(d.middle_name, '')) AS dentist,
-            a.appointment_date,
-            a.appointment_time,
-            a.status,
-            a.date_created
-        FROM appointment_transaction a
-        LEFT JOIN branch b ON a.branch_id = b.branch_id
-        LEFT JOIN service s ON a.service_id = s.service_id
-        LEFT JOIN dentist d ON a.dentist_id = d.dentist_id
-        WHERE a.user_id = ?
-            AND a.status <> 'Completed'";
+$sql = "
+    SELECT 
+        a.appointment_transaction_id,
+        b.name AS branch,
+        GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', ') AS services,
+        CONCAT('Dr. ', d.last_name, ', ', d.first_name, ' ', IFNULL(d.middle_name, '')) AS dentist,
+        a.appointment_date,
+        a.appointment_time,
+        a.status,
+        a.date_created
+    FROM appointment_transaction a
+    LEFT JOIN branch b ON a.branch_id = b.branch_id
+    LEFT JOIN appointment_services aps ON a.appointment_transaction_id = aps.appointment_transaction_id
+    LEFT JOIN service s ON aps.service_id = s.service_id
+    LEFT JOIN dentist d ON a.dentist_id = d.dentist_id
+    WHERE a.user_id = ?
+        AND a.status <> 'Completed'
+    GROUP BY a.appointment_transaction_id
+";
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $patientID);
@@ -41,15 +45,16 @@ while ($row = $result->fetch_assoc()) {
     $appointments[] = [
         $row['appointment_transaction_id'] ?: '-',
         $row['dentist'] ?: 'Available Dentist',
-        $row['service'] ?: '-',
+        $row['services'] ?: '-',
         $row['appointment_date'],
-        substr($row['appointment_time'], 0, 5),
+        $row['appointment_time'] ? date("g:i A", strtotime($row['appointment_time'])) : '-',
         $row['status'],
-        '<button class="btn-action" data-type="appointment" data-id="'.$row['appointment_transaction_id'].'">Manage</button>',
-        $row['date_created']
+        '<button class="btn-action" data-type="appointment" data-id="' . $row['appointment_transaction_id'] . '">Manage</button>',
+        $row['date_created'] ? date("F j, Y", strtotime($row['date_created'])) : '-'
     ];
 }
 
 header('Content-Type: application/json');
 echo json_encode(["data" => $appointments]);
 $conn->close();
+?>

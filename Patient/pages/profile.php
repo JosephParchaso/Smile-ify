@@ -20,7 +20,7 @@ $updateError = $_SESSION['updateError'] ?? "";
 <div class="profile-container">
     <div class="profile-section">
         <div class="profile-card" id="profileCard">
-            <p>Loading profile...</p>
+            <p>Loading profile</p>
         </div>
     
         <?php if (!empty($updateSuccess) || !empty($updateError)): ?>

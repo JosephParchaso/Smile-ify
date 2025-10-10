@@ -30,7 +30,7 @@ $sql = "
         a.appointment_date,
         a.appointment_time,
 
-        s.name AS service,
+        GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR '\n') AS services,
         b.name AS branch,
         CONCAT('Dr. ', d.last_name, ', ', d.first_name, ' ', IFNULL(d.middle_name, '')) AS dentist,
 
@@ -56,8 +56,10 @@ $sql = "
     FROM dental_transaction dt
     INNER JOIN appointment_transaction a 
         ON dt.appointment_transaction_id = a.appointment_transaction_id
+    LEFT JOIN appointment_services aps 
+        ON a.appointment_transaction_id = aps.appointment_transaction_id
     LEFT JOIN service s 
-        ON a.service_id = s.service_id
+        ON aps.service_id = s.service_id
     LEFT JOIN branch b 
         ON a.branch_id = b.branch_id
     LEFT JOIN dentist d 
@@ -67,6 +69,7 @@ $sql = "
     LEFT JOIN users u
         ON a.user_id = u.user_id
     WHERE dt.dental_transaction_id = ?
+    GROUP BY dt.dental_transaction_id
 ";
 
 $stmt = $conn->prepare($sql);

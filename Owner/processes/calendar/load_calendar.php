@@ -15,23 +15,27 @@ function stringToColorCode($str) {
     return '#' . substr($code, 0, 6);
 }
 
-$sql = "SELECT DISTINCT
-            a.appointment_transaction_id,
-            CONCAT(u.first_name, ' ', u.last_name) AS patient,
-            b.name AS branch,
-            s.name AS service,
-            CONCAT(d.last_name, ', ', d.first_name) AS dentist,
-            a.appointment_date,
-            a.appointment_time,
-            a.notes,
-            a.date_created,
-            a.status
-        FROM appointment_transaction a
-        LEFT JOIN branch b ON a.branch_id = b.branch_id
-        LEFT JOIN service s ON a.service_id = s.service_id
-        LEFT JOIN dentist d ON a.dentist_id = d.dentist_id
-        LEFT JOIN users u ON a.user_id = u.user_id
-        ORDER BY a.appointment_date, a.appointment_time";
+$sql = "
+    SELECT 
+        a.appointment_transaction_id,
+        CONCAT(u.first_name, ' ', u.last_name) AS patient,
+        b.name AS branch,
+        GROUP_CONCAT(s.name ORDER BY s.name SEPARATOR ', ') AS services,
+        CONCAT(d.last_name, ', ', d.first_name) AS dentist,
+        a.appointment_date,
+        a.appointment_time,
+        a.notes,
+        a.date_created,
+        a.status
+    FROM appointment_transaction a
+    LEFT JOIN branch b ON a.branch_id = b.branch_id
+    LEFT JOIN dentist d ON a.dentist_id = d.dentist_id
+    LEFT JOIN users u ON a.user_id = u.user_id
+    LEFT JOIN appointment_services aps ON a.appointment_transaction_id = aps.appointment_transaction_id
+    LEFT JOIN service s ON aps.service_id = s.service_id
+    GROUP BY a.appointment_transaction_id
+    ORDER BY a.appointment_date, a.appointment_time
+";
 
 $result = $conn->query($sql);
 
@@ -45,14 +49,15 @@ while ($row = $result->fetch_assoc()) {
     }
 
     $branchColor = stringToColorCode($row['branch']);
+    $serviceList = $row['services'] ?? '-';
 
     $events[] = [
         'id' => $row['appointment_transaction_id'],
         'patient' => $row['patient'],
-        'title' => $row['service'],
+        'title' => $serviceList,
         'start' => $row['appointment_date'] . 'T' . $row['appointment_time'],
         'branch' => $row['branch'],
-        'service' => $row['service'],
+        'services' => $serviceList,
         'dentist' => $row['dentist'],
         'notes' => $row['notes'],
         'status' => $row['status'],
@@ -65,3 +70,4 @@ while ($row = $result->fetch_assoc()) {
 header('Content-Type: application/json');
 echo json_encode($events);
 $conn->close();
+?>

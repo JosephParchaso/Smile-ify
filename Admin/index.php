@@ -41,7 +41,6 @@ $totalAppointmentsMonth = 42;
 
 <div class="dashboard">
     <div class="cards">
-
         <div class="card">
             <h2><span class="material-symbols-outlined">calendar_month</span> Upcoming Appointments</h2>
             <div class="appointment">Today: <span id="todayCount">0</span></div>
@@ -116,12 +115,8 @@ $totalAppointmentsMonth = 42;
                     </div>
 
                     <div class="form-group">
-                        <div id="services-container">
-                            <select id="appointmentService" class="form-control" name="appointmentService" required>
-                                <option value="" disabled selected hidden></option>
-                                <!-- Options will be populated here via AJAX -->
-                            </select>
-                        <label for="appointmentService" class="form-label">Service <span class="required">*</span></label>
+                        <div id="servicesContainer" class="checkbox-group">
+                            <p class="loading-text">Select a branch to load available services</p>
                         </div>
                     </div>
 
@@ -141,24 +136,14 @@ $totalAppointmentsMonth = 42;
                     </div>
 
                     <div class="form-group">
-                        <select id="appointmentTime" name="appointmentTime" class="form-control" required>
-                            <option value="" disabled selected hidden></option>
-                            <option value="09:00">9:00 AM</option>
-                            <option value="09:45">9:45 AM</option>
-                            <option value="10:30">10:30 AM</option>
-                            <option value="11:15">11:15 AM</option>
-                            <option value="12:00">12:00 PM</option>
-                            <option value="12:45">12:45 PM</option>
-                            <option value="13:30">1:30 PM</option>
-                            <option value="14:15">2:15 PM</option>
-                            <option value="15:00">3:00 PM</option>
-                        </select>
+                        <select id="appointmentTime" name="appointmentTime" class="form-control" required></select>
                         <label for="appointmentTime" class="form-label">Time <span class="required">*</span></label>
+                        <div id="estimatedEnd" class="text-gray-600 mt-2"></div>
                     </div>
 
                     <div class="form-group">
                         <textarea id="notes" name="notes" class="form-control" rows="3" placeholder=" "autocomplete="off"></textarea>
-                        <label for="notes" class="form-label">Add a note...</label>
+                        <label for="notes" class="form-label">Add a note</label>
                     </div>
 
                     <div class="button-group">
@@ -186,7 +171,7 @@ $totalAppointmentsMonth = 42;
         <div class="card">
             <h2><span class="material-symbols-outlined">inventory_2</span> Supplies</h2>
             <div id="lowSuppliesContainer">
-                <div class="announcement">Loading...</div>
+                <div class="announcement">Loading</div>
             </div>
             <a href="<?= BASE_URL ?>/Admin/pages/supplies.php" class="card-link">Manage Supplies</a>
         </div>

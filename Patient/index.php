@@ -46,21 +46,21 @@ require_once BASE_PATH . '/Patient/includes/navbar.php';
             <div class="card">
                 <h2><span class="material-symbols-outlined">calendar_month</span> Upcoming Appointments</h2>
                 <div id="patientUpcomingAppointments">
-                    <div class="appointment">Loading...</div>
+                    <div class="appointment">Loading</div>
                 </div>
             </div>
 
             <div class="card">
                 <h2><span class="material-symbols-outlined">campaign</span> Announcements</h2>
                 <div id="patientAnnouncements">
-                    <div class="announcement">Loading ...</div>
+                    <div class="announcement">Loading</div>
                 </div>
             </div>
 
             <div class="card">
                 <h2><span class="material-symbols-outlined">dentistry</span> Dental Care Tips</h2>
                 <div id="patientTips">
-                    <div class="tip">Loading...</div>
+                    <div class="tip">Loading</div>
                 </div>
             </div>
 
@@ -102,15 +102,11 @@ require_once BASE_PATH . '/Patient/includes/navbar.php';
                     <label for="appointmentBranch" class="form-label">Branch <span class="required">*</span></label>
                 </div>
 
-            <div class="form-group">
-                <div id="services-container">
-                    <select id="appointmentService" class="form-control" name="appointmentService[]" multiple required>
-                        <!-- Options will be populated via AJAX -->
-                    </select>
-                    <label for="appointmentService" class="form-label">Services <span class="required">*</span></label>
-                    <small class="form-hint">Hold <b>Ctrl</b> (Windows) or <b>Cmd</b> (Mac) to select multiple</small>
+                <div class="form-group">
+                    <div id="servicesContainer" class="checkbox-group">
+                        <p class="loading-text">Select a branch to load available services</p>
+                    </div>
                 </div>
-            </div>
 
                 <div class="form-group">
                     <select id="appointmentDentist" class="form-control" name="appointmentDentist" required>
@@ -128,24 +124,14 @@ require_once BASE_PATH . '/Patient/includes/navbar.php';
                 </div>
 
                 <div class="form-group">
-                    <select id="appointmentTime" class="form-control" name="appointmentTime" required>
-                        <option value="" disabled selected hidden></option>
-                        <option value="09:00">9:00 AM</option>
-                        <option value="09:45">9:45 AM</option>
-                        <option value="10:30">10:30 AM</option>
-                        <option value="11:15">11:15 AM</option>
-                        <option value="12:00">12:00 PM</option>
-                        <option value="12:45">12:45 PM</option>
-                        <option value="13:30">1:30 PM</option>
-                        <option value="14:15">2:15 PM</option>
-                        <option value="15:00">3:00 PM</option>
-                    </select>
+                    <select id="appointmentTime" name="appointmentTime" class="form-control" required></select>
                     <label for="appointmentTime" class="form-label">Time <span class="required">*</span></label>
+                    <div id="estimatedEnd" class="text-gray-600 mt-2"></div>
                 </div>
 
                 <div class="form-group">
                     <textarea id="notes" class="form-control" name="notes" rows="3" placeholder=" "autocomplete="off"></textarea>
-                    <label for="notes" class="form-label">Add a note...</label>
+                    <label for="notes" class="form-label">Add a note</label>
                 </div>
 
                 <div class="button-group">

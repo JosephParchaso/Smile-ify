@@ -36,15 +36,27 @@ document.addEventListener('DOMContentLoaded', function() {
             const modalBody = document.getElementById('modalBody');
             modalBody.innerHTML = `
                 <h2>Appointment Details</h2>
-                <p><strong>Patient:</strong> ${appointment.patient}</p>
-                <p><strong>Dentist:</strong> ${appointment.dentist ? "Dr. " + appointment.dentist : "Available Dentist"}</p>
-                <p><strong>Branch:</strong> ${appointment.branch}</p>
-                <p><strong>Service:</strong> ${appointment.service}</p>
-                <p><strong>Date:</strong> ${info.event.start.toLocaleDateString()}</p>
-                <p><strong>Time:</strong> ${info.event.start.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</p>
-                <p><strong>Notes:</strong> ${appointment.notes ?? '-'}</p>
-                <p><strong>Status:</strong> ${appointment.status}</p>
-                <p><strong>Date Booked:</strong> ${appointment.date_created}</p>
+                <p><strong>Patient:</strong><span>${appointment.patient}</span></p>
+                <p><strong>Dentist:</strong><span>${appointment.dentist ? "Dr. " + appointment.dentist : "Available Dentist"}</span></p>
+                <p><strong>Branch:</strong><span>${appointment.branch}</span></p>
+                <p><strong>Service:</strong><span>${appointment.services}</span></p>
+                <p><strong>Date:</strong><span>${
+                    info.event.start
+                        ? info.event.start.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+                        : '-'
+                }</span></p>
+                <p><strong>Time:</strong><span>${
+                    info.event.start
+                        ? info.event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })
+                        : '-'
+                }</span></p>
+                <p><strong>Notes:</strong><span>${appointment.notes || '-'}</span></p>
+                <p><strong>Status:</strong><span>${appointment.status}</span></p>
+                <p><strong>Date Booked:</strong><span>${
+                    appointment.date_created
+                        ? new Date(appointment.date_created).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+                        : '-'
+                }</span></p>
             `;
             document.getElementById('appointmentModalDetails').style.display = "block";
         }

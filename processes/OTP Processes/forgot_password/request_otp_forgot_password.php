@@ -48,10 +48,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $mail->SMTPAuth = true;
     $mail->SMTPSecure = 'tls';
 
-    $mail->Username = 'smileify.clinic@gmail.com';
-    $mail->Password = 'ynecojolefyxdosu';
+    $mail->Username = 'smileify.web@gmail.com';
+    $mail->Password = 'cwupkqcucoufyxnf';
 
-    $mail->setFrom('smileify.clinic@gmail.com', 'Smile-ify OTP Verification');
+    $mail->setFrom('smileify.web@gmail.com', 'Smile-ify OTP Verification');
     $mail->addAddress($email);
 
     $mail->isHTML(true);

@@ -6,8 +6,8 @@ require_once BASE_PATH . '/includes/db.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
-// Auth check
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    http_response_code(401);
     echo json_encode(["error" => "Unauthorized"]);
     exit();
 }

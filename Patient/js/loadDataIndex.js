@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 const container = document.getElementById("patientTips");
                 if (!container) return;
 
-                container.innerHTML = ""; // clear old
+                container.innerHTML = "";
 
                 if (data.error) {
                     container.innerHTML = `<div class="tip">${data.error}</div>`;

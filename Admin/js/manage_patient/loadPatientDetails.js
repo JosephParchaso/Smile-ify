@@ -22,14 +22,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
             patientCard.innerHTML = `
                 <h3>${data.full_name}</h3>
-                <p><strong>Status:</strong> <span>${data.status}</span></p>
-                <p><strong>Gender:</strong> <span>${data.gender}</span></p>
-                <p><strong>Date of Birth:</strong> <span>${data.date_of_birth}</span></p>
-                <p><strong>Email:</strong> <span>${data.email}</span></p>
-                <p><strong>Contact Number:</strong> <span>${data.contact_number}</span></p>
-                <p><strong>Address:</strong> <span>${data.address}</span></p>
-                <p><strong>Registered:</strong> <span>${data.joined}</span></p>
-                <p><strong>Last Update:</strong> <span>${data.date_updated}</span></p>
+                <p><strong>Gender:</strong><span>${data.gender}</p></span> 
+                <p><strong>Date of Birth:</strong><span>${data.date_of_birth}</p></span> 
+                <p><strong>Email:</strong><span>${data.email}</p></span> 
+                <p><strong>Contact Number:</strong><span>${data.contact_number}</p></span> 
+                <p><strong>Address:</strong><span>${data.address}</p></span> 
+                <p><strong>Registered:</strong><span>${data.joined}</p></span>
+                <p><strong>Last Update:</strong><span>${data.date_updated}</span></p>
+                <p><strong>Status:</strong><span>${data.status}</span></p>
                 <div class="button-group button-group-profile">
                     ${buttonsHtml}
                 </div>

@@ -17,32 +17,36 @@ if (!$appointmentId) {
     exit();
 }
 
-$sql = "SELECT 
-            u.first_name, 
-            u.middle_name, 
-            u.last_name, 
-            u.gender, 
-            u.date_of_birth, 
-            u.email, 
-            u.contact_number, 
-            u.address,
-            u.date_created AS user_created,
-            u.date_updated,
-            a.appointment_date,
-            a.appointment_time,
-            a.status,
-            a.notes,
-            a.date_created,
-            b.name AS branch_name,
-            s.name AS service_name,
-            d.first_name AS dentist_first,
-            d.last_name AS dentist_last
-        FROM appointment_transaction a
-        INNER JOIN users u ON a.user_id = u.user_id
-        INNER JOIN branch b ON a.branch_id = b.branch_id
-        INNER JOIN service s ON a.service_id = s.service_id
-        LEFT JOIN dentist d ON a.dentist_id = d.dentist_id
-        WHERE a.appointment_transaction_id = ?";
+$sql = "
+    SELECT 
+        u.first_name, 
+        u.middle_name, 
+        u.last_name, 
+        u.gender, 
+        u.date_of_birth, 
+        u.email, 
+        u.contact_number, 
+        u.address,
+        u.date_created AS user_created,
+        u.date_updated,
+        a.appointment_date,
+        a.appointment_time,
+        a.status,
+        a.notes,
+        a.date_created,
+        b.name AS branch_name,
+        GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', ') AS services,
+        d.first_name AS dentist_first,
+        d.last_name AS dentist_last
+    FROM appointment_transaction a
+    INNER JOIN users u ON a.user_id = u.user_id
+    INNER JOIN branch b ON a.branch_id = b.branch_id
+    LEFT JOIN appointment_services aps ON a.appointment_transaction_id = aps.appointment_transaction_id
+    LEFT JOIN service s ON aps.service_id = s.service_id
+    LEFT JOIN dentist d ON a.dentist_id = d.dentist_id
+    WHERE a.appointment_transaction_id = ?
+    GROUP BY a.appointment_transaction_id
+";
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $appointmentId);
@@ -53,25 +57,25 @@ if ($row = $result->fetch_assoc()) {
     $profile = [
         'full_name'       => trim($row['first_name'] . ' ' . ($row['middle_name'] ?? '') . ' ' . $row['last_name']),
         'gender'          => ucfirst($row['gender']),
-        'date_of_birth'   => $row['date_of_birth'],
+        'date_of_birth'   => $row['date_of_birth'] ? date("F j, Y", strtotime($row['date_of_birth'])) : '-',
         'email'           => $row['email'],
         'contact_number'  => $row['contact_number'],
-        'address'         => $row['address'],
-        'joined'          => date("F d, Y", strtotime($row['user_created'])),
-        "date_updated"    => $row['date_updated'] ? date("F d, Y", strtotime($row['date_updated'])) : "-",
+        'address'         => $row['address'] ?? '-',
+        'joined'          => $row['user_created'] ? date("F j, Y", strtotime($row['user_created'])) : '-',
+        'date_updated'    => $row['date_updated'] ? date("F j, Y", strtotime($row['date_updated'])) : '-',
 
-        'appointment_date' => $row['appointment_date'],
-        'appointment_time' => $row['appointment_time'],
+        'appointment_date' => $row['appointment_date'] ? date("F j, Y", strtotime($row['appointment_date'])) : '-',
+        'appointment_time' => $row['appointment_time'] ? date("g:i A", strtotime($row['appointment_time'])) : '-',
         'status'           => $row['status'],
         'notes'            => $row['notes'] ?? '-',
 
         'branch'          => $row['branch_name'],
-        'service'         => $row['service_name'],
+        'services'        => $row['services'] ?: '-',
         'dentist'         => $row['dentist_first']
-                            ? 'Dr. ' . trim($row['dentist_first'] . ' ' . $row['dentist_last'])
-                            : 'Not Assigned',
-        'date_created'         => $row['date_created'],
-        ];
+                                ? 'Dr. ' . trim($row['dentist_first'] . ' ' . $row['dentist_last'])
+                                : 'Not Assigned',
+        'date_created'    => $row['date_created'] ? date("F j, Y", strtotime($row['date_created'])) : '-',
+    ];
 
     header('Content-Type: application/json');
     echo json_encode($profile);
@@ -81,3 +85,4 @@ if ($row = $result->fetch_assoc()) {
 }
 
 $conn->close();
+?>

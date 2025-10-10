@@ -724,7 +724,7 @@ class SMTP
      * Send an SMTP HELO or EHLO command.
      * Used to identify the sending server to the receiving server.
      * This makes sure that client and server are in a known state.
-     * Implements RFC 821: HELO <SP> <domain> <CRLF>
+     * Implements RFC 821: HELO <SP><domain><CRLF>
      * and RFC 2821 EHLO.
      * @param string $host The host name or IP to connect to
      * @access public
@@ -805,7 +805,7 @@ class SMTP
      * $from. Returns true if successful or false otherwise. If True
      * the mail transaction is started and then one or more recipient
      * commands may be called followed by a data command.
-     * Implements rfc 821: MAIL <SP> FROM:<reverse-path> <CRLF>
+     * Implements rfc 821: MAIL <SP> FROM:<reverse-path><CRLF>
      * @param string $from Source address of this message
      * @access public
      * @return boolean
@@ -843,7 +843,7 @@ class SMTP
      * Send an SMTP RCPT command.
      * Sets the TO argument to $toaddr.
      * Returns true if the recipient was accepted false if it was rejected.
-     * Implements from rfc 821: RCPT <SP> TO:<forward-path> <CRLF>
+     * Implements from rfc 821: RCPT <SP> TO:<forward-path><CRLF>
      * @param string $address The address the message is being sent to
      * @access public
      * @return boolean
@@ -938,7 +938,7 @@ class SMTP
      * commands may be called followed by a data command. This command
      * will send the message to the users terminal if they are logged
      * in and send them an email.
-     * Implements rfc 821: SAML <SP> FROM:<reverse-path> <CRLF>
+     * Implements rfc 821: SAML <SP> FROM:<reverse-path><CRLF>
      * @param string $from The address the message is from
      * @access public
      * @return boolean

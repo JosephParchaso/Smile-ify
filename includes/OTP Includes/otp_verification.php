@@ -34,7 +34,7 @@ $maskedEmail = isset($verified_data['email']) ? maskEmail($verified_data['email'
     <div class="otp-verification-modal-content">
         <h2>OTP Verification</h2>
         <p>
-            We’ve sent a 6-digit code to your email to verify your password reset request:
+            We’ve sent a 6-digit code to your email to verify your appointment request:
             <strong><?= htmlspecialchars($maskedEmail) ?></strong>
         </p>
 

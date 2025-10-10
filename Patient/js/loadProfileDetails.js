@@ -22,8 +22,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 <p><strong>Email:</strong><span>${data.email}</p></span> 
                 <p><strong>Contact Number:</strong><span>${data.contact_number}</p></span> 
                 <p><strong>Address:</strong><span>${data.address}</p></span> 
-                <p><strong>Registered:</strong><span>${data.joined}</p> </span>
-                <p><strong>Last Update:</strong> <span>${data.date_updated}</span></p>
+                <p><strong>Registered:</strong><span>${data.joined}</p></span>
+                <p><strong>Last Update:</strong><span>${data.date_updated}</span></p>
                 <div class="button-group button-group-profile">
                     <button class="confirm-btn" id="editDetails">Edit Profile</button>
                     <button class="confirm-btn" id="changePasswordBtn">Change Password</button>

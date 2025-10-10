@@ -23,16 +23,18 @@ try {
             d.first_name AS dentist_first,
             d.last_name AS dentist_last,
             b.name AS branch_name,
-            s.name AS service_name
+            GROUP_CONCAT(s.name ORDER BY s.name SEPARATOR ', ') AS service_names
         FROM appointment_transaction a
         INNER JOIN dentist d ON a.dentist_id = d.dentist_id
         INNER JOIN branch b ON a.branch_id = b.branch_id
         INNER JOIN users u ON a.user_id = u.user_id
-        LEFT JOIN service s ON a.service_id = s.service_id
+        LEFT JOIN appointment_services aps ON a.appointment_transaction_id = aps.appointment_transaction_id
+        LEFT JOIN service s ON aps.service_id = s.service_id
         WHERE a.user_id = ?
             AND u.role = 'patient'
             AND a.appointment_date >= CURDATE()
             AND a.status NOT IN ('Cancelled', 'Completed')
+        GROUP BY a.appointment_transaction_id
         ORDER BY a.appointment_date ASC, a.appointment_time ASC
         LIMIT 3
     ";
@@ -48,7 +50,7 @@ try {
             'time' => date('g:i A', strtotime($row['appointment_time'])),
             'dentist' => 'Dr. ' . htmlspecialchars($row['dentist_last']),
             'branch' => htmlspecialchars($row['branch_name']),
-            'service' => htmlspecialchars($row['service_name'] ?? 'Not specified')
+            'services' => htmlspecialchars($row['service_names'] ?? 'Not specified')
         ];
     }
 

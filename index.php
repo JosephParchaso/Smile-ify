@@ -159,11 +159,11 @@ if (isset($_SESSION['timeoutError'])) {
                     <label for="appointmentBranch" class="form-label">Branch <span class="required">*</span></label>
                 </div>
 
-            <div class="form-group">
-                <div id="servicesContainer" class="checkbox-group">
-                    <p class="loading-text">Select a branch to load available services...</p>
+                <div class="form-group">
+                    <div id="servicesContainer" class="checkbox-group">
+                        <p class="loading-text">Select a branch to load available services</p>
+                    </div>
                 </div>
-            </div>
 
                 <div class="form-group">
                     <select id="appointmentDentist" name="appointmentDentist" class="form-control" required>
@@ -183,11 +183,12 @@ if (isset($_SESSION['timeoutError'])) {
                 <div class="form-group">
                     <select id="appointmentTime" name="appointmentTime" class="form-control" required></select>
                     <label for="appointmentTime" class="form-label">Time <span class="required">*</span></label>
+                    <div id="estimatedEnd" class="text-gray-600 mt-2"></div>
                 </div>
 
                 <div class="form-group">
                     <textarea id="notes" name="notes" class="form-control" rows="3" placeholder=" "autocomplete="off"></textarea>
-                    <label for="notes" class="form-label">Add a note...</label>
+                    <label for="notes" class="form-label">Add a note</label>
                 </div>
 
                 <div class="button-group">

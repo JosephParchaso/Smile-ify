@@ -10,34 +10,38 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 
 $branch_id = $_SESSION['branch_id'];
 
-$sql = "SELECT 
-            a.appointment_transaction_id,
-            CONCAT(u.first_name, ' ', u.last_name) AS patient,
-            b.name AS branch,
-            s.name AS service,
-            CONCAT(d.first_name, ' ', d.last_name) AS dentist,
-            a.appointment_date,
-            a.appointment_time,
-            a.date_created,
-            a.status
-        FROM appointment_transaction a
-        JOIN users u ON a.user_id = u.user_id
-        LEFT JOIN branch b ON a.branch_id = b.branch_id
-        LEFT JOIN service s ON a.service_id = s.service_id
-        LEFT JOIN users d ON a.dentist_id = d.user_id
-        WHERE a.branch_id = ?
-            AND u.role = 'patient'
-            AND a.appointment_date >= CURDATE()
-        ORDER BY 
-            CASE
-                WHEN TIMESTAMP(a.appointment_date, a.appointment_time) >= NOW() - INTERVAL 12 HOUR
-                    AND TIMESTAMP(a.appointment_date, a.appointment_time) < NOW() THEN 0
-                WHEN a.appointment_date = CURDATE() THEN 1
-                WHEN a.appointment_date = CURDATE() + INTERVAL 1 DAY THEN 2
-                ELSE 3
-            END,
-            a.appointment_date ASC,
-            a.appointment_time ASC";
+$sql = "
+    SELECT 
+        a.appointment_transaction_id,
+        CONCAT(u.first_name, ' ', u.last_name) AS patient,
+        b.name AS branch,
+        GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', ') AS services,
+        CONCAT(d.first_name, ' ', d.last_name) AS dentist,
+        a.appointment_date,
+        a.appointment_time,
+        a.date_created,
+        a.status
+    FROM appointment_transaction a
+    JOIN users u ON a.user_id = u.user_id
+    LEFT JOIN branch b ON a.branch_id = b.branch_id
+    LEFT JOIN appointment_services aps ON a.appointment_transaction_id = aps.appointment_transaction_id
+    LEFT JOIN service s ON aps.service_id = s.service_id
+    LEFT JOIN users d ON a.dentist_id = d.user_id
+    WHERE a.branch_id = ?
+        AND u.role = 'patient'
+        AND a.appointment_date >= CURDATE()
+    GROUP BY a.appointment_transaction_id
+    ORDER BY 
+        CASE
+            WHEN TIMESTAMP(a.appointment_date, a.appointment_time) >= NOW() - INTERVAL 12 HOUR
+                AND TIMESTAMP(a.appointment_date, a.appointment_time) < NOW() THEN 0
+            WHEN a.appointment_date = CURDATE() THEN 1
+            WHEN a.appointment_date = CURDATE() + INTERVAL 1 DAY THEN 2
+            ELSE 3
+        END,
+        a.appointment_date ASC,
+        a.appointment_time ASC
+";
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $branch_id);
@@ -50,7 +54,7 @@ while ($row = $result->fetch_assoc()) {
         $row['appointment_transaction_id'],
         $row['patient'],
         $row['appointment_date'],
-        $row['appointment_time'],
+        substr($row['appointment_time'], 0, 5),
         $row['status'],
         '<a href="' . BASE_URL . '/Admin/pages/manage_appointment.php?id=' . $row['appointment_transaction_id'] . '&backTab=recent&tab=dental_transactions" class="manage-action">Manage</a>'
     ];
@@ -59,3 +63,4 @@ while ($row = $result->fetch_assoc()) {
 header('Content-Type: application/json');
 echo json_encode(["data" => $bookings]);
 $conn->close();
+?>

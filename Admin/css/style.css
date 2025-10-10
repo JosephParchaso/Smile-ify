@@ -173,6 +173,7 @@
 #recentTable_filter input[type="search"],
 #inactiveTable_filter input[type="search"],
 #appointmentTable_filter input[type="search"], 
+#transactionTable_filter input[type="search"],
 #suppliesTable_filter input[type="search"],
 #servicesTable_filter input[type="search"],
 #promosTable_filter input[type="search"],
@@ -266,10 +267,10 @@
 
 .transaction-table th:nth-child(1), .transaction-table td:nth-child(1) { width: 5% !important; text-align: center;}
 .transaction-table th:nth-child(2), .transaction-table td:nth-child(2) { width: 20% !important; }
-.transaction-table th:nth-child(3), .transaction-table td:nth-child(3) { width: 15% !important; }
-.transaction-table th:nth-child(4), .transaction-table td:nth-child(4) { width: 10% !important; }
+.transaction-table th:nth-child(3), .transaction-table td:nth-child(3) { width: 20% !important; }
+.transaction-table th:nth-child(4), .transaction-table td:nth-child(4) { width: 5% !important; }
 .transaction-table th:nth-child(5), .transaction-table td:nth-child(5) { width: 5% !important; }
-.transaction-table th:nth-child(6), .transaction-table td:nth-child(6) { width: 10% !important; }
+.transaction-table th:nth-child(6), .transaction-table td:nth-child(6) { width: 5% !important; }
 .transaction-table th:nth-child(7), .transaction-table td:nth-child(7) { width: 10% !important; text-align: center;}
 
 @media (max-width: 900px) {

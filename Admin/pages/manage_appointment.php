@@ -40,7 +40,7 @@ $activeTab = in_array($_GET['tab'] ?? '', $validTabs) ? $_GET['tab'] : 'dental_t
         </div>
         
         <div class="profile-card" id="appointmentCard">
-            <p>Loading profile...</p>
+            <p>Loading profile</p>
         </div>
         
         <?php if (!empty($updateSuccess) || !empty($updateError)): ?>

@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const dentistSelect = document.getElementById("appointmentDentist");
     const dateSelect = document.getElementById("appointmentDate");
     const timeSelect = document.getElementById("appointmentTime");
+    const estimatedEndDisplay = document.getElementById("estimatedEnd");
 
     window.openBookingModal = function () {
         const modal = document.getElementById("bookingModal");
@@ -37,6 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
             opt.disabled = false;
             opt.style.color = "#000";
         });
+        if (estimatedEndDisplay) estimatedEndDisplay.textContent = "";
     }
 
     function resetDateAndTime() {
@@ -47,11 +49,11 @@ document.addEventListener("DOMContentLoaded", function () {
     function loadServices() {
         const branchId = branchSelect?.value;
         if (!branchId) {
-            servicesContainer.innerHTML = `<p class="loading-text">Select a branch to load available services...</p>`;
+            servicesContainer.innerHTML = `<p class="loading-text">Select a branch to load available services</p>`;
             return;
         }
 
-        servicesContainer.innerHTML = `<p class="loading-text">Loading services...</p>`;
+        servicesContainer.innerHTML = `<p class="loading-text">Loading services</p>`;
 
         fetch(`${BASE_URL}/processes/load_services.php`, {
             method: "POST",
@@ -86,7 +88,7 @@ document.addEventListener("DOMContentLoaded", function () {
         fd.append('appointmentBranch', branchId);
         checkedServices.forEach(s => fd.append('appointmentServices[]', s));
 
-        dentistSelect.innerHTML = `<option disabled>Loading available dentists...</option>`;
+        dentistSelect.innerHTML = `<option disabled>Loading available dentists</option>`;
 
         fetch(`${BASE_URL}/processes/load_dentists.php`, {
             method: "POST",
@@ -120,7 +122,7 @@ document.addEventListener("DOMContentLoaded", function () {
         fd.append("appointment_date", date);
         services.forEach(s => fd.append("services[]", s));
 
-        timeSelect.innerHTML = '<option disabled>Loading available times...</option>';
+        timeSelect.innerHTML = '<option disabled>Loading available times</option>';
 
         fetch(`${BASE_URL}/processes/load_available_times.php`, {
             method: "POST",
@@ -135,16 +137,37 @@ document.addEventListener("DOMContentLoaded", function () {
                     return;
                 }
 
-                if (Array.isArray(data) && data.length > 0) {
+                if (Array.isArray(data.times)) {
                     let options = '<option value="" disabled selected hidden></option>';
-                    data.forEach(time => {
+
+                    const allSlots = [];
+                    const start = new Date("2000-01-01T09:00:00");
+                    const end = new Date("2000-01-01T16:30:00");
+
+                    while (start < end) {
+                        const hh = String(start.getHours()).padStart(2, "0");
+                        const mm = String(start.getMinutes()).padStart(2, "0");
+                        allSlots.push(`${hh}:${mm}`);
+                        start.setMinutes(start.getMinutes() + 30);
+                    }
+
+                    allSlots.forEach(time => {
                         const [h, m] = time.split(":");
-                        const formatted = new Date(0, 0, 0, h, m).toLocaleTimeString([], {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        });
-                        options += `<option value="${time}">${formatted}</option>`;
+                        let hour = parseInt(h);
+                        const ampm = hour >= 12 ? "PM" : "AM";
+                        hour = hour % 12 || 12;
+                        const formatted = `${hour}:${m} ${ampm}`;
+
+                        const isAvailable = data.times.includes(time);
+                        const isBlocked = data.blocked.includes(time);
+
+                        if (!isAvailable || isBlocked) {
+                            options += `<option value="${time}" disabled style="color: gray;">${formatted}</option>`;
+                        } else {
+                            options += `<option value="${time}">${formatted}</option>`;
+                        }
                     });
+
                     timeSelect.innerHTML = options;
                 } else {
                     timeSelect.innerHTML = '<option disabled>No available times</option>';
@@ -154,6 +177,44 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error("Error loading available times:", err);
                 timeSelect.innerHTML = '<option disabled>Error loading times</option>';
             });
+    }
+
+    if (timeSelect) {
+        timeSelect.addEventListener("change", function () {
+            const selected = this.value;
+            if (!selected) return;
+
+            const selectedServices = Array.from(
+                document.querySelectorAll("#servicesContainer input[type='checkbox']:checked")
+            );
+
+            let totalDuration = 0;
+            selectedServices.forEach(cb => {
+                totalDuration += parseInt(cb.dataset.duration || 0);
+            });
+
+            const start = new Date(`2024-01-01T${selected}:00`);
+            start.setMinutes(start.getMinutes() + totalDuration);
+            
+            let endHours = start.getHours();
+            const endMinutes = String(start.getMinutes()).padStart(2, "0");
+            const ampm = endHours >= 12 ? "PM" : "AM";
+            endHours = endHours % 12 || 12;
+            const formattedEnd = `${endHours}:${endMinutes} ${ampm}`;
+
+            const hours = Math.floor(totalDuration / 60);
+            const minutes = totalDuration % 60;
+            let durationText = "";
+            if (hours > 0) {
+                durationText += `${hours} hour${hours > 1 ? "s" : ""}`;
+                if (minutes > 0) durationText += ` and ${minutes} min${minutes > 1 ? "s" : ""}`;
+            } else {
+                durationText = `${minutes} min${minutes > 1 ? "s" : ""}`;
+            }
+
+            if (estimatedEndDisplay)
+                estimatedEndDisplay.textContent = `Estimated End Time: ${formattedEnd} (${durationText} total)`;
+        });
     }
 
     if (branchSelect && servicesContainer && dentistSelect && dateSelect && timeSelect) {

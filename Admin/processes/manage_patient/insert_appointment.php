@@ -12,7 +12,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $user_id          = intval($_POST['user_id'] ?? 0);
     $branch_id        = intval($_POST['appointmentBranch'] ?? 0);
-    $service_id       = intval($_POST['appointmentService'] ?? 0);
+    $appointmentServices = $_POST['appointmentServices'] ?? [];
     $dentist_id       = !empty($_POST['appointmentDentist']) && $_POST['appointmentDentist'] !== 'none'
                         ? intval($_POST['appointmentDentist'])
                         : null;
@@ -20,25 +20,49 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $appointment_time = $_POST['appointmentTime'] ?? null;
     $notes            = trim($_POST['notes'] ?? '');
 
-    if (!$user_id || !$branch_id || !$service_id || !$appointment_date || !$appointment_time) {
+    if (!$user_id || !$branch_id || empty($appointmentServices) || !$appointment_date || !$appointment_time) {
         $_SESSION['updateError'] = "Missing required fields.";
         header("Location: " . BASE_URL . "/Admin/pages/patients.php");
         exit();
     }
 
     try {
-        $stmt = $conn->prepare("
+        $conn->begin_transaction();
+
+        $appointment_sql = "
             INSERT INTO appointment_transaction 
-            (user_id, branch_id, service_id, dentist_id, appointment_date, appointment_time, notes, status)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'Booked')
-        ");
-        $stmt->bind_param(
-            "iiiisss",
-            $user_id, $branch_id, $service_id, $dentist_id,
-            $appointment_date, $appointment_time, $notes
+            (user_id, branch_id, dentist_id, appointment_date, appointment_time, notes, status)
+            VALUES (?, ?, ?, ?, ?, ?, 'Booked')
+        ";
+        $appointment_stmt = $conn->prepare($appointment_sql);
+        $appointment_stmt->bind_param(
+            "iiisss",
+            $user_id,
+            $branch_id,
+            $dentist_id,
+            $appointment_date,
+            $appointment_time,
+            $notes
         );
-        $stmt->execute();
-        $stmt->close();
+
+        if (!$appointment_stmt->execute()) {
+            throw new Exception("Failed to insert appointment: " . $appointment_stmt->error);
+        }
+
+        $appointment_transaction_id = $appointment_stmt->insert_id;
+        $appointment_stmt->close();
+
+        if (!empty($appointmentServices) && is_array($appointmentServices)) {
+            $service_sql = "INSERT INTO appointment_services (appointment_transaction_id, service_id) VALUES (?, ?)";
+            $service_stmt = $conn->prepare($service_sql);
+
+            foreach ($appointmentServices as $service_id) {
+                $sid = intval($service_id);
+                $service_stmt->bind_param("ii", $appointment_transaction_id, $sid);
+                $service_stmt->execute();
+            }
+            $service_stmt->close();
+        }
 
         $update_user = $conn->prepare("UPDATE users SET status = 'Active', date_updated = NOW() WHERE user_id = ?");
         $update_user->bind_param("i", $user_id);
@@ -52,14 +76,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $notif_stmt->execute();
         $notif_stmt->close();
 
+        $conn->commit();
+
         $_SESSION['updateSuccess'] = "Appointment booked successfully!";
         header("Location: " . BASE_URL . "/Admin/pages/patients.php");
         exit();
 
     } catch (Exception $e) {
+        $conn->rollback();
         error_log("Error booking appointment: " . $e->getMessage());
         $_SESSION['updateError'] = "Failed to book appointment. Please try again.";
         header("Location: " . BASE_URL . "/Admin/pages/patients.php");
         exit();
     }
 }
+
+$conn->close();
+?>

@@ -58,7 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $email               = trim($_POST['email']);
     $contactNumber       = trim($_POST['contactNumber']);
     $appointmentBranch   = $_POST['appointmentBranch'];
-    $appointmentService  = $_POST['appointmentService'];
+    $appointmentServices = $_POST['appointmentServices'];
     $appointmentDentist  = $_POST['appointmentDentist'];
     $appointmentDate     = $_POST['appointmentDate'];
     $appointmentTime     = $_POST['appointmentTime'];
@@ -97,33 +97,82 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         $appointment_sql = "
             INSERT INTO appointment_transaction 
-            (user_id, branch_id, service_id, dentist_id, appointment_date, appointment_time, notes, status) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'Booked')
+            (user_id, branch_id, dentist_id, appointment_date, appointment_time, notes, status) 
+            VALUES (?, ?, ?, ?, ?, ?, 'Booked')
         ";
         $appointment_stmt = $conn->prepare($appointment_sql);
         $appointment_stmt->bind_param(
-            "iiissss",
-            $user_id, $appointmentBranch, $appointmentService,
-            $appointmentDentist, $appointmentDate, $appointmentTime, $notes
+            "iiisss",
+            $user_id, $appointmentBranch, $appointmentDentist,
+            $appointmentDate, $appointmentTime, $notes
         );
         $appointment_stmt->execute();
+        $appointment_id = $appointment_stmt->insert_id;
         $appointment_stmt->close();
 
+        if (!empty($appointmentServices) && is_array($appointmentServices)) {
+            $service_sql = "INSERT INTO appointment_services (appointment_transaction_id, service_id) VALUES (?, ?)";
+            $service_stmt = $conn->prepare($service_sql);
+
+            foreach ($appointmentServices as $serviceId) {
+                $service_stmt->bind_param("ii", $appointment_id, $serviceId);
+                $service_stmt->execute();
+            }
+
+            $service_stmt->close();
+        }
+
         $welcome_msg = "Welcome to Smile-ify! Your account was created.";
-        $welcome_sql = "INSERT INTO notifications (user_id, message) VALUES (?, ?)";
-        $welcome_stmt = $conn->prepare($welcome_sql);
-        $welcome_stmt->bind_param("is", $user_id, $welcome_msg);
-        $welcome_stmt->execute();
-        $welcome_stmt->close();
+        $notif1 = $conn->prepare("INSERT INTO notifications (user_id, message) VALUES (?, ?)");
+        $notif1->bind_param("is", $user_id, $welcome_msg);
+        $notif1->execute();
+        $notif1->close();
 
         $msg = "Your appointment on $appointmentDate at $appointmentTime was successfully booked!";
-        $notif_sql = "INSERT INTO notifications (user_id, message) VALUES (?, ?)";
-        $notif_stmt = $conn->prepare($notif_sql);
-        $notif_stmt->bind_param("is", $user_id, $msg);
-        $notif_stmt->execute();
-        $notif_stmt->close();
+        $notif2 = $conn->prepare("INSERT INTO notifications (user_id, message) VALUES (?, ?)");
+        $notif2->bind_param("is", $user_id, $msg);
+        $notif2->execute();
+        $notif2->close();
 
         $conn->commit();
+
+        $servicesHtml = "";
+        $totalPrice = 0;
+        $totalDuration = 0;
+
+        if (!empty($appointmentServices) && is_array($appointmentServices)) {
+            $placeholders = implode(',', array_fill(0, count($appointmentServices), '?'));
+            $types = str_repeat('i', count($appointmentServices));
+
+            $stmt = $conn->prepare("SELECT name, price, duration_minutes FROM service WHERE service_id IN ($placeholders)");
+            $stmt->bind_param($types, ...$appointmentServices);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            $servicesHtml .= "<ul>";
+            while ($row = $result->fetch_assoc()) {
+                $servicesHtml .= "<li>{$row['name']} - ₱" . number_format($row['price'], 2) . " ({$row['duration_minutes']} mins)</li>";
+                $totalPrice += $row['price'];
+                $totalDuration += (int)$row['duration_minutes'];
+            }
+            $servicesHtml .= "</ul>";
+            $stmt->close();
+        }
+
+        $totalFormatted = number_format($totalPrice, 2);
+
+        $appointmentDateTime = new DateTime("$appointmentDate $appointmentTime");
+        $appointmentDateTime->modify("+{$totalDuration} minutes");
+        $formattedEndTime = $appointmentDateTime->format('h:i A');
+
+        $branch_sql = "SELECT address FROM branch WHERE branch_id = ?";
+        $branch_stmt = $conn->prepare($branch_sql);
+        $branch_stmt->bind_param("i", $appointmentBranch);
+        $branch_stmt->execute();
+        $branch_result = $branch_stmt->get_result();
+        $branch_row = $branch_result->fetch_assoc();
+        $branchAddress = $branch_row['address'] ?? 'N/A';
+        $branch_stmt->close();
 
         require BASE_PATH . '/Mail/phpmailer/PHPMailerAutoload.php';
         $mail = new PHPMailer;
@@ -134,20 +183,33 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $mail->SMTPAuth = true;
         $mail->SMTPSecure = 'tls';
 
-        $mail->Username = 'smileify.clinic@gmail.com';
-        $mail->Password = 'ynecojolefyxdosu';
+        $mail->Username = 'smileify.web@gmail.com';
+        $mail->Password = 'cwupkqcucoufyxnf';
 
-        $mail->setFrom('smileify.clinic@gmail.com', 'Smile-ify Team');
+        $mail->setFrom('smileify.web@gmail.com', 'Smile-ify Team');
         $mail->addAddress($email);
 
         $mail->isHTML(true);
-        $mail->Subject = "Smile-ify Login Credentials";
+        $mail->Subject = "Smile-ify Login Credentials and Appointment Details";
         $mail->Body = "
             <p>Dear <strong>$username</strong>,</p>
-            <p>Your Smile-ify account has been successfully created.</p>
+            <p>Your Smile-ify account has been successfully verified.</p>
             <p>You may now log in using the following credentials:</p>
-            <p><strong>Username:</strong> $username<br>
-            <strong>Password:</strong> $default_password</p>
+            <p>
+                <strong>Username:</strong> $username<br>
+                <strong>Password:</strong> $default_password
+            </p>
+            <hr>
+            <p><strong>Appointment Details:</strong></p>
+            <p>
+                <strong>Date:</strong> $appointmentDate<br>
+                <strong>Time:</strong> $appointmentTime<br>
+                <strong>Estimated End Time:</strong> $formattedEndTime<br>
+                <strong>Location:</strong> $branchAddress
+            </p>
+            <p><strong>Selected Services:</strong></p>
+            $servicesHtml
+            <p><strong>Total:</strong> ₱{$totalFormatted} ({$totalDuration} mins total)</p>
             <br>
             <p><i>Smile with confidence.</i></p>
             <p>Best regards,<br><strong>Smile-ify</strong></p>
@@ -157,7 +219,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             throw new Exception("Mailer Error: " . $mail->ErrorInfo);
         }
 
-        $_SESSION['updateSuccess'] = "Walk-in patient booked and credentials emailed successfully.";
+        $_SESSION['updateSuccess'] = "Walk-in patient booked (with multiple services) and credentials emailed successfully.";
         header("Location: " . BASE_URL . "/Admin/pages/calendar.php");
         exit;
 

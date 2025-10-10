@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <div class="service-row">
                             <select id="transactionService" class="form-control transactionServiceSelect" name="service_ids[]" required>
                             </select>
-                            <label for="transactionService" class="form-label">Services <span class="required">*</span></label>
+                            <label for="transactionService" class="form-label">Services</label>
                             <button type="button" class="add-service-btn" title="Add another service">+</button>
                         </div>
                     </div>
@@ -138,10 +138,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const serviceContainer = modalBody.querySelector("#serviceContainer");
 
-        // ✅ Load all services ONCE then populate first dropdown
         loadAllServicesOnce(branchId, serviceContainer.querySelector(".transactionServiceSelect"));
 
-        // Handle add/remove service rows
         serviceContainer.addEventListener("click", (e) => {
             if (e.target.classList.contains("add-service-btn")) {
                 const newRow = document.createElement("div");
@@ -153,7 +151,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 `;
                 serviceContainer.appendChild(newRow);
 
-                // ✅ Use cached services
                 populateServicesDropdown(newRow.querySelector(".transactionServiceSelect"));
             }
 
@@ -173,8 +170,6 @@ document.addEventListener("DOMContentLoaded", () => {
     function updateCheckoutSummary(data) {
         data = data || {};
 
-        // Assume `data.services` is an array of booked services like:
-        // [ { name: "Cleaning", price: 500 }, { name: "Extraction", price: 1200 } ]
         const services = data.services || [];
 
         const servicesList = document.getElementById("servicesList");
@@ -182,10 +177,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const discountEl = document.getElementById("discountDisplay");
         const totalEl = document.getElementById("totalDisplay");
 
-        // Clear previous list
         if (servicesList) servicesList.innerHTML = "";
 
-        // Render each service in summary
         let subtotal = 0;
         services.forEach(service => {
             const price = parseFloat(service.price) || 0;
@@ -200,12 +193,10 @@ document.addEventListener("DOMContentLoaded", () => {
             servicesList.appendChild(item);
         });
 
-        // Apply promo discount if any
         const promoDiscount = data.promo_discount ? parseFloat(data.promo_discount) : 0;
         const discount = promoDiscount > 0 ? (subtotal * (promoDiscount / 100)) : 0;
         const total = subtotal - discount;
 
-        // Update totals
         if (subtotalEl) subtotalEl.textContent = `₱${subtotal.toFixed(2)}`;
         if (discountEl) discountEl.textContent = `₱${discount.toFixed(2)}`;
         if (totalEl) totalEl.textContent = `₱${total.toFixed(2)}`;
@@ -245,7 +236,7 @@ document.addEventListener("DOMContentLoaded", () => {
         fetch(`${BASE_URL}/Admin/processes/manage_appointment/get_services_by_branch.php?branch_id=${branchId}`)
             .then(res => res.json())
             .then(services => {
-                cachedServices = services; // cache for reuse
+                cachedServices = services;
                 populateServicesDropdown(firstSelectEl);
             })
             .catch(err => console.error("Failed to load services:", err));

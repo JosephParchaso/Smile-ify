@@ -13,14 +13,14 @@ function stringToColorCode($str) {
     $code = dechex(crc32($str));
     $code = str_pad($code, 6, '0', STR_PAD_LEFT);
     return '#' . substr($code, 0, 6);
-}   
+}
 
 $userID = $_SESSION['user_id'];
 
-$sql = "SELECT DISTINCT
+$sql = "SELECT 
             a.appointment_transaction_id,
             b.name AS branch,
-            s.name AS service,
+            GROUP_CONCAT(s.name SEPARATOR '\n') AS services,
             CONCAT(d.last_name, ', ', d.first_name) AS dentist,
             a.appointment_date,
             a.appointment_time,
@@ -29,9 +29,11 @@ $sql = "SELECT DISTINCT
             a.status
         FROM appointment_transaction a
         LEFT JOIN branch b ON a.branch_id = b.branch_id
-        LEFT JOIN service s ON a.service_id = s.service_id
+        LEFT JOIN appointment_services aps ON a.appointment_transaction_id = aps.appointment_transaction_id
+        LEFT JOIN service s ON aps.service_id = s.service_id
         LEFT JOIN dentist d ON a.dentist_id = d.dentist_id
         WHERE a.user_id = ?
+        GROUP BY a.appointment_transaction_id
         ORDER BY a.appointment_date, a.appointment_time";
 
 $stmt = $conn->prepare($sql);
@@ -41,22 +43,19 @@ $result = $stmt->get_result();
 
 $events = [];
 while ($row = $result->fetch_assoc()) {
-
     $statusColor = '#fe9705';
-    if (strcasecmp($row['status'], 'Completed') === 0) {
-        $statusColor = '#3ac430';
-    } elseif (strcasecmp($row['status'], 'Cancelled') === 0) {
-        $statusColor = '#d11313';
-    }
-    
+    if (strcasecmp($row['status'], 'Completed') === 0) $statusColor = '#3ac430';
+    elseif (strcasecmp($row['status'], 'Cancelled') === 0) $statusColor = '#d11313';
+
     $branchColor = stringToColorCode($row['branch']);
+    $serviceList = $row['services'] ?? '-';
 
     $events[] = [
         'id' => $row['appointment_transaction_id'],
-        'title' => $row['service'],
+        'title' => $serviceList,
         'start' => $row['appointment_date'] . 'T' . $row['appointment_time'],
         'branch' => $row['branch'],
-        'service' => $row['service'],
+        'services' => $serviceList,
         'dentist' => $row['dentist'],
         'notes' => $row['notes'],
         'status' => $row['status'],
