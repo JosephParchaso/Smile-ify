@@ -46,7 +46,7 @@ $(document).ready(function () {
                 { "title": "Service" },
                 { "title": "Date" },
                 { "title": "Time" },
-                { "title": "Amount" },
+                { "title": "Total" },
                 { "title": "Action", "orderable": false },
                 { "title": "Created", "visible": false, "searchable": false }
             ],

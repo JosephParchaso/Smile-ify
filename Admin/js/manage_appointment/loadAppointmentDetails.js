@@ -35,35 +35,61 @@ document.addEventListener("DOMContentLoaded", function () {
                 <p><strong>Notes:</strong><span>${data.notes || '-'}</span></p>
                 <p><strong>Date Booked:</strong><span>${data.date_created}</span></p>
                 <div class="button-group button-group-profile">
-                    <button class="confirm-btn" id="downloadReceipt">Download Receipt</button>
                     <button class="confirm-btn" id="markDone">Complete Appointment</button>
                     <button class="cancel-btn-appointment" id="markCancel">Cancel Appointment</button>
                 </div>
             `;
 
-            const recordVitalsBtn = document.getElementById("recordVitals");
-            if (recordVitalsBtn) {
-                recordVitalsBtn.addEventListener("click", () => {
-                    document.getElementById("recordVitalsModal").style.display = "block";
+            const completeBtn = document.getElementById("markDone");
+            const cancelBtn = document.getElementById("markCancel");
+
+            if (completeBtn) {
+                completeBtn.addEventListener("click", () => {
+                    openStatusModal({
+                        action: "complete",
+                        formAction: `${BASE_URL}/Admin/processes/manage_appointment/complete_dental_transaction.php`,
+                        message: "Are you sure you want to <strong>complete</strong> this patient's transaction?"
+                    });
                 });
             }
 
-            const recordPrescriptionBtn = document.getElementById("recordPrescription");
-            if (recordPrescriptionBtn) {
-                recordPrescriptionBtn.addEventListener("click", () => {
-                    document.getElementById("recordPrescriptionModal").style.display = "block";
+            if (cancelBtn) {
+                cancelBtn.addEventListener("click", () => {
+                    openStatusModal({
+                        action: "cancel",
+                        formAction: `${BASE_URL}/Admin/processes/manage_appointment/cancel_appointment.php`,
+                        message: "Are you sure you want to <strong>cancel</strong> this patient's transaction?"
+                    });
                 });
             }
+
+            function openStatusModal({ action, formAction, message }) {
+                const modal = document.getElementById("setStatusModal");
+                const form = document.getElementById("statusForm");
+                const messageBox = document.getElementById("statusMessage");
+                const statusInput = document.getElementById("statusValue");
+                const userInput = document.getElementById("statusUserId");
+                const appointmentInput = document.getElementById("statusAppointmentId");
+
+                form.action = formAction;
+                messageBox.innerHTML = message;
+                statusInput.value = action;
+                userInput.value = data.user_id;
+                appointmentInput.value = appointmentId;
+                modal.style.display = "block";
+            }
+
+            window.closeStatusModal = function () {
+                document.getElementById("setStatusModal").style.display = "none";
+            };
+
+            window.addEventListener("click", (e) => {
+                const modal = document.getElementById("setStatusModal");
+                if (e.target === modal) modal.style.display = "none";
+            });
         })
         .catch(error => {
             appointmentCard.innerHTML = "<p>Error loading profile.</p>";
             console.error("Fetch error:", error);
         });
 });
-
-function closeRecordVitalsModal() {
-    document.getElementById("recordVitalsModal").style.display = "none";
-}
-function closeRecordPrescriptionModal() {
-    document.getElementById("recordPrescriptionModal").style.display = "none";
-}

@@ -30,8 +30,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     try {
+        $conn->begin_transaction();
+
         $affected1 = 0;
         $affected2 = 0;
+        $affected3 = 0;
+        $madeChanges = false;
 
         $sqlCheck1 = "SELECT name, description, category, unit FROM supply WHERE supply_id = ?";
         $stmtCheck1 = $conn->prepare($sqlCheck1);
@@ -58,12 +62,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         SET name = ?, description = ?, category = ?, unit = ? 
                         WHERE supply_id = ?";
             $stmt1 = $conn->prepare($sql1);
-            if (!$stmt1) {
-                throw new Exception("Prepare failed (supply): " . $conn->error);
-            }
             $stmt1->bind_param("ssssi", $name, $description, $category, $unit, $supply_id);
             $stmt1->execute();
             $affected1 = $stmt1->affected_rows;
+            $madeChanges = true;
             $stmt1->close();
         }
 
@@ -92,27 +94,83 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if ($branchChanged) {
             $sql2 = "UPDATE branch_supply 
-                        SET quantity = ?, 
-                            reorder_level = ?, 
-                            expiration_date = ?, 
-                            status = ?, 
-                            date_updated = NOW()
+                    SET quantity = ?, 
+                        reorder_level = ?, 
+                        expiration_date = ?, 
+                        status = ?, 
+                        date_updated = NOW()
                     WHERE supply_id = ? AND branch_id = ?";
             $stmt2 = $conn->prepare($sql2);
-            if (!$stmt2) {
-                throw new Exception("Prepare failed (branch_supply): " . $conn->error);
-            }
             $stmt2->bind_param("iissii", $quantity, $reorderLevel, $expirationDate, $status, $supply_id, $branch_id);
             $stmt2->execute();
             $affected2 = $stmt2->affected_rows;
+            $madeChanges = true;
             $stmt2->close();
         }
 
-        if ($affected1 > 0 || $affected2 > 0) {
-            $_SESSION['updateSuccess'] = "Supply updated successfully!";
+        $currentLinks = [];
+        $stmtLinks = $conn->prepare("SELECT service_id, quantity_used FROM service_supplies WHERE supply_id = ?");
+        $stmtLinks->bind_param("i", $supply_id);
+        $stmtLinks->execute();
+        $resultLinks = $stmtLinks->get_result();
+        while ($row = $resultLinks->fetch_assoc()) {
+            $currentLinks[(int)$row['service_id']] = (int)$row['quantity_used'];
+        }
+        $stmtLinks->close();
+
+        $newServices = array_map('intval', $_POST['services'] ?? []);
+        $affected3 = 0;
+
+        if (!empty($newServices)) {
+            foreach ($newServices as $service_id) {
+                $service_id = intval($service_id);
+                $quantity_used = intval($_POST['quantities'][$service_id] ?? 1);
+
+                if (isset($currentLinks[$service_id])) {
+                    if ($currentLinks[$service_id] !== $quantity_used) {
+                        $updateSQL = "UPDATE service_supplies 
+                                        SET quantity_used = ?, date_updated = NOW() 
+                                        WHERE service_id = ? AND supply_id = ?";
+                        $stmtUpdate = $conn->prepare($updateSQL);
+                        $stmtUpdate->bind_param("iii", $quantity_used, $service_id, $supply_id);
+                        $stmtUpdate->execute();
+                        $affected3 += max(0, $stmtUpdate->affected_rows);
+                        $madeChanges = true;
+                        $stmtUpdate->close();
+                    }
+                } else {
+                    $insertSQL = "INSERT INTO service_supplies (service_id, supply_id, quantity_used, date_created)
+                                    VALUES (?, ?, ?, NOW())";
+                    $stmtInsert = $conn->prepare($insertSQL);
+                    $stmtInsert->bind_param("iii", $service_id, $supply_id, $quantity_used);
+                    $stmtInsert->execute();
+                    $affected3 += max(0, $stmtInsert->affected_rows);
+                    $madeChanges = true;
+                    $stmtInsert->close();
+                }
+            }
+        }
+
+        foreach ($currentLinks as $existingServiceId => $existingQty) {
+            if (!in_array((int)$existingServiceId, $newServices, true)) {
+                $deleteSQL = "DELETE FROM service_supplies WHERE service_id = ? AND supply_id = ?";
+                $stmtDel = $conn->prepare($deleteSQL);
+                $stmtDel->bind_param("ii", $existingServiceId, $supply_id);
+                $stmtDel->execute();
+                $affected3 += max(0, $stmtDel->affected_rows);
+                $madeChanges = true;
+                $stmtDel->close();
+            }
+        }
+
+        $conn->commit();
+
+        if ($madeChanges) {
+            $_SESSION['updateSuccess'] = "Supply updated successfully with service assignments!";
         }
 
     } catch (Exception $e) {
+        $conn->rollback();
         $_SESSION['updateError'] = "Database error: " . $e->getMessage();
     }
 
@@ -124,3 +182,4 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 }
 
 $conn->close();
+?>

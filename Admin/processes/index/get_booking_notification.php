@@ -29,3 +29,4 @@ $count = $row['cnt'] ?? 0;
 header('Content-Type: application/json');
 echo json_encode(["count" => $count]);
 $conn->close();
+?>

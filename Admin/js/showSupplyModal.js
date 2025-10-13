@@ -105,6 +105,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
 
                 <div class="form-group">
+                    <div id="servicesContainer" class="checkbox-group">
+                        <p class="loading-text">Loading Services</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
                     <select id="status" name="status" class="form-control" required>
                         <option value="" disabled ${!isEdit ? "selected" : ""}></option>
                         <option value="Available" ${isEdit && data.status === "Available" ? "selected" : ""}>Available</option>
@@ -121,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 ${isEdit ? `
                 <div class="form-group">
-                    <input type="text" id="dateUpdated" class="form-control" value="${data.date_updated}" disabled>
+                    <input type="text" id="dateUpdated" class="form-control" value="${data.latest_update}" disabled>
                     <label for="dateUpdated" class="form-label">Last Update</label>
                 </div>` : ""}
 
@@ -131,7 +137,60 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
             </form>
         `;
+
+        loadBranchServices(data);
     }
+
+    function loadBranchServices(data = null) {
+        const container = document.getElementById("servicesContainer");
+
+        fetch(`${BASE_URL}/Admin/processes/supplies/load_services_for_supply.php`, {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams({
+                branch_id: branchId,
+                supply_id: data?.supply_id || ""
+            })
+        })
+        .then(res => res.json())
+        .then(services => {
+            if (!Array.isArray(services) || services.length === 0) {
+                container.innerHTML = `<p>No services available for this branch.</p>`;
+                return;
+            }
+
+            container.innerHTML = services.map(service => {
+                const checked = service.assigned ? "checked" : "";
+                const qtyDisplay = service.assigned ? "inline-block" : "none";
+                return `
+                    <div class="checkbox-item">
+                        <label>
+                            <input type="checkbox" name="services[]" value="${service.id}" ${checked}>
+                            ${service.name}
+                        </label>
+                        <input type="number" name="quantities[${service.id}]" class="service-quantity" 
+                            value="${service.quantity || ""}" 
+                            min="1" placeholder="Qty" 
+                            style="display:${qtyDisplay}; width:80px; margin-left:10px;">
+                    </div>
+                `;
+            }).join("");
+
+            container.querySelectorAll("input[type='checkbox']").forEach(chk => {
+                chk.addEventListener("change", () => {
+                    const qtyInput = chk.closest(".checkbox-item").querySelector(".service-quantity");
+                    if (!qtyInput) return;
+                    qtyInput.style.display = chk.checked ? "inline-block" : "none";
+                    if (!chk.checked) qtyInput.value = "";
+                });
+            });
+        })
+        .catch(err => {
+            console.error(err);
+            container.innerHTML = `<p style="color:red;">Error loading services.</p>`;
+        });
+    }
+
 });
 
 function closeSupplyModal() {

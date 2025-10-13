@@ -23,7 +23,7 @@ $sql = "
         CONCAT('Dr. ', d.last_name, ', ', d.first_name, ' ', IFNULL(d.middle_name, '')) AS dentist,
         a.appointment_date,
         a.appointment_time,
-        dt.amount_paid,
+        dt.total,
         dt.date_created
     FROM dental_transaction dt
     INNER JOIN appointment_transaction a 
@@ -54,7 +54,7 @@ while ($row = $result->fetch_assoc()) {
         $row['services'] ?: '-',
         $row['appointment_date'] ?: '-',
         $row['appointment_time'] ? substr($row['appointment_time'], 0, 5) : '-',
-        number_format((float)$row['amount_paid'], 2),
+        number_format((float)$row['total'], 2),
         '<button class="btn-action" data-type="transaction" data-id="'.$row['dental_transaction_id'].'">Manage</button>',
         $row['date_created'] ? date("F j, Y", strtotime($row['date_created'])) : '-'
     ];

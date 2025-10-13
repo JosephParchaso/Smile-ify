@@ -48,7 +48,7 @@ require_once BASE_PATH . '/processes/load_notifications.php';
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </ul>
-                    <a href="#" id="markAllRead">Read all notifications</a>
+                    <a href="#" id="markAllRead">Mark all as read</a>
                 </div>
             </li>
             <li>

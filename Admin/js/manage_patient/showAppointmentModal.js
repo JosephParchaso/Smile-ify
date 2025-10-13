@@ -126,39 +126,38 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-function loadServices(branchId, container) {
-    container.innerHTML = '<p class="loading-text">Loading services</p>';
-    $.ajax({
-        type: "POST",
-        url: `${BASE_URL}/processes/load_services.php`,
-        data: { appointmentBranch: branchId },
-        success: function (response) {
-            container.innerHTML = response;
+    function loadServices(branchId, container) {
+        container.innerHTML = '<p class="loading-text">Loading services</p>';
+        $.ajax({
+            type: "POST",
+            url: `${BASE_URL}/processes/load_services.php`,
+            data: { appointmentBranch: branchId },
+            success: function (response) {
+                container.innerHTML = response;
 
-            const dentistSelect = document.getElementById("appointmentDentist");
-            const dateSelect = document.getElementById("appointmentDate");
-            const timeSelect = document.getElementById("appointmentTime");
-            const estimatedEndDiv = document.getElementById("estimatedEnd");
+                const dentistSelect = document.getElementById("appointmentDentist");
+                const dateSelect = document.getElementById("appointmentDate");
+                const timeSelect = document.getElementById("appointmentTime");
+                const estimatedEndDiv = document.getElementById("estimatedEnd");
 
-            const serviceCheckboxes = container.querySelectorAll('input[name="appointmentServices[]"]');
+                const serviceCheckboxes = container.querySelectorAll('input[name="appointmentServices[]"]');
 
-            serviceCheckboxes.forEach(cb => {
-                cb.addEventListener("change", function () {
-                    const selectedServices = [...container.querySelectorAll('input[name="appointmentServices[]"]:checked')]
-                        .map(cb => cb.value);
+                serviceCheckboxes.forEach(cb => {
+                    cb.addEventListener("change", function () {
+                        const selectedServices = [...container.querySelectorAll('input[name="appointmentServices[]"]:checked')]
+                            .map(cb => cb.value);
 
-                    resetDentistDateTime(dentistSelect, dateSelect, timeSelect, estimatedEndDiv);
+                        resetDentistDateTime(dentistSelect, dateSelect, timeSelect, estimatedEndDiv);
 
-                    loadDentists(branchId, selectedServices, dentistSelect);
+                        loadDentists(branchId, selectedServices, dentistSelect);
+                    });
                 });
-            });
-        },
-        error: function () {
-            container.innerHTML = '<p class="error">Error loading services</p>';
-        }
-    });
-}
-
+            },
+            error: function () {
+                container.innerHTML = '<p class="error">Error loading services</p>';
+            }
+        });
+    }
 
     function loadDentists(branchId, selectedServices, dentistSelect) {
         if (!selectedServices.length) {

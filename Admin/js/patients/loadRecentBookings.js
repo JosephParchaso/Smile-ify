@@ -9,12 +9,13 @@ $(document).ready(function() {
             "columns": [
                 { "title": "ID" },
                 { "title": "Patient" },
+                { "title": "Dentist" },
                 { "title": "Date" },
                 { "title": "Time" },
                 { "title": "Status" },
                 { "title": "Action", "orderable": false, "searchable": false }
             ],
-            "order": [[2, "asc"], [3, "asc"]],
+            "order": [[3, "asc"], [4, "asc"]],
             "language": {
                 search: "",
                 searchPlaceholder: "Search"

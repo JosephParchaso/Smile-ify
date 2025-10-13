@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                             ? new Date(`1970-01-01T${data.appointment_time}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })
                                             : ''
                                     }</span></p>
-                                    <p><strong>Amount Paid:</strong><span>${data.amount_paid}</span></p>
+                                    <p><strong>Amount Paid:</strong><span>${data.total}</span></p>
                                     <p><strong>Notes:</strong><span>${data.notes || '-'}</span></p>
                                     <p><strong>Date Booked:</strong><span>${
                                         data.date_created

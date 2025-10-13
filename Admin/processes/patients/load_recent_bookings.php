@@ -15,20 +15,19 @@ $sql = "
         a.appointment_transaction_id,
         CONCAT(u.first_name, ' ', u.last_name) AS patient,
         b.name AS branch,
-        GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', ') AS services,
-        CONCAT(d.first_name, ' ', d.last_name) AS dentist,
+        CONCAT('Dr. ', d.last_name, ', ', d.first_name, ' ', IFNULL(d.middle_name, '')) AS dentist,
         a.appointment_date,
         a.appointment_time,
         a.date_created,
-        a.status
+        a.status,
+        u.user_id
     FROM appointment_transaction a
     JOIN users u ON a.user_id = u.user_id
     LEFT JOIN branch b ON a.branch_id = b.branch_id
-    LEFT JOIN appointment_services aps ON a.appointment_transaction_id = aps.appointment_transaction_id
-    LEFT JOIN service s ON aps.service_id = s.service_id
-    LEFT JOIN users d ON a.dentist_id = d.user_id
+    LEFT JOIN dentist d ON a.dentist_id = d.dentist_id
     WHERE a.branch_id = ?
         AND u.role = 'patient'
+        AND a.status = 'booked'
         AND a.appointment_date >= CURDATE()
     GROUP BY a.appointment_transaction_id
     ORDER BY 
@@ -51,8 +50,9 @@ $result = $stmt->get_result();
 $bookings = [];
 while ($row = $result->fetch_assoc()) {
     $bookings[] = [
-        $row['appointment_transaction_id'],
+        $row['user_id'],
         $row['patient'],
+        $row['dentist'] ?: 'Available Dentist',
         $row['appointment_date'],
         substr($row['appointment_time'], 0, 5),
         $row['status'],

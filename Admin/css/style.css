@@ -156,6 +156,23 @@
     cursor: pointer;
 }
 
+.table-action-once {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+}
+
+.table-action-once button {
+    display: none;
+    height: 38px;
+    padding: 6px 12px;
+    border: 1px solid #1e293b;
+    border-radius: 4px;
+    background-color: #1e293b;
+    color: #fff;
+    cursor: pointer;
+}
+
 #registeredTable_filter,
 #recentTable_filter,
 #inactiveTable_filter,
@@ -213,16 +230,18 @@
 #inactiveTable th:nth-child(4), #inactiveTable td:nth-child(4) { width: 10% !important; text-align: center;}
 
 #recentTable th:nth-child(1), #recentTable td:nth-child(1) { width: 5% !important; text-align: center;}
-#recentTable th:nth-child(2), #recentTable td:nth-child(2) { width: 15% !important; }
-#recentTable th:nth-child(3), #recentTable td:nth-child(3) { width: 15% !important; }
-#recentTable th:nth-child(4), #recentTable td:nth-child(4) { width: 15% !important; }
-#recentTable th:nth-child(5), #recentTable td:nth-child(5) { width: 15% !important; }
-#recentTable th:nth-child(6), #recentTable td:nth-child(6) { width: 10% !important; text-align: center;}
+#recentTable th:nth-child(2), #recentTable td:nth-child(2) { width: 20% !important; }
+#recentTable th:nth-child(3), #recentTable td:nth-child(3) { width: 20% !important; }
+#recentTable th:nth-child(4), #recentTable td:nth-child(4) { width: 10% !important; }
+#recentTable th:nth-child(5), #recentTable td:nth-child(5) { width: 10% !important; }
+#recentTable th:nth-child(6), #recentTable td:nth-child(6) { width: 10% !important; }
+#recentTable th:nth-child(7), #recentTable td:nth-child(7) { width: 10% !important; text-align: center;}
 
 #dentaltransactionTable th:nth-child(1), #dentaltransactionTable td:nth-child(1) { width: 5% !important; text-align: center;}
-#dentaltransactionTable th:nth-child(2), #dentaltransactionTable td:nth-child(2) { width: 40% !important; }
-#dentaltransactionTable th:nth-child(3), #dentaltransactionTable td:nth-child(3) { width: 20% !important; }
-#dentaltransactionTable th:nth-child(4), #dentaltransactionTable td:nth-child(4) { width: 10% !important; text-align: center;}
+#dentaltransactionTable th:nth-child(2), #dentaltransactionTable td:nth-child(2) { width: 15% !important; }
+#dentaltransactionTable th:nth-child(3), #dentaltransactionTable td:nth-child(3) { width: 40% !important; }
+#dentaltransactionTable th:nth-child(4), #dentaltransactionTable td:nth-child(4) { width: 10% !important; }
+#dentaltransactionTable th:nth-child(5), #dentaltransactionTable td:nth-child(5) { width: 10% !important; text-align: center;}
 
 #vitalTable th:nth-child(1), #vitalTable td:nth-child(1) { width: 5% !important; text-align: center; }
 #vitalTable th:nth-child(2), #vitalTable td:nth-child(2) { width: 20% !important; }

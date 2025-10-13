@@ -35,7 +35,7 @@ $sql = "
         a.notes,
         a.date_created,
         b.name AS branch_name,
-        GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', ') AS services,
+        GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR '\n') AS services,
         d.first_name AS dentist_first,
         d.last_name AS dentist_last
     FROM appointment_transaction a

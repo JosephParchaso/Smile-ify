@@ -40,7 +40,7 @@ $sql = "
         a.appointment_time,
         dt.dental_transaction_id,
         dt.notes,
-        dt.amount_paid,
+        dt.total,
         dt.date_created,
         dt.prescription_downloaded,
 

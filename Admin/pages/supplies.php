@@ -46,4 +46,8 @@ $updateError   = $_SESSION['updateError'] ?? '';
     </div>
 </div>
 
+<script>
+const branchId = <?= json_encode($_SESSION['branch_id'] ?? null) ?>;
+</script>
+
 <?php require_once BASE_PATH . '/includes/footer.php'; ?>

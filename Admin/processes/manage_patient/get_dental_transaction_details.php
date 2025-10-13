@@ -22,9 +22,12 @@ $sql = "
     SELECT 
         dt.dental_transaction_id,
         dt.notes,
-        dt.amount_paid,
+        dt.total,
         dt.date_created,
         dt.prescription_downloaded,
+        dt.admin_user_id,
+
+        CONCAT(ua.first_name, ' ', ua.last_name) AS admin_name,
 
         a.appointment_transaction_id,
         a.appointment_date,
@@ -68,6 +71,8 @@ $sql = "
         ON dv.appointment_transaction_id = a.appointment_transaction_id
     LEFT JOIN users u
         ON a.user_id = u.user_id
+    LEFT JOIN users ua
+        ON ua.user_id = dt.admin_user_id
     WHERE dt.dental_transaction_id = ?
     GROUP BY dt.dental_transaction_id
 ";

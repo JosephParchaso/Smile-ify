@@ -145,8 +145,7 @@ gmail suspicious spams - sendgrid?
 dungan register/book different user  
 ==========================================================================================================================================================================================
 
-home, profile = rix 💖
-reports andy, achas 
+home/index reports = achas  💖
 Contact Fr. Peter for the database hosting 💖
 Minimum of 5 minutes for OTP time remaining expiration time 💖
 
@@ -154,21 +153,19 @@ Hash EVERYTHING in db after deployment?💖
 dungan register/book different user 💖
 family 💖
 
-home/index reports = achas
 
-one add vitals and transaction only 🫥
-add admin or prepared by admin 🫥
-apply promo transact 🥶
-supplies with transact / add and link the service materials per transaction🥶
+supplies with transact / add and link the service materials per transaction 🥶
 receipt 🥶
 cancel appointment and complete appointment / to save transaction and status completed notify user 🥶
-
-release again the prescription
-add update dentist - modify load services based on branch selected
+release again the prescription 🥶
 
 Owner - OTP Every Login 🥶
 Admin - OTP Every Login 🥶
 Patient - OTP Every Login 🥶
+
+announcments, disable dates if branch is closed 🥶
+medical cert 🥶
+
 
 Error on change password OTP Fix 👍
 Validation for the Date of Birth, so that it will not accept 0000 👍
@@ -205,3 +202,8 @@ Switch status from pending ->> booked 👍
 Add the change email function in profile with otp verification 👍
 
 MAJOR CHANGE - MULTIPLE SERVICE 👍
+
+
+add admin or prepared by admin 👍
+apply promo transact 👍
+one add vitals and transaction only 👍

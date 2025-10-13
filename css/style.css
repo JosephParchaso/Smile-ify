@@ -243,6 +243,22 @@ form {
     font-weight: normal;
 }
 
+.checkbox-item:has(input[type="checkbox"]:checked) {
+    border-color: #007bff;
+    background: #f0f7ff;
+    color: #007bff;
+}
+
+.confirmation-label {
+    display: block;
+    background: #fff3cd;
+    border: 1px solid #ffeeba;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 0.95em;
+    color: #856404;
+}
+
 .divider {
     display: flex;
     align-items: center;
@@ -328,12 +344,12 @@ form {
     font-size: 15px;
 }
 
-.profile-card p strong, .manage-appointment-modal-content-body p strong, .transaction-section p strong, .appointment-details p strong {
+.profile-card p strong, .manage-appointment-modal-content-body p strong, .manage-calendar-modal-content-body p strong, .transaction-section p strong, .appointment-details p strong {
     width: 150px;
     display: inline-block;
 }
 
-.profile-card p span, .manage-appointment-modal-content-body p span, .transaction-section p span {
+.profile-card p span, .manage-appointment-modal-content-body p span, .manage-calendar-modal-content-body p span, .transaction-section p span {
     display: inline-block;
     max-width: calc(100% - 160px);
     vertical-align: top;
@@ -352,6 +368,7 @@ form {
 .change-password-modal,
 .manage-appointment-modal,
 .transaction-record-modal,
+.manage-calendar-modal,
 .manage-patient-modal,
 .manage-employee-modal,
 .manage-supply-modal,
@@ -380,6 +397,7 @@ form {
 .manage-appointment-modal-content,
 .transaction-record-modal-content,
 .manage-patient-modal-content,
+.manage-calendar-modal-content,
 .manage-employee-modal-content,
 .manage-supply-modal-content,
 .manage-service-modal-content,
@@ -416,7 +434,7 @@ form {
     animation: fadeIn 0.3s ease-in-out;
 }
 
-.change-password-modal-content, .edit-profile-modal-content, .manage-appointment-modal-content, .manage-service-modal-content {
+.change-password-modal-content, .edit-profile-modal-content, .manage-calendar-modal-content, .manage-service-modal-content {
     max-width: 500px;
     max-height: 150vh;
     width: 100%;
@@ -466,7 +484,6 @@ form {
 }
 
 .manage-appointment-modal-content h2, .transaction-record-modal-content h2 {
-    border-bottom: 1px solid #ddd;
     margin: 0;
     padding-bottom: 5%;
     text-align: center;
@@ -474,6 +491,7 @@ form {
 
 .manage-employee-modal-content h2,
 .manage-patient-modal-content h2,
+.manage-calendar-modal-content h2,
 .manage-supply-modal-content h2,
 .manage-service-modal-content h2,
 .manage-promo-modal-content h2,

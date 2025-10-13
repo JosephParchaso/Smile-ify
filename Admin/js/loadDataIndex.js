@@ -68,9 +68,11 @@ document.addEventListener("DOMContentLoaded", function () {
     loadPatientCounts();
     loadLowSupplies();
 
-    setInterval(() => {
-        loadUpcomingAppointments();
-        loadPatientCounts();
-        loadLowSupplies();
-    }, 60000);
+    if (!window.dashboardUpdater) {
+        window.dashboardUpdater = setInterval(() => {
+            loadUpcomingAppointments();
+            loadPatientCounts();
+            loadLowSupplies();
+        }, 60000);
+    }
 });
