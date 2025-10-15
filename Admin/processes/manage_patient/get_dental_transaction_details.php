@@ -26,6 +26,7 @@ $sql = "
         dt.date_created,
         dt.prescription_downloaded,
         dt.admin_user_id,
+        dt.promo_id,
 
         CONCAT(ua.first_name, ' ', ua.last_name) AS admin_name,
 
@@ -33,9 +34,14 @@ $sql = "
         a.appointment_date,
         a.appointment_time,
 
-        GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR '\n') AS services,
         b.name AS branch,
-        CONCAT('Dr. ', d.last_name, ', ', d.first_name, ' ', IFNULL(d.middle_name, '')) AS dentist,
+
+        d.last_name AS dentist_last_name,
+        d.first_name AS dentist_first_name,
+        d.middle_name AS dentist_middle_name,
+        CONCAT('Dr. ', d.last_name, ', ', d.first_name, ' ', IFNULL(d.middle_name, '')) AS dentist_name,
+        d.license_number,
+        d.signature_image,
 
         dv.vitals_id,
         dv.body_temp,
@@ -52,27 +58,16 @@ $sql = "
         u.first_name AS patient_first_name,
         u.middle_name AS patient_middle_name,
         u.date_of_birth AS patient_dob,
-        u.gender AS patient_gender,
+        u.gender AS patient_gender
 
-        d.license_number,
-        d.signature_image
     FROM dental_transaction dt
     INNER JOIN appointment_transaction a 
         ON dt.appointment_transaction_id = a.appointment_transaction_id
-    LEFT JOIN appointment_services aps 
-        ON a.appointment_transaction_id = aps.appointment_transaction_id
-    LEFT JOIN service s 
-        ON aps.service_id = s.service_id
-    LEFT JOIN branch b 
-        ON a.branch_id = b.branch_id
-    LEFT JOIN dentist d 
-        ON d.dentist_id = COALESCE(dt.dentist_id, a.dentist_id)
-    LEFT JOIN dental_vital dv
-        ON dv.appointment_transaction_id = a.appointment_transaction_id
-    LEFT JOIN users u
-        ON a.user_id = u.user_id
-    LEFT JOIN users ua
-        ON ua.user_id = dt.admin_user_id
+    LEFT JOIN branch b ON a.branch_id = b.branch_id
+    LEFT JOIN dentist d ON d.dentist_id = COALESCE(dt.dentist_id, a.dentist_id)
+    LEFT JOIN dental_vital dv ON dv.appointment_transaction_id = a.appointment_transaction_id
+    LEFT JOIN users u ON a.user_id = u.user_id
+    LEFT JOIN users ua ON ua.user_id = dt.admin_user_id
     WHERE dt.dental_transaction_id = ?
     GROUP BY dt.dental_transaction_id
 ";
@@ -86,6 +81,42 @@ $data = $result->fetch_assoc();
 if (!$data) {
     echo json_encode(['error' => 'Transaction not found']);
     exit();
+}
+
+$servicesSql = "
+    SELECT 
+        s.name AS service_name,
+        dts.quantity,
+        s.price,
+        (dts.quantity * s.price) AS subtotal
+    FROM dental_transaction_services dts
+    INNER JOIN service s ON s.service_id = dts.service_id
+    WHERE dts.dental_transaction_id = ?
+";
+$stmtServices = $conn->prepare($servicesSql);
+$stmtServices->bind_param("i", $transactionId);
+$stmtServices->execute();
+$resServices = $stmtServices->get_result();
+
+$services = [];
+$serviceStrings = [];
+while ($row = $resServices->fetch_assoc()) {
+    $services[] = $row;
+    $serviceStrings[] = $row['service_name'] . " × " . $row['quantity'];
+}
+$data['services_raw'] = $services;
+$data['services'] = $services;
+$data['services_text'] = implode("\n", $serviceStrings);
+
+if (!empty($data['promo_id'])) {
+    $promoSql = "SELECT name, discount_type, discount_value FROM promo WHERE promo_id = ?";
+    $stmtPromo = $conn->prepare($promoSql);
+    $stmtPromo->bind_param("i", $data['promo_id']);
+    $stmtPromo->execute();
+    $resPromo = $stmtPromo->get_result();
+    $data['promo'] = $resPromo->fetch_assoc() ?: null;
+} else {
+    $data['promo'] = null;
 }
 
 $presSql = "
@@ -110,6 +141,6 @@ while ($row = $resPres->fetch_assoc()) {
 }
 $data['prescriptions'] = $prescriptions;
 
-echo json_encode($data);
+echo json_encode($data, JSON_PRETTY_PRINT);
 $conn->close();
 ?>

@@ -31,7 +31,6 @@ $sql = "
     LEFT JOIN service s ON aps.service_id = s.service_id
     LEFT JOIN dentist d ON a.dentist_id = d.dentist_id
     WHERE a.user_id = ?
-        AND a.status <> 'Completed'
     GROUP BY a.appointment_transaction_id
 ";
 

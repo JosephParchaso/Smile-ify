@@ -21,7 +21,7 @@ $userId = $_SESSION['user_id'];
 $sql = "
     SELECT 
         b.name AS branch,
-        GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', ') AS services,
+        GROUP_CONCAT(DISTINCT CONCAT(s.name, ' × ', dts.quantity) ORDER BY s.name SEPARATOR '\n') AS services,
         CONCAT('Dr. ', d.last_name, ', ', d.first_name, ' ', IFNULL(d.middle_name, '')) AS dentist,
         d.last_name AS dentist_last_name,
         d.first_name AS dentist_first_name,
@@ -58,10 +58,10 @@ $sql = "
         ON dt.appointment_transaction_id = a.appointment_transaction_id
     LEFT JOIN branch b 
         ON a.branch_id = b.branch_id
-    LEFT JOIN appointment_services aps 
-        ON a.appointment_transaction_id = aps.appointment_transaction_id
+    LEFT JOIN dental_transaction_services dts 
+        ON dts.dental_transaction_id = dt.dental_transaction_id
     LEFT JOIN service s 
-        ON aps.service_id = s.service_id
+        ON dts.service_id = s.service_id
     LEFT JOIN dentist d 
         ON d.dentist_id = COALESCE(dt.dentist_id, a.dentist_id)
     LEFT JOIN dental_vital dv
@@ -69,7 +69,7 @@ $sql = "
     LEFT JOIN users u 
         ON a.user_id = u.user_id
     WHERE dt.dental_transaction_id = ? 
-    AND a.user_id = ?
+        AND a.user_id = ?
     GROUP BY dt.dental_transaction_id
 ";
 
@@ -79,14 +79,15 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 if ($row = $result->fetch_assoc()) {
-    
     $row['services'] = $row['services'] ?: '-';
 
     $appointmentTransactionId = $row['appointment_transaction_id'];
 
-    $prescriptionsSql = "SELECT drug, frequency, dosage, duration, quantity, instructions 
-                            FROM dental_prescription 
-                            WHERE appointment_transaction_id = ?";
+    $prescriptionsSql = "
+        SELECT drug, frequency, dosage, duration, quantity, instructions 
+        FROM dental_prescription 
+        WHERE appointment_transaction_id = ?
+    ";
     $stmt2 = $conn->prepare($prescriptionsSql);
     $stmt2->bind_param("i", $appointmentTransactionId);
     $stmt2->execute();

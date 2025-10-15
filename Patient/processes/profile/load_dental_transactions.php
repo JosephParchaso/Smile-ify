@@ -15,7 +15,7 @@ $sql = "
     SELECT 
         dt.dental_transaction_id,
         b.name AS branch,
-        GROUP_CONCAT(s.name ORDER BY s.name SEPARATOR ', ') AS services,
+        GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', ') AS services,
         CONCAT('Dr. ', d.last_name, ', ', d.first_name, ' ', IFNULL(d.middle_name, '')) AS dentist,
         a.appointment_date,
         a.appointment_time,
@@ -26,10 +26,10 @@ $sql = "
         ON dt.appointment_transaction_id = a.appointment_transaction_id
     LEFT JOIN branch b 
         ON a.branch_id = b.branch_id
-    LEFT JOIN appointment_services aps 
-        ON a.appointment_transaction_id = aps.appointment_transaction_id
+    LEFT JOIN dental_transaction_services dts 
+        ON dts.dental_transaction_id = dt.dental_transaction_id
     LEFT JOIN service s 
-        ON aps.service_id = s.service_id
+        ON s.service_id = dts.service_id
     LEFT JOIN dentist d 
         ON d.dentist_id = COALESCE(dt.dentist_id, a.dentist_id)
     WHERE a.user_id = ?

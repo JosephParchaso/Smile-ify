@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 15, 2025 at 03:44 AM
+-- Generation Time: Oct 16, 2025 at 12:14 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -94,7 +94,11 @@ INSERT INTO `appointment_services` (`appointment_services_id`, `appointment_tran
 (25, 99, 4, '2025-10-15 09:06:42'),
 (26, 100, 1, '2025-10-15 09:27:39'),
 (27, 100, 4, '2025-10-15 09:27:39'),
-(28, 101, 1, '2025-10-15 09:34:49');
+(28, 101, 1, '2025-10-15 09:34:49'),
+(29, 102, 1, '2025-10-15 22:50:48'),
+(30, 103, 3, '2025-10-16 04:28:31'),
+(31, 103, 4, '2025-10-16 04:28:31'),
+(32, 104, 1, '2025-10-16 04:41:11');
 
 -- --------------------------------------------------------
 
@@ -213,7 +217,10 @@ INSERT INTO `appointment_transaction` (`appointment_transaction_id`, `user_id`, 
 (98, 28, 1, 2, '2025-10-22', '09:00:00', '', '2025-10-14 19:30:57', '2025-10-15 08:51:44', 'Completed'),
 (99, 28, 1, NULL, '2025-10-23', '09:00:00', '', '2025-10-15 01:06:42', '2025-10-15 09:19:36', 'Completed'),
 (100, 28, 1, 2, '2025-10-23', '09:00:00', '', '2025-10-15 01:27:39', '2025-10-15 09:32:40', 'Completed'),
-(101, 28, 1, 3, '2025-10-23', '09:00:00', '', '2025-10-15 01:34:49', '2025-10-15 09:36:00', 'Completed');
+(101, 28, 1, 3, '2025-10-23', '09:00:00', '', '2025-10-15 01:34:49', '2025-10-15 09:36:00', 'Completed'),
+(102, 28, 1, 3, '2025-10-23', '09:00:00', '', '2025-10-15 14:50:48', '2025-10-15 22:52:55', 'Completed'),
+(103, 28, 1, 2, '2025-10-23', '09:00:00', '', '2025-10-15 20:28:31', '2025-10-16 04:29:54', 'Completed'),
+(104, 28, 1, 3, '2025-10-23', '09:00:00', '', '2025-10-15 20:41:11', '2025-10-16 04:43:04', 'Completed');
 
 -- --------------------------------------------------------
 
@@ -338,10 +345,10 @@ CREATE TABLE `branch_supply` (
 --
 
 INSERT INTO `branch_supply` (`branch_supplies_id`, `branch_id`, `supply_id`, `quantity`, `reorder_level`, `expiration_date`, `status`, `date_created`, `date_updated`) VALUES
-(1, 1, 1, 11, 12, '2025-10-31', 'Available', '2025-09-21 05:51:59', '2025-10-15 09:36:00'),
+(1, 1, 1, 13, 12, '2025-10-31', 'Available', '2025-09-21 05:51:59', '2025-10-15 22:52:55'),
 (2, 3, 2, 5, 10, NULL, 'Available', '2025-09-21 06:05:54', '2025-09-21 06:05:54'),
-(3, 1, 3, 40, 10, NULL, 'Available', '2025-10-13 04:59:52', '2025-10-15 09:19:36'),
-(4, 1, 4, 300, 175, NULL, 'Available', '2025-10-13 05:15:15', '2025-10-15 09:36:00');
+(3, 1, 3, 470, 10, NULL, 'Available', '2025-10-13 04:59:52', '2025-10-16 04:43:04'),
+(4, 1, 4, 390, 175, NULL, 'Available', '2025-10-13 05:15:15', '2025-10-16 04:43:04');
 
 -- --------------------------------------------------------
 
@@ -475,8 +482,11 @@ INSERT INTO `dental_transaction` (`dental_transaction_id`, `appointment_transact
 (31, 97, 2, 2, 3, 780.00, 'bag ang', '2025-10-14 16:58:03', NULL, 0),
 (32, 98, 2, 2, 5, 225.00, '', '2025-10-14 19:32:19', '2025-10-15 04:06:23', 1),
 (33, 99, 3, 2, NULL, 7300.00, '', '2025-10-15 01:07:35', '2025-10-15 09:07:35', 0),
-(34, 100, 2, 2, NULL, 300.00, '', '2025-10-15 01:29:17', '2025-10-15 09:29:17', 0),
-(35, 101, 3, 2, NULL, 300.00, '', '2025-10-15 01:34:55', '2025-10-15 09:34:55', 0);
+(34, 100, 2, 2, NULL, 300.00, '', '2025-10-15 01:29:17', '2025-10-15 09:29:17', 1),
+(35, 101, 3, 2, NULL, 300.00, '', '2025-10-15 01:34:55', '2025-10-15 09:34:55', 1),
+(36, 102, 3, 2, NULL, 300.00, '', '2025-10-15 14:51:07', '2025-10-15 22:51:07', 1),
+(37, 103, 2, 2, 2, 8455.00, '', '2025-10-15 20:29:36', '2025-10-16 04:29:36', 0),
+(38, 104, 2, 2, 3, 1940.00, '', '2025-10-15 20:42:01', '2025-10-16 04:42:01', 1);
 
 -- --------------------------------------------------------
 
@@ -524,7 +534,13 @@ INSERT INTO `dental_transaction_services` (`id`, `dental_transaction_id`, `servi
 (47, 33, 1, 1),
 (48, 33, 4, 1),
 (49, 34, 1, 1),
-(50, 35, 1, 1);
+(50, 35, 1, 1),
+(51, 36, 1, 1),
+(52, 37, 3, 1),
+(53, 37, 4, 1),
+(54, 38, 3, 1),
+(55, 38, 4, 1),
+(56, 38, 2, 1);
 
 -- --------------------------------------------------------
 
@@ -579,7 +595,10 @@ INSERT INTO `dental_vital` (`vitals_id`, `appointment_transaction_id`, `admin_us
 (25, 98, 2, 28.0, 101, 100, '120/80', 170.00, 100.00, 'No', 'No', 'No', '2025-10-14 19:33:13', '2025-10-15 03:48:31'),
 (26, 99, 2, 25.0, 110, 115, '120/80', 170.00, 100.00, 'Yes', 'Yes', 'Yes', '2025-10-15 01:11:30', '2025-10-15 09:11:30'),
 (27, 100, 2, 3.0, 3, 3, '3', 3.00, 3.00, 'No', 'No', 'No', '2025-10-15 01:29:27', '2025-10-15 09:29:27'),
-(28, 101, 2, 44.0, 4, 4, '4', 44.00, 4.00, 'No', 'No', 'No', '2025-10-15 01:35:02', '2025-10-15 09:35:02');
+(28, 101, 2, 44.0, 4, 4, '4', 44.00, 4.00, 'No', 'No', 'No', '2025-10-15 01:35:02', '2025-10-15 09:35:02'),
+(29, 102, 2, 3.0, 33, 3, '3', 3.00, 3.00, 'No', 'No', 'No', '2025-10-15 14:51:14', '2025-10-15 22:51:14'),
+(30, 103, 2, 1.0, 1, 1, '1', 1.00, 1.00, 'No', 'No', 'No', '2025-10-15 20:29:43', '2025-10-16 04:29:43'),
+(31, 104, 2, 231.0, 123, 123, '1', 31.00, 3.00, 'No', 'No', 'No', '2025-10-15 20:41:19', '2025-10-16 04:41:19');
 
 -- --------------------------------------------------------
 
@@ -909,7 +928,13 @@ INSERT INTO `notifications` (`notification_id`, `user_id`, `message`, `is_read`,
 (168, 28, 'Your appointment on 2025-10-23 at 09:00 was successfully booked!', 0, '2025-10-15 01:27:39'),
 (225, 28, 'Your appointment (October 23, 2025 at 9:00 AM) has been marked as completed. Thank you for visiting!', 0, '2025-10-15 01:32:40'),
 (226, 28, 'Your appointment on 2025-10-23 at 09:00 was successfully booked!', 0, '2025-10-15 01:34:49'),
-(269, 28, 'Your appointment (October 23, 2025 at 9:00 AM) has been marked as completed. Thank you for visiting!', 0, '2025-10-15 01:36:00');
+(269, 28, 'Your appointment (October 23, 2025 at 9:00 AM) has been marked as completed. Thank you for visiting!', 0, '2025-10-15 01:36:00'),
+(270, 28, 'Your appointment on 2025-10-23 at 09:00 was successfully booked!', 0, '2025-10-15 14:50:48'),
+(313, 28, 'Your appointment (October 23, 2025 at 9:00 AM) has been marked as completed. Thank you for visiting!', 0, '2025-10-15 14:52:55'),
+(314, 28, 'Your appointment on 2025-10-23 at 09:00 was successfully booked!', 0, '2025-10-15 20:28:31'),
+(315, 28, 'Your appointment (October 23, 2025 at 9:00 AM) has been marked as completed. Thank you for visiting!', 0, '2025-10-15 20:29:54'),
+(316, 28, 'Your appointment on 2025-10-23 at 09:00 was successfully booked!', 0, '2025-10-15 20:41:11'),
+(345, 28, 'Your appointment (October 23, 2025 at 9:00 AM) has been marked as completed. Thank you for visiting!', 0, '2025-10-15 20:43:04');
 
 -- --------------------------------------------------------
 
@@ -1075,7 +1100,7 @@ INSERT INTO `users` (`user_id`, `username`, `password`, `last_name`, `middle_nam
 (25, 'AchasGG', '$2y$10$csrxQ1iwxHEcfkhQHKf3se586DUSZSK.WhXgNKB39m9js/HfPwuYK', 'Achas', '', 'Gab', 'Male', '0000-00-00', '18100807@usc.edu.ph', '0922626262', NULL, 'patient', NULL, NULL, 'Inactive', '2025-07-14 10:25:16', NULL, 0),
 (26, 'DazeP', '$2y$10$du.PYFR4vnJv9ecdNWDox.UUDcjoC0cTUAvtnsnSG.tXwdqn5vLKO', 'Daze', '', 'Pretot', 'Male', '0000-00-00', 'parchasoresidence@gmail.com', '9055626239', NULL, 'patient', NULL, NULL, 'Inactive', '2025-07-14 10:33:22', NULL, 0),
 (27, 'ChikuY', '$2y$10$h7C7FiWzWuf7oS0hUaav/OZwJX4rYOExaPk3NJu3O39mmsutOsUvm', 'Chiku', 'Wix', 'Yel', 'Female', '0000-00-00', 'parchasoresidence@gmail.com', '9055626239', NULL, 'patient', NULL, NULL, 'Inactive', '2025-07-14 11:14:19', '2025-10-04 05:51:10', 0),
-(28, 'Josephp', '$2y$10$OYynxpSPEJmsmDYgUlzNh.bnp1SH8.yJNckex9WXSvwA79LxPQ4Wm', 'Parchaso', 'España', 'Jhon Joseph', 'Male', '1999-08-17', 'josephparchaso@gmail.com', '9055626237', 'Block 22, Lot 6, Deca 4 Bankal Lapu Lapu City Cebu', 'patient', 1, NULL, 'Active', '2025-07-14 11:26:32', '2025-10-15 09:34:49', 0),
+(28, 'Josephp', '$2y$10$OYynxpSPEJmsmDYgUlzNh.bnp1SH8.yJNckex9WXSvwA79LxPQ4Wm', 'Parchaso', 'España', 'Jhon Joseph', 'Male', '1999-08-17', 'josephparchaso@gmail.com', '9055626237', 'Block 22, Lot 6, Deca 4 Bankal Lapu Lapu City Cebu', 'patient', 1, NULL, 'Active', '2025-07-14 11:26:32', '2025-10-16 04:41:11', 0),
 (29, 'pototj', '$2y$10$9Swzre20c9pLQ8ejMr1ySufYwaARXiCYpp8sUXyb5CP1oI7xNjtC2', 'potot', '', 'jj', 'Male', '0000-00-00', '18102727@usc.edu.ph', '9527194102', NULL, 'patient', NULL, NULL, 'Inactive', '2025-07-14 15:48:41', NULL, 0),
 (30, 'pret', '$2y$10$z7r/dpwWQ2m.RZK8EcwJGu2MkUM3tRY2EgG/7OyfSubN.bmXm2yTW', 'pre', '', 'tot', 'Male', '0000-00-00', '18102727@usc.edu.ph', '9205251545', NULL, 'patient', NULL, NULL, 'Inactive', '2025-07-14 16:03:59', NULL, 0),
 (31, 'Parchaso_J', '$2y$10$14IUZVVauGdjCe04vSuVTechUS8.EYYzOO5yZ0Li6Lq/IUhGx0.Ny', 'Parchaso', 'Espana', 'Jhon', 'Female', '0000-00-00', '18100807@usc.edu.ph', '9055626239', NULL, 'patient', NULL, NULL, 'Inactive', '2025-07-31 14:32:30', NULL, 0),
@@ -1294,13 +1319,13 @@ ALTER TABLE `announcements`
 -- AUTO_INCREMENT for table `appointment_services`
 --
 ALTER TABLE `appointment_services`
-  MODIFY `appointment_services_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `appointment_services_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `appointment_transaction`
 --
 ALTER TABLE `appointment_transaction`
-  MODIFY `appointment_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=102;
+  MODIFY `appointment_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=105;
 
 --
 -- AUTO_INCREMENT for table `branch`
@@ -1342,19 +1367,19 @@ ALTER TABLE `dental_tips`
 -- AUTO_INCREMENT for table `dental_transaction`
 --
 ALTER TABLE `dental_transaction`
-  MODIFY `dental_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `dental_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT for table `dental_transaction_services`
 --
 ALTER TABLE `dental_transaction_services`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
 
 --
 -- AUTO_INCREMENT for table `dental_vital`
 --
 ALTER TABLE `dental_vital`
-  MODIFY `vitals_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `vitals_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `dentist`
@@ -1378,7 +1403,7 @@ ALTER TABLE `dentist_service`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=270;
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=346;
 
 --
 -- AUTO_INCREMENT for table `promo`

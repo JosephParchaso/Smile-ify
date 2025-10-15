@@ -153,9 +153,6 @@ Hash EVERYTHING in db after deployment?💖
 dungan register/book different user 💖
 family 💖
 
-receipt admin🥶
-prescription admin/ remove release again🥶
-medical cert admin/patient🥶
 announcments, disable dates if branch is closed 🥶
 
 Owner - OTP Every Login 🥶
@@ -205,3 +202,6 @@ apply promo transact 👍
 one add vitals and transaction only 👍
 supplies with transact / add and link the service materials per transaction 👍
 cancel appointment and complete appointment / to save transaction and status completed notify user 👍
+receipt admin 👍
+prescription admin 👍
+medical cert admin 👍

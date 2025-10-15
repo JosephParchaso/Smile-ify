@@ -136,12 +136,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         document.getElementById("prescriptionList").innerHTML = prescriptionHtml;
                         transactionModal.style.display = "block";
 
-                        async function getBranches() {
-                            const response = await fetch(`${BASE_URL}/Patient/processes/profile/get_branches.php`);
-                            const data = await response.json();
-                            return data.branches || [];
-                        }
-
                         // ========= DOWNLOAD PRESCRIPTION =========
                         const btn = document.getElementById("downloadPrescription");
                         if (btn) {
@@ -171,8 +165,9 @@ document.addEventListener("DOMContentLoaded", () => {
                                 doc.text("Arriesgado Dental Clinic", 105, 15, { align: "center" });
 
                                 // Branches
-                                const branches = await getBranches();
-                                const branchesText = branches.length > 0 ? branches.join(" • ") : "-";
+                                const response = await fetch(`${BASE_URL}/Patient/processes/profile/get_branches.php`);
+                                const branchesData = await response.json();
+                                const branchesText = branchesData.branches ? branchesData.branches.join(" • ") : "-";
 
                                 doc.setFontSize(11);
                                 doc.setFont("helvetica", "normal");
@@ -213,24 +208,14 @@ document.addEventListener("DOMContentLoaded", () => {
                                 doc.text(patientFullName || "-", leftValueX + 2, 54);
                                 doc.text(patientAge || "-", rightValueX + 2, 54);
 
-                                // === Row 2: Service & Branch ===
+                                // === Row 2: Date Issued & Branch ===
                                 const row2Y = 67;
                                 doc.setFont("helvetica", "bold");
-                                doc.text("Service:", leftLabelX, row2Y);
+                                doc.text("Date Issued:", leftLabelX, row2Y);
                                 doc.line(leftValueX, row2Y, leftLineEndX, row2Y);
 
                                 doc.text("Branch:", rightLabelX, row2Y);
                                 doc.line(rightValueX, row2Y, rightLineEndX, row2Y);
-
-                                doc.setFont("helvetica", "normal");
-                                doc.text(data.services || "-", leftValueX + 2, row2Y - 1);
-                                doc.text(data.branch || "-", rightValueX + 2, row2Y - 1);
-
-                               // === Row 3: Date Issued ===
-                                const row3Y = 79;
-                                doc.setFont("helvetica", "bold");
-                                doc.text("Date Issued:", leftLabelX, row3Y);
-                                doc.line(leftValueX, row3Y, leftLineEndX, row3Y);
 
                                 doc.setFont("helvetica", "normal");
                                 const formattedDate = data.date_created
@@ -240,7 +225,30 @@ document.addEventListener("DOMContentLoaded", () => {
                                         day: "numeric"
                                     })
                                     : "-";
-                                doc.text(formattedDate, leftValueX + 2, row3Y - 1);
+                                doc.text(formattedDate, leftValueX + 2, row2Y - 1);
+                                doc.text(data.branch || "-", rightValueX + 2, row2Y - 1);
+
+                                // === Row 3: Service ===
+                                const row3Y = 79;
+                                doc.setFont("helvetica", "bold");
+                                doc.text("Service:", leftLabelX, row3Y);
+
+                                doc.setFont("helvetica", "normal");
+                                let serviceLines = [];
+                                if (data.services) {
+                                    serviceLines = data.services.split("\n").map(s => s.trim()).filter(Boolean);
+                                    let y = row3Y - 1;
+                                    serviceLines.forEach((s, i) => {
+                                        if (y > pageHeight - 40) {
+                                            doc.addPage();
+                                            y = 20;
+                                        }
+                                        doc.text(s, leftValueX + 2, y);
+                                        y += 6;
+                                    });
+                                } else {
+                                    doc.text("-", leftValueX + 2, row3Y - 1);
+                                }
 
                                 // ===== PRESCRIPTIONS =====
                                 const prescripY = row3Y + 15;
