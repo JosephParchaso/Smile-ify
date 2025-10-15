@@ -10,20 +10,32 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $appointment_id = intval($_POST['appointment_transaction_id'] ?? 0);
-    $drug        = trim($_POST['drug'] ?? '');
-    $frequency   = trim($_POST['frequency'] ?? '');
-    $dosage      = trim($_POST['dosage'] ?? '');
-    $duration    = trim($_POST['duration'] ?? '');
-    $quantity    = trim($_POST['quantity'] ?? '');
-    $instructions= trim($_POST['instructions'] ?? '');
+    $admin_user_id  = intval($_POST['admin_user_id'] ?? $_SESSION['user_id']);
+    $drug           = trim($_POST['drug'] ?? '');
+    $frequency      = trim($_POST['frequency'] ?? '');
+    $dosage         = trim($_POST['dosage'] ?? '');
+    $duration       = trim($_POST['duration'] ?? '');
+    $quantity       = trim($_POST['quantity'] ?? '');
+    $instructions   = trim($_POST['instructions'] ?? '');
 
     try {
         $stmt = $conn->prepare("
             INSERT INTO dental_prescription 
-            (appointment_transaction_id, drug, frequency, dosage, duration, quantity, instructions, date_created)
-            VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
+            (appointment_transaction_id, admin_user_id, drug, frequency, dosage, duration, quantity, instructions, date_created, date_updated)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
         ");
-        $stmt->bind_param("issssss", $appointment_id, $drug, $frequency, $dosage, $duration, $quantity, $instructions);
+        $stmt->bind_param(
+            "iissssss",
+            $appointment_id,
+            $admin_user_id,
+            $drug,
+            $frequency,
+            $dosage,
+            $duration,
+            $quantity,
+            $instructions
+        );
+
         $stmt->execute();
         $stmt->close();
 
@@ -36,3 +48,4 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     header("Location: " . BASE_URL . "/Admin/pages/manage_appointment.php?id=" . $appointment_id . "&backTab=recent&tab=prescriptions");
     exit();
 }
+?>

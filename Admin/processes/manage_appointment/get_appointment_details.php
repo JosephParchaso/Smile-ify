@@ -29,6 +29,7 @@ $sql = "
         u.address,
         u.date_created AS user_created,
         u.date_updated,
+        a.appointment_transaction_id,
         a.appointment_date,
         a.appointment_time,
         a.status,
@@ -64,6 +65,7 @@ if ($row = $result->fetch_assoc()) {
         'joined'          => $row['user_created'] ? date("F j, Y", strtotime($row['user_created'])) : '-',
         'date_updated'    => $row['date_updated'] ? date("F j, Y", strtotime($row['date_updated'])) : '-',
 
+        'appointment_transaction_id'           => $row['appointment_transaction_id'],
         'appointment_date' => $row['appointment_date'] ? date("F j, Y", strtotime($row['appointment_date'])) : '-',
         'appointment_time' => $row['appointment_time'] ? date("g:i A", strtotime($row['appointment_time'])) : '-',
         'status'           => $row['status'],

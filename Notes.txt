@@ -153,18 +153,14 @@ Hash EVERYTHING in db after deployment?💖
 dungan register/book different user 💖
 family 💖
 
-
-supplies with transact / add and link the service materials per transaction 🥶
-receipt 🥶
-cancel appointment and complete appointment / to save transaction and status completed notify user 🥶
-release again the prescription 🥶
+receipt admin🥶
+prescription admin/ remove release again🥶
+medical cert admin/patient🥶
+announcments, disable dates if branch is closed 🥶
 
 Owner - OTP Every Login 🥶
 Admin - OTP Every Login 🥶
 Patient - OTP Every Login 🥶
-
-announcments, disable dates if branch is closed 🥶
-medical cert 🥶
 
 
 Error on change password OTP Fix 👍
@@ -207,3 +203,5 @@ MAJOR CHANGE - MULTIPLE SERVICE 👍
 add admin or prepared by admin 👍
 apply promo transact 👍
 one add vitals and transaction only 👍
+supplies with transact / add and link the service materials per transaction 👍
+cancel appointment and complete appointment / to save transaction and status completed notify user 👍

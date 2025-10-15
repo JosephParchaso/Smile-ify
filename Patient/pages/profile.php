@@ -102,9 +102,9 @@ $updateError = $_SESSION['updateError'] ?? "";
     </div>
 </div>
 
-<div id="manageModal" class="manage-appointment-modal">
-    <div class="manage-appointment-modal-content">
-        <div id="modalBody" class="manage-appointment-modal-content-body">
+<div id="manageModal" class="manage-calendar-modal">
+    <div class="manage-calendar-modal-content">
+        <div id="modalBody" class="manage-calendar-modal-content-body">
             <!-- Appointment info will be loaded here -->
         </div>
     </div>

@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <p><strong>Last Update:</strong><span>${data.date_updated}</span></p>
                 <hr>
                 <h3>Appointment Details</h3>
+                <p><strong>Appointment ID:</strong><span>${data.appointment_transaction_id}</span></p>
                 <p><strong>Branch:</strong><span>${data.branch}</span></p>
                 <p><strong>Service:</strong><span>${data.services}</span></p>
                 <p><strong>Dentist:</strong><span>${data.dentist}</span></p>
@@ -35,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <p><strong>Notes:</strong><span>${data.notes || '-'}</span></p>
                 <p><strong>Date Booked:</strong><span>${data.date_created}</span></p>
                 <div class="button-group button-group-profile">
-                    <button class="confirm-btn" id="markDone">Complete Appointment</button>
+                    <button class="confirm-btn" id="markDone">Complete Transaction</button>
                     <button class="cancel-btn-appointment" id="markCancel">Cancel Appointment</button>
                 </div>
             `;

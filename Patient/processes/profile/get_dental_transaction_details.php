@@ -21,7 +21,7 @@ $userId = $_SESSION['user_id'];
 $sql = "
     SELECT 
         b.name AS branch,
-        GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR '\n') AS services,
+        GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', ') AS services,
         CONCAT('Dr. ', d.last_name, ', ', d.first_name, ' ', IFNULL(d.middle_name, '')) AS dentist,
         d.last_name AS dentist_last_name,
         d.first_name AS dentist_first_name,

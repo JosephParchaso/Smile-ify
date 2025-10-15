@@ -33,6 +33,7 @@ $sql = "
     LEFT JOIN dentist d 
         ON d.dentist_id = COALESCE(dt.dentist_id, a.dentist_id)
     WHERE a.user_id = ?
+        AND a.status = 'Completed'
     GROUP BY dt.dental_transaction_id
     ORDER BY dt.date_created DESC
 ";

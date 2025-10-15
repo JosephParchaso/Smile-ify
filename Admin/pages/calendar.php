@@ -18,6 +18,11 @@ $updateError = $_SESSION['updateError'] ?? "";
 <title>Schedules</title>
 
 <div class="calendar-container">
+    <div id="calendarLegend" class="legend"></div>
+    <div id="calendar"></div>
+</div>
+
+<div class="calendar-container">
     <div id="calendar"></div>
 </div>
 <input type="hidden" id="branchIdInput" value="<?= htmlspecialchars($_SESSION['branch_id'] ?? '') ?>">

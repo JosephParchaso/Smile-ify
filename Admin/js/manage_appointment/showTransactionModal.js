@@ -98,6 +98,24 @@ document.addEventListener("DOMContentLoaded", () => {
                     <label for="notes" class="form-label">Notes</label>
                 </div>
 
+                ${isEdit ? `
+                <div class="form-group">
+                    <input type="text" id="recordedBy" class="form-control" value="${data.recorded_by}" disabled>
+                    <label for="recordedBy" class="form-label">Recorded by:</label>
+                </div>` : ""}
+
+                ${isEdit ? `
+                <div class="form-group">
+                    <input type="text" id="dateCreated" class="form-control" value="${data.date_created}" disabled>
+                    <label for="dateCreated" class="form-label">Date Created</label>
+                </div>` : ""}
+
+                ${isEdit ? `
+                <div class="form-group">
+                    <input type="text" id="dateUpdated" class="form-control" value="${data.date_updated}" disabled>
+                    <label for="dateUpdated" class="form-label">Last Update</label>
+                </div>` : ""}
+
                 <div class="checkout-summary">
                     <h3>Transaction Summary</h3>
                     <div id="servicesList"></div> 
@@ -186,6 +204,100 @@ document.addEventListener("DOMContentLoaded", () => {
         if (promoSelect) {
             promoSelect.addEventListener("change", updateServicesSummary);
         }
+    }
+
+    function loadDentists(branchId, serviceIds = [], dentistSelect, selectedId = null, preserveIfStillValid = false) {
+        dentistSelect.innerHTML = '<option disabled>Loading dentists...</option>';
+
+        const finalSelectedId = selectedId || window.appointmentDentistId || null;
+
+        $.ajax({
+            type: "POST",
+            url: `${BASE_URL}/processes/load_dentists.php`,
+            data: {
+                appointmentBranch: branchId,
+                appointmentServices: serviceIds,
+                forTransaction: true,
+                selectedDentistId: finalSelectedId
+            },
+            success: function (response) {
+                dentistSelect.innerHTML = response.trim();
+
+                if (finalSelectedId) {
+                    const optionToSelect = dentistSelect.querySelector(`option[value="${finalSelectedId}"]`);
+                    if (optionToSelect) {
+                        dentistSelect.value = finalSelectedId;
+                    } else if (!preserveIfStillValid) {
+                        dentistSelect.selectedIndex = 0;
+                    }
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Dentist load failed:", status, error, xhr.responseText);
+                dentistSelect.innerHTML = '<option disabled>Error loading dentists</option>';
+            }
+        });
+    }
+
+    function loadServices(branchId, container, transactionId = null, appointmentServiceIds = [], callback = null) {
+        container.innerHTML = '<p class="loading-text">Loading services</p>';
+
+        $.ajax({
+            type: "POST",
+            url: `${BASE_URL}/processes/load_services.php`,
+            data: {
+                appointmentBranch: branchId,
+                appointment_transaction_id: transactionId,
+                appointment_id: appointmentId,
+                hide_duration: true 
+            },
+            success: function (response) {
+                container.innerHTML = response;
+
+                const checkboxes = container.querySelectorAll('input[name="appointmentServices[]"]');
+                const dentistSelect = document.getElementById("transactionDentist");
+
+                if (!transactionId && appointmentServiceIds.length > 0) {
+                    checkboxes.forEach(cb => {
+                        if (appointmentServiceIds.includes(cb.value)) {
+                            cb.checked = true;
+                        }
+                    });
+                }
+
+                checkboxes.forEach(cb => {
+                    cb.addEventListener("change", function () {
+                        const selectedServices = [...container.querySelectorAll('input[name="appointmentServices[]"]:checked')]
+                            .map(cb => cb.value);
+
+                        dentistSelect.innerHTML = `<option value="" disabled selected hidden>Select a dentist</option>`;
+
+                        const loadingOption = document.createElement("option");
+                        loadingOption.textContent = "Loading available dentists...";
+                        loadingOption.disabled = true;
+                        dentistSelect.appendChild(loadingOption);
+
+                        if (selectedServices.length === 0) {
+                            dentistSelect.innerHTML = `<option value="" disabled selected hidden>No services selected</option>`;
+                            return;
+                        }
+        const qtyInput = container.querySelector(`input[name="serviceQuantity[${cb.value}]"]`);
+        qtyInput.style.display = cb.checked ? 'inline-block' : 'none';
+
+        if (!cb.checked) qtyInput.value = 1;
+
+                        const currentDentistId = null;
+                        loadDentists(branchId, selectedServices, dentistSelect, currentDentistId, false);
+                    });
+                });
+
+                if (callback) callback();
+            },
+            error: function (xhr, status, error) {
+                console.error("Service load failed:", status, error, xhr.responseText);
+                container.innerHTML = '<p class="error">Error loading services</p>';
+            }
+        });
     }
 
     function loadPromos(promoSelect, selectedId = null, branchId = null) {
@@ -293,100 +405,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    function loadDentists(branchId, serviceIds = [], dentistSelect, selectedId = null, preserveIfStillValid = false) {
-        dentistSelect.innerHTML = '<option disabled>Loading dentists...</option>';
-
-        const finalSelectedId = selectedId || window.appointmentDentistId || null;
-
-        $.ajax({
-            type: "POST",
-            url: `${BASE_URL}/processes/load_dentists.php`,
-            data: {
-                appointmentBranch: branchId,
-                appointmentServices: serviceIds,
-                forTransaction: true,
-                selectedDentistId: finalSelectedId
-            },
-            success: function (response) {
-                dentistSelect.innerHTML = response.trim();
-
-                if (finalSelectedId) {
-                    const optionToSelect = dentistSelect.querySelector(`option[value="${finalSelectedId}"]`);
-                    if (optionToSelect) {
-                        dentistSelect.value = finalSelectedId;
-                    } else if (!preserveIfStillValid) {
-                        dentistSelect.selectedIndex = 0;
-                    }
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error("Dentist load failed:", status, error, xhr.responseText);
-                dentistSelect.innerHTML = '<option disabled>Error loading dentists</option>';
-            }
-        });
-    }
-
-    function loadServices(branchId, container, transactionId = null, appointmentServiceIds = [], callback = null) {
-        container.innerHTML = '<p class="loading-text">Loading services</p>';
-
-        $.ajax({
-            type: "POST",
-            url: `${BASE_URL}/processes/load_services.php`,
-            data: {
-                appointmentBranch: branchId,
-                appointment_transaction_id: transactionId,
-                appointment_id: appointmentId,
-                hide_duration: true 
-            },
-            success: function (response) {
-                container.innerHTML = response;
-
-                const checkboxes = container.querySelectorAll('input[name="appointmentServices[]"]');
-                const dentistSelect = document.getElementById("transactionDentist");
-
-                if (!transactionId && appointmentServiceIds.length > 0) {
-                    checkboxes.forEach(cb => {
-                        if (appointmentServiceIds.includes(cb.value)) {
-                            cb.checked = true;
-                        }
-                    });
-                }
-
-                checkboxes.forEach(cb => {
-                    cb.addEventListener("change", function () {
-                        const selectedServices = [...container.querySelectorAll('input[name="appointmentServices[]"]:checked')]
-                            .map(cb => cb.value);
-
-                        dentistSelect.innerHTML = `<option value="" disabled selected hidden>Select a dentist</option>`;
-
-                        const loadingOption = document.createElement("option");
-                        loadingOption.textContent = "Loading available dentists...";
-                        loadingOption.disabled = true;
-                        dentistSelect.appendChild(loadingOption);
-
-                        if (selectedServices.length === 0) {
-                            dentistSelect.innerHTML = `<option value="" disabled selected hidden>No services selected</option>`;
-                            return;
-                        }
-        const qtyInput = container.querySelector(`input[name="serviceQuantity[${cb.value}]"]`);
-        qtyInput.style.display = cb.checked ? 'inline-block' : 'none';
-
-        if (!cb.checked) qtyInput.value = 1;
-
-                        const currentDentistId = null;
-                        loadDentists(branchId, selectedServices, dentistSelect, currentDentistId, false);
-                    });
-                });
-
-                if (callback) callback();
-            },
-            error: function (xhr, status, error) {
-                console.error("Service load failed:", status, error, xhr.responseText);
-                container.innerHTML = '<p class="error">Error loading services</p>';
-            }
-        });
-    }
-
     function renderVitalForm(data) {
         const isEdit = !!data;
 
@@ -398,6 +416,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 
                 ${isEdit ? `<input type="hidden" name="vitals_id" value="${data.vitals_id}">` : ""}
                 <input type="hidden" name="appointment_transaction_id" value="${appointmentId}">
+                <input type="hidden" name="admin_user_id" value="${userId}" readonly required>
 
                 <div class="form-group">
                     <input type="number" step="0.1" id="bodyTemp" class="form-control" name="body_temp"
@@ -459,6 +478,24 @@ document.addEventListener("DOMContentLoaded", () => {
                     <label for="isBleeding" class="form-label">Bleeding <span class="required">*</span></label>
                 </div>
 
+                ${isEdit ? `
+                <div class="form-group">
+                    <input type="text" id="recordedBy" class="form-control" value="${data.recorded_by}" disabled>
+                    <label for="recordedBy" class="form-label">Recorded by:</label>
+                </div>` : ""}
+
+                ${isEdit ? `
+                <div class="form-group">
+                    <input type="text" id="dateCreated" class="form-control" value="${data.date_created}" disabled>
+                    <label for="dateCreated" class="form-label">Date Created</label>
+                </div>` : ""}
+
+                ${isEdit ? `
+                <div class="form-group">
+                    <input type="text" id="dateUpdated" class="form-control" value="${data.date_updated}" disabled>
+                    <label for="dateUpdated" class="form-label">Last Update</label>
+                </div>` : ""}
+
                 <div class="button-group">
                     <button type="submit" class="form-button confirm-btn">${isEdit ? "Update Vitals" : "Save Vitals"}</button>
                     <button type="button" class="form-button cancel-btn" onclick="closeManageModal()">Cancel</button>
@@ -478,6 +515,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 
                 ${isEdit ? `<input type="hidden" name="prescription_id" value="${data.prescription_id}">` : ""}
                 <input type="hidden" name="appointment_transaction_id" value="${appointmentId}">
+                <input type="hidden" name="admin_user_id" value="${userId}" readonly required>
 
                 <div class="form-group">
                     <input type="text" id="drug" class="form-control" name="drug"
@@ -514,6 +552,24 @@ document.addEventListener("DOMContentLoaded", () => {
                     <textarea id="instructions" class="form-control" name="instructions" rows="3" placeholder=" ">${isEdit ? data.instructions : ""}</textarea>
                     <label for="instructions" class="form-label">Instructions</label>
                 </div>
+
+                ${isEdit ? `
+                <div class="form-group">
+                    <input type="text" id="recordedBy" class="form-control" value="${data.recorded_by}" disabled>
+                    <label for="recordedBy" class="form-label">Recorded by:</label>
+                </div>` : ""}
+
+                ${isEdit ? `
+                <div class="form-group">
+                    <input type="text" id="dateCreated" class="form-control" value="${data.date_created}" disabled>
+                    <label for="dateCreated" class="form-label">Date Created</label>
+                </div>` : ""}
+
+                ${isEdit ? `
+                <div class="form-group">
+                    <input type="text" id="dateUpdated" class="form-control" value="${data.date_updated}" disabled>
+                    <label for="dateUpdated" class="form-label">Last Update</label>
+                </div>` : ""}
 
                 <div class="button-group">
                     <button type="submit" class="form-button confirm-btn">${isEdit ? "Update Prescription" : "Save Prescription"}</button>

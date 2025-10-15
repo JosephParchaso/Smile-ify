@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                     <button class="confirm-btn" id="downloadPrescription">Download Prescription</button>
                                         ${
                                             data.prescription_downloaded == 0
-                                            ? `<button class="confirm-btn" id="downloadPrescription">Realease Prescription</button>`
+                                            ? `<button class="confirm-btn" id="downloadPrescription">Release Prescription</button>`
                                             : `<button class="confirm-btn" disabled>Released</button>`
                                         }
                                     </div>

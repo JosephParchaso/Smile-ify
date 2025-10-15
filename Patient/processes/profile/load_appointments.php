@@ -27,7 +27,6 @@ $sql = "
     LEFT JOIN appointment_services aps ON a.appointment_transaction_id = aps.appointment_transaction_id
     LEFT JOIN service s ON aps.service_id = s.service_id
     WHERE a.user_id = ?
-        AND a.status <> 'Completed'
     GROUP BY a.appointment_transaction_id
     ORDER BY a.date_created DESC
 ";

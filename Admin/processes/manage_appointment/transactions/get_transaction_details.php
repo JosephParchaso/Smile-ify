@@ -76,7 +76,7 @@ $response = [
     'admin_user_id' => (int)$data['admin_user_id'],
     'recorded_by' => $data['recorded_by'] ?? 'Unknown',
     'date_created' => $data['date_created'],
-    'date_updated' => $data['date_updated'],
+    'date_updated' => !empty($data['date_updated']) ? $data['date_updated'] : '-',
     'services' => $services
 ];
 

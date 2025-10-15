@@ -3,23 +3,28 @@ session_start();
 require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
 
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    header("Location: " . BASE_URL . "/index.php");
+    exit();
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $appointment_transaction_id = intval($_POST['appointment_transaction_id']);
-    $dentist_id = intval($_POST['dentist_id']);
+    $appointment_transaction_id = intval($_POST['appointment_transaction_id'] ?? 0);
+    $dentist_id = intval($_POST['dentist_id'] ?? 0);
     $promo_id = !empty($_POST['promo_id']) ? intval($_POST['promo_id']) : null;
     $notes = trim($_POST['notes'] ?? '');
-    $admin_user_id = intval($_POST['admin_user_id']);
+    $admin_user_id = intval($_SESSION['user_id'] ?? 0);
     $services = $_POST['appointmentServices'] ?? [];
     $quantities = $_POST['serviceQuantity'] ?? [];
     $total_payment = floatval($_POST['total_payment'] ?? 0);
 
-    $conn->begin_transaction();
-
     try {
+        $conn->begin_transaction();
+
         $stmt = $conn->prepare("
             INSERT INTO dental_transaction (
-                appointment_transaction_id, dentist_id, promo_id, total, notes, admin_user_id, date_created
-            ) VALUES (?, ?, ?, ?, ?, ?, NOW())
+                appointment_transaction_id, dentist_id, promo_id, total, notes, admin_user_id, date_created, date_updated
+            ) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())
         ");
         $stmt->bind_param(
             "iiidsi",
@@ -35,27 +40,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $dental_transaction_id = $stmt->insert_id;
         $stmt->close();
 
-        $stmtService = $conn->prepare("
-            INSERT INTO dental_transaction_services (dental_transaction_id, service_id, quantity)
-            VALUES (?, ?, ?)
-        ");
-        foreach ($services as $service_id) {
-            $quantity = isset($quantities[$service_id]) ? intval($quantities[$service_id]) : 1;
-            $stmtService->bind_param("iii", $dental_transaction_id, $service_id, $quantity);
-            $stmtService->execute();
+        if (!empty($services)) {
+            $stmtService = $conn->prepare("
+                INSERT INTO dental_transaction_services (dental_transaction_id, service_id, quantity)
+                VALUES (?, ?, ?)
+            ");
+            foreach ($services as $service_id) {
+                $quantity = isset($quantities[$service_id]) ? intval($quantities[$service_id]) : 1;
+                $stmtService->bind_param("iii", $dental_transaction_id, $service_id, $quantity);
+                $stmtService->execute();
+            }
+            $stmtService->close();
         }
-        $stmtService->close();
 
         $conn->commit();
 
-        $_SESSION['updateSuccess'] = "Transaction successfully saved!";
+        $_SESSION['updateSuccess'] = "Transaction added successfully!";
     } catch (Exception $e) {
         $conn->rollback();
         error_log("INSERT TRANSACTION ERROR: " . $e->getMessage());
-        $_SESSION['updateError'] = "Failed to save transaction.";
+        $_SESSION['updateError'] = "Failed to add transaction.";
     }
 
-    header("Location: " . $_SERVER['HTTP_REFERER']);
-    exit;
+    header("Location: " . BASE_URL . "/Admin/pages/manage_appointment.php?id=" . $appointment_transaction_id . "&backTab=recent&tab=transaction");
+    exit();
 }
 ?>

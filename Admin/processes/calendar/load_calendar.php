@@ -9,11 +9,10 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-$branch_id = $_SESSION['branch_id'] ?? null;
-
-if (!$branch_id) {
-    http_response_code(400);
-    exit('Branch ID not found in session');
+function stringToColorCode($str) {
+    $code = dechex(crc32($str));
+    $code = str_pad($code, 6, '0', STR_PAD_LEFT);
+    return '#' . substr($code, 0, 6);
 }
 
 $sql = "
@@ -34,26 +33,22 @@ $sql = "
     LEFT JOIN users u ON a.user_id = u.user_id
     LEFT JOIN appointment_services aps ON a.appointment_transaction_id = aps.appointment_transaction_id
     LEFT JOIN service s ON aps.service_id = s.service_id
-    WHERE a.branch_id = ?
     GROUP BY a.appointment_transaction_id
     ORDER BY a.appointment_date, a.appointment_time
 ";
 
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $branch_id);
-$stmt->execute();
-$result = $stmt->get_result();
+$result = $conn->query($sql);
 
 $events = [];
 while ($row = $result->fetch_assoc()) {
-
     $statusColor = '#fe9705';
     if (strcasecmp($row['status'], 'Completed') === 0) {
         $statusColor = '#3ac430';
     } elseif (strcasecmp($row['status'], 'Cancelled') === 0) {
         $statusColor = '#d11313';
     }
-    
+
+    $branchColor = stringToColorCode($row['branch']);
     $serviceList = $row['services'] ?? '-';
 
     $events[] = [
@@ -67,13 +62,12 @@ while ($row = $result->fetch_assoc()) {
         'notes' => $row['notes'],
         'status' => $row['status'],
         'date_created' => $row['date_created'],
-        'color' => $statusColor
+        'color' => $statusColor,
+        'branchColor' => $branchColor
     ];
 }
 
 header('Content-Type: application/json');
 echo json_encode($events);
-
-$stmt->close();
 $conn->close();
 ?>

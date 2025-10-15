@@ -1,7 +1,5 @@
 <?php
 session_start();
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
@@ -35,6 +33,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $row = $result->fetch_assoc();
         $check->close();
+
+        if (strtolower($row['status']) === 'cancelled') {
+            throw new Exception("This appointment has already been cancelled.");
+        }
+
+        if (strtolower($row['status']) === 'completed') {
+            throw new Exception("This appointment has already been completed and cannot be cancelled.");
+        }
 
         $stmt = $conn->prepare("
             UPDATE appointment_transaction
