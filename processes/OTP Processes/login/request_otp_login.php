@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['userName'], $_POST['p
                 $mail->SMTPAuth = true;
                 $mail->SMTPSecure = 'tls';
                 $mail->Username = 'smileify.web@gmail.com';
-                $mail->Password = 'cwupkqcucoufyxnf';
+                $mail->Password = '';
                 $mail->setFrom('smileify.web@gmail.com', 'Smile-ify Login Verification');
                 $mail->addAddress($email);
                 $mail->isHTML(true);

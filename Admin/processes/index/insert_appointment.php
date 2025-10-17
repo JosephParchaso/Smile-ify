@@ -183,8 +183,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $mail->SMTPAuth = true;
         $mail->SMTPSecure = 'tls';
 
-        $mail->Username = 'smileify.web@gmail.com';
-        $mail->Password = 'cwupkqcucoufyxnf';
+    // $mail->Username = 'smileify.web@gmail.com';
+    // $mail->Password = '';
 
         $mail->setFrom('smileify.web@gmail.com', 'Smile-ify Team');
         $mail->addAddress($email);

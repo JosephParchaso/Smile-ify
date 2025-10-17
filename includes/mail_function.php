@@ -21,8 +21,8 @@ function sendMail($to, $subject, $body, $fromName = 'Smile-ify Notifications')
     $mail->SMTPAuth = true;
     $mail->SMTPSecure = 'tls';
 
-    $mail->Username = 'smileify.web@gmail.com';
-    $mail->Password = 'cwupkqcucoufyxnf';
+    // $mail->Username = 'smileify.web@gmail.com';
+    // $mail->Password = '';
 
     $mail->setFrom('smileify.web@gmail.com', $fromName);
     $mail->addAddress($to);
