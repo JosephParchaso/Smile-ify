@@ -21,9 +21,11 @@ $sql = "
         p.discount_value,
         bp.start_date,
         bp.end_date,
-        bp.status
+        bp.status,
+        b.address AS branch_name
     FROM promo p
     INNER JOIN branch_promo bp ON p.promo_id = bp.promo_id
+    INNER JOIN branch b ON bp.branch_id = b.branch_id
     WHERE p.promo_id = ?
     LIMIT 1
 ";

@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function() {
             })
             .catch(err => console.error("Error loading patient appointments:", err));
     }
-
+    
     function loadAnnouncements() {
         fetch(`${BASE_URL}/Patient/processes/index/get_announcements.php`)
             .then(response => response.json())
@@ -60,12 +60,17 @@ document.addEventListener("DOMContentLoaded", function() {
                             ? `<br><small>Until ${a.end_date}</small>`
                             : "";
 
+                    const branchDisplay = a.branch_name
+                        ? `<br><small>📍 Branch: ${a.branch_name}</small>`
+                        : "";
+
                     container.insertAdjacentHTML(
                         "beforeend",
                         `
                         <div class="announcement">
                             <strong>${a.title}</strong><br>
                             ${a.description}
+                            ${branchDisplay}
                             ${dateRange}
                         </div>
                     `

@@ -77,6 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                             : ''
                                     }</span></p>
                                     <p><strong>Amount Paid:</strong><span>${data.total}</span></p>
+                                    <p><strong>Method:</strong><span>${data.payment_method}</span></p>
                                     <p><strong>Notes:</strong><span>${data.notes || '-'}</span></p>
                                     <p><strong>Date Booked:</strong><span>${
                                         data.date_created

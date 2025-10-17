@@ -9,7 +9,7 @@ header('Content-Type: application/json');
 if (isset($_SESSION['user_id'])) {
     $userId = $_SESSION['user_id'];
 
-    $stmt = $conn->prepare("SELECT userName, email FROM users WHERE user_id = ?");
+    $stmt = $conn->prepare("SELECT username, email FROM users WHERE user_id = ?");
     $stmt->bind_param("i", $userId);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -20,8 +20,13 @@ if (isset($_SESSION['user_id'])) {
     }
 
     $row = $result->fetch_assoc();
-    $username = $row['userName'];
+    $username = $row['username'];
     $email = $row['email'];
+
+} elseif (isset($_SESSION['pending_login_user'])) {
+    $pendingUser = $_SESSION['pending_login_user'];
+    $email = $pendingUser['email'];
+    $username = $pendingUser['username'];
 
 } elseif (isset($_SESSION['verified_data'])) {
     $verified_data = $_SESSION['verified_data'];
@@ -72,3 +77,4 @@ if (!$mail->send()) {
         'otp_created' => $_SESSION['otp_created']
     ]);
 }
+?>

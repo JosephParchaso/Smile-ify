@@ -67,7 +67,7 @@ if (isset($_SESSION['timeoutError'])) {
                 <div class="error flash-msg"><?php echo htmlspecialchars($timeoutError); ?></div>
             <?php endif; ?>
 
-            <form action="<?= BASE_URL ?>/processes/login.php" method="POST" autocomplete="off">
+            <form action="<?= BASE_URL ?>/processes/OTP Processes/login/request_otp_login.php" method="POST" autocomplete="off">
                 <div class="form-group">
                     <input type="text" id="userName" name="userName" class="form-control" placeholder=" " required autocomplete="off"/>
                     <label for="userName" class="form-label">Username</label>
@@ -339,6 +339,7 @@ if (isset($_SESSION['timeoutError'])) {
                 <h3 id="promoTitle"></h3>
                 <p id="promoDesc"></p>
                 <p id="promoDate"></p>
+                <p id="promoBranch"></p>
             </div>
         </div>
     </div>

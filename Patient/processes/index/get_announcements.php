@@ -16,15 +16,18 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'patient') {
 try {
     $sql = "
         SELECT 
-            title, 
-            description, 
-            start_date, 
-            end_date
-        FROM announcements
-        WHERE status = 'Active'
-            AND (end_date IS NULL OR end_date >= CURDATE())
-            ORDER BY start_date ASC, date_created DESC
-            LIMIT 3
+            a.title,
+            a.description,
+            ba.start_date,
+            ba.end_date,
+            b.address AS branch_name
+        FROM branch_announcements AS ba
+        INNER JOIN announcements AS a ON ba.announcement_id = a.announcement_id
+        INNER JOIN branch AS b ON ba.branch_id = b.branch_id
+        WHERE ba.status = 'Active'
+            AND (ba.end_date IS NULL OR ba.end_date >= CURDATE())
+        ORDER BY ba.start_date ASC, ba.date_created DESC
+        LIMIT 3
     ";
 
     $result = $conn->query($sql);
@@ -33,6 +36,7 @@ try {
         $response['announcements'][] = [
             'title' => htmlspecialchars($row['title']),
             'description' => htmlspecialchars($row['description']),
+            'branch_name' => htmlspecialchars($row['branch_name']),
             'start_date' => $row['start_date'] ? date('F j, Y', strtotime($row['start_date'])) : '',
             'end_date' => $row['end_date'] ? date('F j, Y', strtotime($row['end_date'])) : ''
         ];

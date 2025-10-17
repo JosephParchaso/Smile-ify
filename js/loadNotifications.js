@@ -96,6 +96,6 @@ document.addEventListener('DOMContentLoaded', function () {
     updatePatientsBadge();
 
     if (!window.patientsBadgeUpdater) {
-        window.patientsBadgeUpdater = setInterval(updatePatientsBadge, 30000);
+        window.patientsBadgeUpdater = setInterval(updatePatientsBadge, 300000);
     }
 });

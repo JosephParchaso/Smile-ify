@@ -149,6 +149,7 @@ require_once BASE_PATH . '/Patient/includes/navbar.php';
                 <h3 id="promoTitle"></h3>
                 <p id="promoDesc"></p>
                 <p id="promoDate"></p>
+                <p id="promoBranch"></p>
             </div>
         </div>
     </div>

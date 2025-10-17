@@ -73,6 +73,6 @@ document.addEventListener("DOMContentLoaded", function () {
             loadUpcomingAppointments();
             loadPatientCounts();
             loadLowSupplies();
-        }, 60000);
+        }, 300000);
     }
 });

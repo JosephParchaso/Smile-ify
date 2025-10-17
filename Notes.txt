@@ -54,24 +54,28 @@ Root/
 ├── Admin/
 │   ├── css/
 │   ├── includes/
+│   ├── processes/
 │   ├── pages/
 │   └── index.php ← Admin landing page
 │
 ├── Owner/
 │   ├── css/
 │   ├── includes/
+│   ├── processes/
 │   ├── pages/
 │   └── index.php ← Owner landing page
 │
 ├── Patient/ 
 │   ├── css/
 │   ├── includes/
+│   ├── processes/
 │   ├── pages/
 │   └── index.php ← Patient landing page 
 │ 
 ├── css    
 ├── js    
 ├── includes
+├── processes
 ├── images    
 ├── index.php ← Shared login form (for all users)
 └── Notes.txt
@@ -152,10 +156,6 @@ Minimum of 5 minutes for OTP time remaining expiration time 💖
 dungan register/book different user 💖
 family 💖
 
-
-Owner - OTP Every Login 🥶
-Admin - OTP Every Login 🥶
-Patient - OTP Every Login 🥶
 Hash EVERYTHING in db after deployment? 🥶
 
 
@@ -205,3 +205,8 @@ receipt admin 👍
 prescription admin 👍
 medical cert admin 👍
 announcments, disable dates if branch is closed 👍
+
+send reminder 👍
+Owner - OTP Every Login 👍
+Admin - OTP Every Login 👍
+Patient - OTP Every Login 👍

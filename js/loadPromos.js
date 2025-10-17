@@ -90,6 +90,9 @@ function openPromoModal(promoId) {
             document.getElementById("promoModalImg").src = BASE_URL + promo.image_path;
             document.getElementById("promoTitle").textContent = promo.name;
             document.getElementById("promoDesc").textContent = promo.description || "No description available.";
+            document.getElementById("promoBranch").textContent = promo.branch_name 
+                ? `Branch: ${promo.branch_name}` 
+                : "Branch: Not specified";
 
             let discountDisplay = "";
             if (promo.discount_type && promo.discount_value) {
