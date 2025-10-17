@@ -10,30 +10,47 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-$sql = "SELECT 
-            announcement_id,
-            title,
-            start_date,
-            end_date,
-            status
-        FROM announcements
-        ORDER BY date_created DESC";
+if (!isset($_SESSION['branch_id'])) {
+    echo json_encode(["error" => "Branch ID not found in session"]);
+    exit();
+}
 
-$result = $conn->query($sql);
+$branchId = intval($_SESSION['branch_id']);
+
+$sql = "
+    SELECT 
+        a.announcement_id,
+        a.title,
+        a.type,
+        ba.start_date,
+        ba.end_date,
+        ba.status
+    FROM announcements a
+    INNER JOIN branch_announcements ba 
+        ON a.announcement_id = ba.announcement_id
+    WHERE ba.branch_id = ?
+    ORDER BY ba.date_created DESC
+";
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $branchId);
+$stmt->execute();
+$result = $stmt->get_result();
 
 $announcements = [];
-if ($result) {
-    while ($row = $result->fetch_assoc()) {
-        $announcements[] = [
-            $row['announcement_id'],
-            htmlspecialchars($row['title']),
-            $row['start_date'] ?? '-',
-            $row['end_date'] ?? '-',
-            $row['status'],
-            '<button class="btn-announcement" data-type="announcement" data-id="'.$row['announcement_id'].'">Manage</button>'
-        ];
-    }
+while ($row = $result->fetch_assoc()) {
+    $announcements[] = [
+        $row['announcement_id'],
+        htmlspecialchars($row['title']),
+        htmlspecialchars($row['type']),
+        $row['start_date'] ?? '-',
+        $row['end_date'] ?? '-',
+        htmlspecialchars($row['status'] ?? 'Inactive'),
+        '<button class="btn-announcement" data-type="announcement" data-id="'.$row['announcement_id'].'">Manage</button>'
+    ];
 }
 
 echo json_encode(["data" => $announcements]);
+
+$stmt->close();
 $conn->close();

@@ -13,6 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $appointment_transaction_id = intval($_POST['appointment_transaction_id'] ?? 0);
     $dentist_id = intval($_POST['dentist_id'] ?? 0);
     $promo_id = !empty($_POST['promo_id']) ? intval($_POST['promo_id']) : null;
+    $payment_method = $_POST['payment_method'] ?? null;
     $notes = trim($_POST['notes'] ?? '');
     $total_payment = floatval($_POST['total_payment'] ?? 0);
     $admin_user_id = intval($_SESSION['user_id'] ?? 0);
@@ -21,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     try {
         $stmtCheck = $conn->prepare("
-            SELECT dentist_id, promo_id, total, notes 
+            SELECT dentist_id, promo_id, payment_method, total, notes 
             FROM dental_transaction 
             WHERE dental_transaction_id = ? AND appointment_transaction_id = ?
         ");
@@ -34,6 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $hasChanges = (
             $existing['dentist_id'] != $dentist_id ||
             $existing['promo_id'] != $promo_id ||
+            $existing['payment_method'] !== $payment_method ||
             $existing['total'] != $total_payment ||
             trim($existing['notes']) !== $notes
         );
@@ -46,6 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 SET 
                     dentist_id = ?, 
                     promo_id = ?, 
+                    payment_method = ?, 
                     total = ?, 
                     notes = ?, 
                     admin_user_id = ?, 
@@ -54,9 +57,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 AND appointment_transaction_id = ?
             ");
             $stmt->bind_param(
-                "iiisiii",
+                "iisdssii",
                 $dentist_id,
                 $promo_id,
+                $payment_method,
                 $total_payment,
                 $notes,
                 $admin_user_id,

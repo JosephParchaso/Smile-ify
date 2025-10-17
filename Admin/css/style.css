@@ -241,7 +241,8 @@
 #dentaltransactionTable th:nth-child(2), #dentaltransactionTable td:nth-child(2) { width: 15% !important; }
 #dentaltransactionTable th:nth-child(3), #dentaltransactionTable td:nth-child(3) { width: 40% !important; }
 #dentaltransactionTable th:nth-child(4), #dentaltransactionTable td:nth-child(4) { width: 10% !important; }
-#dentaltransactionTable th:nth-child(5), #dentaltransactionTable td:nth-child(5) { width: 10% !important; text-align: center;}
+#dentaltransactionTable th:nth-child(5), #dentaltransactionTable td:nth-child(5) { width: 10% !important; }
+#dentaltransactionTable th:nth-child(6), #dentaltransactionTable td:nth-child(6) { width: 10% !important; text-align: center;}
 
 #vitalTable th:nth-child(1), #vitalTable td:nth-child(1) { width: 5% !important; text-align: center; }
 #vitalTable th:nth-child(2), #vitalTable td:nth-child(2) { width: 20% !important; }
@@ -282,7 +283,8 @@
 #announcementsTable th:nth-child(3), #announcementsTable td:nth-child(3) { width: 10% !important; }
 #announcementsTable th:nth-child(4), #announcementsTable td:nth-child(4) { width: 10% !important; }
 #announcementsTable th:nth-child(5), #announcementsTable td:nth-child(5) { width: 10% !important; }
-#announcementsTable th:nth-child(6), #announcementsTable td:nth-child(6) { width: 10% !important; text-align: center; }
+#announcementsTable th:nth-child(6), #announcementsTable td:nth-child(6) { width: 10% !important; }
+#announcementsTable th:nth-child(7), #announcementsTable td:nth-child(7) { width: 10% !important; text-align: center; }
 
 .transaction-table th:nth-child(1), .transaction-table td:nth-child(1) { width: 5% !important; text-align: center;}
 .transaction-table th:nth-child(2), .transaction-table td:nth-child(2) { width: 20% !important; }

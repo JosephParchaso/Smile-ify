@@ -34,6 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function renderAnnouncementForm(data) {
         const isEdit = !!data;
+
         announcementBody.innerHTML = `
             <h2>${isEdit ? "Manage Announcement" : "Add Announcement"}</h2>
             <form id="announcementForm" 
@@ -41,6 +42,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 method="POST" autocomplete="off">
 
                 ${isEdit ? `<input type="hidden" name="announcement_id" value="${data.announcement_id}">` : ""}
+
+                <input type="hidden" name="branch_id" id="branch_id" value="${ADMIN_BRANCH_ID ?? ''}">
 
                 <div class="form-group">
                     <input type="text" id="title" name="title" class="form-control"
@@ -52,6 +55,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     <textarea id="description" name="description" class="form-control" rows="4"
                         placeholder=" ">${isEdit ? (data.description || "") : ""}</textarea>
                     <label for="description" class="form-label">Description</label>
+                </div>
+
+                <div class="form-group">
+                    <select id="type" name="type" class="form-control" required>
+                        <option value="" disabled hidden ${!isEdit ? "selected" : ""}></option>
+                        <option value="General" ${isEdit && data.type === "General" ? "selected" : ""}>General</option>
+                        <option value="Closed" ${isEdit && data.type === "Closed" ? "selected" : ""}>Closed</option>
+                    </select>
+                    <label for="type" class="form-label">Type <span class="required">*</span></label>
                 </div>
 
                 <div class="form-group">

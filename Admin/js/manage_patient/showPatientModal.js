@@ -79,6 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                         : ''
                                 }</span></p>
                                 <p><strong>Amount Paid:</strong><span>${data.total}</span></p>
+                                <p><strong>Method:</strong><span>${data.payment_method}</span></p>
                                 <p><strong>Notes:</strong><span>${data.notes || '-'}</span></p>
                                 <p><strong>Prepared by:</strong><span>${data.admin_name || '-'}</span></p>
                                 <p><strong>Date Recorded:</strong><span>${
@@ -298,7 +299,6 @@ document.addEventListener("DOMContentLoaded", () => {
                             doc.line(20, y, 190, y);
                             y += 8;
 
-
                             // ===== PAYMENT SUMMARY =====
                             const labelX = 130;
                             const valueX = 190;
@@ -311,8 +311,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                             // ==== PROMO ====
                             let discountValue = 0;
-                            let discountLabel = "";
-
                             if (data.promo && data.promo.name) {
                                 const promoName = data.promo.name;
                                 const discountType = data.promo.discount_type;
@@ -320,22 +318,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
                                 if (discountType === "percentage") {
                                     discountValue = (subtotal * discountVal) / 100;
-                                    discountLabel = `${promoName} (${discountVal}%)`;
-                                } else {
-                                    discountValue = discountVal;
-                                    discountLabel = `${promoName} (₱ ${discountVal.toLocaleString()})`;
                                 }
+                                if (discountType === "fixed") {
+                                    discountValue = discountVal;
+                                }
+
+                                const discountLabel =
+                                    discountType === "percentage"
+                                        ? `${promoName} (${discountVal}% OFF)`
+                                        : promoName;
 
                                 doc.setFont("helvetica", "bold");
                                 doc.text("Promo:", labelX, y);
+
                                 doc.setFont("helvetica", "normal");
-                                doc.text(discountLabel, valueX, y, { align: "right" });
-                                y += 6;
+                                const promoText = doc.splitTextToSize(discountLabel, 60);
+                                doc.text(promoText, labelX + 25, y);
+                                y += promoText.length * 6;
 
                                 doc.setFont("helvetica", "bold");
                                 doc.text("Discount:", labelX, y);
                                 doc.setFont("helvetica", "normal");
-                                doc.text(`- ${discountValue.toLocaleString()}`, valueX, y, { align: "right" });
+                                doc.text(`- ± ${discountValue.toLocaleString()}`, valueX, y, { align: "right" });
                                 y += 6;
                             }
 
@@ -346,7 +350,6 @@ document.addEventListener("DOMContentLoaded", () => {
                             doc.setFont("helvetica", "normal");
                             doc.text(`± ${Number(totalAmount).toLocaleString()}`, valueX, y, { align: "right" });
                             y += 12;
-
 
                             // ===== PREPARED INFO =====
                             doc.text(`Prepared By: ${data.admin_name || "-"}`, 20, y);
@@ -360,6 +363,9 @@ document.addEventListener("DOMContentLoaded", () => {
                                 })
                                 : "-";
                             doc.text(`Transaction Date: ${transDate}`, 20, y);
+                            y += 6;
+
+                            doc.text(`Payment Method: ${data.payment_method ? data.payment_method : "-"}`, 20, y);
                             y += 15;
 
                             // ===== SIGNATURE =====
@@ -637,16 +643,29 @@ document.addEventListener("DOMContentLoaded", () => {
                             doc.setFont("helvetica", "normal");
                             let serviceLines = [];
                             if (data.services) {
-                                serviceLines = data.services.split("\n").map(s => s.trim()).filter(Boolean);
                                 let y = row3Y - 1;
-                                serviceLines.forEach((s, i) => {
-                                    if (y > pageHeight - 40) {
-                                        doc.addPage();
-                                        y = 20;
-                                    }
-                                    doc.text(s, leftValueX + 2, y);
-                                    y += 6;
-                                });
+                                if (Array.isArray(data.services)) {
+                                    // data.services is an array of objects
+                                    serviceLines = data.services.map(s => s.service_name || s.name || s);
+                                } else if (typeof data.services === "string") {
+                                    // data.services is a simple string
+                                    serviceLines = data.services.split(",").map(s => s.trim()).filter(Boolean);
+                                } else {
+                                    serviceLines = [];
+                                }
+
+                                if (serviceLines.length > 0) {
+                                    serviceLines.forEach((s) => {
+                                        if (y > pageHeight - 40) {
+                                            doc.addPage();
+                                            y = 20;
+                                        }
+                                        doc.text(s, leftValueX + 2, y);
+                                        y += 6;
+                                    });
+                                } else {
+                                    doc.text("-", leftValueX + 2, row3Y - 1);
+                                }
                             } else {
                                 doc.text("-", leftValueX + 2, row3Y - 1);
                             }

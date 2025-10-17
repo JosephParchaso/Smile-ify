@@ -22,6 +22,7 @@ $sql = "
     SELECT 
         dt.dental_transaction_id,
         dt.notes,
+        dt.payment_method,
         dt.total,
         dt.date_created,
         dt.prescription_downloaded,

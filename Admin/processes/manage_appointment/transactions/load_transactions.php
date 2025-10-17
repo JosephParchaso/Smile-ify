@@ -23,7 +23,8 @@ $sql = "
         t.appointment_transaction_id,
         CONCAT('Dr. ', d.last_name, ', ', d.first_name, ' ', IFNULL(d.middle_name, '')) AS dentist,
         GROUP_CONCAT(s.name SEPARATOR ', ') AS services,
-        t.total
+        t.total,
+        t.payment_method
     FROM dental_transaction t
     LEFT JOIN dentist d ON t.dentist_id = d.dentist_id
     LEFT JOIN dental_transaction_services ts ON t.dental_transaction_id = ts.dental_transaction_id
@@ -44,6 +45,7 @@ while ($row = $result->fetch_assoc()) {
         $row['dental_transaction_id'],
         $row['dentist'] ?: '—',
         $row['services'] ?: '—',
+        $row['payment_method'] ?: '—',
         number_format($row['total'], 2),
         '<button class="btn-action btn-primary" data-type="dental_transaction" data-id="'.$row['dental_transaction_id'].'">Manage</button>'
     ];

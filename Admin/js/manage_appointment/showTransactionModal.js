@@ -94,6 +94,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
 
                 <div class="form-group">
+                    <select id="paymentMethod" class="form-control" name="payment_method" required>
+                        <option value="" disabled ${isEdit ? "" : "selected"} hidden>Select Payment Method</option>
+                        <option value="Cash" ${isEdit && data.payment_method === 'Cash' ? 'selected' : ''}>Cash</option>
+                        <option value="Cashless" ${isEdit && data.payment_method === 'Cashless' ? 'selected' : ''}>Cashless</option>
+                    </select>
+                    <label for="paymentMethod" class="form-label">Payment Method <span class="required">*</span></label>
+                </div>
+
+                <div class="form-group">
                     <textarea id="notes" class="form-control" name="notes" rows="3" placeholder=" ">${isEdit ? data.notes || "" : ""}</textarea>
                     <label for="notes" class="form-label">Notes</label>
                 </div>
@@ -129,7 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                     <hr>
                     <div class="summary-item total">
-                        <span>Total Payment:</span>
+                        <span>Total Amount:</span>
                         <span id="totalDisplay">₱0.00</span>
                     </div>
                 </div>
@@ -203,6 +212,112 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (promoSelect) {
             promoSelect.addEventListener("change", updateServicesSummary);
+        }
+    }
+
+    function loadPromos(promoSelect, selectedId = null, branchId = null) {
+        $.ajax({
+            type: "GET",
+            url: `${BASE_URL}/processes/load_promos.php`,
+            data: { branch_id: branchId || window.branchId || null },
+            dataType: "json",
+            success: function (promos) {
+                promoSelect.innerHTML = '<option value="">None</option>';
+
+                promos.forEach(p => {
+                    const opt = document.createElement("option");
+                    opt.value = p.id;
+                    opt.dataset.discountType = p.discount_type;
+                    opt.dataset.discountValue = p.discount_value;
+
+                    let discountLabel = "";
+                    if (p.discount_type === "percent" || p.discount_type === "percentage") {
+                        discountLabel = ` (${parseFloat(p.discount_value).toFixed(2)}% OFF)`;
+                    } else if (p.discount_type === "fixed") {
+                        discountLabel = ` (₱${parseFloat(p.discount_value).toFixed(2)} OFF)`;
+                    }
+
+                    opt.textContent = `${p.name}${discountLabel}`;
+                    if (selectedId && selectedId == p.id) opt.selected = true;
+                    promoSelect.appendChild(opt);
+                });
+
+                promoSelect.addEventListener("change", updateServicesSummary);
+                updateServicesSummary();
+            },
+            error: function (xhr, status, error) {
+                console.error("Promo load failed:", status, error);
+                promoSelect.innerHTML = '<option disabled>Error loading promos</option>';
+            }
+        });
+    }
+
+    function updateServicesSummary() {
+        const serviceCheckboxes = document.querySelectorAll('#servicesContainer input[type="checkbox"][name="appointmentServices[]"]');
+        const services = [];
+
+        serviceCheckboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                const serviceId = checkbox.value;
+                const name = checkbox.parentElement.textContent.trim();
+                const price = parseFloat(checkbox.closest('.checkbox-item').querySelector('.price').textContent.replace(/[₱,]/g, '')) || 0;
+                const quantityInput = document.querySelector(`input[name="serviceQuantity[${serviceId}]"]`);
+                const quantity = parseInt(quantityInput?.value || 1);
+                services.push({ name, price, quantity });
+            }
+        });
+
+        const promoSelect = document.getElementById("transactionPromo");
+        const selectedPromo = promoSelect ? promoSelect.selectedOptions[0] : null;
+        const discountType = selectedPromo?.dataset?.discountType || null;
+        const discountValue = parseFloat(selectedPromo?.dataset?.discountValue || 0);
+
+        updateCheckoutSummary({
+            services,
+            discountType,
+            discountValue
+        });
+    }
+
+    function updateCheckoutSummary({ services = [], discountType = null, discountValue = 0 }) {
+        const servicesList = document.getElementById("servicesList");
+        const subtotalEl = document.getElementById("subtotalDisplay");
+        const discountEl = document.getElementById("discountDisplay");
+        const totalEl = document.getElementById("totalDisplay");
+
+        if (servicesList) servicesList.innerHTML = "";
+
+        let subtotal = 0;
+
+        services.forEach(service => {
+            const totalPrice = service.price * service.quantity;
+            subtotal += totalPrice;
+
+            const item = document.createElement("div");
+            item.classList.add("summary-item");
+            item.innerHTML = `
+                <span>${service.name} × ${service.quantity}</span>
+                <span>₱${totalPrice.toFixed(2)}</span>
+            `;
+            servicesList.appendChild(item);
+        });
+
+        let discount = 0;
+        if (discountType === "fixed") {
+            discount = discountValue;
+        } else if (discountType === "percent" || discountType === "percentage") {
+            discount = subtotal * (discountValue / 100);
+        }
+
+        const total = Math.max(subtotal - discount, 0);
+
+        if (subtotalEl) subtotalEl.textContent = `₱${subtotal.toFixed(2)}`;
+        if (discountEl) discountEl.textContent = `₱${discount.toFixed(2)}`;
+        if (totalEl) totalEl.textContent = `₱${total.toFixed(2)}`;
+        
+        const totalPaymentInput = document.getElementById("total_payment");
+        if (totalPaymentInput) {
+            totalPaymentInput.value = total.toFixed(2);
         }
     }
 
@@ -298,111 +413,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 container.innerHTML = '<p class="error">Error loading services</p>';
             }
         });
-    }
-
-    function loadPromos(promoSelect, selectedId = null, branchId = null) {
-        $.ajax({
-            type: "GET",
-            url: `${BASE_URL}/processes/load_promos.php`,
-            data: { branch_id: branchId || window.branchId || null },
-            dataType: "json",
-            success: function (promos) {
-                promoSelect.innerHTML = '<option value="">None</option>';
-
-                promos.forEach(p => {
-                    const opt = document.createElement("option");
-                    opt.value = p.id;
-                    opt.dataset.discountType = p.discount_type;
-                    opt.dataset.discountValue = p.discount_value;
-
-                    let discountLabel = "";
-                    if (p.discount_type === "percent" || p.discount_type === "percentage") {
-                        discountLabel = ` (${parseFloat(p.discount_value).toFixed(2)}% OFF)`;
-                    } else if (p.discount_type === "fixed") {
-                        discountLabel = ` (₱${parseFloat(p.discount_value).toFixed(2)} OFF)`;
-                    }
-
-                    opt.textContent = `${p.name}${discountLabel}`;
-                    if (selectedId && selectedId == p.id) opt.selected = true;
-                    promoSelect.appendChild(opt);
-                });
-
-                promoSelect.addEventListener("change", updateServicesSummary);
-            },
-            error: function (xhr, status, error) {
-                console.error("Promo load failed:", status, error);
-                promoSelect.innerHTML = '<option disabled>Error loading promos</option>';
-            }
-        });
-    }
-
-    function updateServicesSummary() {
-        const serviceCheckboxes = document.querySelectorAll('#servicesContainer input[type="checkbox"][name="appointmentServices[]"]');
-        const services = [];
-
-        serviceCheckboxes.forEach(checkbox => {
-            if (checkbox.checked) {
-                const serviceId = checkbox.value;
-                const name = checkbox.parentElement.textContent.trim();
-                const price = parseFloat(checkbox.closest('.checkbox-item').querySelector('.price').textContent.replace(/[₱,]/g, '')) || 0;
-                const quantityInput = document.querySelector(`input[name="serviceQuantity[${serviceId}]"]`);
-                const quantity = parseInt(quantityInput?.value || 1);
-                services.push({ name, price, quantity });
-            }
-        });
-
-        const promoSelect = document.getElementById("transactionPromo");
-        const selectedPromo = promoSelect ? promoSelect.selectedOptions[0] : null;
-        const discountType = selectedPromo?.dataset?.discountType || null;
-        const discountValue = parseFloat(selectedPromo?.dataset?.discountValue || 0);
-
-        updateCheckoutSummary({
-            services,
-            discountType,
-            discountValue
-        });
-    }
-
-    function updateCheckoutSummary({ services = [], discountType = null, discountValue = 0 }) {
-        const servicesList = document.getElementById("servicesList");
-        const subtotalEl = document.getElementById("subtotalDisplay");
-        const discountEl = document.getElementById("discountDisplay");
-        const totalEl = document.getElementById("totalDisplay");
-
-        if (servicesList) servicesList.innerHTML = "";
-
-        let subtotal = 0;
-
-        services.forEach(service => {
-            const totalPrice = service.price * service.quantity;
-            subtotal += totalPrice;
-
-            const item = document.createElement("div");
-            item.classList.add("summary-item");
-            item.innerHTML = `
-                <span>${service.name} × ${service.quantity}</span>
-                <span>₱${totalPrice.toFixed(2)}</span>
-            `;
-            servicesList.appendChild(item);
-        });
-
-        let discount = 0;
-        if (discountType === "fixed") {
-            discount = discountValue;
-        } else if (discountType === "percent" || discountType === "percentage") {
-            discount = subtotal * (discountValue / 100);
-        }
-
-        const total = Math.max(subtotal - discount, 0);
-
-        if (subtotalEl) subtotalEl.textContent = `₱${subtotal.toFixed(2)}`;
-        if (discountEl) discountEl.textContent = `₱${discount.toFixed(2)}`;
-        if (totalEl) totalEl.textContent = `₱${total.toFixed(2)}`;
-        
-        const totalPaymentInput = document.getElementById("total_payment");
-        if (totalPaymentInput) {
-            totalPaymentInput.value = total.toFixed(2);
-        }
     }
 
     function renderVitalForm(data) {

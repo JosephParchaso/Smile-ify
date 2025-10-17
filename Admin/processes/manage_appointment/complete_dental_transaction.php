@@ -72,7 +72,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $srvRow = $srvResult->fetch_assoc();
         $srvCount = $srvRow['service_count'] ?? 0;
         $srvQuery->close();
-        if ($srvCount === 0) throw new Exception("No services found for this transaction. Please add services before completing.");
+
+        if ($srvCount === 0)
+            throw new Exception("No services found for this transaction. Please add services before completing.");
 
         $lowSupplies = [];
         $srvQuery = $conn->prepare("
@@ -85,6 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         while ($srv = $srvResult->fetch_assoc()) {
             $serviceId = $srv['service_id'];
+
             $supplyQuery = $conn->prepare("
                 SELECT supply_id, quantity_used 
                 FROM service_supplies 
@@ -99,29 +102,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $qtyUsed = $sup['quantity_used'];
 
                 $checkQty = $conn->prepare("
-                    SELECT quantity, reorder_level 
-                    FROM branch_supply 
-                    WHERE branch_id = ? AND supply_id = ?
+                    SELECT bs.quantity, bs.reorder_level, s.name
+                    FROM branch_supply bs
+                    JOIN supply s ON s.supply_id = bs.supply_id
+                    WHERE bs.branch_id = ? AND bs.supply_id = ?
                 ");
                 $checkQty->bind_param("ii", $branchId, $supplyId);
                 $checkQty->execute();
                 $checkRes = $checkQty->get_result();
 
                 if ($checkRes->num_rows === 0) {
-                    $lowSupplies[] = "Supply ID $supplyId not found in branch supply.";
+                    $lowSupplies[] = "Supply ID #$supplyId (not found in branch)";
                     $checkQty->close();
                     continue;
                 }
 
                 $supplyRow = $checkRes->fetch_assoc();
+                $supplyName = $supplyRow['name'];
                 $currentQty = (float)$supplyRow['quantity'];
                 $reorderLevel = (float)$supplyRow['reorder_level'];
                 $checkQty->close();
 
                 if ($currentQty < $qtyUsed) {
-                    $lowSupplies[] = "Supply ID $supplyId insufficient (available: $currentQty, required: $qtyUsed)";
+                    $lowSupplies[] = "$supplyName – insufficient (Available: $currentQty, Needed: $qtyUsed)";
                 } elseif (($currentQty - $qtyUsed) <= $reorderLevel) {
-                    $lowSupplies[] = "Supply ID $supplyId is below reorder level (remaining: " . ($currentQty - $qtyUsed) . ")";
+                    $lowSupplies[] = "$supplyName – low stock (Remaining after use: " . ($currentQty - $qtyUsed) . ")";
                 }
             }
             $supplyQuery->close();
@@ -129,7 +134,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $srvQuery->close();
 
         if (!empty($lowSupplies)) {
-            $adminMsg = "Appointment ID #$appointmentId cannot be completed due to supply issues:\n";
+            $adminMsg = "Appointment #$appointmentId cannot be completed due to low or insufficient supply:\n";
             foreach ($lowSupplies as $msg) $adminMsg .= "- $msg\n";
 
             $adminQuery = $conn->query("SELECT user_id FROM users WHERE role = 'admin'");
@@ -142,7 +147,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             $adminQuery->close();
 
-            throw new Exception("Cannot complete appointment due to insufficient or low supply stock.");
+            $errorList = implode(", ", $lowSupplies);
+            throw new Exception("Cannot complete appointment. The following supplies are low or insufficient: $errorList");
         }
 
         $srvQuery = $conn->prepare("
@@ -174,7 +180,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     WHERE branch_id = ? AND supply_id = ?
                 ");
                 $updateSupply->bind_param("dii", $qtyUsed, $branchId, $supplyId);
-                if (!$updateSupply->execute()) throw new Exception("Failed to update supply for supply_id: $supplyId");
+                if (!$updateSupply->execute())
+                    throw new Exception("Failed to update supply for $supplyId");
                 $updateSupply->close();
             }
             $supplyQuery->close();
@@ -187,7 +194,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             WHERE appointment_transaction_id = ?
         ");
         $stmt->bind_param("i", $appointmentId);
-        if (!$stmt->execute()) throw new Exception("Failed to update appointment: " . $stmt->error);
+        if (!$stmt->execute())
+            throw new Exception("Failed to update appointment: " . $stmt->error);
         $stmt->close();
 
         $formattedDate = date("F j, Y", strtotime($row['appointment_date']));
@@ -200,14 +208,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $notif_stmt->close();
 
         $conn->commit();
-
         $_SESSION['updateSuccess'] = "Appointment completed successfully. Supplies updated.";
         header("Location: " . BASE_URL . "/Admin/pages/patients.php");
         exit;
 
     } catch (Exception $e) {
         $conn->rollback();
-        $_SESSION['updateError'] = "Error: " . $e->getMessage();
+        $_SESSION['updateError'] = "⚠️ " . $e->getMessage();
         header("Location: " . BASE_URL . "/Admin/pages/patients.php");
         exit;
     }

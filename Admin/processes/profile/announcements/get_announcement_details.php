@@ -19,18 +19,25 @@ if (!isset($_GET['id'])) {
 
 $announcementId = intval($_GET['id']);
 
-$sql = "SELECT 
-            announcement_id,
-            title,
-            description,
-            start_date,
-            end_date,
-            status,
-            date_created,
-            date_updated
-        FROM announcements
-        WHERE announcement_id = ?
-        LIMIT 1";
+$sql = "
+    SELECT 
+        a.announcement_id,
+        a.title,
+        a.description,
+        a.type,
+        ba.id AS branch_announcement_id,
+        ba.branch_id,
+        ba.status,
+        ba.start_date,
+        ba.end_date,
+        ba.date_created,
+        ba.date_updated
+    FROM announcements a
+    LEFT JOIN branch_announcements ba 
+        ON a.announcement_id = ba.announcement_id
+    WHERE a.announcement_id = ?
+    LIMIT 1
+";
 
 $stmt = $conn->prepare($sql);
 if (!$stmt) {
@@ -51,3 +58,4 @@ if ($row = $result->fetch_assoc()) {
 
 $stmt->close();
 $conn->close();
+?>

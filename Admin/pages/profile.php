@@ -98,6 +98,8 @@ $updateError = $_SESSION['updateError'] ?? "";
 </div>
 
 
-
+<script>
+    const ADMIN_BRANCH_ID = <?= isset($_SESSION['branch_id']) ? intval($_SESSION['branch_id']) : 'null' ?>;
+</script>
 <?php require_once BASE_PATH . '/includes/footer.php'; ?>
 

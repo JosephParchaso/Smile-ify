@@ -17,20 +17,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $services = $_POST['appointmentServices'] ?? [];
     $quantities = $_POST['serviceQuantity'] ?? [];
     $total_payment = floatval($_POST['total_payment'] ?? 0);
+    $payment_method = $_POST['payment_method'] ?? null;
 
     try {
         $conn->begin_transaction();
 
         $stmt = $conn->prepare("
             INSERT INTO dental_transaction (
-                appointment_transaction_id, dentist_id, promo_id, total, notes, admin_user_id, date_created, date_updated
-            ) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())
+                appointment_transaction_id, dentist_id, promo_id, payment_method, total, notes, admin_user_id, date_created, date_updated
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
         ");
         $stmt->bind_param(
-            "iiidsi",
+            "iiisdsi",
             $appointment_transaction_id,
             $dentist_id,
             $promo_id,
+            $payment_method,
             $total_payment,
             $notes,
             $admin_user_id

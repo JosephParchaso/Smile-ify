@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 16, 2025 at 12:14 AM
+-- Generation Time: Oct 17, 2025 at 11:10 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -31,23 +31,20 @@ CREATE TABLE `announcements` (
   `announcement_id` int(11) NOT NULL,
   `title` varchar(255) NOT NULL,
   `description` text NOT NULL,
-  `start_date` date DEFAULT NULL,
-  `end_date` date DEFAULT NULL,
-  `date_created` datetime DEFAULT current_timestamp(),
-  `date_updated` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `status` enum('Active','Inactive') DEFAULT 'Active'
+  `type` enum('General','Closed') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `announcements`
 --
 
-INSERT INTO `announcements` (`announcement_id`, `title`, `description`, `start_date`, `end_date`, `date_created`, `date_updated`, `status`) VALUES
-(1, 'Holiday', 'Christmas', '2025-12-25', '2026-01-03', '2025-10-07 23:09:49', '2025-10-07 23:52:00', 'Active'),
-(2, 'Get 10% Off on Root Canal Treatments!', 'Enjoy a 10% discount on all Root Canal services this October. Book your appointment now!', '2025-10-01', '2025-10-31', '2025-10-07 23:39:46', '2025-10-07 23:51:50', 'Active'),
-(3, 'New Dental Branch Now Open!', 'We’re excited to announce that our new branch in Talamban is now open to serve you!', '2025-09-15', NULL, '2025-10-07 23:39:46', '2025-10-08 00:06:28', 'Active'),
-(4, 'Free Dental Check-up for New Patients!', 'All new patients can avail a free dental check-up this month. Walk-ins are welcome!', NULL, NULL, '2025-10-07 23:39:46', '2025-10-07 23:39:46', 'Active'),
-(5, 'System Maintenance Notice', 'Our online booking system will be under maintenance this weekend. Sorry for the inconvenience!', '2025-10-10', '2025-10-12', '2025-10-07 23:39:46', '2025-10-07 23:46:39', 'Active');
+INSERT INTO `announcements` (`announcement_id`, `title`, `description`, `type`) VALUES
+(1, 'Holiday', 'Christmas', 'Closed'),
+(2, 'Get 10% Off on Root Canal Treatments!', 'Enjoy a 10% discount on all Root Canal services this October. Book your appointment now!', 'General'),
+(3, 'New Dental Branch Now Open!', 'We’re excited to announce that our new branch in Talamban is now open to serve you!', 'General'),
+(4, 'Free Dental Check-up for New Patients!', 'All new patients can avail a free dental check-up this month. Walk-ins are welcome!', 'General'),
+(5, 'System Maintenance Notice', 'Our online booking system will be under maintenance this weekend. Sorry for the inconvenience!', 'General'),
+(6, 'Holiday', '', 'Closed');
 
 -- --------------------------------------------------------
 
@@ -98,7 +95,8 @@ INSERT INTO `appointment_services` (`appointment_services_id`, `appointment_tran
 (29, 102, 1, '2025-10-15 22:50:48'),
 (30, 103, 3, '2025-10-16 04:28:31'),
 (31, 103, 4, '2025-10-16 04:28:31'),
-(32, 104, 1, '2025-10-16 04:41:11');
+(32, 104, 1, '2025-10-16 04:41:11'),
+(33, 105, 1, '2025-10-17 14:50:03');
 
 -- --------------------------------------------------------
 
@@ -220,7 +218,8 @@ INSERT INTO `appointment_transaction` (`appointment_transaction_id`, `user_id`, 
 (101, 28, 1, 3, '2025-10-23', '09:00:00', '', '2025-10-15 01:34:49', '2025-10-15 09:36:00', 'Completed'),
 (102, 28, 1, 3, '2025-10-23', '09:00:00', '', '2025-10-15 14:50:48', '2025-10-15 22:52:55', 'Completed'),
 (103, 28, 1, 2, '2025-10-23', '09:00:00', '', '2025-10-15 20:28:31', '2025-10-16 04:29:54', 'Completed'),
-(104, 28, 1, 3, '2025-10-23', '09:00:00', '', '2025-10-15 20:41:11', '2025-10-16 04:43:04', 'Completed');
+(104, 28, 1, 3, '2025-10-23', '09:00:00', '', '2025-10-15 20:41:11', '2025-10-16 04:43:04', 'Completed'),
+(105, 28, 1, NULL, '2025-10-27', '09:00:00', '', '2025-10-17 06:50:03', '2025-10-17 15:14:42', 'Completed');
 
 -- --------------------------------------------------------
 
@@ -254,6 +253,31 @@ INSERT INTO `branch` (`branch_id`, `name`, `address`, `phone_number`, `opening_t
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `branch_announcements`
+--
+
+CREATE TABLE `branch_announcements` (
+  `id` int(11) NOT NULL,
+  `announcement_id` int(11) NOT NULL,
+  `branch_id` int(11) NOT NULL,
+  `status` enum('Active','Inactive') DEFAULT 'Active',
+  `start_date` date DEFAULT NULL,
+  `end_date` date DEFAULT NULL,
+  `date_created` datetime DEFAULT current_timestamp(),
+  `date_updated` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `branch_announcements`
+--
+
+INSERT INTO `branch_announcements` (`id`, `announcement_id`, `branch_id`, `status`, `start_date`, `end_date`, `date_created`, `date_updated`) VALUES
+(1, 1, 1, 'Active', '2025-12-25', '2026-01-02', '2025-10-17 16:33:55', '2025-10-17 16:57:04'),
+(2, 6, 1, 'Active', '2025-10-24', '2025-10-24', '2025-10-17 16:42:41', '2025-10-17 16:45:19');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `branch_promo`
 --
 
@@ -274,7 +298,7 @@ CREATE TABLE `branch_promo` (
 
 INSERT INTO `branch_promo` (`branch_promo_id`, `branch_id`, `promo_id`, `status`, `start_date`, `end_date`, `date_created`, `date_updated`) VALUES
 (1, 1, 1, 'Inactive', NULL, NULL, '2025-09-21 06:48:42', '2025-10-07 23:44:40'),
-(2, 1, 2, 'Active', NULL, NULL, '2025-09-21 06:54:12', '2025-10-04 07:06:41'),
+(2, 1, 2, 'Active', NULL, NULL, '2025-09-21 06:54:12', '2025-10-17 15:02:24'),
 (3, 1, 3, 'Active', '2025-10-01', '2025-10-27', '2025-09-21 07:11:00', '2025-10-02 06:15:45'),
 (4, 1, 4, 'Active', '2025-10-07', '2025-10-31', '2025-09-21 07:19:41', '2025-10-07 23:53:21'),
 (5, 1, 5, 'Active', NULL, NULL, '2025-09-24 08:30:01', '2025-10-02 06:18:16'),
@@ -345,10 +369,10 @@ CREATE TABLE `branch_supply` (
 --
 
 INSERT INTO `branch_supply` (`branch_supplies_id`, `branch_id`, `supply_id`, `quantity`, `reorder_level`, `expiration_date`, `status`, `date_created`, `date_updated`) VALUES
-(1, 1, 1, 13, 12, '2025-10-31', 'Available', '2025-09-21 05:51:59', '2025-10-15 22:52:55'),
+(1, 1, 1, 45, 12, '2025-10-31', 'Available', '2025-09-21 05:51:59', '2025-10-17 15:14:42'),
 (2, 3, 2, 5, 10, NULL, 'Available', '2025-09-21 06:05:54', '2025-09-21 06:05:54'),
-(3, 1, 3, 470, 10, NULL, 'Available', '2025-10-13 04:59:52', '2025-10-16 04:43:04'),
-(4, 1, 4, 390, 175, NULL, 'Available', '2025-10-13 05:15:15', '2025-10-16 04:43:04');
+(3, 1, 3, 455, 10, NULL, 'Available', '2025-10-13 04:59:52', '2025-10-17 15:14:42'),
+(4, 1, 4, 330, 175, NULL, 'Available', '2025-10-13 05:15:15', '2025-10-17 15:14:42');
 
 -- --------------------------------------------------------
 
@@ -450,6 +474,7 @@ CREATE TABLE `dental_transaction` (
   `dentist_id` int(11) NOT NULL,
   `admin_user_id` int(11) DEFAULT NULL,
   `promo_id` int(11) DEFAULT NULL,
+  `payment_method` enum('Cash','Cashless') NOT NULL,
   `total` decimal(10,2) NOT NULL,
   `notes` text DEFAULT NULL,
   `date_created` timestamp NOT NULL DEFAULT current_timestamp(),
@@ -461,32 +486,33 @@ CREATE TABLE `dental_transaction` (
 -- Dumping data for table `dental_transaction`
 --
 
-INSERT INTO `dental_transaction` (`dental_transaction_id`, `appointment_transaction_id`, `dentist_id`, `admin_user_id`, `promo_id`, `total`, `notes`, `date_created`, `date_updated`, `prescription_downloaded`) VALUES
-(1, 21, 3, NULL, NULL, 1500.00, 'Tooth #12 extraction, mild swelling.', '2025-08-23 19:37:15', NULL, 0),
-(2, 22, 3, NULL, NULL, 2000.00, 'Tooth filling, slight sensitivity.', '2025-08-23 19:37:15', NULL, 1),
-(3, 23, 1, NULL, NULL, 1200.00, 'Routine cleaning, no complications.', '2025-08-23 19:37:15', NULL, 1),
-(4, 24, 4, NULL, NULL, 1800.00, 'Wisdom tooth removal, moderate bleeding.', '2025-08-23 19:37:15', NULL, 1),
-(5, 25, 3, NULL, NULL, 2500.00, 'Root canal treatment, stable condition.', '2025-08-23 19:37:15', NULL, 1),
-(8, 28, 1, NULL, NULL, 3000.00, 'Complex surgical extraction with swelling & bleeding.', '2025-08-23 19:37:15', NULL, 0),
-(20, 95, 2, NULL, NULL, 300.00, '', '2025-10-12 22:25:33', NULL, 0),
-(21, 95, 2, NULL, NULL, 1800.00, '', '2025-10-12 22:25:47', NULL, 0),
-(22, 93, 3, NULL, 3, 300.00, 'from ₱1500.00 into  ₱300.00 90% off', '2025-10-12 22:28:02', NULL, 0),
-(23, 93, 3, NULL, NULL, 300.00, 'removed tooth extract', '2025-10-12 22:29:47', NULL, 0),
-(24, 93, 3, NULL, NULL, 6300.00, '', '2025-10-12 22:30:18', NULL, 0),
-(25, 93, 2, 2, 2, 9955.00, '', '2025-10-12 22:37:31', NULL, 0),
-(26, 93, 2, 2, NULL, 10000.00, 'tanan', '2025-10-12 22:56:41', NULL, 0),
-(27, 93, 3, 2, NULL, 7500.00, '', '2025-10-12 23:24:24', NULL, 1),
-(28, 94, 2, 2, NULL, 8200.00, '', '2025-10-12 23:40:58', NULL, 0),
-(29, 85, 2, 2, NULL, 300.00, '', '2025-10-13 15:50:04', NULL, 0),
-(30, 59, 2, 2, 2, 1455.00, '', '2025-10-13 16:09:46', NULL, 0),
-(31, 97, 2, 2, 3, 780.00, 'bag ang', '2025-10-14 16:58:03', NULL, 0),
-(32, 98, 2, 2, 5, 225.00, '', '2025-10-14 19:32:19', '2025-10-15 04:06:23', 1),
-(33, 99, 3, 2, NULL, 7300.00, '', '2025-10-15 01:07:35', '2025-10-15 09:07:35', 0),
-(34, 100, 2, 2, NULL, 300.00, '', '2025-10-15 01:29:17', '2025-10-15 09:29:17', 1),
-(35, 101, 3, 2, NULL, 300.00, '', '2025-10-15 01:34:55', '2025-10-15 09:34:55', 1),
-(36, 102, 3, 2, NULL, 300.00, '', '2025-10-15 14:51:07', '2025-10-15 22:51:07', 1),
-(37, 103, 2, 2, 2, 8455.00, '', '2025-10-15 20:29:36', '2025-10-16 04:29:36', 0),
-(38, 104, 2, 2, 3, 1940.00, '', '2025-10-15 20:42:01', '2025-10-16 04:42:01', 1);
+INSERT INTO `dental_transaction` (`dental_transaction_id`, `appointment_transaction_id`, `dentist_id`, `admin_user_id`, `promo_id`, `payment_method`, `total`, `notes`, `date_created`, `date_updated`, `prescription_downloaded`) VALUES
+(1, 21, 3, NULL, NULL, 'Cash', 1500.00, 'Tooth #12 extraction, mild swelling.', '2025-08-23 19:37:15', NULL, 0),
+(2, 22, 3, NULL, NULL, 'Cash', 2000.00, 'Tooth filling, slight sensitivity.', '2025-08-23 19:37:15', NULL, 1),
+(3, 23, 1, NULL, NULL, 'Cash', 1200.00, 'Routine cleaning, no complications.', '2025-08-23 19:37:15', NULL, 1),
+(4, 24, 4, NULL, NULL, 'Cash', 1800.00, 'Wisdom tooth removal, moderate bleeding.', '2025-08-23 19:37:15', NULL, 1),
+(5, 25, 3, NULL, NULL, 'Cash', 2500.00, 'Root canal treatment, stable condition.', '2025-08-23 19:37:15', NULL, 1),
+(8, 28, 1, NULL, NULL, 'Cash', 3000.00, 'Complex surgical extraction with swelling & bleeding.', '2025-08-23 19:37:15', NULL, 0),
+(20, 95, 2, NULL, NULL, 'Cash', 300.00, '', '2025-10-12 22:25:33', NULL, 0),
+(21, 95, 2, NULL, NULL, 'Cash', 1800.00, '', '2025-10-12 22:25:47', NULL, 0),
+(22, 93, 3, NULL, 3, 'Cash', 300.00, 'from ₱1500.00 into  ₱300.00 90% off', '2025-10-12 22:28:02', NULL, 0),
+(23, 93, 3, NULL, NULL, 'Cash', 300.00, 'removed tooth extract', '2025-10-12 22:29:47', NULL, 0),
+(24, 93, 3, NULL, NULL, 'Cash', 6300.00, '', '2025-10-12 22:30:18', NULL, 0),
+(25, 93, 2, 2, 2, 'Cash', 9955.00, '', '2025-10-12 22:37:31', NULL, 0),
+(26, 93, 2, 2, NULL, 'Cash', 10000.00, 'tanan', '2025-10-12 22:56:41', NULL, 0),
+(27, 93, 3, 2, NULL, 'Cash', 7500.00, '', '2025-10-12 23:24:24', NULL, 1),
+(28, 94, 2, 2, NULL, 'Cash', 8200.00, '', '2025-10-12 23:40:58', NULL, 0),
+(29, 85, 2, 2, NULL, 'Cash', 300.00, '', '2025-10-13 15:50:04', NULL, 0),
+(30, 59, 2, 2, 2, 'Cash', 1455.00, '', '2025-10-13 16:09:46', NULL, 0),
+(31, 97, 2, 2, 3, 'Cash', 780.00, 'bag ang', '2025-10-14 16:58:03', NULL, 0),
+(32, 98, 2, 2, 5, 'Cash', 225.00, '', '2025-10-14 19:32:19', '2025-10-15 04:06:23', 1),
+(33, 99, 3, 2, NULL, 'Cash', 7300.00, '', '2025-10-15 01:07:35', '2025-10-15 09:07:35', 0),
+(34, 100, 2, 2, NULL, 'Cash', 300.00, '', '2025-10-15 01:29:17', '2025-10-15 09:29:17', 1),
+(35, 101, 3, 2, NULL, 'Cash', 300.00, '', '2025-10-15 01:34:55', '2025-10-15 09:34:55', 1),
+(36, 102, 3, 2, NULL, 'Cash', 300.00, '', '2025-10-15 14:51:07', '2025-10-15 22:51:07', 1),
+(37, 103, 2, 2, 2, 'Cash', 8455.00, '', '2025-10-15 20:29:36', '2025-10-16 04:29:36', 0),
+(38, 104, 2, 2, 3, 'Cash', 1940.00, '', '2025-10-15 20:42:01', '2025-10-16 04:42:01', 1),
+(39, 105, 3, 2, 2, 'Cashless', 1455.00, 'Gcash 091234556687', '2025-10-17 07:02:46', '2025-10-17 15:14:21', 0);
 
 -- --------------------------------------------------------
 
@@ -540,7 +566,9 @@ INSERT INTO `dental_transaction_services` (`id`, `dental_transaction_id`, `servi
 (53, 37, 4, 1),
 (54, 38, 3, 1),
 (55, 38, 4, 1),
-(56, 38, 2, 1);
+(56, 38, 2, 1),
+(81, 39, 1, 1),
+(82, 39, 2, 1);
 
 -- --------------------------------------------------------
 
@@ -598,7 +626,8 @@ INSERT INTO `dental_vital` (`vitals_id`, `appointment_transaction_id`, `admin_us
 (28, 101, 2, 44.0, 4, 4, '4', 44.00, 4.00, 'No', 'No', 'No', '2025-10-15 01:35:02', '2025-10-15 09:35:02'),
 (29, 102, 2, 3.0, 33, 3, '3', 3.00, 3.00, 'No', 'No', 'No', '2025-10-15 14:51:14', '2025-10-15 22:51:14'),
 (30, 103, 2, 1.0, 1, 1, '1', 1.00, 1.00, 'No', 'No', 'No', '2025-10-15 20:29:43', '2025-10-16 04:29:43'),
-(31, 104, 2, 231.0, 123, 123, '1', 31.00, 3.00, 'No', 'No', 'No', '2025-10-15 20:41:19', '2025-10-16 04:41:19');
+(31, 104, 2, 231.0, 123, 123, '1', 31.00, 3.00, 'No', 'No', 'No', '2025-10-15 20:41:19', '2025-10-16 04:41:19'),
+(32, 105, 2, 50.0, 50, 50, '50', 50.00, 50.00, 'No', 'No', 'No', '2025-10-17 07:01:53', '2025-10-17 15:01:53');
 
 -- --------------------------------------------------------
 
@@ -934,7 +963,9 @@ INSERT INTO `notifications` (`notification_id`, `user_id`, `message`, `is_read`,
 (314, 28, 'Your appointment on 2025-10-23 at 09:00 was successfully booked!', 0, '2025-10-15 20:28:31'),
 (315, 28, 'Your appointment (October 23, 2025 at 9:00 AM) has been marked as completed. Thank you for visiting!', 0, '2025-10-15 20:29:54'),
 (316, 28, 'Your appointment on 2025-10-23 at 09:00 was successfully booked!', 0, '2025-10-15 20:41:11'),
-(345, 28, 'Your appointment (October 23, 2025 at 9:00 AM) has been marked as completed. Thank you for visiting!', 0, '2025-10-15 20:43:04');
+(345, 28, 'Your appointment (October 23, 2025 at 9:00 AM) has been marked as completed. Thank you for visiting!', 0, '2025-10-15 20:43:04'),
+(346, 28, 'Your appointment on 2025-10-27 at 09:00 was successfully booked!', 0, '2025-10-17 06:50:03'),
+(375, 28, 'Your appointment (October 27, 2025 at 9:00 AM) has been marked as completed. Thank you for visiting!', 0, '2025-10-17 07:14:42');
 
 -- --------------------------------------------------------
 
@@ -957,7 +988,7 @@ CREATE TABLE `promo` (
 
 INSERT INTO `promo` (`promo_id`, `name`, `image_path`, `description`, `discount_type`, `discount_value`) VALUES
 (1, 'openinggg', '/images/promos/promo_1.jpg', 'openinggg', 'fixed', 500.00),
-(2, 'Grand Openingg', '/images/promos/promo_2.jpg', 'Grand Openinggg', 'fixed', 45.00),
+(2, 'Grand Opening', '/images/promos/promo_2.jpg', 'Grand Opening', 'fixed', 45.00),
 (3, 'joseph', '/images/promos/promo_3.jpg', 'jj', 'percentage', 80.00),
 (4, 'sample', '/images/promos/promo_4.jpg', 'qwerrt', 'fixed', 123.00),
 (5, 'Senior', '/images/promos/promo_5.jpeg', '60 above', 'percentage', 25.00),
@@ -1100,7 +1131,7 @@ INSERT INTO `users` (`user_id`, `username`, `password`, `last_name`, `middle_nam
 (25, 'AchasGG', '$2y$10$csrxQ1iwxHEcfkhQHKf3se586DUSZSK.WhXgNKB39m9js/HfPwuYK', 'Achas', '', 'Gab', 'Male', '0000-00-00', '18100807@usc.edu.ph', '0922626262', NULL, 'patient', NULL, NULL, 'Inactive', '2025-07-14 10:25:16', NULL, 0),
 (26, 'DazeP', '$2y$10$du.PYFR4vnJv9ecdNWDox.UUDcjoC0cTUAvtnsnSG.tXwdqn5vLKO', 'Daze', '', 'Pretot', 'Male', '0000-00-00', 'parchasoresidence@gmail.com', '9055626239', NULL, 'patient', NULL, NULL, 'Inactive', '2025-07-14 10:33:22', NULL, 0),
 (27, 'ChikuY', '$2y$10$h7C7FiWzWuf7oS0hUaav/OZwJX4rYOExaPk3NJu3O39mmsutOsUvm', 'Chiku', 'Wix', 'Yel', 'Female', '0000-00-00', 'parchasoresidence@gmail.com', '9055626239', NULL, 'patient', NULL, NULL, 'Inactive', '2025-07-14 11:14:19', '2025-10-04 05:51:10', 0),
-(28, 'Josephp', '$2y$10$OYynxpSPEJmsmDYgUlzNh.bnp1SH8.yJNckex9WXSvwA79LxPQ4Wm', 'Parchaso', 'España', 'Jhon Joseph', 'Male', '1999-08-17', 'josephparchaso@gmail.com', '9055626237', 'Block 22, Lot 6, Deca 4 Bankal Lapu Lapu City Cebu', 'patient', 1, NULL, 'Active', '2025-07-14 11:26:32', '2025-10-16 04:41:11', 0),
+(28, 'Josephp', '$2y$10$OYynxpSPEJmsmDYgUlzNh.bnp1SH8.yJNckex9WXSvwA79LxPQ4Wm', 'Parchaso', 'España', 'Jhon Joseph', 'Male', '1999-08-17', 'josephparchaso@gmail.com', '9055626237', 'Block 22, Lot 6, Deca 4 Bankal Lapu Lapu City Cebu', 'patient', 1, NULL, 'Active', '2025-07-14 11:26:32', '2025-10-17 14:50:03', 0),
 (29, 'pototj', '$2y$10$9Swzre20c9pLQ8ejMr1ySufYwaARXiCYpp8sUXyb5CP1oI7xNjtC2', 'potot', '', 'jj', 'Male', '0000-00-00', '18102727@usc.edu.ph', '9527194102', NULL, 'patient', NULL, NULL, 'Inactive', '2025-07-14 15:48:41', NULL, 0),
 (30, 'pret', '$2y$10$z7r/dpwWQ2m.RZK8EcwJGu2MkUM3tRY2EgG/7OyfSubN.bmXm2yTW', 'pre', '', 'tot', 'Male', '0000-00-00', '18102727@usc.edu.ph', '9205251545', NULL, 'patient', NULL, NULL, 'Inactive', '2025-07-14 16:03:59', NULL, 0),
 (31, 'Parchaso_J', '$2y$10$14IUZVVauGdjCe04vSuVTechUS8.EYYzOO5yZ0Li6Lq/IUhGx0.Ny', 'Parchaso', 'Espana', 'Jhon', 'Female', '0000-00-00', '18100807@usc.edu.ph', '9055626239', NULL, 'patient', NULL, NULL, 'Inactive', '2025-07-31 14:32:30', NULL, 0),
@@ -1177,6 +1208,14 @@ ALTER TABLE `appointment_transaction`
 --
 ALTER TABLE `branch`
   ADD PRIMARY KEY (`branch_id`);
+
+--
+-- Indexes for table `branch_announcements`
+--
+ALTER TABLE `branch_announcements`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `announcement_id` (`announcement_id`,`branch_id`),
+  ADD KEY `fk_branch_announcements_branch` (`branch_id`);
 
 --
 -- Indexes for table `branch_promo`
@@ -1313,25 +1352,31 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `announcements`
 --
 ALTER TABLE `announcements`
-  MODIFY `announcement_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `announcement_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `appointment_services`
 --
 ALTER TABLE `appointment_services`
-  MODIFY `appointment_services_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `appointment_services_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT for table `appointment_transaction`
 --
 ALTER TABLE `appointment_transaction`
-  MODIFY `appointment_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=105;
+  MODIFY `appointment_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=106;
 
 --
 -- AUTO_INCREMENT for table `branch`
 --
 ALTER TABLE `branch`
   MODIFY `branch_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `branch_announcements`
+--
+ALTER TABLE `branch_announcements`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `branch_promo`
@@ -1367,19 +1412,19 @@ ALTER TABLE `dental_tips`
 -- AUTO_INCREMENT for table `dental_transaction`
 --
 ALTER TABLE `dental_transaction`
-  MODIFY `dental_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `dental_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT for table `dental_transaction_services`
 --
 ALTER TABLE `dental_transaction_services`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
 
 --
 -- AUTO_INCREMENT for table `dental_vital`
 --
 ALTER TABLE `dental_vital`
-  MODIFY `vitals_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `vitals_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `dentist`
@@ -1403,7 +1448,7 @@ ALTER TABLE `dentist_service`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=346;
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=376;
 
 --
 -- AUTO_INCREMENT for table `promo`
@@ -1453,6 +1498,13 @@ ALTER TABLE `appointment_transaction`
   ADD CONSTRAINT `appointment_transaction_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
   ADD CONSTRAINT `appointment_transaction_ibfk_2` FOREIGN KEY (`branch_id`) REFERENCES `branch` (`branch_id`),
   ADD CONSTRAINT `appointment_transaction_ibfk_4` FOREIGN KEY (`dentist_id`) REFERENCES `dentist` (`dentist_id`);
+
+--
+-- Constraints for table `branch_announcements`
+--
+ALTER TABLE `branch_announcements`
+  ADD CONSTRAINT `fk_branch_announcements_announcement` FOREIGN KEY (`announcement_id`) REFERENCES `announcements` (`announcement_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_branch_announcements_branch` FOREIGN KEY (`branch_id`) REFERENCES `branch` (`branch_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `branch_promo`

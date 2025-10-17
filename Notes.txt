@@ -149,15 +149,14 @@ home/index reports = achas  💖
 Contact Fr. Peter for the database hosting 💖
 Minimum of 5 minutes for OTP time remaining expiration time 💖
 
-Hash EVERYTHING in db after deployment?💖
 dungan register/book different user 💖
 family 💖
 
-announcments, disable dates if branch is closed 🥶
 
 Owner - OTP Every Login 🥶
 Admin - OTP Every Login 🥶
 Patient - OTP Every Login 🥶
+Hash EVERYTHING in db after deployment? 🥶
 
 
 Error on change password OTP Fix 👍
@@ -205,3 +204,4 @@ cancel appointment and complete appointment / to save transaction and status com
 receipt admin 👍
 prescription admin 👍
 medical cert admin 👍
+announcments, disable dates if branch is closed 👍

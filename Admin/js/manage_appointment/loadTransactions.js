@@ -29,6 +29,7 @@ function initTables(appointmentId) {
             { title: "ID" },
             { title: "Dentist" },
             { title: "Service" },
+            { title: "Method" },
             { title: "Total" },
             { title: "Action", orderable: false },
         ],

@@ -93,24 +93,57 @@ document.addEventListener("DOMContentLoaded", function () {
         const dateInput = bookingBody.querySelector("#appointmentDate");
         const errorMsg = bookingBody.querySelector("#dateError");
 
-        if (dateInput) {
+        if (dateInput && errorMsg) {
             const today = new Date();
             today.setDate(today.getDate() + 1);
             dateInput.min = today.toISOString().split("T")[0];
 
+            let closedDates = [];
+            const branchSelect = bookingBody.querySelector("#appointmentBranch");
+
+            if (branchSelect) {
+                branchSelect.addEventListener("change", async () => {
+                    const branchId = branchSelect.value;
+                    closedDates = branchId ? await getClosedDates(branchId) : [];
+                });
+            }
+
             dateInput.addEventListener("input", function () {
                 if (!this.value) return;
                 const selectedDate = new Date(this.value);
-                if (selectedDate.getDay() === 0) {
-                    errorMsg.style.display = "block";
+                const day = selectedDate.getDay();
+                const formatted = this.value;
+
+                if (day === 0) {
                     this.value = "";
                     this.classList.add("is-invalid");
-                } else {
-                    errorMsg.style.display = "none";
-                    this.classList.remove("is-invalid");
+                    errorMsg.textContent = "Sundays are not available for appointments.";
+                    errorMsg.style.display = "block";
+                    return;
                 }
+
+                if (closedDates.includes(formatted)) {
+                    this.value = "";
+                    this.classList.add("is-invalid");
+                    errorMsg.textContent = "This date is unavailable due to a branch closure.";
+                    errorMsg.style.display = "block";
+                    return;
+                }
+
+                this.classList.remove("is-invalid");
+                errorMsg.style.display = "none";
             });
         }
+    }
+
+    function getClosedDates(branchId) {
+        return fetch(`${BASE_URL}/processes/get_closed_dates.php?branch_id=${branchId}`)
+            .then(res => res.json())
+            .then(data => Array.isArray(data.closedDates) ? data.closedDates : [])
+            .catch(err => {
+                console.error("Error fetching closed dates:", err);
+                return [];
+            });
     }
 
     function loadBranches(branchSelect) {
