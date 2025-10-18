@@ -44,9 +44,9 @@ $mail->Host = 'smtp.gmail.com';
 $mail->Port = 587;
 $mail->SMTPAuth = true;
 $mail->SMTPSecure = 'tls';
-
-$mail->Username = 'smileify.web@gmail.com';
 $mail->Password = '';
+$mail->Username = 'smileify.web@gmail.com';
+
 
 $mail->setFrom('smileify.web@gmail.com', 'Smile-ify OTP Verification');
 $mail->addAddress($email);

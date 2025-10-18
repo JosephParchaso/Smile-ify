@@ -154,10 +154,8 @@ Contact Fr. Peter for the database hosting 💖
 Minimum of 5 minutes for OTP time remaining expiration time 💖
 
 dungan register/book different user 💖
-family 💖
 
 Hash EVERYTHING in db after deployment? 🥶
-
 
 Error on change password OTP Fix 👍
 Validation for the Date of Birth, so that it will not accept 0000 👍
@@ -194,7 +192,6 @@ Switch status from pending ->> booked 👍
 Add the change email function in profile with otp verification 👍
 
 MAJOR CHANGE - MULTIPLE SERVICE 👍
-
 
 add admin or prepared by admin 👍
 apply promo transact 👍

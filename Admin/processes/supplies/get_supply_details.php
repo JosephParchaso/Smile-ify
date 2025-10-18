@@ -57,9 +57,10 @@ try {
                             ss.date_updated
                         FROM service_supplies ss
                         INNER JOIN service sv ON ss.service_id = sv.service_id
-                        WHERE ss.supply_id = ?";
+                        WHERE ss.supply_id = ? AND ss.branch_id = ?";
+
         $stmtServices = $conn->prepare($serviceSql);
-        $stmtServices->bind_param("i", $supplyId);
+        $stmtServices->bind_param("ii", $supplyId, $branch_id);
         $stmtServices->execute();
         $servicesResult = $stmtServices->get_result();
 
@@ -68,14 +69,14 @@ try {
 
         while ($srv = $servicesResult->fetch_assoc()) {
             $services[] = [
-                "service_id" => (int)$srv["service_id"],
-                "service_name" => $srv["service_name"],
-                "quantity_used" => (int)$srv["quantity_used"],
-                "date_created" => $srv["date_created"],
-                "date_updated" => $srv["date_updated"]
+                "service_id"     => (int)$srv["service_id"],
+                "service_name"   => $srv["service_name"],
+                "quantity_used"  => (int)$srv["quantity_used"],
+                "date_created"   => $srv["date_created"],
+                "date_updated"   => $srv["date_updated"]
             ];
 
-            if ($srv["date_updated"] > $latestServiceUpdate) {
+            if (!empty($srv["date_updated"]) && $srv["date_updated"] > $latestServiceUpdate) {
                 $latestServiceUpdate = $srv["date_updated"];
             }
         }
@@ -85,11 +86,12 @@ try {
         $row["service"] = $services;
         $row["latest_update"] = $latestServiceUpdate;
 
-        echo json_encode($row);
+        echo json_encode($row, JSON_UNESCAPED_UNICODE);
 
     } else {
         echo json_encode(["error" => "Supply not found"]);
     }
+
 } catch (Exception $e) {
     echo json_encode(["error" => "Database error: " . $e->getMessage()]);
 }

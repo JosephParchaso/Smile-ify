@@ -10,10 +10,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 const todayCount = document.getElementById("todayCount");
                 const tomorrowCount = document.getElementById("tomorrowCount");
+                const weekCount = document.getElementById("weekCount");
 
-                if (todayCount && tomorrowCount) {
+                if (todayCount && tomorrowCount && weekCount) {
                     todayCount.textContent = data.today || 0;
                     tomorrowCount.textContent = data.tomorrow || 0;
+                    weekCount.textContent = data.thisWeek || 0;
                 }
             })
             .catch(error => console.error("Error loading appointments:", error));
@@ -64,9 +66,38 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => console.error("Error loading low supplies:", error));
     }
 
+    function loadPromoAvailed() {
+        fetch(`${BASE_URL}/Admin/processes/index/get_promo_availed.php`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error(data.error);
+                    return;
+                }
+
+                const promoAvailedCount = document.getElementById("promoAvailedCount");
+                const promoAvailedList = document.getElementById("promoAvailedList");
+
+                if (promoAvailedCount) promoAvailedCount.textContent = data.total || 0;
+
+                if (promoAvailedList) {
+                    if (data.promos.length === 0) {
+                        promoAvailedList.innerHTML = `<div>No promos availed yet</div>`;
+                    } else {
+                        promoAvailedList.innerHTML = data.promos
+                            .map(p => `<div>${p.promo_name}: ${p.availed_count}</div>`)
+                            .join("");
+                    }
+                }
+            })
+            .catch(error => console.error("Error loading promo data:", error));
+    }
+
     loadUpcomingAppointments();
     loadPatientCounts();
     loadLowSupplies();
+    loadPromoAvailed();
+    loadPromoAvailed();
 
     if (!window.dashboardUpdater) {
         window.dashboardUpdater = setInterval(() => {

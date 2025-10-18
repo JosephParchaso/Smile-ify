@@ -34,15 +34,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $sql1 = "INSERT INTO supply (name, description, category, unit) 
                     VALUES (?, ?, ?, ?)";
         $stmt1 = $conn->prepare($sql1);
-        if (!$stmt1) {
-            throw new Exception("Prepare failed (supply): " . $conn->error);
-        }
+        if (!$stmt1) throw new Exception("Prepare failed (supply): " . $conn->error);
         $stmt1->bind_param("ssss", $name, $description, $category, $unit);
-
-        if (!$stmt1->execute()) {
-            throw new Exception("Failed to insert into supply: " . $stmt1->error);
-        }
-
+        $stmt1->execute();
         $supply_id = $stmt1->insert_id;
         $stmt1->close();
 
@@ -50,24 +44,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     (supply_id, branch_id, quantity, reorder_level, expiration_date, status, date_created) 
                     VALUES (?, ?, ?, ?, ?, ?, NOW())";
         $stmt2 = $conn->prepare($sql2);
-        if (!$stmt2) {
-            throw new Exception("Prepare failed (branch_supply): " . $conn->error);
-        }
+        if (!$stmt2) throw new Exception("Prepare failed (branch_supply): " . $conn->error);
         $stmt2->bind_param("iiisss", $supply_id, $branch_id, $quantity, $reorderLevel, $expiration, $status);
-
-        if (!$stmt2->execute()) {
-            throw new Exception("Failed to insert branch supply: " . $stmt2->error);
-        }
+        $stmt2->execute();
         $stmt2->close();
 
         if (!empty($_POST['services'])) {
-            $sql3 = "INSERT INTO service_supplies (service_id, supply_id, quantity_used, date_created)
-                        VALUES (?, ?, ?, NOW())";
+            $sql3 = "INSERT INTO service_supplies (service_id, branch_id, supply_id, quantity_used, date_created)
+                        VALUES (?, ?, ?, ?, NOW())";
             $stmt3 = $conn->prepare($sql3);
+            if (!$stmt3) throw new Exception("Prepare failed (service_supplies): " . $conn->error);
+
             foreach ($_POST['services'] as $service_id) {
                 $service_id = intval($service_id);
                 $quantity_used = intval($_POST['quantities'][$service_id] ?? 1);
-                $stmt3->bind_param("iii", $service_id, $supply_id, $quantity_used);
+                $stmt3->bind_param("iiii", $service_id, $branch_id, $supply_id, $quantity_used);
                 $stmt3->execute();
             }
             $stmt3->close();
@@ -75,7 +66,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         $conn->commit();
         $_SESSION['updateSuccess'] = "Supply added successfully with service assignments!";
-
     } catch (Exception $e) {
         $conn->rollback();
         $_SESSION['updateError'] = "Database error: " . $e->getMessage();

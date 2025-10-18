@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 18, 2025 at 12:32 AM
+-- Generation Time: Oct 18, 2025 at 11:48 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -104,7 +104,21 @@ INSERT INTO `appointment_services` (`appointment_services_id`, `appointment_tran
 (38, 109, 1, '2025-10-18 06:28:37'),
 (39, 110, 1, '2025-10-18 06:29:12'),
 (40, 110, 4, '2025-10-18 06:29:12'),
-(41, 111, 1, '2025-10-18 06:29:42');
+(41, 111, 1, '2025-10-18 06:29:42'),
+(42, 112, 1, '2025-10-18 08:09:42'),
+(43, 113, 2, '2025-10-19 02:28:24'),
+(44, 114, 2, '2025-10-19 03:30:10'),
+(45, 115, 2, '2025-10-19 03:30:30'),
+(46, 116, 2, '2025-10-19 03:44:16'),
+(47, 117, 2, '2025-10-19 03:45:54'),
+(48, 118, 2, '2025-10-19 03:49:56'),
+(49, 119, 1, '2025-10-19 03:56:34'),
+(50, 120, 7, '2025-10-19 03:59:13'),
+(51, 121, 1, '2025-10-19 04:10:32'),
+(52, 121, 3, '2025-10-19 04:10:32'),
+(53, 122, 2, '2025-10-19 04:14:04'),
+(54, 123, 2, '2025-10-19 04:22:43'),
+(55, 124, 2, '2025-10-19 04:23:02');
 
 -- --------------------------------------------------------
 
@@ -173,9 +187,9 @@ INSERT INTO `appointment_transaction` (`appointment_transaction_id`, `user_id`, 
 (40, 28, 2, 3, '2025-09-12', '10:30:00', '', '2025-09-07 19:43:36', NULL, 'Completed', 0),
 (41, 28, 1, 1, '2025-09-11', '10:30:00', '', '2025-09-07 19:44:03', NULL, 'Cancelled', 0),
 (42, 28, 1, NULL, '2025-09-12', '09:45:00', '', '2025-09-07 19:47:38', NULL, 'Cancelled', 0),
-(43, 53, 1, 1, '2025-10-04', '14:15:00', '', '2025-09-16 19:05:45', NULL, 'Booked', 0),
+(43, 53, 1, 1, '2025-10-04', '14:15:00', '', '2025-09-16 19:05:45', NULL, 'Cancelled', 0),
 (44, 54, 1, NULL, '2025-09-19', '09:00:00', '', '2025-09-16 19:22:37', NULL, 'Completed', 0),
-(45, 55, 2, 3, '2025-10-02', '12:00:00', '', '2025-09-17 19:45:22', NULL, 'Booked', 0),
+(45, 55, 2, 3, '2025-10-02', '12:00:00', '', '2025-09-17 19:45:22', NULL, 'Cancelled', 0),
 (49, 46, 1, 3, '2025-09-19', '11:15:00', '', '2025-09-17 22:30:42', NULL, 'Completed', 0),
 (50, 56, 3, NULL, '2025-09-19', '09:45:00', 'mandaue branch', '2025-09-17 22:48:49', NULL, 'Completed', 0),
 (51, 56, 3, 3, '2025-09-20', '09:45:00', '', '2025-09-17 23:10:02', NULL, 'Cancelled', 0),
@@ -199,23 +213,23 @@ INSERT INTO `appointment_transaction` (`appointment_transaction_id`, `user_id`, 
 (72, 59, 3, 2, '2025-09-25', '09:00:00', '', '2025-09-24 00:03:02', NULL, 'Cancelled', 0),
 (73, 60, 1, 1, '2025-09-25', '11:15:00', '', '2025-09-24 07:32:21', NULL, 'Cancelled', 0),
 (74, 28, 1, 1, '2025-09-25', '09:45:00', 'Sample note', '2025-09-24 07:37:01', NULL, 'Completed', 0),
-(75, 28, 3, 2, '2025-10-31', '09:00:00', '', '2025-10-03 21:22:21', NULL, 'Booked', 0),
-(76, 28, 3, 2, '2025-10-31', '09:45:00', '', '2025-10-03 21:42:30', NULL, 'Booked', 0),
-(77, 27, 3, 2, '2025-10-31', '10:30:00', '', '2025-10-03 21:43:55', NULL, 'Booked', 0),
-(78, 54, 3, 2, '2025-10-31', '11:15:00', '', '2025-10-03 21:44:25', NULL, 'Booked', 0),
-(79, 54, 3, 2, '2025-10-31', '12:00:00', '', '2025-10-03 21:46:53', NULL, 'Booked', 0),
-(80, 28, 1, 4, '2025-10-08', '09:00:00', '', '2025-10-06 19:50:46', NULL, 'Booked', 0),
-(81, 62, 1, 4, '2025-10-07', '15:00:00', '', '2025-10-06 20:35:12', NULL, 'Booked', 0),
-(82, 63, 3, 2, '2025-10-08', '15:00:00', '', '2025-10-06 20:41:29', NULL, 'Booked', 0),
-(84, 65, 3, 5, '2025-10-14', '09:00:00', 'consult only', '2025-10-08 16:23:20', NULL, 'Booked', 0),
+(75, 28, 3, 2, '2025-10-31', '09:00:00', '', '2025-10-03 21:22:21', NULL, 'Cancelled', 0),
+(76, 28, 3, 2, '2025-10-31', '09:45:00', '', '2025-10-03 21:42:30', NULL, 'Cancelled', 0),
+(77, 27, 3, 2, '2025-10-31', '10:30:00', '', '2025-10-03 21:43:55', NULL, 'Cancelled', 0),
+(78, 54, 3, 2, '2025-10-31', '11:15:00', '', '2025-10-03 21:44:25', NULL, 'Cancelled', 0),
+(79, 54, 3, 2, '2025-10-31', '12:00:00', '', '2025-10-03 21:46:53', NULL, 'Cancelled', 0),
+(80, 28, 1, 4, '2025-10-08', '09:00:00', '', '2025-10-06 19:50:46', NULL, 'Cancelled', 0),
+(81, 62, 1, 4, '2025-10-07', '15:00:00', '', '2025-10-06 20:35:12', NULL, 'Cancelled', 0),
+(82, 63, 3, 2, '2025-10-08', '15:00:00', '', '2025-10-06 20:41:29', NULL, 'Cancelled', 0),
+(84, 65, 3, 5, '2025-10-14', '09:00:00', 'consult only', '2025-10-08 16:23:20', NULL, 'Cancelled', 0),
 (85, 66, 1, 2, '2025-10-14', '09:00:00', 'consult only', '2025-10-08 16:31:23', '2025-10-14 01:04:39', 'Cancelled', 0),
-(86, 67, 2, NULL, '2025-10-14', '12:00:00', 'dental implant, ortho 115000', '2025-10-08 16:37:26', NULL, 'Booked', 0),
-(87, 68, 2, NULL, '2025-10-15', '09:00:00', 'Estimated End Time: 10:30 AM\r\n', '2025-10-08 17:26:21', NULL, 'Booked', 0),
-(88, 69, 3, 4, '2025-10-10', '10:00:00', 'teeth whiten tooth extract 105 mins, Estimated End Time: 11:45 AM', '2025-10-08 17:44:24', NULL, 'Booked', 0),
-(89, 70, 3, 5, '2025-10-10', '12:00:00', 'Estimated End Time: 01:00 PM', '2025-10-08 18:12:00', NULL, 'Booked', 0),
-(90, 28, 3, 3, '2025-10-10', '09:00:00', '', '2025-10-09 20:14:11', NULL, 'Booked', 0),
-(91, 28, 3, 4, '2025-10-10', '13:30:00', 'consult, tooth extract', '2025-10-09 20:20:00', NULL, 'Booked', 0),
-(92, 71, 3, 5, '2025-10-10', '15:00:00', 'Estimated End Time: 03:15 PM', '2025-10-09 21:25:06', NULL, 'Booked', 0),
+(86, 67, 2, NULL, '2025-10-14', '12:00:00', 'dental implant, ortho 115000', '2025-10-08 16:37:26', NULL, 'Cancelled', 0),
+(87, 68, 2, NULL, '2025-10-15', '09:00:00', 'Estimated End Time: 10:30 AM\r\n', '2025-10-08 17:26:21', NULL, 'Cancelled', 0),
+(88, 69, 3, 4, '2025-10-10', '10:00:00', 'teeth whiten tooth extract 105 mins, Estimated End Time: 11:45 AM', '2025-10-08 17:44:24', NULL, 'Cancelled', 0),
+(89, 70, 3, 5, '2025-10-10', '12:00:00', 'Estimated End Time: 01:00 PM', '2025-10-08 18:12:00', NULL, 'Cancelled', 0),
+(90, 28, 3, 3, '2025-10-10', '09:00:00', '', '2025-10-09 20:14:11', NULL, 'Cancelled', 0),
+(91, 28, 3, 4, '2025-10-10', '13:30:00', 'consult, tooth extract', '2025-10-09 20:20:00', NULL, 'Cancelled', 0),
+(92, 71, 3, 5, '2025-10-10', '15:00:00', 'Estimated End Time: 03:15 PM', '2025-10-09 21:25:06', NULL, 'Cancelled', 0),
 (93, 28, 1, 3, '2025-10-20', '09:00:00', '', '2025-10-10 01:02:22', '2025-10-14 01:10:06', 'Cancelled', 0),
 (94, 46, 1, 2, '2025-10-20', '10:30:00', '', '2025-10-10 22:22:19', '2025-10-15 01:06:26', 'Cancelled', 0),
 (95, 54, 1, 2, '2025-10-20', '13:30:00', '', '2025-10-10 22:31:38', '2025-10-15 03:26:48', 'Cancelled', 0),
@@ -229,12 +243,25 @@ INSERT INTO `appointment_transaction` (`appointment_transaction_id`, `user_id`, 
 (103, 28, 1, 2, '2025-10-23', '09:00:00', '', '2025-10-15 20:28:31', '2025-10-16 04:29:54', 'Completed', 0),
 (104, 28, 1, 3, '2025-10-23', '09:00:00', '', '2025-10-15 20:41:11', '2025-10-16 04:43:04', 'Completed', 0),
 (105, 28, 1, NULL, '2025-10-27', '09:00:00', '', '2025-10-17 06:50:03', '2025-10-17 15:14:42', 'Completed', 0),
-(106, 28, 1, NULL, '2025-10-18', '09:00:00', '', '2025-10-17 20:44:06', NULL, 'Booked', 0),
-(107, 46, 3, 5, '2025-10-18', '12:00:00', '', '2025-10-17 22:27:59', NULL, 'Booked', 0),
-(108, 54, 1, 2, '2025-10-18', '10:00:00', '', '2025-10-17 22:28:19', NULL, 'Booked', 0),
-(109, 69, 1, 3, '2025-10-18', '11:00:00', '', '2025-10-17 22:28:37', NULL, 'Booked', 0),
-(110, 28, 1, 2, '2025-10-18', '12:00:00', '', '2025-10-17 22:29:12', NULL, 'Booked', 0),
-(111, 46, 1, 3, '2025-10-18', '15:00:00', '', '2025-10-17 22:29:42', NULL, 'Booked', 0);
+(106, 28, 1, NULL, '2025-10-18', '09:00:00', '', '2025-10-17 20:44:06', NULL, 'Cancelled', 0),
+(107, 46, 3, 5, '2025-10-18', '12:00:00', '', '2025-10-17 22:27:59', NULL, 'Cancelled', 1),
+(108, 54, 1, 2, '2025-10-18', '10:00:00', '', '2025-10-17 22:28:19', NULL, 'Cancelled', 1),
+(109, 69, 1, 3, '2025-10-18', '11:00:00', '', '2025-10-17 22:28:37', NULL, 'Cancelled', 1),
+(110, 28, 1, 2, '2025-10-18', '12:00:00', '', '2025-10-17 22:29:12', NULL, 'Cancelled', 1),
+(111, 46, 1, 3, '2025-10-18', '15:00:00', '', '2025-10-17 22:29:42', NULL, 'Cancelled', 1),
+(112, 28, 1, 1, '2025-10-18', '09:30:00', '', '2025-10-18 00:08:35', NULL, 'Cancelled', 1),
+(113, 54, 2, 1, '2025-10-27', '09:00:00', '', '2025-10-18 18:28:24', '2025-10-19 03:14:31', 'Completed', 0),
+(114, 28, 1, 3, '2025-10-27', '09:00:00', '', '2025-10-18 19:30:10', '2025-10-19 03:41:45', 'Completed', 0),
+(115, 28, 2, 3, '2025-10-27', '09:00:00', '', '2025-10-18 19:30:30', '2025-10-19 03:35:14', 'Completed', 0),
+(116, 28, 1, 3, '2025-10-22', '13:00:00', '', '2025-10-18 19:44:16', '2025-10-19 03:44:31', 'Completed', 0),
+(117, 28, 1, 2, '2025-10-29', '13:30:00', '', '2025-10-18 19:45:54', '2025-10-19 03:48:34', 'Completed', 0),
+(118, 28, 1, 3, '2025-10-25', '13:30:00', '', '2025-10-18 19:49:56', '2025-10-19 03:50:20', 'Completed', 0),
+(119, 28, 1, NULL, '2025-10-22', '12:00:00', '', '2025-10-18 19:56:34', '2025-10-19 03:56:58', 'Completed', 0),
+(120, 28, 2, 1, '2025-10-29', '11:30:00', '', '2025-10-18 19:59:13', '2025-10-19 04:08:25', 'Completed', 0),
+(121, 28, 1, 2, '2025-10-25', '09:00:00', '', '2025-10-18 20:10:32', '2025-10-19 04:12:06', 'Completed', 0),
+(122, 28, 2, 3, '2025-10-28', '10:00:00', '', '2025-10-18 20:14:04', '2025-10-19 04:14:31', 'Completed', 0),
+(123, 28, 2, 1, '2025-10-24', '11:00:00', '', '2025-10-18 20:22:43', '2025-10-19 04:25:13', 'Completed', 0),
+(124, 28, 1, 3, '2025-10-29', '11:30:00', '', '2025-10-18 20:23:02', '2025-10-19 04:25:45', 'Completed', 0);
 
 -- --------------------------------------------------------
 
@@ -263,7 +290,8 @@ INSERT INTO `branch` (`branch_id`, `name`, `address`, `phone_number`, `opening_t
 (1, 'Babag', 'Babag 2, Lapu Lapu City, Cebu', '9876543211', NULL, NULL, 'Active', '2025-09-23 06:16:53', '2025-10-09 00:29:11', 'https://www.google.com/maps?s=web&rlz=1C1CHBF_enPH1076PH1076&vet=12ahUKEwjuncvMhquCAxXyZWwGHf0oB6AQ5OUKegQIDhAO..i&cs=0&um=1&ie=UTF-8&fb=1&gl=ph&sa=X&geocode=KeXXQbw9mKkzMZ8SM-2MbRRa&daddr=8XW6%2BG37,+42+Zone+Ube,+Mandaue+City,+6014+Cebu'),
 (2, 'Pusok', 'Pusok, Lapu Lapu City, Cebu', NULL, NULL, NULL, 'Active', '2025-09-23 06:16:53', '2025-10-09 00:29:11', 'https://www.google.com/maps/dir//Mondejar+Bldg.,+8X97%2B4VH,+M.L.+Quezon+National+Highway,+Lapu-Lapu+City,+6015+Cebu/@10.3178978,123.9235228,13z/data=!3m1!4b1!4m9!4m8!1m1!4e2!1m5!1m1!1s0x33a999daa69f9d7d:0xe953442899b16cf7!2m2!1d123.9647064!2d10.3178364?e'),
 (3, 'Mandaue', 'Mandaue City, Cebu', '9123456789', NULL, NULL, 'Active', '2025-09-23 06:16:53', '2025-10-09 00:29:11', 'https://www.google.com/maps/dir//7WHV%2BRP3,+Babang+II+Rd,+Lapu-Lapu+City,+6015+Cebu/@10.2795046,123.8619066,12z/data=!4m8!4m7!1m0!1m5!1m1!1s0x33a99a3a552c12d3:0x4f3b0cb463cfb86d!2m2!1d123.9443073!2d10.2795147?entry=ttu'),
-(6, 'Talamban', 'Talamban, Cebu', '4564656664', NULL, NULL, 'Active', '2025-09-24 16:25:59', '2025-10-08 09:57:04', 'https://www.google.com/maps/dir//8XW6%2BG37,+42+Zone+Ube,+Mandaue+City,+6014+Cebu/@10.3557436,123.8524778,22362m/data=!3m1!1e3!4m8!4m7!1m0!1m5!1m1!1s0x33a9983dbc41d7e5:0x5a146d8ced33129f!2m2!1d123.9601141!2d10.3462534?entry=ttu&g_ep=EgoyMDI1MDkyMi4wIKXMDS');
+(6, 'Talamban', 'Talamban, Cebu', '4564656664', NULL, NULL, 'Active', '2025-09-24 16:25:59', '2025-10-08 09:57:04', 'https://www.google.com/maps/dir//8XW6%2BG37,+42+Zone+Ube,+Mandaue+City,+6014+Cebu/@10.3557436,123.8524778,22362m/data=!3m1!1e3!4m8!4m7!1m0!1m5!1m1!1s0x33a9983dbc41d7e5:0x5a146d8ced33129f!2m2!1d123.9601141!2d10.3462534?entry=ttu&g_ep=EgoyMDI1MDkyMi4wIKXMDS'),
+(7, 'Bankal', 'Bankal, Lapu Lapu City, Cebu', '9055626239', NULL, NULL, 'Inactive', '2025-10-19 01:50:46', '2025-10-19 01:50:46', 'https://www.google.com/maps/place/Bankal+Barangay+Hall/@10.3078254,123.9873401,1069m/data=!3m2!1e3!4b1!4m6!3m5!1s0x33a99769a6db8655:0x48200cb7cbf4bf82!8m2!3d10.3078254!4d123.989915!16s%2Fg%2F11bwl3ssy7?entry=ttu&g_ep=EgoyMDI1MTAxNC4wIKXMDSoASAFQAw%3D%3D');
 
 -- --------------------------------------------------------
 
@@ -384,10 +412,11 @@ CREATE TABLE `branch_supply` (
 --
 
 INSERT INTO `branch_supply` (`branch_supplies_id`, `branch_id`, `supply_id`, `quantity`, `reorder_level`, `expiration_date`, `status`, `date_created`, `date_updated`) VALUES
-(1, 1, 1, 45, 12, '2025-10-31', 'Available', '2025-09-21 05:51:59', '2025-10-17 15:14:42'),
+(1, 1, 1, 43, 12, '2025-10-31', 'Available', '2025-09-21 05:51:59', '2025-10-19 04:25:45'),
 (2, 3, 2, 5, 10, NULL, 'Available', '2025-09-21 06:05:54', '2025-09-21 06:05:54'),
 (3, 1, 3, 455, 10, NULL, 'Available', '2025-10-13 04:59:52', '2025-10-17 15:14:42'),
-(4, 1, 4, 330, 175, NULL, 'Available', '2025-10-13 05:15:15', '2025-10-17 15:14:42');
+(8, 1, 6, 60, 10, NULL, 'Available', '2025-10-19 03:55:10', '2025-10-19 04:12:06'),
+(9, 2, 7, 997, 200, NULL, 'Available', '2025-10-19 04:04:47', '2025-10-19 04:25:13');
 
 -- --------------------------------------------------------
 
@@ -527,7 +556,19 @@ INSERT INTO `dental_transaction` (`dental_transaction_id`, `appointment_transact
 (36, 102, 3, 2, NULL, 'Cash', 300.00, '', '2025-10-15 14:51:07', '2025-10-15 22:51:07', 1),
 (37, 103, 2, 2, 2, 'Cash', 8455.00, '', '2025-10-15 20:29:36', '2025-10-16 04:29:36', 0),
 (38, 104, 2, 2, 3, 'Cash', 1940.00, '', '2025-10-15 20:42:01', '2025-10-16 04:42:01', 1),
-(39, 105, 3, 2, 2, 'Cashless', 1455.00, 'Gcash 091234556687', '2025-10-17 07:02:46', '2025-10-17 15:14:21', 0);
+(39, 105, 3, 2, 2, 'Cashless', 1455.00, 'Gcash 091234556687', '2025-10-17 07:02:46', '2025-10-17 15:14:21', 0),
+(40, 113, 1, 39, NULL, 'Cash', 2400.00, '', '2025-10-18 18:29:01', '2025-10-19 02:29:01', 0),
+(41, 115, 3, 39, NULL, 'Cash', 1200.00, '', '2025-10-18 19:31:10', '2025-10-19 03:31:10', 0),
+(42, 114, 3, 2, NULL, 'Cashless', 1200.00, '', '2025-10-18 19:41:35', '2025-10-19 03:41:35', 0),
+(43, 116, 3, 2, NULL, 'Cash', 1200.00, '', '2025-10-18 19:44:22', '2025-10-19 03:44:22', 0),
+(44, 117, 2, 2, NULL, 'Cashless', 1200.00, '', '2025-10-18 19:46:03', '2025-10-19 03:46:03', 0),
+(45, 118, 3, 2, NULL, 'Cashless', 1200.00, '', '2025-10-18 19:50:02', '2025-10-19 03:50:02', 0),
+(46, 119, 3, 2, NULL, 'Cash', 300.00, '', '2025-10-18 19:56:50', '2025-10-19 03:56:50', 0),
+(47, 120, 1, 39, NULL, 'Cashless', 1200.00, '', '2025-10-18 20:01:24', '2025-10-19 04:01:24', 0),
+(48, 121, 2, 2, NULL, 'Cashless', 1800.00, '', '2025-10-18 20:11:15', '2025-10-19 04:11:15', 0),
+(49, 122, 3, 39, NULL, 'Cashless', 1200.00, '', '2025-10-18 20:14:18', '2025-10-19 04:14:18', 0),
+(50, 123, 1, 39, NULL, 'Cash', 1200.00, '', '2025-10-18 20:23:21', '2025-10-19 04:23:21', 0),
+(51, 124, 3, 2, NULL, 'Cash', 1200.00, '', '2025-10-18 20:23:41', '2025-10-19 04:23:41', 0);
 
 -- --------------------------------------------------------
 
@@ -583,7 +624,20 @@ INSERT INTO `dental_transaction_services` (`id`, `dental_transaction_id`, `servi
 (55, 38, 4, 1),
 (56, 38, 2, 1),
 (81, 39, 1, 1),
-(82, 39, 2, 1);
+(82, 39, 2, 1),
+(83, 40, 2, 2),
+(84, 41, 2, 1),
+(85, 42, 2, 1),
+(86, 43, 2, 1),
+(87, 44, 2, 1),
+(88, 45, 2, 1),
+(89, 46, 1, 1),
+(90, 47, 2, 1),
+(91, 48, 1, 1),
+(92, 48, 3, 1),
+(93, 49, 2, 1),
+(94, 50, 2, 1),
+(95, 51, 2, 1);
 
 -- --------------------------------------------------------
 
@@ -642,7 +696,19 @@ INSERT INTO `dental_vital` (`vitals_id`, `appointment_transaction_id`, `admin_us
 (29, 102, 2, 3.0, 33, 3, '3', 3.00, 3.00, 'No', 'No', 'No', '2025-10-15 14:51:14', '2025-10-15 22:51:14'),
 (30, 103, 2, 1.0, 1, 1, '1', 1.00, 1.00, 'No', 'No', 'No', '2025-10-15 20:29:43', '2025-10-16 04:29:43'),
 (31, 104, 2, 231.0, 123, 123, '1', 31.00, 3.00, 'No', 'No', 'No', '2025-10-15 20:41:19', '2025-10-16 04:41:19'),
-(32, 105, 2, 50.0, 50, 50, '50', 50.00, 50.00, 'No', 'No', 'No', '2025-10-17 07:01:53', '2025-10-17 15:01:53');
+(32, 105, 2, 50.0, 50, 50, '50', 50.00, 50.00, 'No', 'No', 'No', '2025-10-17 07:01:53', '2025-10-17 15:01:53'),
+(33, 113, 39, 5.0, 5, 5, '5', 5.00, 5.00, 'No', 'No', 'No', '2025-10-18 18:29:10', '2025-10-19 02:29:10'),
+(34, 115, 39, 5.0, 5, 5, '55', 5.00, 5.00, 'No', 'No', 'No', '2025-10-18 19:33:14', '2025-10-19 03:33:14'),
+(35, 114, 2, 5.0, 5, 5, '5', 5.00, 5.00, 'No', 'No', 'No', '2025-10-18 19:41:43', '2025-10-19 03:41:43'),
+(36, 116, 2, 4.0, 44, 4, '4', 4.00, 4.00, 'No', 'No', 'No', '2025-10-18 19:44:30', '2025-10-19 03:44:30'),
+(37, 117, 2, 999.9, 21, 321, '3', 13.00, 3.00, 'No', 'No', 'No', '2025-10-18 19:46:08', '2025-10-19 03:46:08'),
+(38, 118, 2, 757.0, 5, 75, '75', 57.00, 6.00, 'No', 'No', 'No', '2025-10-18 19:50:08', '2025-10-19 03:50:08'),
+(39, 119, 2, 34.0, 43, 43, '4', 3.00, 4.00, 'No', 'No', 'No', '2025-10-18 19:56:43', '2025-10-19 03:56:43'),
+(40, 120, 39, 999.9, 2, 2, '2', 2.00, 2.00, 'No', 'No', 'No', '2025-10-18 20:01:33', '2025-10-19 04:01:33'),
+(41, 121, 2, 999.9, 3, 2, '2', 2.00, 2.00, 'No', 'No', 'No', '2025-10-18 20:11:22', '2025-10-19 04:11:22'),
+(42, 122, 39, 32.0, 23, 213, '12', 32.00, 13.00, 'No', 'No', 'No', '2025-10-18 20:14:23', '2025-10-19 04:14:23'),
+(43, 123, 39, 34.0, 5, 3434, '43', 999.99, 34.00, 'No', 'No', 'No', '2025-10-18 20:23:33', '2025-10-19 04:23:33'),
+(44, 124, 2, 6.0, 6, 66, '6', 6.00, 6.00, 'No', 'No', 'No', '2025-10-18 20:23:48', '2025-10-19 04:23:48');
 
 -- --------------------------------------------------------
 
@@ -986,7 +1052,31 @@ INSERT INTO `notifications` (`notification_id`, `user_id`, `message`, `is_read`,
 (378, 54, 'Your appointment on 2025-10-18 at 10:00 was successfully booked!', 0, '2025-10-17 22:28:19'),
 (379, 69, 'Your appointment on 2025-10-18 at 11:00 was successfully booked!', 0, '2025-10-17 22:28:37'),
 (380, 28, 'Your appointment on 2025-10-18 at 12:00 was successfully booked!', 0, '2025-10-17 22:29:12'),
-(381, 46, 'Your appointment on 2025-10-18 at 15:00 was successfully booked!', 0, '2025-10-17 22:29:42');
+(381, 46, 'Your appointment on 2025-10-18 at 15:00 was successfully booked!', 0, '2025-10-17 22:29:42'),
+(382, 54, 'Your appointment on 2025-10-27 at 09:00 was successfully booked!', 0, '2025-10-18 18:28:24'),
+(635, 54, 'Your appointment (October 27, 2025 at 9:00 AM) has been marked as completed. Thank you for visiting!', 0, '2025-10-18 19:14:31'),
+(636, 28, 'Your appointment on 2025-10-27 at 09:00 was successfully booked!', 0, '2025-10-18 19:30:10'),
+(637, 28, 'Your appointment on 2025-10-27 at 09:00 was successfully booked!', 0, '2025-10-18 19:30:30'),
+(652, 28, 'Your appointment (October 27, 2025 at 9:00 AM) has been marked as completed. Thank you for visiting!', 0, '2025-10-18 19:35:14'),
+(653, 28, 'Your appointment (October 27, 2025 at 9:00 AM) has been marked as completed. Thank you for visiting!', 0, '2025-10-18 19:41:45'),
+(654, 28, 'Your appointment on 2025-10-22 at 13:00 was successfully booked!', 0, '2025-10-18 19:44:16'),
+(655, 28, 'Your appointment (October 22, 2025 at 1:00 PM) has been marked as completed. Thank you for visiting!', 0, '2025-10-18 19:44:31'),
+(656, 28, 'Your appointment on 2025-10-29 at 13:30 was successfully booked!', 0, '2025-10-18 19:45:54'),
+(685, 28, 'Your appointment (October 29, 2025 at 1:30 PM) has been marked as completed. Thank you for visiting!', 0, '2025-10-18 19:48:34'),
+(686, 28, 'Your appointment on 2025-10-25 at 13:30 was successfully booked!', 0, '2025-10-18 19:49:56'),
+(687, 28, 'Your appointment (October 25, 2025 at 1:30 PM) has been marked as completed. Thank you for visiting!', 0, '2025-10-18 19:50:20'),
+(688, 28, 'Your appointment on 2025-10-22 at 12:00 was successfully booked!', 0, '2025-10-18 19:56:34'),
+(689, 28, 'Your appointment (October 22, 2025 at 12:00 PM) has been marked as completed. Thank you for visiting!', 0, '2025-10-18 19:56:58'),
+(690, 28, 'Your appointment on 2025-10-29 at 11:30 was successfully booked!', 0, '2025-10-18 19:59:13'),
+(747, 28, 'Your appointment (October 29, 2025 at 11:30 AM) has been marked as completed. Thank you for visiting!', 0, '2025-10-18 20:08:25'),
+(748, 28, 'Your appointment on 2025-10-25 at 09:00 was successfully booked!', 0, '2025-10-18 20:10:32'),
+(749, 28, 'Your appointment (October 25, 2025 at 9:00 AM) has been marked as completed. Thank you for visiting!', 0, '2025-10-18 20:12:06'),
+(750, 28, 'Your appointment on 2025-10-28 at 10:00 was successfully booked!', 0, '2025-10-18 20:14:04'),
+(751, 28, 'Your appointment (October 28, 2025 at 10:00 AM) has been marked as completed. Thank you for visiting!', 0, '2025-10-18 20:14:31'),
+(752, 28, 'Your appointment on 2025-10-24 at 11:00 was successfully booked!', 0, '2025-10-18 20:22:43'),
+(753, 28, 'Your appointment on 2025-10-29 at 11:30 was successfully booked!', 0, '2025-10-18 20:23:02'),
+(768, 28, 'Your appointment (October 24, 2025 at 11:00 AM) has been marked as completed. Thank you for visiting!', 0, '2025-10-18 20:25:13'),
+(769, 28, 'Your appointment (October 29, 2025 at 11:30 AM) has been marked as completed. Thank you for visiting!', 0, '2025-10-18 20:25:45');
 
 -- --------------------------------------------------------
 
@@ -1053,6 +1143,7 @@ INSERT INTO `service` (`service_id`, `name`, `price`, `duration_minutes`) VALUES
 CREATE TABLE `service_supplies` (
   `id` int(11) NOT NULL,
   `service_id` int(11) NOT NULL,
+  `branch_id` int(11) DEFAULT NULL,
   `supply_id` int(11) NOT NULL,
   `quantity_used` varchar(50) NOT NULL DEFAULT '1.00',
   `date_created` timestamp NOT NULL DEFAULT current_timestamp(),
@@ -1063,15 +1154,14 @@ CREATE TABLE `service_supplies` (
 -- Dumping data for table `service_supplies`
 --
 
-INSERT INTO `service_supplies` (`id`, `service_id`, `supply_id`, `quantity_used`, `date_created`, `date_updated`) VALUES
-(2, 1, 4, '50', '2025-10-12 21:20:29', '2025-10-13 05:25:53'),
-(3, 1, 1, '5', '2025-10-12 21:20:44', '2025-10-15 04:06:45'),
-(4, 3, 4, '50', '2025-10-12 21:25:53', '2025-10-13 05:25:53'),
-(5, 4, 4, '50', '2025-10-12 21:25:53', '2025-10-13 05:25:53'),
-(6, 2, 4, '10', '2025-10-12 21:25:53', '2025-10-13 05:35:44'),
-(7, 3, 3, '5', '2025-10-12 21:41:40', '2025-10-13 05:41:40'),
-(8, 4, 3, '10', '2025-10-12 21:41:41', '2025-10-13 05:41:41'),
-(9, 2, 3, '15', '2025-10-12 21:41:41', '2025-10-13 05:41:41');
+INSERT INTO `service_supplies` (`id`, `service_id`, `branch_id`, `supply_id`, `quantity_used`, `date_created`, `date_updated`) VALUES
+(3, 1, NULL, 1, '5', '2025-10-12 21:20:44', '2025-10-15 04:06:45'),
+(4, 3, NULL, 4, '50', '2025-10-12 21:25:53', '2025-10-13 05:25:53'),
+(12, 1, 1, 6, '10', '2025-10-18 19:55:10', '2025-10-19 03:55:10'),
+(13, 7, 2, 5, '10', '2025-10-18 19:59:28', '2025-10-19 03:59:28'),
+(14, 2, 2, 7, '1', '2025-10-18 20:04:47', '2025-10-19 04:04:47'),
+(15, 1, 1, 1, '5', '2025-10-18 20:19:51', '2025-10-19 04:19:51'),
+(16, 2, 1, 1, '2', '2025-10-18 20:19:51', '2025-10-19 04:19:51');
 
 -- --------------------------------------------------------
 
@@ -1092,10 +1182,13 @@ CREATE TABLE `supply` (
 --
 
 INSERT INTO `supply` (`supply_id`, `name`, `description`, `category`, `unit`) VALUES
-(1, 'mask', 'mask', 'mask', 'ppe4e'),
+(1, 'cotton', 'mask', 'mask', 'ppe4e'),
 (2, 'knife', 'talinis', 'tools', 'taya'),
 (3, 'Knife', '', '', ''),
-(4, 'sample', '', '', '');
+(4, 'sample', '', '', ''),
+(5, 'tooth extract knife', '', '', ''),
+(6, 'supply with branch', '', '', ''),
+(7, 'gunting', '', '', '');
 
 -- --------------------------------------------------------
 
@@ -1130,7 +1223,7 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`user_id`, `username`, `password`, `last_name`, `middle_name`, `first_name`, `gender`, `date_of_birth`, `email`, `contact_number`, `address`, `role`, `branch_id`, `date_started`, `status`, `date_created`, `date_updated`, `force_logout`) VALUES
 (1, 'owner01', '$2y$10$YmX8WyBrkWa5.K1su6H4uez6cxNHkIpp4ZYcA/uPytMaVWeI0adD.', 'Owner', 'Dummy', 'Sample', 'Male', '0000-00-00', '18100807@usc.edu.ph', '9998887777', 'deca', 'owner', NULL, NULL, 'Active', '2025-06-14 10:39:32', '2025-10-05 03:09:00', 0),
-(2, 'admin01', '$2y$10$l04Ft/fD3o4E8XBHrHe.vOjpKZ/qIN.OG75zufwNAzkNY15xConea', 'Potot', 'Travero', 'Rix', 'Female', '2000-04-05', '18102727@usc.edu.ph', '9950217941', 'San Miguel, Cordova', 'admin', 1, '2025-09-30', 'Active', '2025-06-14 10:39:32', '2025-10-05 03:02:32', 0),
+(2, 'admin01', '$2y$10$l04Ft/fD3o4E8XBHrHe.vOjpKZ/qIN.OG75zufwNAzkNY15xConea', 'Potot', 'Travero', 'Rix', 'Female', '2000-04-05', '18102727@usc.edu.ph', '9950217941', 'San Miguel, Cordova', 'admin', 1, '2025-09-30', 'Active', '2025-06-14 10:39:32', '2025-10-19 02:22:32', 0),
 (3, 'patient01', '$2a$12$RJZbVUZ3JDsUjDB5eFTyiuACuCvxFJyrQI4cE9u8fQ2ChJf/.Srdq', 'Patient', 'Dummy', 'Sample', 'Male', '0000-00-00', '', '9123456789', NULL, 'patient', NULL, NULL, 'Inactive', '2025-06-14 10:39:32', NULL, 0),
 (8, 'ParchasoJ', '$2y$10$9fqT9Gco1CtAKVKu6bSDgeh9SFZbg/bb8GJR5OJrrVIJycPZgqxWC', 'Parchaso', 'Espana', 'Jhon', 'Male', '0000-00-00', '9055626239', 'josephparc', NULL, 'owner', NULL, NULL, 'Inactive', '2025-07-11 22:27:56', NULL, 0),
 (9, 'ParchasoJJ', '$2y$10$W.BXzGapcq9J/oxpk1RHYeaYMxBCz0fSTp8YiRh41YSUebQ12Hjhy', 'Parchaso', 'Joseph', 'Jhon', 'Male', '0000-00-00', '9055626239', 'josephparc', NULL, 'owner', NULL, NULL, 'Inactive', '2025-07-11 22:30:07', NULL, 0),
@@ -1152,7 +1245,7 @@ INSERT INTO `users` (`user_id`, `username`, `password`, `last_name`, `middle_nam
 (25, 'AchasGG', '$2y$10$csrxQ1iwxHEcfkhQHKf3se586DUSZSK.WhXgNKB39m9js/HfPwuYK', 'Achas', '', 'Gab', 'Male', '0000-00-00', '18100807@usc.edu.ph', '0922626262', NULL, 'patient', NULL, NULL, 'Inactive', '2025-07-14 10:25:16', NULL, 0),
 (26, 'DazeP', '$2y$10$du.PYFR4vnJv9ecdNWDox.UUDcjoC0cTUAvtnsnSG.tXwdqn5vLKO', 'Daze', '', 'Pretot', 'Male', '0000-00-00', 'parchasoresidence@gmail.com', '9055626239', NULL, 'patient', NULL, NULL, 'Inactive', '2025-07-14 10:33:22', NULL, 0),
 (27, 'ChikuY', '$2y$10$h7C7FiWzWuf7oS0hUaav/OZwJX4rYOExaPk3NJu3O39mmsutOsUvm', 'Chiku', 'Wix', 'Yel', 'Female', '0000-00-00', 'parchasoresidence@gmail.com', '9055626239', NULL, 'patient', NULL, NULL, 'Inactive', '2025-07-14 11:14:19', '2025-10-04 05:51:10', 0),
-(28, 'Josephp', '$2y$10$OYynxpSPEJmsmDYgUlzNh.bnp1SH8.yJNckex9WXSvwA79LxPQ4Wm', 'Parchaso', 'España', 'Jhon Joseph', 'Male', '1999-08-17', 'josephparchaso@gmail.com', '9055626237', 'Block 22, Lot 6, Deca 4 Bankal Lapu Lapu City Cebu', 'patient', 1, NULL, 'Active', '2025-07-14 11:26:32', '2025-10-18 06:29:12', 0),
+(28, 'Josephp', '$2y$10$OYynxpSPEJmsmDYgUlzNh.bnp1SH8.yJNckex9WXSvwA79LxPQ4Wm', 'Parchaso', 'España', 'Jhon Joseph', 'Male', '1999-08-17', 'josephparchaso@gmail.com', '9055626237', 'Block 22, Lot 6, Deca 4 Bankal Lapu Lapu City Cebu', 'patient', 1, NULL, 'Active', '2025-07-14 11:26:32', '2025-10-19 04:23:02', 0),
 (29, 'pototj', '$2y$10$9Swzre20c9pLQ8ejMr1ySufYwaARXiCYpp8sUXyb5CP1oI7xNjtC2', 'potot', '', 'jj', 'Male', '0000-00-00', '18102727@usc.edu.ph', '9527194102', NULL, 'patient', NULL, NULL, 'Inactive', '2025-07-14 15:48:41', NULL, 0),
 (30, 'pret', '$2y$10$z7r/dpwWQ2m.RZK8EcwJGu2MkUM3tRY2EgG/7OyfSubN.bmXm2yTW', 'pre', '', 'tot', 'Male', '0000-00-00', '18102727@usc.edu.ph', '9205251545', NULL, 'patient', NULL, NULL, 'Inactive', '2025-07-14 16:03:59', NULL, 0),
 (31, 'Parchaso_J', '$2y$10$14IUZVVauGdjCe04vSuVTechUS8.EYYzOO5yZ0Li6Lq/IUhGx0.Ny', 'Parchaso', 'Espana', 'Jhon', 'Female', '0000-00-00', '18100807@usc.edu.ph', '9055626239', NULL, 'patient', NULL, NULL, 'Inactive', '2025-07-31 14:32:30', NULL, 0),
@@ -1163,11 +1256,11 @@ INSERT INTO `users` (`user_id`, `username`, `password`, `last_name`, `middle_nam
 (36, 'asdasd_A', '$2y$10$bMsAKLtfJ1e00emYMAaNWuFrD00n/n5St9zCFqmlbLvlHKoKNOXfS', 'asdasd', '', 'asdads', 'Female', '0000-00-00', 'josephparchaso@gmail.com', '2525325425', NULL, 'patient', NULL, NULL, 'Inactive', '2025-08-09 17:21:09', '2025-10-04 05:52:35', 0),
 (37, 'admin_b1_01', '$2a$12$hBbDjdgIHA7jTYk63MoYCevpRg.Wyl.Q9AlF1k22Adu5ZTZ2scPhm', 'Wonderland', 'In', 'Alice', 'Female', '2020-03-25', 'alice.b1@example.com', '9789456231', 'Cebu', 'admin', 3, '2023-02-11', 'Active', '2025-08-11 18:06:49', '2025-10-04 06:26:06', 1),
 (38, 'admin_b1_02', '$2a$12$q3izbTzuli5uTm1twK/4YuDY3QSDbWej0pkWVyGsSMRpXVhbrbVRO', 'Admin', 'B1', 'Bob', 'Male', '0000-00-00', 'bob.b1@example.com', '0911111111', NULL, 'admin', 1, '2023-12-05', 'Active', '2025-08-11 18:06:49', NULL, 0),
-(39, 'admin_b2_01', '$2a$12$zoGuJuLYhOVs6B828pgDe.lrvUEwXroV1zUzbmxgfwZgCSLi39mHa', 'Admin', 'B2', 'Charlie', 'Male', '2025-09-25', 'charlie.b2@example.com', '0922222222', 'null', 'admin', 2, '2025-09-12', 'Inactive', '2025-08-11 18:06:49', NULL, 1),
+(39, 'admin_b2_01', '$2a$12$zoGuJuLYhOVs6B828pgDe.lrvUEwXroV1zUzbmxgfwZgCSLi39mHa', 'Admin', 'B2', 'Charlie', 'Male', '2025-09-25', '18100807@usc.edu.ph', '0922222222', 'null', 'admin', 2, '2025-09-12', 'Active', '2025-08-11 18:06:49', '2025-10-19 02:24:43', 0),
 (40, 'admin_b2_02', '$2a$12$KL9XSfdZh75UuYWljehw0.zNyPK/arJmS7mEzFMvNuK1sBKqLBTLC', 'Admin', 'B2', 'Diana', 'Female', '0000-00-00', 'diana.b2@example.com', '0922222222', NULL, 'admin', 2, '2024-02-20', 'Active', '2025-08-11 18:06:49', NULL, 0),
-(41, 'admin_b3_01', '$2a$12$hNePRteKgF2EC1nNHkhQP..14KMwMN66/t3YzL4.GGbLNPXhS7ksa', 'Admin', 'B33', 'Evan', 'Male', '2025-09-25', 'evan.b3@example.com', '0933333333', 'null', 'admin', 3, '2025-02-20', 'Active', '2025-08-11 18:06:49', '2025-10-04 06:31:24', 0),
+(41, 'admin_b3_01', '$2a$12$hNePRteKgF2EC1nNHkhQP..14KMwMN66/t3YzL4.GGbLNPXhS7ksa', 'Admin', 'B33', 'Evan', 'Male', '2025-09-25', '18100807@usc.edu.ph', '0933333333', 'null', 'admin', 3, '2025-02-20', 'Active', '2025-08-11 18:06:49', '2025-10-19 02:25:01', 1),
 (42, 'Parchaso_J3', '$2y$10$7nbX35783pFvgW4/mdIuzuSaFhONUt6S5Gw/Aabgd2akXGwfmzwa2', 'Parchaso', 'Espana', 'JJ', 'Male', '0000-00-00', 'josephparchaso@gmail.com', '9055626239', NULL, 'patient', NULL, NULL, 'Inactive', '2025-08-12 15:18:53', NULL, 0),
-(43, NULL, '$2y$10$aCLfK7EOsfLFyCYFsCDZzO03iVxSaxZ7D9grAp7C1GMnDs2t.YSYi', 'Potot', 'Travero', 'Thamara', 'Female', '2013-09-25', 'maya@gmail.com', '5465464654', 'asdsad', 'admin', 1, '2025-09-25', 'Active', '2025-08-30 11:40:50', '2025-10-10 04:05:12', 1),
+(43, NULL, '$2y$10$aCLfK7EOsfLFyCYFsCDZzO03iVxSaxZ7D9grAp7C1GMnDs2t.YSYi', 'Potot', 'Travero', 'Thamara', 'Female', '2013-09-25', 'josephparchaso@gmail.com', '5465464654', 'asdsad', 'admin', 2, '2025-09-25', 'Active', '2025-08-30 11:40:50', '2025-10-19 02:23:22', 1),
 (44, 'potot_a', '$2y$10$f5shlmN2IMzn1yz/VacRLOjezOmSdU7xPB7kizyd70K0nvpk7e8AK', 'Potot', 'Travero', 'Anna', 'Female', '2025-07-27', 'ana@gmail.com', '1231324654', '0', 'admin', 3, '2025-09-29', 'Inactive', '2025-08-30 11:47:27', NULL, 0),
 (45, 'ttvt_K', '$2y$10$avex/XQe4/bbLQTfGq4vsOeLiFV.SANzStRzaEgpZHUr5kLUuJ1Bq', 'ttvt', 'k', 'kggjkj', 'Female', '2025-09-02', 'josephparchaso@gmail.com', '9055626239', NULL, 'patient', NULL, NULL, 'Inactive', '2025-09-01 10:51:29', NULL, 0),
 (46, 'Achas_J', '$2y$10$YuOFDFrnJFYnE65JjXFChu.WQxRa2okENHtFER9xJPwLN1LM29l1y', 'Achas', 'Pallasigue', 'Joshua Gabriel', 'Male', '1999-04-27', 'gabbyachas99@gmail.com', '9260860681', 'P-1 Base Camp, Maramag, Bukidnon', 'patient', 1, NULL, 'Active', '2025-09-01 10:54:07', '2025-10-18 06:29:42', 0),
@@ -1178,7 +1271,7 @@ INSERT INTO `users` (`user_id`, `username`, `password`, `last_name`, `middle_nam
 (51, 'adny_A', '$2y$10$7KPScD0EP86YwVfwAxj7tu50e5rO1dDFfSm1SmjYg1dL66SUDS3QC', 'adny', '', 'adsa', 'Female', '2025-09-09', 'j@gmail.com', '1324412414', '0', 'admin', 1, '2025-09-24', 'Inactive', '2025-09-07 22:03:04', NULL, 0),
 (52, 'potot_R', '$2y$10$mnp55PKAKO0Yawgeg2FWqeE4ejo9aK2RCto5E2EtfWHSY6IqNKwjK', 'potot', '', 'rix', 'Male', '2025-09-02', 'asd@gmail.com', '1243141414', 'deca', 'admin', 1, '2025-09-24', 'Active', '2025-09-07 22:05:06', NULL, 0),
 (53, 'bakol_K', NULL, 'bakol', '', 'kolad', 'Male', '2025-09-16', 'kolado@yahoo.com', '3454353453', NULL, 'patient', 1, NULL, 'Inactive', '2025-09-16 19:05:45', '2025-10-10 06:59:47', 0),
-(54, 'Tan_P', '$2y$10$TZkHD748QzNkgjjvZNpUzOHXTunwayEU9J38.Net11EtuWWWd9lY6', 'Tan', '', 'Pilep', 'Male', '2025-09-11', 'josephparchaso@gmail.com', '1231313131', NULL, 'patient', 1, NULL, 'Active', '2025-09-16 19:22:37', '2025-10-18 06:28:19', 0),
+(54, 'Tan_P', '$2y$10$TZkHD748QzNkgjjvZNpUzOHXTunwayEU9J38.Net11EtuWWWd9lY6', 'Tan', '', 'Pilep', 'Male', '2025-09-11', 'josephparchaso@gmail.com', '1231313131', NULL, 'patient', 1, NULL, 'Active', '2025-09-16 19:22:37', '2025-10-19 02:28:24', 0),
 (55, 'sample_S', '$2y$10$DUoVBSk0sV7WTwlLBWmCTu443Nb4FEOe0kwHt0dMfzRJgTlVoBf8O', 'sample', '', 'sample', 'Male', '2025-09-11', 'josephparchaso@gmail.com', '1242141414', NULL, 'patient', 2, NULL, 'Inactive', '2025-09-17 19:45:22', NULL, 0),
 (56, 'Baloy_P', '$2y$10$otDsje.SDYSmiPOSxDfL4OpsQrpLXttB.YPiU7CEBmpuC99J5GsMe', 'Baloy', '', 'Parkley', 'Female', '2025-09-20', '18100807@usc.edu.ph', '2114142141', NULL, 'patient', 3, NULL, 'Inactive', '2025-09-17 22:48:49', NULL, 0),
 (57, 'baloy_B', '$2y$10$48Dxhg4z5kXu7q92qHbMpOqVneCyNkz5Q97epVC0h6yWy.kG8TSG2', 'baloy', '', 'bal', 'Male', '2025-09-24', 'josephparchaso@gmail.com', '1243124214', NULL, 'patient', 1, NULL, 'Inactive', '2025-09-21 22:05:17', NULL, 0),
@@ -1349,7 +1442,8 @@ ALTER TABLE `service`
 ALTER TABLE `service_supplies`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_service_supplies_service` (`service_id`),
-  ADD KEY `fk_service_supplies_supply` (`supply_id`);
+  ADD KEY `fk_service_supplies_supply` (`supply_id`),
+  ADD KEY `fk_service_supplies_branch` (`branch_id`);
 
 --
 -- Indexes for table `supply`
@@ -1379,19 +1473,19 @@ ALTER TABLE `announcements`
 -- AUTO_INCREMENT for table `appointment_services`
 --
 ALTER TABLE `appointment_services`
-  MODIFY `appointment_services_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
+  MODIFY `appointment_services_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
 
 --
 -- AUTO_INCREMENT for table `appointment_transaction`
 --
 ALTER TABLE `appointment_transaction`
-  MODIFY `appointment_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=112;
+  MODIFY `appointment_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=125;
 
 --
 -- AUTO_INCREMENT for table `branch`
 --
 ALTER TABLE `branch`
-  MODIFY `branch_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `branch_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `branch_announcements`
@@ -1415,7 +1509,7 @@ ALTER TABLE `branch_service`
 -- AUTO_INCREMENT for table `branch_supply`
 --
 ALTER TABLE `branch_supply`
-  MODIFY `branch_supplies_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `branch_supplies_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `dental_prescription`
@@ -1433,19 +1527,19 @@ ALTER TABLE `dental_tips`
 -- AUTO_INCREMENT for table `dental_transaction`
 --
 ALTER TABLE `dental_transaction`
-  MODIFY `dental_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `dental_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- AUTO_INCREMENT for table `dental_transaction_services`
 --
 ALTER TABLE `dental_transaction_services`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=96;
 
 --
 -- AUTO_INCREMENT for table `dental_vital`
 --
 ALTER TABLE `dental_vital`
-  MODIFY `vitals_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `vitals_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT for table `dentist`
@@ -1469,7 +1563,7 @@ ALTER TABLE `dentist_service`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=382;
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=770;
 
 --
 -- AUTO_INCREMENT for table `promo`
@@ -1487,13 +1581,13 @@ ALTER TABLE `service`
 -- AUTO_INCREMENT for table `service_supplies`
 --
 ALTER TABLE `service_supplies`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `supply`
 --
 ALTER TABLE `supply`
-  MODIFY `supply_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `supply_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -1602,6 +1696,7 @@ ALTER TABLE `notifications`
 -- Constraints for table `service_supplies`
 --
 ALTER TABLE `service_supplies`
+  ADD CONSTRAINT `fk_service_supplies_branch` FOREIGN KEY (`branch_id`) REFERENCES `branch` (`branch_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_service_supplies_service` FOREIGN KEY (`service_id`) REFERENCES `service` (`service_id`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_service_supplies_supply` FOREIGN KEY (`supply_id`) REFERENCES `supply` (`supply_id`) ON DELETE CASCADE;
 

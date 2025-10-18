@@ -31,86 +31,53 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     try {
         $conn->begin_transaction();
-
-        $affected1 = 0;
-        $affected2 = 0;
-        $affected3 = 0;
         $madeChanges = false;
 
-        $sqlCheck1 = "SELECT name, description, category, unit FROM supply WHERE supply_id = ?";
-        $stmtCheck1 = $conn->prepare($sqlCheck1);
+        $stmtCheck1 = $conn->prepare("SELECT name, description, category, unit FROM supply WHERE supply_id = ?");
         $stmtCheck1->bind_param("i", $supply_id);
         $stmtCheck1->execute();
-        $res1 = $stmtCheck1->get_result();
-        $currentSupply = $res1->fetch_assoc();
+        $currentSupply = $stmtCheck1->get_result()->fetch_assoc();
         $stmtCheck1->close();
 
-        $supplyChanged = false;
-        if ($currentSupply) {
-            if (
-                $currentSupply['name'] !== $name ||
-                $currentSupply['description'] !== $description ||
-                $currentSupply['category'] !== $category ||
-                $currentSupply['unit'] !== $unit
-            ) {
-                $supplyChanged = true;
-            }
-        }
-
-        if ($supplyChanged) {
-            $sql1 = "UPDATE supply 
-                        SET name = ?, description = ?, category = ?, unit = ? 
-                        WHERE supply_id = ?";
-            $stmt1 = $conn->prepare($sql1);
+        if ($currentSupply && (
+            $currentSupply['name'] !== $name ||
+            $currentSupply['description'] !== $description ||
+            $currentSupply['category'] !== $category ||
+            $currentSupply['unit'] !== $unit
+        )) {
+            $stmt1 = $conn->prepare("UPDATE supply SET name = ?, description = ?, category = ?, unit = ? WHERE supply_id = ?");
             $stmt1->bind_param("ssssi", $name, $description, $category, $unit, $supply_id);
             $stmt1->execute();
-            $affected1 = $stmt1->affected_rows;
-            $madeChanges = true;
             $stmt1->close();
+            $madeChanges = true;
         }
 
-        $sqlCheck2 = "SELECT quantity, reorder_level, expiration_date, status 
-                        FROM branch_supply 
-                        WHERE supply_id = ? AND branch_id = ?";
-        $stmtCheck2 = $conn->prepare($sqlCheck2);
+        $stmtCheck2 = $conn->prepare("SELECT quantity, reorder_level, expiration_date, status 
+                                        FROM branch_supply 
+                                        WHERE supply_id = ? AND branch_id = ?");
         $stmtCheck2->bind_param("ii", $supply_id, $branch_id);
         $stmtCheck2->execute();
-        $res2 = $stmtCheck2->get_result();
-        $currentBranch = $res2->fetch_assoc();
+        $currentBranch = $stmtCheck2->get_result()->fetch_assoc();
         $stmtCheck2->close();
 
-        $branchChanged = false;
-        if ($currentBranch) {
-            if (
-                (int)$currentBranch['quantity'] !== $quantity ||
-                (int)$currentBranch['reorder_level'] !== $reorderLevel ||
-                ($currentBranch['expiration_date'] !== $expirationDate &&
-                !($currentBranch['expiration_date'] === null && $expirationDate === null)) ||
-                $currentBranch['status'] !== $status
-            ) {
-                $branchChanged = true;
-            }
-        }
-
-        if ($branchChanged) {
-            $sql2 = "UPDATE branch_supply 
-                    SET quantity = ?, 
-                        reorder_level = ?, 
-                        expiration_date = ?, 
-                        status = ?, 
-                        date_updated = NOW()
-                    WHERE supply_id = ? AND branch_id = ?";
-            $stmt2 = $conn->prepare($sql2);
+        if ($currentBranch && (
+            (int)$currentBranch['quantity'] !== $quantity ||
+            (int)$currentBranch['reorder_level'] !== $reorderLevel ||
+            $currentBranch['expiration_date'] !== $expirationDate ||
+            $currentBranch['status'] !== $status
+        )) {
+            $stmt2 = $conn->prepare("UPDATE branch_supply 
+                                        SET quantity = ?, reorder_level = ?, expiration_date = ?, status = ?, date_updated = NOW()
+                                        WHERE supply_id = ? AND branch_id = ?");
             $stmt2->bind_param("iissii", $quantity, $reorderLevel, $expirationDate, $status, $supply_id, $branch_id);
             $stmt2->execute();
-            $affected2 = $stmt2->affected_rows;
-            $madeChanges = true;
             $stmt2->close();
+            $madeChanges = true;
         }
 
         $currentLinks = [];
-        $stmtLinks = $conn->prepare("SELECT service_id, quantity_used FROM service_supplies WHERE supply_id = ?");
-        $stmtLinks->bind_param("i", $supply_id);
+        $stmtLinks = $conn->prepare("SELECT service_id, quantity_used FROM service_supplies WHERE supply_id = ? AND branch_id = ?");
+        $stmtLinks->bind_param("ii", $supply_id, $branch_id);
         $stmtLinks->execute();
         $resultLinks = $stmtLinks->get_result();
         while ($row = $resultLinks->fetch_assoc()) {
@@ -119,47 +86,39 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmtLinks->close();
 
         $newServices = array_map('intval', $_POST['services'] ?? []);
-        $affected3 = 0;
 
         if (!empty($newServices)) {
             foreach ($newServices as $service_id) {
-                $service_id = intval($service_id);
                 $quantity_used = intval($_POST['quantities'][$service_id] ?? 1);
 
                 if (isset($currentLinks[$service_id])) {
                     if ($currentLinks[$service_id] !== $quantity_used) {
-                        $updateSQL = "UPDATE service_supplies 
-                                        SET quantity_used = ?, date_updated = NOW() 
-                                        WHERE service_id = ? AND supply_id = ?";
-                        $stmtUpdate = $conn->prepare($updateSQL);
-                        $stmtUpdate->bind_param("iii", $quantity_used, $service_id, $supply_id);
+                        $stmtUpdate = $conn->prepare("UPDATE service_supplies 
+                                                        SET quantity_used = ?, date_updated = NOW() 
+                                                        WHERE service_id = ? AND supply_id = ? AND branch_id = ?");
+                        $stmtUpdate->bind_param("iiii", $quantity_used, $service_id, $supply_id, $branch_id);
                         $stmtUpdate->execute();
-                        $affected3 += max(0, $stmtUpdate->affected_rows);
-                        $madeChanges = true;
                         $stmtUpdate->close();
+                        $madeChanges = true;
                     }
                 } else {
-                    $insertSQL = "INSERT INTO service_supplies (service_id, supply_id, quantity_used, date_created)
-                                    VALUES (?, ?, ?, NOW())";
-                    $stmtInsert = $conn->prepare($insertSQL);
-                    $stmtInsert->bind_param("iii", $service_id, $supply_id, $quantity_used);
+                    $stmtInsert = $conn->prepare("INSERT INTO service_supplies (service_id, supply_id, branch_id, quantity_used, date_created)
+                                                    VALUES (?, ?, ?, ?, NOW())");
+                    $stmtInsert->bind_param("iiii", $service_id, $supply_id, $branch_id, $quantity_used);
                     $stmtInsert->execute();
-                    $affected3 += max(0, $stmtInsert->affected_rows);
-                    $madeChanges = true;
                     $stmtInsert->close();
+                    $madeChanges = true;
                 }
             }
         }
 
         foreach ($currentLinks as $existingServiceId => $existingQty) {
-            if (!in_array((int)$existingServiceId, $newServices, true)) {
-                $deleteSQL = "DELETE FROM service_supplies WHERE service_id = ? AND supply_id = ?";
-                $stmtDel = $conn->prepare($deleteSQL);
-                $stmtDel->bind_param("ii", $existingServiceId, $supply_id);
+            if (!in_array($existingServiceId, $newServices, true)) {
+                $stmtDel = $conn->prepare("DELETE FROM service_supplies WHERE service_id = ? AND supply_id = ? AND branch_id = ?");
+                $stmtDel->bind_param("iii", $existingServiceId, $supply_id, $branch_id);
                 $stmtDel->execute();
-                $affected3 += max(0, $stmtDel->affected_rows);
-                $madeChanges = true;
                 $stmtDel->close();
+                $madeChanges = true;
             }
         }
 

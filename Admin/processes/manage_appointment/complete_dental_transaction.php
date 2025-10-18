@@ -91,9 +91,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $supplyQuery = $conn->prepare("
                 SELECT supply_id, quantity_used 
                 FROM service_supplies 
-                WHERE service_id = ?
+                WHERE service_id = ? AND branch_id = ?
             ");
-            $supplyQuery->bind_param("i", $serviceId);
+            $supplyQuery->bind_param("ii", $serviceId, $branchId);
             $supplyQuery->execute();
             $supplyResult = $supplyQuery->get_result();
 
@@ -161,12 +161,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         while ($srv = $srvResult->fetch_assoc()) {
             $serviceId = $srv['service_id'];
+
             $supplyQuery = $conn->prepare("
                 SELECT supply_id, quantity_used 
                 FROM service_supplies 
-                WHERE service_id = ?
+                WHERE service_id = ? AND branch_id = ?
             ");
-            $supplyQuery->bind_param("i", $serviceId);
+            $supplyQuery->bind_param("ii", $serviceId, $branchId);
             $supplyQuery->execute();
             $supplyResult = $supplyQuery->get_result();
 
@@ -214,7 +215,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     } catch (Exception $e) {
         $conn->rollback();
-        $_SESSION['updateError'] = "⚠️ " . $e->getMessage();
+        $_SESSION['updateError'] = $e->getMessage();
         header("Location: " . BASE_URL . "/Admin/pages/patients.php");
         exit;
     }

@@ -23,21 +23,17 @@ require_once BASE_PATH . '/Owner/includes/navbar.php';
         
         <div class="card">
             <h2><span class="material-symbols-outlined">monitoring</span> Revenue This Month</h2>
-            <div class="appointment">₱ ---</div>
-            <div class="appointment">Change vs last month: ---%</div>
-        </div>
-
-        <div class="card">
-            <h2><span class="material-symbols-outlined">calendar_month</span> Appointments Overview</h2>
-            <div class="appointment">Today: ---</div>
-            <div class="appointment">This Month: ---</div>
+            <div id="revenueThisMonthContainer">Loading...</div>
         </div>
 
         <div class="card">
             <h2><span class="material-symbols-outlined">apartment</span> Branch Performance</h2>
-            <div class="appointment">Mandaue: ---</div>
-            <div class="appointment">Pusok: ---</div>
-            <div class="appointment">Babag: ---</div>
+            <div id="branchPerformanceContainer">Loading...</div>
+        </div>
+
+        <div class="card">
+            <h2><span class="material-symbols-outlined">calendar_month</span> Appointments Overview</h2>
+            <div id="appointmentsOverviewContainer">Loading...</div>
         </div>
 
         <div class="card">

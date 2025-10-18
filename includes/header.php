@@ -78,6 +78,7 @@ if (isset($_SESSION['user_id'])) {
 
     <?php if ($role === 'owner'): ?>
         <!-- Owner-specific -->
+        <script src="<?= BASE_URL ?>/Owner/js/loadDataIndex.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Owner/js/loadBranches.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Owner/js/loadCalendar.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Owner/js/loadProfileDetails.js?v=<?= time(); ?>"></script>

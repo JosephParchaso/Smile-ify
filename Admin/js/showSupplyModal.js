@@ -61,6 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <h2>${isEdit ? "Manage Supply" : "Add Supply"}</h2>
             <form id="supplyForm" action="${BASE_URL}/Admin/processes/supplies/${isEdit ? "update_supply.php" : "insert_supply.php"}" method="POST" autocomplete="off">
                 ${isEdit ? `<input type="hidden" name="supply_id" value="${data.supply_id}">` : ""}
+                <input type="hidden" name="branch_id" value="${branchId}">
 
                 <div class="form-group">
                     <input type="text" id="supplyName" name="supplyName" class="form-control"

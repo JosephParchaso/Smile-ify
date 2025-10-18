@@ -19,8 +19,6 @@ $updateError = $_SESSION['updateError'] ?? "";
 require_once BASE_PATH . '/includes/header.php';
 require_once BASE_PATH . '/Admin/includes/navbar.php';
 
-$monthlyRevenue = "₱120,000";
-$totalAppointmentsMonth = 42;
 ?>
 
 <title>Home</title>
@@ -45,6 +43,7 @@ $totalAppointmentsMonth = 42;
             <h2><span class="material-symbols-outlined">calendar_month</span> Upcoming Appointments</h2>
             <div class="appointment">Today: <span id="todayCount">0</span></div>
             <div class="appointment">Tomorrow: <span id="tomorrowCount">0</span></div>
+            <div class="appointment">This Week: <span id="weekCount">0</span></div>
             <a href="<?= BASE_URL ?>/Admin/pages/calendar.php" class="card-link">View Schedule</a>
             <a href="#" class="card-link" onclick="openBookingModal()"><span class="material-symbols-outlined">calendar_add_on</span> Book Appointment</a>
         </div>  
@@ -155,13 +154,6 @@ $totalAppointmentsMonth = 42;
         </div>
 
         <div class="card">
-            <h2><span class="material-symbols-outlined">bar_chart</span> Reports</h2>
-            <div class="appointment">Monthly Revenue: <?= $monthlyRevenue ?></div>
-            <div class="appointment">Appointments this Month: <?= $totalAppointmentsMonth ?></div>
-            <a href="<?= BASE_URL ?>/Admin/pages/reports.php" class="card-link">View Detailed Reports</a>
-        </div>
-
-        <div class="card">
             <h2><span class="material-symbols-outlined">groups</span> Patients</h2>
             <div class="appointment">New This Month: <span id="newPatientsCount">0</span></div>
             <div class="appointment">Total: <span id="totalPatientsCount">0</span></div>
@@ -174,6 +166,13 @@ $totalAppointmentsMonth = 42;
                 <div class="announcement">Loading</div>
             </div>
             <a href="<?= BASE_URL ?>/Admin/pages/supplies.php" class="card-link">Manage Supplies</a>
+        </div>
+
+        <div class="card">
+            <h2><span class="material-symbols-outlined">bar_chart</span> Promo</h2>
+            <div class="appointment">Total Availed: <span id="promoAvailedCount">0</span></div>
+            <div id="promoAvailedList" class="announcement"></div>
+            <a href="<?= BASE_URL ?>/Admin/pages/reports.php" class="card-link">View Detailed Reports</a>
         </div>
 
         <div class="card">
