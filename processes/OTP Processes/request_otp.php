@@ -64,15 +64,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     require BASE_PATH . '/Mail/phpmailer/PHPMailerAutoload.php';
     $mail = new PHPMailer;
-
     $mail->isSMTP();
-    $mail->Host = 'smtp.gmail.com';
-    $mail->Port = 587;
-    $mail->SMTPAuth = true;
-    $mail->SMTPSecure = 'tls';
-
-    $mail->Username = 'smileify.web@gmail.com';
-    $mail->Password = '';
+    $mail->Host       = SMTP_HOST;
+    $mail->Port       = SMTP_PORT;
+    $mail->SMTPAuth   = SMTP_AUTH;
+    $mail->SMTPSecure = SMTP_SECURE;
+    $mail->Username   = SMTP_USER;
+    $mail->Password   = SMTP_PASS;
 
     $mail->setFrom('smileify.web@gmail.com', 'Smile-ify OTP Verification');
     $mail->addAddress($email);
