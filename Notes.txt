@@ -149,7 +149,6 @@ gmail suspicious spams - sendgrid?
 dungan register/book different user  
 ==========================================================================================================================================================================================
 
-home/index reports = achas  💖
 Contact Fr. Peter for the database hosting 💖
 Minimum of 5 minutes for OTP time remaining expiration time 💖
 
@@ -207,3 +206,5 @@ send reminder 👍
 Owner - OTP Every Login 👍
 Admin - OTP Every Login 👍
 Patient - OTP Every Login 👍
+
+home/index reports = achas  👍

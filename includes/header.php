@@ -123,6 +123,15 @@ if (isset($_SESSION['user_id'])) {
     <script src="<?= BASE_URL ?>/js/openEducationalModal.js?v=1.1"></script>
     <script src="<?= BASE_URL ?>/js/logoutModal.js?v=<?= time(); ?>"></script>
 
+    <!-- CHART JS  -->
+    <script src="/Smile-ify/js/reports.js?v=<?= time(); ?>"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+
+
+
     <!-- PHP constant to JS -->
     <script>
         const BASE_URL = "<?= BASE_URL ?>";
