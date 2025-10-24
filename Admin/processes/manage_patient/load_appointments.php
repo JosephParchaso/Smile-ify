@@ -48,7 +48,7 @@ while ($row = $result->fetch_assoc()) {
         $row['appointment_date'],
         $row['appointment_time'] ? date("g:i A", strtotime($row['appointment_time'])) : '-',
         $row['status'],
-        '<button class="btn-action" data-type="appointment" data-id="' . $row['appointment_transaction_id'] . '">Manage</button>',
+        '<button class="btn-action" data-type="appointment" data-id="' . $row['appointment_transaction_id'] . '">View</button>',
         $row['date_created'] ? date("F j, Y", strtotime($row['date_created'])) : '-'
     ];
 }

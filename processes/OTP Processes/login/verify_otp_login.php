@@ -28,6 +28,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $_SESSION['role'] = $pendingUser['role'];
         $_SESSION['branch_id'] = $pendingUser['branch_id'];
         $_SESSION['branch_name'] = $pendingUser['branch_name'];
+        $_SESSION['first_name'] = $pendingUser['first_name'];
+        $_SESSION['last_name'] = $pendingUser['last_name'];
+        $_SESSION['gender'] = $pendingUser['gender'];
 
         $role = strtolower($pendingUser['role']);
 

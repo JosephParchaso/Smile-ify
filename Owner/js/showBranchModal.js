@@ -66,18 +66,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     <span class="phone-prefix">+63</span>
                 </div>
 
-                <div class="form-group time-group">
-                    <input type="time" id="opening_time" name="opening_time" class="form-control"
-                        value="${isEdit ? (data.opening_time || '') : ''}">
-                    <label for="opening_time" class="form-label">Opening Time</label>
-                </div>
-
-                <div class="form-group time-group">
-                    <input type="time" id="closing_time" name="closing_time" class="form-control"
-                        value="${isEdit ? (data.closing_time || '') : ''}">
-                    <label for="closing_time" class="form-label">Closing Time</label>
-                </div>
-
                 <div class="form-group">
                     <input type="url" id="map_url" name="map_url" class="form-control"
                         value="${isEdit ? (data.map_url || '') : ''}" placeholder=" ">

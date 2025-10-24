@@ -24,8 +24,6 @@ $sql = "SELECT
             name,
             address,
             phone_number,
-            opening_time,
-            closing_time,
             map_url,
             status,
             date_updated,

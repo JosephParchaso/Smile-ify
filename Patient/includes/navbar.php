@@ -71,7 +71,9 @@ require_once BASE_PATH . '/processes/load_notifications.php';
                 Logged in as <span class="colon">:</span> 
                 <strong><?= htmlspecialchars($_SESSION['username']) ?></strong> 
                 <span class="dash">-</span> 
-                <span class="user-role"><?= htmlspecialchars($_SESSION['role']) ?></span>
+                <span class="user-role">
+                    <?= htmlspecialchars(ucfirst($_SESSION['role'] ?? '')) ?>
+                </span>
             </li>
         </ul>
     </div>

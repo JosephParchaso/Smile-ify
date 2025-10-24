@@ -18,7 +18,6 @@ $updateError = $_SESSION['updateError'] ?? "";
 
 require_once BASE_PATH . '/includes/header.php';
 require_once BASE_PATH . '/Admin/includes/navbar.php';
-
 ?>
 
 <title>Home</title>
@@ -42,8 +41,8 @@ require_once BASE_PATH . '/Admin/includes/navbar.php';
         <div class="card">
             <h2><span class="material-symbols-outlined">calendar_month</span> Upcoming Appointments</h2>
             <div class="appointment">Today: <span id="todayCount">0</span></div>
-            <div class="appointment">Tomorrow: <span id="tomorrowCount">0</span></div>
             <div class="appointment">This Week: <span id="weekCount">0</span></div>
+            <div class="appointment">This Month: <span id="monthCount">0</span></div>
             <a href="<?= BASE_URL ?>/Admin/pages/calendar.php" class="card-link">View Schedule</a>
             <a href="#" class="card-link" onclick="openBookingModal()"><span class="material-symbols-outlined">calendar_add_on</span> Book Appointment</a>
         </div>  
@@ -88,7 +87,10 @@ require_once BASE_PATH . '/Admin/includes/navbar.php';
                     </div>
 
                     <div class="form-group phone-group">
-                        <input type="tel" id="contactNumber" name="contactNumber" class="form-control" oninput="this.value = this.value.replace(/[^0-9]/g, '')" pattern="[0-9]{10}" title="Mobile number must be 10 digits" required maxlength="10" />
+                        <input type="tel" id="contactNumber" name="contactNumber" class="form-control" 
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '')" 
+                            pattern="[0-9]{10}" title="Mobile number must be 10 digits" 
+                            required maxlength="10" />
                         <label for="contactNumber" class="form-label">Mobile Number <span class="required">*</span></label>
                         <span class="phone-prefix">+63</span>
                     </div>
@@ -97,8 +99,7 @@ require_once BASE_PATH . '/Admin/includes/navbar.php';
                         <select id="appointmentBranch" name="appointmentBranch" class="form-control" required>
                             <option value="" disabled selected hidden></option>
                             <?php
-
-                            $sql = "SELECT branch_id, name, status FROM branch WHERE status = 'Active' ";
+                            $sql = "SELECT branch_id, name, status FROM branch WHERE status = 'Active'";
                             $result = $conn->query($sql);
 
                             if ($result->num_rows > 0) {
@@ -129,7 +130,7 @@ require_once BASE_PATH . '/Admin/includes/navbar.php';
                     <div class="form-group">
                         <input type="date" id="appointmentDate" name="appointmentDate" class="form-control" required />
                         <label for="appointmentDate" class="form-label">Date <span class="required">*</span></label>
-                        <span id="dateError" class="error-msg-calendar error">
+                        <span id="dateError" class="error-msg-calendar error" style="display:none;">
                             Sundays are not available for appointments. Please select another date.
                         </span>
                     </div>
@@ -141,7 +142,7 @@ require_once BASE_PATH . '/Admin/includes/navbar.php';
                     </div>
 
                     <div class="form-group">
-                        <textarea id="notes" name="notes" class="form-control" rows="3" placeholder=" "autocomplete="off"></textarea>
+                        <textarea id="notes" name="notes" class="form-control" rows="3" placeholder=" " autocomplete="off"></textarea>
                         <label for="notes" class="form-label">Add a note</label>
                     </div>
 
@@ -198,8 +199,33 @@ require_once BASE_PATH . '/Admin/includes/navbar.php';
                 <a href="<?= BASE_URL ?>/Admin/pages/profile.php"><span class="material-symbols-outlined">manage_accounts</span> Profile Settings</a>
             </div>
         </div>
-
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const adminBranchId = "<?= $_SESSION['branch_id'] ?? '' ?>";
+        const branchSelect = document.getElementById("appointmentBranch");
+
+        if (adminBranchId && branchSelect) {
+            const observer = new MutationObserver(() => {
+                const modal = document.getElementById("bookingModal");
+                if (modal && modal.style.display === "block") {
+                    const option = branchSelect.querySelector(`option[value='${adminBranchId}']`);
+                    if (option && !branchSelect.value) {
+                        option.selected = true;
+                        branchSelect.dispatchEvent(new Event("change", { bubbles: true }));
+                    }
+                }
+            });
+
+            observer.observe(document.body, {
+                attributes: true,
+                subtree: true,
+                attributeFilter: ["style", "class"]
+            });
+        }
+    });
+</script>
 
 <?php require_once BASE_PATH . '/includes/footer.php'; ?>

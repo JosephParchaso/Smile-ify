@@ -19,8 +19,8 @@
 
         <div class="footer-column">
             <h3>Contact Us</h3>
-            <p class="footerDes"><i class="far fa-clock"></i> 9am-3pm<br>Mon–Sat (All branches)</p>
-            <p class="footerDes"><i class="far fa-envelope"></i> Smile-ify@gmail.com</p>
+            <p class="footerDes"><i class="far fa-clock"></i> 9:00 am - 4:30 pm<br>Mon–Sat (All branches)</p>
+            <p class="footerDes"><i class="far fa-envelope"></i> smileify.web@gmail.com</p>
             <p class="footerDes"><i class="fas fa-phone-alt"></i> 09955446451</p>
         </div>
     </div>

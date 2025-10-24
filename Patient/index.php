@@ -28,7 +28,27 @@ require_once BASE_PATH . '/Patient/includes/navbar.php';
     <div class="dashboard">
         <div class="top-section">
             <div class="welcome">
-                <h1>👋 Welcome, <?= htmlspecialchars($_SESSION['username']); ?>!</h1>
+                <h1>
+    👋 Welcome, 
+    <?php
+        $prefix = '';
+        if (isset($_SESSION['gender'])) {
+            $gender = strtolower($_SESSION['gender']);
+            $prefix = ($gender === 'male') ? 'Mr.' : (($gender === 'female') ? 'Ms.' : '');
+        }
+
+        // Always define a default value first
+        $fullName = htmlspecialchars($_SESSION['username'] ?? 'User');
+
+        // Replace with full name if available
+        if (!empty($_SESSION['first_name']) && !empty($_SESSION['last_name'])) {
+            $fullName = htmlspecialchars($_SESSION['first_name'] . ' ' . $_SESSION['last_name']);
+        }
+
+        echo trim("$prefix $fullName!") ;
+    ?>
+</h1>
+
             </div>
 
             <div class="promos swiper promo-slider">

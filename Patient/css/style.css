@@ -93,20 +93,8 @@
     justify-content: center;
     align-items: flex-start;
     padding: 40px;
-    gap: 50px;
+    gap: 20px;
     flex-wrap: wrap;
-}
-
-.profile-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.message-box {
-    width: 350px;
-    margin-top: 15px;
-    text-align: center;
 }
 
 .tabs-container {

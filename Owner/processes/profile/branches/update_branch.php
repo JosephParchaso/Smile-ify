@@ -14,13 +14,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $branchName    = trim($_POST["branchName"] ?? "");
     $address       = trim($_POST["address"] ?? "");
     $phone_number  = trim($_POST["contactNumber"] ?? "");
-    $opening_time  = !empty($_POST["opening_time"]) ? $_POST["opening_time"] : null;
-    $closing_time  = !empty($_POST["closing_time"]) ? $_POST["closing_time"] : null;
     $map_url       = trim($_POST["map_url"] ?? "");
     $status        = $_POST["status"] ?? "Active";
 
     try {
-        $check_sql = "SELECT name, address, phone_number, opening_time, closing_time, status, map_url
+        $check_sql = "SELECT name, address, phone_number, status, map_url
                         FROM branch
                         WHERE branch_id = ?";
         $check_stmt = $conn->prepare($check_sql);
@@ -36,8 +34,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $current['name'] !== $branchName ||
                 $current['address'] !== $address ||
                 $current['phone_number'] !== $phone_number ||
-                $current['opening_time'] !== $opening_time ||
-                $current['closing_time'] !== $closing_time ||
                 $current['status'] !== $status ||
                 $current['map_url'] !== $map_url
             ) {
@@ -45,10 +41,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         SET name = ?, 
                             address = ?, 
                             phone_number = ?, 
-                            opening_time = ?, 
-                            closing_time = ?, 
                             status = ?, 
-                            map_url = ? 
+                            map_url = ?
                         WHERE branch_id = ?";
                 $stmt = $conn->prepare($sql);
                 if (!$stmt) {
@@ -56,9 +50,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 }
 
                 $stmt->bind_param(
-                    "sssssssi",
+                    "sssssi",
                     $branchName, $address, $phone_number,
-                    $opening_time, $closing_time,
                     $status, $map_url, $branch_id
                 );
 

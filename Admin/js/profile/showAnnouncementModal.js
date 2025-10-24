@@ -2,6 +2,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const announcementModal = document.getElementById("manageAnnouncementModal");
     const announcementBody = document.getElementById("announcementModalBody");
 
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const formattedToday = today.toISOString().split("T")[0];
+
     document.body.addEventListener("click", function (e) {
         if (e.target.classList.contains("btn-announcement")) {
             const id = e.target.getAttribute("data-id");
@@ -14,7 +18,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         announcementModal.style.display = "block";
                         return;
                     }
-
                     renderAnnouncementForm(data);
                     announcementModal.style.display = "block";
                 })
@@ -23,17 +26,70 @@ document.addEventListener("DOMContentLoaded", () => {
                     announcementModal.style.display = "block";
                 });
         }
-    });
 
-    document.body.addEventListener("click", function (e) {
         if (e.target.id === "insertAnnouncementBtn") {
             renderAnnouncementForm(null);
             announcementModal.style.display = "block";
         }
     });
 
+    document.body.addEventListener("focusin", function (e) {
+        if (e.target && (e.target.id === "start_date" || e.target.id === "end_date")) {
+            e.target.setAttribute("min", formattedToday);
+        }
+    });
+
+    document.body.addEventListener("change", function (e) {
+        const target = e.target;
+
+        if (target && target.id === "start_date") {
+            const startInput = target;
+            const errorEl = document.getElementById("startDateError");
+
+            if (startInput.value) {
+                const selectedDate = new Date(startInput.value);
+                selectedDate.setHours(0, 0, 0, 0);
+
+                if (selectedDate < today) {
+                    errorEl.textContent = "Please enter a valid date.";
+                    errorEl.style.display = "block";
+                    startInput.value = "";
+                } else {
+                    errorEl.style.display = "none";
+                }
+            }
+        }
+
+        if (target && target.id === "end_date") {
+            const startInput = document.getElementById("start_date");
+            const endInput = target;
+            const errorEl = document.getElementById("endDateError");
+
+            if (endInput.value) {
+                const endDate = new Date(endInput.value);
+                const startDate = startInput.value ? new Date(startInput.value) : null;
+                endDate.setHours(0, 0, 0, 0);
+
+                if (endDate < today) {
+                    errorEl.textContent = "Please enter a valid date.";
+                    errorEl.style.display = "block";
+                    endInput.value = "";
+                } else if (startDate && endDate < startDate) {
+                    errorEl.textContent = "Please enter a valid date.";
+                    errorEl.style.display = "block";
+                    endInput.value = "";
+                } else {
+                    errorEl.style.display = "none";
+                }
+            }
+        }
+    });
+
     function renderAnnouncementForm(data) {
         const isEdit = !!data;
+
+        const startDate = isEdit && data.start_date ? data.start_date : "";
+        const endDate = isEdit && data.end_date ? data.end_date : "";
 
         announcementBody.innerHTML = `
             <h2>${isEdit ? "Manage Announcement" : "Add Announcement"}</h2>
@@ -42,7 +98,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 method="POST" autocomplete="off">
 
                 ${isEdit ? `<input type="hidden" name="announcement_id" value="${data.announcement_id}">` : ""}
-
                 <input type="hidden" name="branch_id" id="branch_id" value="${ADMIN_BRANCH_ID ?? ''}">
 
                 <div class="form-group">
@@ -68,14 +123,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 <div class="form-group">
                     <input type="date" id="start_date" name="start_date" class="form-control"
-                        value="${isEdit ? (data.start_date || "") : ""}">
+                        value="${startDate}">
                     <label for="start_date" class="form-label">Start Date</label>
+                    <span id="startDateError" class="error-msg-calendar error" style="display:none;"></span>
                 </div>
 
                 <div class="form-group">
                     <input type="date" id="end_date" name="end_date" class="form-control"
-                        value="${isEdit ? (data.end_date || "") : ""}">
+                        value="${endDate}">
                     <label for="end_date" class="form-label">End Date</label>
+                    <span id="endDateError" class="error-msg-calendar error" style="display:none;"></span>
                 </div>
 
                 <div class="form-group">
@@ -100,9 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>` : ""}
 
                 <div class="button-group button-group-profile">
-                    <button type="submit" class="form-button confirm-btn">
-                        ${isEdit ? "Save Changes" : "Add Announcement"}
-                    </button>
+                    <button type="submit" class="form-button confirm-btn">${isEdit ? "Save Changes" : "Add Announcement"}</button>
                     <button type="button" class="form-button cancel-btn" onclick="closeAnnouncementModal()">Cancel</button>
                 </div>
             </form>

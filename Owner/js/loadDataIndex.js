@@ -7,16 +7,12 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(response => response.json())
             .then(data => {
                 if (data.error) {
-                    container.innerHTML = `
-                        <div class="appointment">₱ ---</div>
-                        <div class="appointment">Change vs last month: ---</div>`;
+                    container.innerHTML = `<div class="appointment">₱ ---</div>`;
                     console.error(data.error);
                     return;
                 }
 
                 const formattedRevenue = `₱${parseFloat(data.current_revenue || 0).toLocaleString()}`;
-                const formattedChange = `${data.change_percent > 0 ? "+" : ""}${data.change_percent}%`;
-
                 const branchesWithRevenue = (data.branches || []).filter(b => parseFloat(b.total_revenue) > 0);
 
                 let branchHTML = "";
@@ -30,19 +26,18 @@ document.addEventListener("DOMContentLoaded", function () {
                             </div>
                         `).join("")}
                     `;
+                } else {
+                    branchHTML = `<hr><div class="appointment">No branch revenue data</div>`;
                 }
 
                 container.innerHTML = `
                     <div class="appointment"><strong>Total:</strong> ${formattedRevenue}</div>
-                    <div class="appointment">Change vs last month: ${formattedChange}</div>
                     ${branchHTML}
                 `;
             })
             .catch(error => {
                 console.error("Error loading revenue data:", error);
-                container.innerHTML = `
-                    <div class="appointment">₱ ---</div>
-                    <div class="appointment">Change vs last month: ---</div>`;
+                container.innerHTML = `<div class="appointment">₱ ---</div>`;
             });
     }
 
@@ -60,15 +55,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
                 if (data.branches?.length > 0) {
-                    container.innerHTML = data.branches
-                        .map(
-                            b => `
-                            <div class="appointment">
-                                <strong>${b.name}</strong><br>
-                                Revenue: <span>₱${parseFloat(b.total_revenue).toLocaleString()}</span>
-                            </div>`
-                        )
-                        .join("");
+                    container.innerHTML = data.branches.map(b => `
+                        <div class="appointment">
+                            <strong>${b.name}</strong><br>
+                            Revenue: <span>₱${parseFloat(b.total_revenue).toLocaleString()}</span>
+                        </div>
+                    `).join("");
                 } else {
                     container.innerHTML = `<div class="appointment">No branch data available</div>`;
                 }
@@ -92,16 +84,15 @@ document.addEventListener("DOMContentLoaded", function () {
                     return;
                 }
 
-                if (data.overview?.length > 0) {
-                    container.innerHTML = data.overview
-                        .map(
-                            b => `
-                            <div class="appointment">
-                                <strong>${b.name}</strong><br>
-                                Total Booked: <span>${b.total_booked}</span>
-                            </div>`
-                        )
-                        .join("");
+                const branchesWithBookings = (data.overview || []).filter(b => parseInt(b.total_booked) > 0);
+
+                if (branchesWithBookings.length > 0) {
+                    container.innerHTML = branchesWithBookings.map(b => `
+                        <div class="appointment">
+                            <strong>${b.name}</strong><br>
+                            Total Booked: <span>${b.total_booked}</span>
+                        </div>
+                    `).join("");
                 } else {
                     container.innerHTML = `<div class="appointment">No appointment data available</div>`;
                 }

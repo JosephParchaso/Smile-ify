@@ -1,10 +1,10 @@
 <?php 
 $mode = $currentMode ?? 'daily'; 
-$bid = $branch['branch_id'];
+$bid = isset($branch['branch_id']) ? $branch['branch_id'] : ($branchId ?? 'all');
+$role = $_SESSION['role'] ?? '';
 ?>
 
-<?php if ($_SESSION['role'] === 'admin'): ?>
-
+<?php if ($role === 'admin'): ?>
     <h2>Highlights</h2>
     <div class="kpi-container">
         <div class="kpi-box">Total Services<br><span id="totalServices<?= $bid ?>-<?= $mode ?>">0</span></div>
@@ -12,46 +12,6 @@ $bid = $branch['branch_id'];
         <div class="kpi-box">Avg Services per Appointment<br><span id="avgServices<?= $bid ?>-<?= $mode ?>">0</span></div>
         <div class="kpi-box">New Patients<br><span id="newPatients<?= $bid ?>-<?= $mode ?>">0</span></div>
     </div>
-
-<?php endif; ?>
-
-<?php if ($_SESSION['role'] === 'owner'): ?>
-
-    <h2>Branch Growth Tracker</h2>
-    <div class="staff-performance">
-        <div class="branch-growth-grid">
-            <div class="branch-growth-list">
-                <h4 class="branch-growth-tracker-text">Which branch is growing the fastest?</h4>
-                <table class="branch-growth-table">
-                    <thead>
-                        <tr><th>Branch</th><th>Revenue</th><th>% Contribution</th></tr>
-                    </thead>
-                    <tbody id="branchGrowthTableBody<?= $bid ?>-<?= $mode ?>"></tbody>
-                </table>
-                <div class="branch-growth-chart">
-                    <h4>Revenue Distribution</h4>
-                    <button id="toggleGrowthChart<?= $bid ?>-<?= $mode ?>" class="toggle-chart-btn">Switch to Bar Chart</button>
-                    <canvas id="branchGrowthChart<?= $bid ?>-<?= $mode ?>"></canvas>
-                </div>
-            </div>
-
-            <div class="branch-growth-list">
-                <h4 style="color:#e74c3c;">RED FLAG: Which branch has declining service uptake?</h4>
-                <table class="branch-growth-table">
-                    <thead>
-                        <tr><th>Branch</th><th>Previous Count</th><th>Current Count</th><th>Decline</th><th>% Total Decline</th></tr>
-                    </thead>
-                    <tbody id="declineTableBody<?= $bid ?>-<?= $mode ?>"></tbody>
-                </table>
-                <div class="branch-growth-chart">
-                    <h4>Previous vs Current Count Distribution</h4>
-                    <button id="toggleDeclineChart<?= $bid ?>-<?= $mode ?>" class="toggle-chart-btn">Switch to Bar Chart</button>
-                    <canvas id="declineChart<?= $bid ?>-<?= $mode ?>"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-
 <?php endif; ?>
 
 <h2>Summary</h2>
@@ -79,9 +39,7 @@ $bid = $branch['branch_id'];
     </div>
 </div>
 
-
-<?php if ($_SESSION['role'] === 'admin'): ?>
-
+<?php if ($role === 'admin'): ?>
     <h2>Services Breakdown</h2>
     <div class="staff-performance">
         <div class="staff-performance-grid">
@@ -116,12 +74,9 @@ $bid = $branch['branch_id'];
             </div>
         </div>
     </div>
-
 <?php endif; ?>
 
-
-<?php if ($_SESSION['role'] === 'owner'): ?>
-
+<?php if ($role === 'owner'): ?>
     <h2>Branch Comparison</h2>
     <div class="staff-performance">
         <div class="staff-performance-grid">
@@ -169,5 +124,4 @@ $bid = $branch['branch_id'];
             </div>
         </div>
     </div>
-
 <?php endif; ?>

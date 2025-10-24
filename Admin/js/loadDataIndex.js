@@ -9,13 +9,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
                 const todayCount = document.getElementById("todayCount");
-                const tomorrowCount = document.getElementById("tomorrowCount");
                 const weekCount = document.getElementById("weekCount");
+                const monthCount = document.getElementById("monthCount");
 
-                if (todayCount && tomorrowCount && weekCount) {
+                if (todayCount && weekCount && monthCount) {
                     todayCount.textContent = data.today || 0;
-                    tomorrowCount.textContent = data.tomorrow || 0;
                     weekCount.textContent = data.thisWeek || 0;
+                    monthCount.textContent = data.thisMonth || 0;
                 }
             })
             .catch(error => console.error("Error loading appointments:", error));

@@ -1,9 +1,27 @@
 let charts = {};
 
 document.addEventListener("DOMContentLoaded", function () {
-    if (typeof ADMIN_BRANCH_ID !== "undefined" && ADMIN_BRANCH_ID) {
+    const hasAdminBranch = typeof ADMIN_BRANCH_ID !== "undefined" && ADMIN_BRANCH_ID;
+    const hasUserRole = typeof USER_ROLE !== "undefined" ? USER_ROLE.toLowerCase() : "";
+
+    // 🧩 If Admin → Load own branch + "all"
+    // 🧩 If Owner → Load all branches
+    if (hasUserRole === "admin" && hasAdminBranch) {
+        // Admin: load "All Branches" summary first
+        switchSubTab("all", "daily");
+        // Then load their assigned branch
+        switchSubTab(ADMIN_BRANCH_ID, "daily");
+    } else if (hasUserRole === "owner") {
+        // Owner: load all branches including "all"
+        document.querySelectorAll(".tab-content").forEach(tab => {
+            const branch_id = tab.id.replace("branch", "");
+            switchSubTab(branch_id, "daily");
+        });
+    } else if (hasAdminBranch) {
+        // Fallback for admin without role detection
         switchSubTab(ADMIN_BRANCH_ID, "daily");
     } else {
+        // Default (e.g. dev mode or fallback)
         document.querySelectorAll(".tab-content").forEach(tab => {
             const branch_id = tab.id.replace("branch", "");
             switchSubTab(branch_id, "daily");
@@ -13,8 +31,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function switchTab(branch_id) {
     document.querySelectorAll(".tab, .tab-content").forEach(el => el.classList.remove("active"));
-    document.querySelector(`.tab[onclick="switchTab('${branch_id}')"]`).classList.add("active");
-    document.getElementById(branch_id).classList.add("active");
+    const activeTab = document.querySelector(`.tab[onclick="switchTab('${branch_id}')"]`);
+    const activeContent = document.getElementById(branch_id);
+    if (activeTab) activeTab.classList.add("active");
+    if (activeContent) activeContent.classList.add("active");
 }
 
 function switchSubTab(branch_id, mode) {
@@ -43,18 +63,38 @@ function loadReports(branch_id, mode) {
             return;
         }
 
+        // 🧠 Handle "All Branches" (Owners only)
+        if (branch_id === "all") {
+            console.log("🧩 Rendering All Branches summary ONLY (Branch Growth)");
+
+            const tabContent = document.getElementById(`branch${branch_id}-${mode}`);
+            if (!tabContent) return;
+
+            // 🧹 Clear previous content inside sub-tab
+            tabContent.querySelectorAll("canvas, table, .chart-container, .data-table").forEach(el => el.remove());
+
+            // ✅ Render Branch Growth Table + Chart
+            renderBranchGrowthTable(branch_id, mode, data.branchGrowthData);
+            renderBranchGrowthChart(branch_id, mode, data.branchGrowthData, 'bar');
+            renderDeclineTable(branch_id, mode, data.declineData);
+            renderDeclineChart(branch_id, mode, data.declineData, 'bar');
+            return; 
+        }
+
         updateKPI(branch_id, mode, data.kpi);
 
-        destroyChart(`appointments${branch_id}-${mode}`);
-        destroyChart(`servicesTrend${branch_id}-${mode}`);
-        destroyChart(`incomeTrend${branch_id}-${mode}`);
-        destroyChart(`branchComparison${branch_id}-${mode}`);
-        destroyChart(`servicesBreakdown${branch_id}-${mode}`);
-        destroyChart(`staffPerformance${branch_id}-${mode}`);
-        destroyChart(`patientMix${branch_id}-${mode}`);
-        destroyChart(`branchGrowth${branch_id}-${mode}`);
-        destroyChart(`decline${branch_id}-${mode}`);
-        destroyChart(`peakHours${branch_id}-${mode}`);
+        [
+            "appointments",
+            "servicesTrend",
+            "incomeTrend",
+            "branchComparison",
+            "servicesBreakdown",
+            "staffPerformance",
+            "patientMix",
+            "branchGrowth",
+            "decline",
+            "peakHours"
+        ].forEach(chartName => destroyChart(`${chartName}${branch_id}-${mode}`));
 
         renderAppointmentsChart(branch_id, mode, data.appointments);
         renderServicesTrendChart(branch_id, mode, data.trend);
@@ -66,166 +106,12 @@ function loadReports(branch_id, mode) {
         renderGrowthTrendChart(branch_id, mode, data.growthTrend);
         renderPatientMixChart(branch_id, mode, data.patientMix);
         renderPeakHoursChart(branch_id, mode, data.peakHours);
-        renderBranchGrowthTable(branch_id, mode, data.branchGrowthData);
-
-        renderBranchGrowthChart(branch_id, mode, data.branchGrowthData, 'bar');
-
-        renderDeclineTable(branch_id, mode, data.declineData);
-        renderDeclineChart(branch_id, mode, data.declineData, 'bar');
         renderServicesBreakdownChart(branch_id, mode, data.servicesBreakdown);
         renderServicesBreakdownTable(branch_id, mode, data.servicesBreakdown);
         renderPromosTable(branch_id, mode, data.promosAvailed);
         renderPromosChart(branch_id, mode, data.promosAvailed);
     })
     .catch(err => console.error("Fetch error:", err));
-}
-
-function updateKPI(branch_id, mode, kpi) {
-    if (!kpi) return;
-    const safeSet = (id, value) => {
-        const el = document.getElementById(`${id}${branch_id}-${mode}`);
-        if (el) el.textContent = value;
-    };
-
-    safeSet("totalServices", kpi.totalServices ?? 0);
-    safeSet("topService", kpi.topService ?? "-");
-    safeSet("newPatients", kpi.newPatients ?? 0);
-    safeSet("avgServices", kpi.avgServices ?? 0);
-
-    const newCountEl = document.getElementById(`newPatientCount${branch_id}-${mode}`);
-    if (newCountEl) newCountEl.textContent = "New Patient Count: " + (kpi.newPatients ?? 0);
-}
-
-function renderAppointmentsChart(branch_id, mode, appointments) {
-    const ctx = document.getElementById(`appointmentsChart${branch_id}-${mode}`);
-    if (!ctx || !appointments) return;
-
-    charts[`appointments${branch_id}-${mode}`] = new Chart(ctx, {
-        type: "bar",
-        data: {
-            labels: ["Booked", "Completed", "Cancelled"],
-            datasets: [{
-                data: [
-                    appointments.booked || 0,
-                    appointments.completed || 0,
-                    appointments.cancelled || 0
-                ],
-                backgroundColor: ["#3498db", "#2ecc71", "#e74c3c"],
-                borderColor: [
-                    'rgba(52, 152, 219, 1)',
-                    'rgba(46, 204, 113, 1)',
-                    'rgba(231, 76, 60, 1)'
-                ],
-                borderWidth: 2,
-                borderRadius: 10
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { display: false },
-                datalabels: {
-                    anchor: 'end',
-                    align: 'end',
-                    offset: -6,
-                    color: '#000',
-                    font: {
-                        size: 24,         
-                        weight: 'bold',
-                        family: 'Poppins, sans-serif'
-                    },
-                    formatter: (value) => value > 0 ? value : ''
-                }
-            },
-
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grace: '20%',  
-                    ticks: {
-                        color: '#000000ff',
-                        font: { size: 12 }
-                    },
-                    grid: {
-                        color: 'rgba(0,0,0,0.05)'
-                    }
-                },
-                x: {
-                    ticks: {
-                        color: '#333',
-                        font: { size: 13, weight: 'bold' }
-                    },
-                    grid: {
-                        display: true
-                    }
-                }
-            }
-        },
-        plugins: [ChartDataLabels]
-    });
-}
-
-function renderServicesTrendChart(branch_id, mode, trend) {
-    const ctx = document.getElementById(`servicesTrendChart${branch_id}-${mode}`);
-    if (!ctx || !trend) return;
-
-    charts[`servicesTrend${branch_id}-${mode}`] = new Chart(ctx, {
-        type: "line",
-        data: {
-            labels: trend.labels,
-            datasets: [{
-                label: "Services",
-                data: trend.services,
-                borderColor: "#1d445dff",
-                borderWidth: 3,
-                tension: 0.3,
-                fill: false,
-                pointBackgroundColor: "#1d445dff",
-                pointRadius: 5
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { display: false },
-                datalabels: {
-                    anchor: 'end',
-                    align: 'end',
-                    offset: 8,
-                    color: '#000',
-                    font: {
-                        size: 24,
-                        weight: 'bold',
-                        family: 'Poppins, sans-serif'
-                    },
-                    formatter: (value) => value > 0 ? value : ''
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grace: '20%',
-                    ticks: {
-                        color: '#333',
-                        font: { size: 13 }
-                    },
-                    grid: {
-                        color: 'rgba(0,0,0,0.05)'
-                    }
-                },
-                x: {
-                    ticks: {
-                        color: '#333',
-                        font: { size: 13, weight: 'bold' }
-                    },
-                    grid: {
-                        display: false
-                    }
-                }
-            }
-        },
-        plugins: [ChartDataLabels]
-    });
 }
 
 function renderBranchGrowthTable(branch_id, mode, branchGrowthData) {
@@ -464,6 +350,155 @@ function renderDeclineChart(branch_id, mode, declineData, chartType = 'bar') {
         renderDeclineChart(branch_id, mode, declineData, currentType);
         btn.textContent = currentType === 'pie' ? 'Switch to Bar Chart' : 'Switch to Pie Chart';
     };
+}
+
+
+function updateKPI(branch_id, mode, kpi) {
+    if (!kpi) return;
+    const safeSet = (id, value) => {
+        const el = document.getElementById(`${id}${branch_id}-${mode}`);
+        if (el) el.textContent = value;
+    };
+
+    safeSet("totalServices", kpi.totalServices ?? 0);
+    safeSet("topService", kpi.topService ?? "-");
+    safeSet("newPatients", kpi.newPatients ?? 0);
+    safeSet("avgServices", kpi.avgServices ?? 0);
+
+    const newCountEl = document.getElementById(`newPatientCount${branch_id}-${mode}`);
+    if (newCountEl) newCountEl.textContent = "New Patient Count: " + (kpi.newPatients ?? 0);
+}
+
+function renderAppointmentsChart(branch_id, mode, appointments) {
+    const ctx = document.getElementById(`appointmentsChart${branch_id}-${mode}`);
+    if (!ctx || !appointments) return;
+
+    charts[`appointments${branch_id}-${mode}`] = new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: ["Booked", "Completed", "Cancelled"],
+            datasets: [{
+                data: [
+                    appointments.booked || 0,
+                    appointments.completed || 0,
+                    appointments.cancelled || 0
+                ],
+                backgroundColor: ["#3498db", "#2ecc71", "#e74c3c"],
+                borderColor: [
+                    'rgba(52, 152, 219, 1)',
+                    'rgba(46, 204, 113, 1)',
+                    'rgba(231, 76, 60, 1)'
+                ],
+                borderWidth: 2,
+                borderRadius: 10
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                datalabels: {
+                    anchor: 'end',
+                    align: 'end',
+                    offset: -6,
+                    color: '#000',
+                    font: {
+                        size: 24,         
+                        weight: 'bold',
+                        family: 'Poppins, sans-serif'
+                    },
+                    formatter: (value) => value > 0 ? value : ''
+                }
+            },
+
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grace: '20%',  
+                    ticks: {
+                        color: '#000000ff',
+                        font: { size: 12 }
+                    },
+                    grid: {
+                        color: 'rgba(0,0,0,0.05)'
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: '#333',
+                        font: { size: 13, weight: 'bold' }
+                    },
+                    grid: {
+                        display: true
+                    }
+                }
+            }
+        },
+        plugins: [ChartDataLabels]
+    });
+}
+
+function renderServicesTrendChart(branch_id, mode, trend) {
+    const ctx = document.getElementById(`servicesTrendChart${branch_id}-${mode}`);
+    if (!ctx || !trend) return;
+
+    charts[`servicesTrend${branch_id}-${mode}`] = new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: trend.labels,
+            datasets: [{
+                label: "Services",
+                data: trend.services,
+                borderColor: "#1d445dff",
+                borderWidth: 3,
+                tension: 0.3,
+                fill: false,
+                pointBackgroundColor: "#1d445dff",
+                pointRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                datalabels: {
+                    anchor: 'end',
+                    align: 'end',
+                    offset: 8,
+                    color: '#000',
+                    font: {
+                        size: 24,
+                        weight: 'bold',
+                        family: 'Poppins, sans-serif'
+                    },
+                    formatter: (value) => value > 0 ? value : ''
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grace: '20%',
+                    ticks: {
+                        color: '#333',
+                        font: { size: 13 }
+                    },
+                    grid: {
+                        color: 'rgba(0,0,0,0.05)'
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: '#333',
+                        font: { size: 13, weight: 'bold' }
+                    },
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        },
+        plugins: [ChartDataLabels]
+    });
 }
 
 function renderIncomeTrendChart(branch_id, mode, trend) {
@@ -732,21 +767,23 @@ function renderGrowthTrendChart(branch_id, mode, growthData) {
         prevValues = labels.map(d => prevByDay[d] || 0);
 
     } else if (mode === 'monthly') {
-        labels = ['Week 1','Week 2','Week 3','Week 4','Week 5'];
-        const currByWeek = { 'Week 1':0,'Week 2':0,'Week 3':0,'Week 4':0,'Week 5':0 };
-        const prevByWeek = { 'Week 1':0,'Week 2':0,'Week 3':0,'Week 4':0,'Week 5':0 };
+        const daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
+        labels = Array.from({length: daysInMonth}, (_, i) => i + 1);
+        const currByDay = {}, prevByDay = {};
+        labels.forEach(day => {
+            currByDay[day] = 0;
+            prevByDay[day] = 0;
+        });
         Object.entries(growthData.current).forEach(([date, rev]) => {
             const day = new Date(date).getDate();
-            const week = 'Week ' + Math.min(Math.ceil(day/7),5);
-            currByWeek[week] += rev;
+            currByDay[day] = rev;
         });
         Object.entries(growthData.previous).forEach(([date, rev]) => {
             const day = new Date(date).getDate();
-            const week = 'Week ' + Math.min(Math.ceil(day/7),5);
-            prevByWeek[week] += rev;
+            prevByDay[day] = rev;
         });
-        currValues = labels.map(w => currByWeek[w]);
-        prevValues = labels.map(w => prevByWeek[w]);
+        currValues = labels.map(d => currByDay[d]);
+        prevValues = labels.map(d => prevByDay[d]);
 
     } else {
         labels = Object.keys(growthData.current);
@@ -756,58 +793,59 @@ function renderGrowthTrendChart(branch_id, mode, growthData) {
 
     if (ctx.chartInstance) ctx.chartInstance.destroy();
     ctx.chartInstance = new Chart(ctx, {
-        type: 'line',
-        data: { labels, datasets:[
-            {
-                label:'Current',
-                data:currValues,
-                borderColor:'#2980b9',
-                backgroundColor:'rgba(41,128,185,0.2)',
-                fill:true, tension:0.1
+    type: 'line',
+    data: { labels, datasets:[
+        {
+            label:'Current',
+            data:currValues,
+            borderColor:'#1d445d',
+            backgroundColor:'rgba(41,128,185,0.2)',
+            fill:true, tension:0.3
+        },
+        {
+            label:'Previous',
+            data:prevValues,
+            borderColor:'#fa2912',
+            backgroundColor:'rgba(173, 75, 68, 0.2)',
+            fill:true, tension:0.3
+        }
+    ]},
+    options:{
+        responsive:true,
+        maintainAspectRatio:true,
+        plugins:{
+            legend:{ position:'bottom' },
+            datalabels:{
+                anchor:'end',align:'top',
+                font:{ size:20, weight:'bold' },
+                formatter:v=>`₱${v.toLocaleString()}`,
+                color:ctx=>ctx.dataset.borderColor
             },
-            {
-                label:'Previous',
-                data:prevValues,
-                borderColor:'#8e44ad',
-                backgroundColor:'rgba(142,68,173,0.2)',
-                fill:true, tension:0.4
-            }
-        ]},
-        options:{
-            responsive:true,
-            maintainAspectRatio:true,
-            plugins:{
-                legend:{ position:'bottom' },
-                datalabels:{
-                    anchor:'end',align:'top',color:'#333',
-                    font:{ size:20, weight:'bold' },
-                    formatter:v=>`₱${v.toLocaleString()}`
-                },
-                tooltip:{
-                    callbacks:{
-                        label:ctx=>`${ctx.dataset.label}: ₱${ctx.parsed.y.toLocaleString()}`
-                    }
-                }
-            },
-            scales:{
-                x:{
-                    offset:true,
-                    title:{
-                        display:true,
-                        text: mode==='weekly'?'Day of Week':
-                            mode==='monthly'?'Week of Month':
-                            mode.charAt(0).toUpperCase()+mode.slice(1)
-                    }
-                },
-                y:{
-                    beginAtZero:true,
-                    grace:'20%',
-                    title:{ display:true, text:'Revenue (₱)' }
+            tooltip:{
+                callbacks:{
+                    label:ctx=>`${ctx.dataset.label}: ₱${ctx.parsed.y.toLocaleString()}`
                 }
             }
         },
-        plugins:[ChartDataLabels]
-    });
+        scales:{
+            x:{
+                offset:true,
+                title:{
+                    display:true,
+                    text: mode==='weekly'?'Day of Week':
+                        mode==='monthly'?'Day of Month':
+                        mode.charAt(0).toUpperCase()+mode.slice(1)
+                }
+            },
+            y:{
+                beginAtZero:true,
+                grace:'20%',
+                title:{ display:true, text:'Revenue (₱)' }
+            }
+        }
+    },
+    plugins:[ChartDataLabels]
+});
 }
 
 function renderPatientMixChart(branch_id, mode, mix, chartType = 'bar') {

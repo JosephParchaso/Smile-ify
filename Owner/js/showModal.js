@@ -62,19 +62,22 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     document.body.addEventListener("change", function (e) {
+        const todayDate = new Date();
+        todayDate.setHours(0, 0, 0, 0);
+
         if (e.target && e.target.id === "dateofBirth") {
             const dobInput = e.target;
             const errorEl = document.getElementById("dobError");
-            const todayDate = new Date();
 
             if (dobInput.value) {
                 const selectedDate = new Date(dobInput.value);
+                selectedDate.setHours(0, 0, 0, 0);
 
-                if (selectedDate.getFullYear() === 1) {
-                    errorEl.textContent = "Please enter a valid date of birth.";
-                    errorEl.style.display = "block";
-                    dobInput.value = "";
-                } else if (selectedDate > todayDate || selectedDate.getFullYear() < 1900) {
+                if (
+                    isNaN(selectedDate) ||
+                    selectedDate.getFullYear() < 1900 ||
+                    selectedDate >= todayDate
+                ) {
                     errorEl.textContent = "Please enter a valid date of birth.";
                     errorEl.style.display = "block";
                     dobInput.value = "";
@@ -83,18 +86,30 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
         }
-    });
 
-    document.body.addEventListener("change", function (e) {
         if (e.target && e.target.id === "dateStarted") {
             const dateInput = e.target;
             const errorEl = document.getElementById("dateError");
 
             if (dateInput.value) {
                 const selectedDate = new Date(dateInput.value);
+                selectedDate.setHours(0, 0, 0, 0);
                 const day = selectedDate.getUTCDay();
 
-                if (day === 0) {
+                if (isNaN(selectedDate)) {
+                    errorEl.textContent = "Please enter a valid date.";
+                    errorEl.style.display = "block";
+                    dateInput.value = "";
+                } else if (
+                    selectedDate.getFullYear() < 1900 ||
+                    selectedDate < todayDate ||
+                    day === 0
+                ) {
+                    if (day === 0) {
+                        errorEl.textContent = "Please enter a valid date.";
+                    } else {
+                        errorEl.textContent = "Please enter a valid date.";
+                    }
                     errorEl.style.display = "block";
                     dateInput.value = "";
                 } else {

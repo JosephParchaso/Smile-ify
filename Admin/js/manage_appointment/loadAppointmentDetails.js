@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <p><strong>Contact Number:</strong><span>${data.contact_number}</span></p>
                 <p><strong>Address:</strong><span>${data.address}</span></p>
                 <p><strong>Registered:</strong><span>${data.joined}</span></p>
-                <p><strong>Last Update:</strong><span>${data.date_updated}</span></p>
+                <p><strong>Last Updated:</strong><span>${data.date_updated}</span></p>
                 <hr>
                 <h3>Appointment Details</h3>
                 <p><strong>Appointment ID:</strong><span>${data.appointment_transaction_id}</span></p>

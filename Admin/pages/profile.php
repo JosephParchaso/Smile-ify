@@ -37,9 +37,15 @@ $updateError = $_SESSION['updateError'] ?? "";
             </div>
         <?php endif; ?>
     </div>
-    
-    <div class="announcements-table">
-        <table id="announcementsTable" class="transaction-table"></table>
+
+    <div class="tabs-container-announcements">
+        <div class="tabs-announcements">
+            <div class="tab active">Announcements</div>
+        </div>
+
+        <div class="announcements-table">
+            <table id="announcementsTable" class="transaction-table"></table>
+        </div>
     </div>
 </div>
 

@@ -38,8 +38,14 @@ $updateError = $_SESSION['updateError'] ?? "";
         <?php endif; ?>
     </div>
 
-    <div class="branches-table">
-        <table id="branchesTable" class="transaction-table"></table>
+    <div class="tabs-container-branch">
+        <div class="tabs-branch">
+            <div class="tab active">Branches</div>
+        </div>
+
+        <div class="branches-table">
+            <table id="branchesTable" class="transaction-table"></table>
+        </div>
     </div>
 </div>
 

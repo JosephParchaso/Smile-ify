@@ -52,12 +52,8 @@
     justify-content: flex-start;
     align-items: flex-start;
     padding: 40px;
-    gap: 50px;
+    gap: 20px;
     flex-wrap: wrap;
-}
-
-.profile-section {
-    position: relative;
 }
 
 .back-button-container {
@@ -104,13 +100,22 @@
     width: 100%;
 }
 
+.tabs-container-announcements {
+    flex: 1;
+    min-width: 350px;
+}
+
+.tabs-announcements {
+    display: flex;
+}
+
 .tab-content {
     display: none;
     width: 80%;
 }
 
 .announcements-table {
-    width: 65% !important;
+    width: 100% !important;
 }
 
 #dental_transactions.tab-content,

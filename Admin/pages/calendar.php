@@ -14,8 +14,33 @@ require_once BASE_PATH . '/includes/header.php';
 require_once BASE_PATH . '/Admin/includes/navbar.php';
 $updateSuccess = $_SESSION['updateSuccess'] ?? "";
 $updateError = $_SESSION['updateError'] ?? "";
+
+$sql = "SELECT branch_id, name, address, phone_number, status FROM branch";
+$result = $conn->query($sql);
+
+$branches = [];
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        $branches[] = $row;
+    }
+}
+$conn->close();
 ?>
+
 <title>Schedules</title>
+
+<div class="tabs-container">
+    <div class="tabs-nomargin">
+        <?php foreach ($branches as $i => $branch): ?>
+            <div 
+                class="tab <?= $i === 0 ? 'active' : '' ?>" 
+                data-branch="branch<?= $branch['branch_id'] ?>"
+                onclick="switchTab('branch<?= $branch['branch_id'] ?>')">
+                <?= htmlspecialchars($branch['name']) ?>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>
 
 <div class="calendar-container">
     <div id="calendarLegend" class="legend"></div>

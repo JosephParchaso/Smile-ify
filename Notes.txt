@@ -208,3 +208,31 @@ Admin - OTP Every Login 👍
 Patient - OTP Every Login 👍
 
 home/index reports = achas  👍
+
+PATIENT SIDE
+Welcome, Potot_R3! But it should be Welcome Mr. Richard D. Potot 👍
+Last Updated: must be last updated 👍
+Appointment History PATIENT & ADMIN: change 'manage' to 'view' 👍
+
+
+ADMIN/SECRETARY SIDE
+Upcoming Appointments: exclude tomorrow, instead this 'month'. 👍
+In the calendar, add buttons to separate the branches. remain the colors 
+IF POSSIBLE: Pre selected branch in the book appointment. If not keri, its okay my love 👍
+Add 'ANNOUNCEMENT' in the profile page 👍
+
+OWNER SIDE
+remove 'change vs last month' 👍
+add 'ALL' tab in the report
+add 'BRANCHES' in the profile 👍
+remove opening/closing time 👍
+
+
+
+
+ROLE
+uppercase the first letter ex. Patient 👍
+
+ASK DURING CONSULTATION
+Ask if the services and promos are under admin or it should be under the owner since it involves MONEY? 
+and if retain: it should have a notification about the updates.

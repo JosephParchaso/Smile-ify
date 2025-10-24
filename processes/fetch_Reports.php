@@ -125,7 +125,7 @@ try {
                     JOIN dental_transaction dt ON dts.dental_transaction_id = dt.dental_transaction_id
                     JOIN appointment_transaction at ON dt.appointment_transaction_id = at.appointment_transaction_id
                     WHERE at.branch_id = ? 
-                    AND DATE(dt.date_created) = ?";
+                    AND DATE(at.appointment_date) = ?";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("is", $branch_id, $day);
             $stmt->execute();
@@ -136,7 +136,7 @@ try {
                     FROM dental_transaction dt
                     JOIN appointment_transaction at ON dt.appointment_transaction_id = at.appointment_transaction_id
                     WHERE at.branch_id = ? 
-                    AND DATE(dt.date_created) = ?";
+                    AND DATE(at.appointment_date) = ?";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("is", $branch_id, $day);
             $stmt->execute();
@@ -153,8 +153,8 @@ try {
                     JOIN dental_transaction dt ON dts.dental_transaction_id = dt.dental_transaction_id
                     JOIN appointment_transaction at ON dt.appointment_transaction_id = at.appointment_transaction_id
                     WHERE at.branch_id = ? 
-                    AND YEARWEEK(dt.date_created,1) = YEARWEEK(CURDATE(),1)
-                    AND DAYNAME(dt.date_created) = ?";
+                    AND YEARWEEK(at.appointment_date,1) = YEARWEEK(CURDATE(),1)
+                    AND DAYNAME(at.appointment_date) = ?";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("is", $branch_id, $d);
             $stmt->execute();
@@ -165,8 +165,8 @@ try {
                     FROM dental_transaction dt
                     JOIN appointment_transaction at ON dt.appointment_transaction_id = at.appointment_transaction_id
                     WHERE at.branch_id = ? 
-                    AND YEARWEEK(dt.date_created,1) = YEARWEEK(CURDATE(),1)
-                    AND DAYNAME(dt.date_created) = ?";
+                    AND YEARWEEK(at.appointment_date,1) = YEARWEEK(CURDATE(),1)
+                    AND DAYNAME(at.appointment_date) = ?";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("is", $branch_id, $d);
             $stmt->execute();
@@ -183,9 +183,9 @@ try {
                     JOIN dental_transaction dt ON dts.dental_transaction_id = dt.dental_transaction_id
                     JOIN appointment_transaction at ON dt.appointment_transaction_id = at.appointment_transaction_id
                     WHERE at.branch_id = ? 
-                    AND YEAR(dt.date_created) = YEAR(CURDATE()) 
-                    AND MONTH(dt.date_created) = MONTH(CURDATE()) 
-                    AND DAY(dt.date_created) = ?";
+                    AND YEAR(at.appointment_date) = YEAR(CURDATE()) 
+                    AND MONTH(at.appointment_date) = MONTH(CURDATE()) 
+                    AND DAY(at.appointment_date) = ?";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("ii", $branch_id, $d);
             $stmt->execute();
@@ -196,9 +196,9 @@ try {
                     FROM dental_transaction dt
                     JOIN appointment_transaction at ON dt.appointment_transaction_id = at.appointment_transaction_id
                     WHERE at.branch_id = ? 
-                    AND YEAR(dt.date_created) = YEAR(CURDATE()) 
-                    AND MONTH(dt.date_created) = MONTH(CURDATE()) 
-                    AND DAY(dt.date_created) = ?";
+                    AND YEAR(at.appointment_date) = YEAR(CURDATE()) 
+                    AND MONTH(at.appointment_date) = MONTH(CURDATE()) 
+                    AND DAY(at.appointment_date) = ?";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("ii", $branch_id, $d);
             $stmt->execute();
@@ -274,13 +274,13 @@ try {
             FROM appointment_transaction AS at
             JOIN dental_transaction AS dt
             ON at.appointment_transaction_id = dt.appointment_transaction_id
-            WHERE DATE(at.appointment_date) BETWEEN ? AND ?
+            WHERE at.branch_id = ? AND DATE(at.appointment_date) BETWEEN ? AND ?
             GROUP BY period
             ORDER BY period ASC
         ";
 
         $stmt = $conn->prepare($periodSql);
-        $stmt->bind_param("ss", $currStart, $currEnd);
+        $stmt->bind_param("iss", $branch_id, $currStart, $currEnd);
         $stmt->execute();
         $res = $stmt->get_result();
         while ($r = $res->fetch_assoc()) {
@@ -289,11 +289,27 @@ try {
         $stmt->close();
 
         $stmt = $conn->prepare($periodSql);
-        $stmt->bind_param("ss", $prevStart, $prevEnd);
+        $stmt->bind_param("iss", $branch_id, $prevStart, $prevEnd);
         $stmt->execute();
         $res = $stmt->get_result();
         while ($r = $res->fetch_assoc()) {
-            $growthTrend['previous'][$r['period']] = (float)$r['revenue'];
+            if ($mode === 'weekly') {
+                $offsetDate = date('Y-m-d', strtotime($r['period'] . ' +7 days'));
+                $growthTrend['previous'][$offsetDate] = (float)$r['revenue'];
+            } elseif ($mode === 'monthly') {
+                $prevDate = strtotime($r['period']);
+                $prevDay = date('d', $prevDate);
+                $currDate = strtotime(date('Y-m-01'));
+                $daysInCurrMonth = date('t', $currDate);
+                
+                if ($prevDay <= $daysInCurrMonth) {
+                    $offsetDate = date('Y-m-' . str_pad($prevDay, 2, '0', STR_PAD_LEFT), $currDate);
+                    $growthTrend['previous'][$offsetDate] = (float)$r['revenue'];
+                }
+            } else {
+                $offsetDate = date('Y-m-d', strtotime($r['period'] . ' +1 day'));
+                $growthTrend['previous'][$offsetDate] = (float)$r['revenue'];
+            }
         }
         $stmt->close();
 
@@ -391,12 +407,33 @@ try {
 
     $declineData = [];
     if ($_SESSION['role'] === 'owner') {
+        if ($mode === 'daily') {
+            $currStart = $currEnd = date('Y-m-d');
+            $prevStart = $prevEnd = date('Y-m-d', strtotime('-1 day'));
+        } elseif ($mode === 'weekly') {
+            $currStart = date('Y-m-d', strtotime('monday this week'));
+            $currEnd   = date('Y-m-d', strtotime('sunday this week'));
+            $prevStart = date('Y-m-d', strtotime('monday last week'));
+            $prevEnd   = date('Y-m-d', strtotime('sunday last week'));
+        } else {
+            $currStart = date('Y-m-01');
+            $currEnd   = date('Y-m-t');
+            $prevStart = date('Y-m-01', strtotime('-1 month'));
+            $prevEnd   = date('Y-m-t', strtotime('-1 month'));
+        }
+
         $sql = "
             SELECT
                 b.branch_id,
                 b.name AS branch_name,
+                COALESCE(prev_counts.count, 0) AS previous_count,
                 COALESCE(curr_counts.count, 0) AS current_count,
-                COALESCE(prev_counts.count, 0) AS previous_count
+                GREATEST(0, COALESCE(prev_counts.count, 0) - COALESCE(curr_counts.count, 0)) AS decline,
+                CASE 
+                    WHEN COALESCE(prev_counts.count, 0) > 0 THEN 
+                        ROUND(((COALESCE(prev_counts.count, 0) - COALESCE(curr_counts.count, 0)) / COALESCE(prev_counts.count, 0) * 100), 2)
+                    ELSE 0
+                END AS percentage_decline
             FROM branch AS b
             LEFT JOIN (
                 SELECT
@@ -404,6 +441,7 @@ try {
                     COUNT(*) AS count
                 FROM appointment_transaction AS at
                 WHERE DATE(at.appointment_date) BETWEEN ? AND ?
+                AND at.status = 'Completed'
                 GROUP BY branch_id
             ) AS curr_counts ON curr_counts.branch_id = b.branch_id
             LEFT JOIN (
@@ -411,45 +449,32 @@ try {
                     branch_id,
                     COUNT(*) AS count
                 FROM appointment_transaction AS at
-                WHERE DATE(at.appointment_date) BETWEEN
-                    DATE_SUB(?, INTERVAL 
-                        CASE 
-                            WHEN ? = 'daily' THEN 1 
-                            WHEN ? = 'weekly' THEN 7 
-                            ELSE 30 
-                        END DAY
-                    ) 
-                    AND DATE_SUB(?, INTERVAL 1 DAY)
+                WHERE DATE(at.appointment_date) BETWEEN ? AND ?
+                AND at.status = 'Completed'
                 GROUP BY branch_id
             ) AS prev_counts ON prev_counts.branch_id = b.branch_id
             WHERE b.status = 'active'
+            ORDER BY decline DESC
         ";
+
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param(
-            "ssssis",
-            $startDate,
-            $endDate,
-            $startDate,
-            $mode,
-            $mode,
-            $endDate
-        );
+        $stmt->bind_param("ssss", $currStart, $currEnd, $prevStart, $prevEnd);
         $stmt->execute();
         $result = $stmt->get_result();
 
         $totalDecline = 0;
         $rows = [];
         while ($r = $result->fetch_assoc()) {
-            $r['decline'] = max(0, $r['previous_count'] - $r['current_count']);
             $rows[] = $r;
             $totalDecline += $r['decline'];
         }
+        
         foreach ($rows as $r) {
             $pct = $totalDecline > 0 
                 ? round($r['decline'] / $totalDecline * 100, 2) 
                 : 0;
             $declineData[] = [
-                'branch_id'      => $r['branch_id'],
+                'branch_id'      => (int)$r['branch_id'],
                 'branch_name'    => $r['branch_name'],
                 'previous_count' => (int)$r['previous_count'],
                 'current_count'  => (int)$r['current_count'],
@@ -709,8 +734,6 @@ try {
         'apptCount'            => $apptCount,
         'patientCount'         => $patientCount,
         'totalRevenue'         => $totalRevenue,
-        'avgRevPerAppt'        => $avgRevPerAppt,
-        'avgRevPerPatient'     => $avgRevPerPatient,
         'avgRevPerAppt'    => $avgRevPerAppt,
         'avgRevPerPatient'=> $avgRevPerPatient,
         'promosAvailed' => $promosAvailed,

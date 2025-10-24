@@ -2,7 +2,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const promoModal = document.getElementById("managePromoModal");
     const promoBody = document.getElementById("promoModalBody");
 
-    const today = new Date().toISOString().split("T")[0];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const formattedToday = today.toISOString().split("T")[0];
 
     document.body.addEventListener("click", function (e) {
         if (e.target.classList.contains("btn-promo")) {
@@ -32,23 +34,23 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     document.body.addEventListener("focusin", function (e) {
-        if (e.target && e.target.id === "startDate") {
-            e.target.setAttribute("min", today);
-        }
-        if (e.target && e.target.id === "endDate") {
-            e.target.setAttribute("min", today);
+        if (e.target && (e.target.id === "startDate" || e.target.id === "endDate")) {
+            e.target.setAttribute("min", formattedToday);
         }
     });
 
     document.body.addEventListener("change", function (e) {
-        if (e.target && e.target.id === "startDate") {
-            const startInput = e.target;
+        const target = e.target;
+
+        if (target && target.id === "startDate") {
+            const startInput = target;
             const errorEl = document.getElementById("startDateError");
 
             if (startInput.value) {
                 const selectedDate = new Date(startInput.value);
+                selectedDate.setHours(0, 0, 0, 0);
 
-                if (selectedDate < new Date(today)) {
+                if (selectedDate < today) {
                     errorEl.textContent = "Please enter a valid date.";
                     errorEl.style.display = "block";
                     startInput.value = "";
@@ -58,16 +60,17 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        if (e.target && e.target.id === "endDate") {
+        if (target && target.id === "endDate") {
             const startInput = document.getElementById("startDate");
-            const endInput = e.target;
+            const endInput = target;
             const errorEl = document.getElementById("endDateError");
 
             if (endInput.value) {
-                const startDate = startInput.value ? new Date(startInput.value) : null;
                 const endDate = new Date(endInput.value);
+                const startDate = startInput.value ? new Date(startInput.value) : null;
+                endDate.setHours(0, 0, 0, 0);
 
-                if (endDate < new Date(today)) {
+                if (endDate < today) {
                     errorEl.textContent = "Please enter a valid date.";
                     errorEl.style.display = "block";
                     endInput.value = "";

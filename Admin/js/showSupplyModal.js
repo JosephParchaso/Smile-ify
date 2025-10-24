@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     const supplyModal = document.getElementById("manageSupplyModal");
     const supplyBody = document.getElementById("supplyModalBody");
-
     const today = new Date().toISOString().split("T")[0];
 
     document.body.addEventListener("click", function (e) {
@@ -19,9 +18,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     renderSupplyForm(data);
                     supplyModal.style.display = "block";
-
-                    const expInput = document.getElementById("expiration_date");
-                    if (expInput) expInput.setAttribute("min", today);
                 })
                 .catch(() => {
                     supplyBody.innerHTML = `<p style="color:red;">Error loading details</p>`;
@@ -34,29 +30,12 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.target.id === "insertSupplyBtn") {
             renderSupplyForm(null);
             supplyModal.style.display = "block";
-
-            const expInput = document.getElementById("expiration_date");
-            if (expInput) expInput.setAttribute("min", today);
-        }
-    });
-
-    document.body.addEventListener("change", function (e) {
-        if (e.target && e.target.id === "expiration_date") {
-            const expInput = e.target;
-            if (expInput.value) {
-                const selected = new Date(expInput.value);
-                const now = new Date(today);
-
-                if (selected < now) {
-                    alert("Expiration date cannot be in the past.");
-                    expInput.value = "";
-                }
-            }
         }
     });
 
     function renderSupplyForm(data) {
         const isEdit = !!data;
+
         supplyBody.innerHTML = `
             <h2>${isEdit ? "Manage Supply" : "Add Supply"}</h2>
             <form id="supplyForm" action="${BASE_URL}/Admin/processes/supplies/${isEdit ? "update_supply.php" : "insert_supply.php"}" method="POST" autocomplete="off">
@@ -101,8 +80,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 <div class="form-group">
                     <input type="date" id="expiration_date" name="expiration_date" class="form-control"
-                        value="${isEdit ? (data.expiration_date || "") : ""}" placeholder=" ">
+                        value="${isEdit ? (data.expiration_date || "") : ""}" placeholder=" " min="${today}">
                     <label for="expiration_date" class="form-label">Expiration Date</label>
+                    <span id="expErrorMsg" class="error-msg-calendar error" style="display:none;"></span>
                 </div>
 
                 <div class="form-group">
@@ -139,7 +119,34 @@ document.addEventListener("DOMContentLoaded", () => {
             </form>
         `;
 
+        validateExpirationDate();
         loadBranchServices(data);
+    }
+
+    function validateExpirationDate() {
+        const expInput = document.getElementById("expiration_date");
+        const expError = document.getElementById("expErrorMsg");
+
+        document.body.addEventListener("change", function (e) {
+            if (e.target && e.target.id === "expiration_date") {
+                const todayDate = new Date();
+                todayDate.setHours(0, 0, 0, 0);
+
+                const selectedDate = new Date(e.target.value);
+
+                if (!e.target.value || isNaN(selectedDate)) {
+                    expError.textContent = "Please enter a valid date.";
+                    expError.style.display = "block";
+                    e.target.value = "";
+                } else if (selectedDate < todayDate) {
+                    expError.textContent = "Please enter a valid date.";
+                    expError.style.display = "block";
+                    e.target.value = "";
+                } else {
+                    expError.style.display = "none";
+                }
+            }
+        });
     }
 
     function loadBranchServices(data = null) {
@@ -191,7 +198,6 @@ document.addEventListener("DOMContentLoaded", () => {
             container.innerHTML = `<p style="color:red;">Error loading services.</p>`;
         });
     }
-
 });
 
 function closeSupplyModal() {
