@@ -151,10 +151,7 @@ dungan register/book different user
 
 Contact Fr. Peter for the database hosting 💖
 Minimum of 5 minutes for OTP time remaining expiration time 💖
-
 dungan register/book different user 💖
-
-Hash EVERYTHING in db after deployment? 🥶
 
 Error on change password OTP Fix 👍
 Validation for the Date of Birth, so that it will not accept 0000 👍
@@ -214,7 +211,6 @@ Welcome, Potot_R3! But it should be Welcome Mr. Richard D. Potot 👍
 Last Updated: must be last updated 👍
 Appointment History PATIENT & ADMIN: change 'manage' to 'view' 👍
 
-
 ADMIN/SECRETARY SIDE
 Upcoming Appointments: exclude tomorrow, instead this 'month'. 👍
 In the calendar, add buttons to separate the branches. remain the colors 
@@ -226,9 +222,6 @@ remove 'change vs last month' 👍
 add 'ALL' tab in the report
 add 'BRANCHES' in the profile 👍
 remove opening/closing time 👍
-
-
-
 
 ROLE
 uppercase the first letter ex. Patient 👍

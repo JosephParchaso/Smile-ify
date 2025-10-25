@@ -9,6 +9,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
+$branch_id = isset($_GET['branch_id']) ? intval($_GET['branch_id']) : 0;
+
 function stringToColorCode($str) {
     $code = dechex(crc32($str));
     $code = str_pad($code, 6, '0', STR_PAD_LEFT);
@@ -33,6 +35,7 @@ $sql = "
     LEFT JOIN users u ON a.user_id = u.user_id
     LEFT JOIN appointment_services aps ON a.appointment_transaction_id = aps.appointment_transaction_id
     LEFT JOIN service s ON aps.service_id = s.service_id
+    " . ($branch_id > 0 ? "WHERE a.branch_id = $branch_id" : "") . "
     GROUP BY a.appointment_transaction_id
     ORDER BY a.appointment_date, a.appointment_time
 ";

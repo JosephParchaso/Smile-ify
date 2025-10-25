@@ -1,7 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
     const supplyModal = document.getElementById("manageSupplyModal");
     const supplyBody = document.getElementById("supplyModalBody");
-    const today = new Date().toISOString().split("T")[0];
+    const today = new Date();
+    today.setDate(today.getDate() + 1);
+    const todayISO = today.toISOString().split("T")[0];
 
     document.body.addEventListener("click", function (e) {
         if (e.target.classList.contains("btn-supply")) {
@@ -80,7 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 <div class="form-group">
                     <input type="date" id="expiration_date" name="expiration_date" class="form-control"
-                        value="${isEdit ? (data.expiration_date || "") : ""}" placeholder=" " min="${today}">
+                        value="${isEdit ? (data.expiration_date || "") : ""}" placeholder=" " min="${todayISO}">
                     <label for="expiration_date" class="form-label">Expiration Date</label>
                     <span id="expErrorMsg" class="error-msg-calendar error" style="display:none;"></span>
                 </div>
@@ -130,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.addEventListener("change", function (e) {
             if (e.target && e.target.id === "expiration_date") {
                 const todayDate = new Date();
-                todayDate.setHours(0, 0, 0, 0);
+                todayDate.setDate(today.getDate() + 1);
 
                 const selectedDate = new Date(e.target.value);
 

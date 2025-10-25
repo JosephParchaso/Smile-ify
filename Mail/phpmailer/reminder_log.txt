@@ -485,3 +485,15 @@ Reminders checked at 2025-10-25 02:56:20. Sent to 0 recipient(s).
 [2025-10-25 03:26:19] Checking between 2025-10-25 04:21:19 and 2025-10-25 04:31:19
 Reminders checked at 2025-10-25 03:26:19. Sent to 0 recipient(s).
 
+[2025-10-25 03:56:20] Script started
+[2025-10-25 03:56:20] Checking between 2025-10-25 04:51:20 and 2025-10-25 05:01:20
+Reminders checked at 2025-10-25 03:56:20. Sent to 0 recipient(s).
+
+[2025-10-26 02:50:35] Script started
+[2025-10-26 02:50:35] Checking between 2025-10-26 03:45:35 and 2025-10-26 03:55:35
+Reminders checked at 2025-10-26 02:50:35. Sent to 0 recipient(s).
+
+[2025-10-26 02:56:19] Script started
+[2025-10-26 02:56:19] Checking between 2025-10-26 03:51:19 and 2025-10-26 04:01:19
+Reminders checked at 2025-10-26 02:56:19. Sent to 0 recipient(s).
+

@@ -34,8 +34,8 @@ $conn->close();
         <?php foreach ($branches as $i => $branch): ?>
             <div 
                 class="tab <?= $i === 0 ? 'active' : '' ?>" 
-                data-branch="branch<?= $branch['branch_id'] ?>"
-                onclick="switchTab('branch<?= $branch['branch_id'] ?>')">
+                data-branch-id="<?= $branch['branch_id'] ?>"
+                onclick="switchTabBranch(<?= $branch['branch_id'] ?>)">
                 <?= htmlspecialchars($branch['name']) ?>
             </div>
         <?php endforeach; ?>
@@ -47,10 +47,8 @@ $conn->close();
     <div id="calendar"></div>
 </div>
 
-<div class="calendar-container">
-    <div id="calendar"></div>
-</div>
-<input type="hidden" id="branchIdInput" value="<?= htmlspecialchars($_SESSION['branch_id'] ?? '') ?>">
+<input type="hidden" id="branchIdInput" value="<?= htmlspecialchars($branches[0]['branch_id'] ?? '') ?>">
+
 
 <div id="appointmentModalDetails" class="manage-calendar-modal">
     <div class="manage-calendar-modal-content">

@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const announcementBody = document.getElementById("announcementModalBody");
 
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    today.setDate(today.getDate() + 1);
     const formattedToday = today.toISOString().split("T")[0];
 
     document.body.addEventListener("click", function (e) {

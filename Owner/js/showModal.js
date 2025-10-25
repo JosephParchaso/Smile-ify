@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.body.addEventListener("change", function (e) {
         const todayDate = new Date();
-        todayDate.setHours(0, 0, 0, 0);
+        todayDate.setDate(today.getDate() + 1);
 
         if (e.target && e.target.id === "dateofBirth") {
             const dobInput = e.target;
