@@ -88,8 +88,7 @@ $conn->close();
                                     </table>
                                     <div class="branch-growth-chart">
                                         <h4>Revenue Distribution</h4>
-                                        <button id="toggleGrowthChart<?= $branchId ?>-<?= $mode ?>" class="toggle-chart-btn">Switch to Bar Chart</button>
-                                        <canvas id="branchGrowthChart<?= $branchId ?>-<?= $mode ?>"></canvas>
+                                        <canvas id="branchGrowthChartall-<?= $mode ?>"></canvas>
                                     </div>
                                 </div>
 
