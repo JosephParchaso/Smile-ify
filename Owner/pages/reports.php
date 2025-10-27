@@ -78,18 +78,48 @@ $conn->close();
                         <h2>Branch Growth Tracker</h2>
                         <div class="staff-performance">
                             <div class="branch-growth-grid">
-                                <div class="branch-growth-list">
+                                <!-- DAILY TAB -->
+                                <div class="branch-growth-list" id="branchall-daily">
                                     <h4 class="branch-growth-tracker-text">Which branch is growing the fastest?</h4>
                                     <table class="branch-growth-table">
                                         <thead>
                                             <tr><th>Branch</th><th>Revenue</th><th>% Contribution</th></tr>
                                         </thead>
-                                        <tbody id="branchGrowthTableBody<?= $branchId ?>-<?= $mode ?>"></tbody>
+                                        <tbody id="branchGrowthTableBodyall-daily"></tbody>
                                     </table>
                                     <div class="branch-growth-chart">
                                         <h4>Revenue Distribution</h4>
-                                        <button id="toggleGrowthChart<?= $branchId ?>-<?= $mode ?>" class="toggle-chart-btn">Switch to Bar Chart</button>
-                                        <canvas id="branchGrowthChart<?= $branchId ?>-<?= $mode ?>"></canvas>
+                                        <canvas id="branchGrowthChartall-daily"></canvas>
+                                    </div>
+                                </div>
+
+                                <!-- WEEKLY TAB -->
+                                <div class="branch-growth-list" id="branchall-weekly">
+                                    <h4 class="branch-growth-tracker-text">Which branch is growing the fastest?</h4>
+                                    <table class="branch-growth-table">
+                                        <thead>
+                                            <tr><th>Branch</th><th>Revenue</th><th>% Contribution</th></tr>
+                                        </thead>
+                                        <tbody id="branchGrowthTableBodyall-weekly"></tbody>
+                                    </table>
+                                    <div class="branch-growth-chart">
+                                        <h4>Revenue Distribution</h4>
+                                        <canvas id="branchGrowthChartall-weekly"></canvas>
+                                    </div>
+                                </div>
+
+                                <!-- MONTHLY TAB -->
+                                <div class="branch-growth-list" id="branchall-monthly">
+                                    <h4 class="branch-growth-tracker-text">Which branch is growing the fastest?</h4>
+                                    <table class="branch-growth-table">
+                                        <thead>
+                                            <tr><th>Branch</th><th>Revenue</th><th>% Contribution</th></tr>
+                                        </thead>
+                                        <tbody id="branchGrowthTableBodyall-monthly"></tbody>
+                                    </table>
+                                    <div class="branch-growth-chart">
+                                        <h4>Revenue Distribution</h4>
+                                        <canvas id="branchGrowthChartall-monthly"></canvas>
                                     </div>
                                 </div>
 

@@ -405,6 +405,169 @@ try {
         $stmt->close();
     }
 
+
+
+
+
+    // ========================================================
+    // NEW: Branch Growth Chart Data (Time-Series) for "All Branches"
+    // ========================================================
+    $branchGrowthChartData = [];
+
+    if ($_SESSION['role'] === 'owner' && $branch_id === 'all') {
+        
+        // Get all active branches
+        $branchesQuery = "SELECT branch_id, name FROM branch WHERE status = 'active' ORDER BY branch_id";
+        $branchesResult = $conn->query($branchesQuery);
+        $allBranches = [];
+        while ($b = $branchesResult->fetch_assoc()) {
+            $allBranches[] = $b;
+        }
+        
+        if ($mode === 'daily') {
+            // DAILY: Single day, all branches
+            $labels = [date('Y-m-d')];
+            $datasets = [];
+            
+            foreach ($allBranches as $branch) {
+                $sql = "SELECT COALESCE(SUM(dt.total), 0) AS revenue
+                        FROM appointment_transaction AS at
+                        LEFT JOIN dental_transaction AS dt ON at.appointment_transaction_id = dt.appointment_transaction_id
+                        WHERE at.branch_id = ? 
+                            AND DATE(at.appointment_date) = ?
+                            AND at.status = 'Completed'";
+                
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("is", $branch['branch_id'], $startDate);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $row = $result->fetch_assoc();
+                $revenue = (float)$row['revenue'];
+                $stmt->close();
+                
+                $datasets[] = [
+                    'label' => $branch['name'],
+                    'data' => [$revenue],
+                    'branch_id' => $branch['branch_id']
+                ];
+            }
+            
+            $branchGrowthChartData = [
+                'labels' => $labels,
+                'datasets' => $datasets
+            ];
+            
+        } elseif ($mode === 'weekly') {
+            // WEEKLY: 7 days (Monday - Sunday)
+            $labels = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            $weekStart = date('Y-m-d', strtotime('monday this week'));
+            $datasets = [];
+            
+            foreach ($allBranches as $branch) {
+                $branchData = [];
+                
+                for ($i = 0; $i < 7; $i++) {
+                    $date = date('Y-m-d', strtotime($weekStart . " +$i days"));
+                    
+                    $sql = "SELECT COALESCE(SUM(dt.total), 0) AS revenue
+                            FROM appointment_transaction AS at
+                            LEFT JOIN dental_transaction AS dt ON at.appointment_transaction_id = dt.appointment_transaction_id
+                            WHERE at.branch_id = ? 
+                                AND DATE(at.appointment_date) = ?
+                                AND at.status = 'Completed'";
+                    
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("is", $branch['branch_id'], $date);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    $row = $result->fetch_assoc();
+                    $revenue = (float)$row['revenue'];
+                    $stmt->close();
+                    
+                    $branchData[] = $revenue;
+                }
+                
+                $datasets[] = [
+                    'label' => $branch['name'],
+                    'data' => $branchData,
+                    'branch_id' => $branch['branch_id']
+                ];
+            }
+            
+            $branchGrowthChartData = [
+                'labels' => $labels,
+                'datasets' => $datasets
+            ];
+            
+        } elseif ($mode === 'monthly') {
+            // MONTHLY: 12 months of current year
+            $currentYear = date('Y');
+            $labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            $datasets = [];
+            
+            foreach ($allBranches as $branch) {
+                $branchData = [];
+                
+                for ($month = 1; $month <= 12; $month++) {
+                    $monthStart = date("$currentYear-" . str_pad($month, 2, '0', STR_PAD_LEFT) . "-01");
+                    $monthEnd = date("Y-m-t", strtotime($monthStart));
+                    
+                    $sql = "SELECT COALESCE(SUM(dt.total), 0) AS revenue
+                            FROM appointment_transaction AS at
+                            LEFT JOIN dental_transaction AS dt ON at.appointment_transaction_id = dt.appointment_transaction_id
+                            WHERE at.branch_id = ? 
+                                AND DATE(at.appointment_date) BETWEEN ? AND ?
+                                AND at.status = 'Completed'";
+                    
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("iss", $branch['branch_id'], $monthStart, $monthEnd);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    $row = $result->fetch_assoc();
+                    $revenue = (float)$row['revenue'];
+                    $stmt->close();
+                    
+                    $branchData[] = $revenue;
+                }
+                
+                $datasets[] = [
+                    'label' => $branch['name'],
+                    'data' => $branchData,
+                    'branch_id' => $branch['branch_id']
+                ];
+            }
+            
+            $branchGrowthChartData = [
+                'labels' => $labels,
+                'datasets' => $datasets
+            ];
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
     $declineData = [];
     if ($_SESSION['role'] === 'owner') {
         if ($mode === 'daily') {
@@ -739,6 +902,7 @@ try {
         'promosAvailed' => $promosAvailed,
         "patientMix" => $patientMix,
         "branchGrowthData" => $branchGrowthData,
+        "branchGrowthChartData" => $branchGrowthChartData,
         "declineData" => $declineData,
         "peakHours" => $peakHours
     ]);
