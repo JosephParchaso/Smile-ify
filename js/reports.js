@@ -1,4 +1,22 @@
 let charts = {};
+const branchColors = {};
+
+const colorPalette = [
+    '#1abc9c', '#3498db', '#9b59b6', '#f1c40f',
+    '#e74c3c', '#2ecc71', '#34495e', '#16a085',
+    '#d35400', '#7f8c8d'
+];
+
+function getBranchColor(branchName) {
+    if (!branchColors[branchName]) {
+        const existingColors = Object.values(branchColors);
+        const availableColors = colorPalette.filter(c => !existingColors.includes(c));
+        branchColors[branchName] = availableColors.length > 0
+            ? availableColors[0]
+            : colorPalette[Object.keys(branchColors).length % colorPalette.length];
+    }
+    return branchColors[branchName];
+}
 
 document.addEventListener("DOMContentLoaded", function () {
     const hasAdminBranch = typeof ADMIN_BRANCH_ID !== "undefined" && ADMIN_BRANCH_ID;
@@ -162,16 +180,10 @@ function renderBranchGrowthChart(branch_id, mode, branchGrowthChartData, chartTy
         return;
     }
 
-    const colorPalette = [
-        '#1abc9c', '#3498db', '#9b59b6', '#f1c40f',
-        '#e74c3c', '#2ecc71', '#34495e', '#16a085',
-        '#d35400', '#7f8c8d'
-    ];
-
     const datasets = branchGrowthChartData.datasets.map((dataset, i) => ({
         label: dataset.label,
         data: dataset.data,
-        backgroundColor: colorPalette[i % colorPalette.length],
+        backgroundColor: getBranchColor(dataset.label),
         borderColor: '#fff',
         borderWidth: 2,
         borderRadius: 6
@@ -185,7 +197,7 @@ function renderBranchGrowthChart(branch_id, mode, branchGrowthChartData, chartTy
         type: chartType,
         data: {
             labels: branchGrowthChartData.labels,
-            datasets: datasets
+            datasets
         },
         options: {
             responsive: true,
@@ -264,83 +276,86 @@ function renderDeclineChart(branch_id, mode, declineData, chartType = 'bar') {
     const ctx = document.getElementById(`declineChart${branch_id}-${mode}`);
     const key = `decline${branch_id}-${mode}`;
     if (!ctx || !declineData.length) return;
+
     if (charts[key]) {
-    charts[key].destroy();
-    delete charts[key];
+        charts[key].destroy();
+        delete charts[key];
     }
+
     const labels = declineData.map(b => b.branch_name);
     const data = declineData.map(b => b.decline);
-    const bg = ['#e74c3c','#3498db','#2ecc71','#f39c12','#9b59b6','#1abc9c','#34495e','#e67e22','#95a5a6','#c0392b'].slice(0, data.length);
+    const bg = labels.map(branch => getBranchColor(branch));
+
     charts[key] = new Chart(ctx, {
-    type: chartType,
-    data: {
-        labels,
-        datasets: [{
-            data,
-            backgroundColor: bg,
-            borderColor: '#ffffff',
-            borderWidth: 2,
-            borderRadius: 10
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: true,
-        indexAxis: chartType === 'bar' ? 'y' : undefined,
-        scales: chartType === 'bar' ? {
-            x: {
-                beginAtZero: true,
-                grace: '20%',
-                title: { display: true, text: 'Decline Count' }
-            },
-            y: { title: { display: true, text: 'Branch' } }
-        } : {},
-        plugins: {
-            legend: {
-                display: true,
-                position: 'bottom',
-                labels: {
-                    color: '#333',
-                    font: { size: 12, weight: 'bold', family: 'Poppins, sans-serif' },
-                    padding: 15,
-                    generateLabels(chart) {
-                        const bgc = chart.data.datasets[0].backgroundColor;
-                        return chart.data.labels.map((label, i) => {
-                            const val = chart.data.datasets[0].data[i];
+        type: chartType,
+        data: {
+            labels,
+            datasets: [{
+                data,
+                backgroundColor: bg,
+                borderColor: '#ffffff',
+                borderWidth: 2,
+                borderRadius: 10
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            indexAxis: chartType === 'bar' ? 'y' : undefined,
+            scales: chartType === 'bar' ? {
+                x: {
+                    beginAtZero: true,
+                    grace: '20%',
+                    title: { display: true, text: 'Decline Count' }
+                },
+                y: { title: { display: true, text: 'Branch' } }
+            } : {},
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: {
+                        color: '#333',
+                        font: { size: 12, weight: 'bold', family: 'Poppins, sans-serif' },
+                        padding: 15,
+                        generateLabels(chart) {
+                            const bgc = chart.data.datasets[0].backgroundColor;
+                            return chart.data.labels.map((label, i) => {
+                                const val = chart.data.datasets[0].data[i];
+                                const pct = declineData[i].percentage;
+                                return {
+                                    text: `${label}: ${val} (${pct}%)`,
+                                    fillStyle: bgc[i],
+                                    strokeStyle: '#ffffff',
+                                    lineWidth: 2,
+                                    hidden: false,
+                                    index: i
+                                };
+                            });
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label(ctx) {
+                            const i = ctx.dataIndex;
+                            const val = ctx.dataset.data[i];
                             const pct = declineData[i].percentage;
-                            return {
-                                text: `${label}: ${val} (${pct}%)`,
-                                fillStyle: bgc[i],
-                                strokeStyle: '#ffffff',
-                                lineWidth: 2,
-                                hidden: false,
-                                index: i
-                            };
-                        });
+                            return `${ctx.label}: ${val} (${pct}%)`;
+                        }
                     }
-                }
-            },
-            tooltip: {
-                callbacks: {
-                    label(ctx) {
-                        const i = ctx.dataIndex;
-                        const val = ctx.dataset.data[i];
-                        const pct = declineData[i].percentage;
-                        return `${ctx.label}: ${val} (${pct}%)`;
+                },
+                datalabels: {
+                    anchor: 'end',
+                    align: 'end',
+                    color: '#333',
+                    font: { weight: 'bold' },
+                    formatter(value) {
+                        return `${value}`;
                     }
-                }
-            },
-            datalabels: {
-                anchor: 'end',
-                align: 'end',
-                color: '#333',
-                font: { weight: 'bold' },
-                formatter(value) {
-                    return `${value}`;
                 }
             }
-        }
-    },
+        },
         plugins: [ChartDataLabels]
     });
 
@@ -353,7 +368,6 @@ function renderDeclineChart(branch_id, mode, declineData, chartType = 'bar') {
         btn.textContent = currentType === 'pie' ? 'Switch to Bar Chart' : 'Switch to Pie Chart';
     };
 }
-
 function updateKPI(branch_id, mode, kpi) {
     if (!kpi) return;
     const safeSet = (id, value) => {

@@ -2,7 +2,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "smile_ify";
+$dbname = "smile-ify";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 
