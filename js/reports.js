@@ -49,7 +49,6 @@ function switchTab(branch_id) {
 }
 
 function switchSubTab(branch_id, mode) {
-    console.log(`Switching to mode: ${mode} for branch ${branch_id}`);
 
     const container = document.getElementById(`branch${branch_id}`);
     if (!container) return;
@@ -75,7 +74,6 @@ function loadReports(branch_id, mode) {
         }
 
     if (branch_id === "all") {
-        console.log("Rendering All Branches summary ONLY (Branch Growth)");
 
         const tabContent = document.getElementById(`branch${branch_id}-${mode}`);
         if (!tabContent) return;
