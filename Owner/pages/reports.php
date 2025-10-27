@@ -100,7 +100,7 @@ $conn->close();
                                         </thead>
                                         <tbody id="declineTableBody<?= $branchId ?>-<?= $mode ?>"></tbody>
                                     </table>
-                                    <div class="branch-growth-chart">
+                                    <div class="branch-growth-chart-decline">
                                         <h4>Previous vs Current Count Distribution</h4>
                                         <button id="toggleDeclineChart<?= $branchId ?>-<?= $mode ?>" class="toggle-chart-btn">Switch to Bar Chart</button>
                                         <canvas id="declineChart<?= $branchId ?>-<?= $mode ?>"></canvas>

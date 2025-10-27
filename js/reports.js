@@ -56,31 +56,27 @@ function loadReports(branch_id, mode) {
             return;
         }
 
-        if (branch_id === "all") {
-            console.log("🧩 Rendering All Branches summary ONLY (Branch Growth)");
+    if (branch_id === "all") {
+        console.log("Rendering All Branches summary ONLY (Branch Growth)");
 
-            const tabContent = document.getElementById(`branch${branch_id}-${mode}`);
-            if (!tabContent) return;
+        const tabContent = document.getElementById(`branch${branch_id}-${mode}`);
+        if (!tabContent) return;
 
-            tabContent.querySelectorAll("tbody").forEach(tbody => tbody.innerHTML = "");
+        tabContent.querySelectorAll("tbody").forEach(tbody => tbody.innerHTML = "");
 
-            Object.keys(charts).forEach(key => {
-                if (key.includes(`branchGrowth${branch_id}-${mode}`) || key.includes(`decline${branch_id}-${mode}`)) {
-                    charts[key].destroy();
-                    delete charts[key];
-                }
-            });
-
-            renderBranchGrowthTable(branch_id, mode, data.branchGrowthData);if (mode === 'monthly') {
-                // Render comparison grouped chart when viewing monthly
-                renderBranchGrowthChart(branch_id, 'grouped', []);
-            } else {
-                renderBranchGrowthChart(branch_id, mode, data.branchGrowthData, 'bar');
+        Object.keys(charts).forEach(key => {
+            if (key.includes(`branchGrowth${branch_id}-${mode}`) || key.includes(`decline${branch_id}-${mode}`)) {
+                charts[key].destroy();
+                delete charts[key];
             }
-            renderDeclineTable(branch_id, mode, data.declineData);
-            renderDeclineChart(branch_id, mode, data.declineData, 'bar');
-            return; 
-        }
+        });
+
+        renderBranchGrowthTable(branch_id, mode, data.branchGrowthData);
+        renderBranchGrowthChart(branch_id, mode, data.branchGrowthChartData, 'bar');
+        renderDeclineTable(branch_id, mode, data.declineData);
+        renderDeclineChart(branch_id, mode, data.declineData, 'bar');
+        return;
+    }
 
         updateKPI(branch_id, mode, data.kpi);
 
@@ -141,158 +137,108 @@ function renderBranchGrowthTable(branch_id, mode, branchGrowthData) {
     });
 }
 
-function renderBranchGrowthChart(branch_id, mode, branchGrowthData, chartType = 'bar') {
+function renderBranchGrowthChart(branch_id, mode, branchGrowthChartData, chartType = 'bar') {
     const ctx = document.getElementById(`branchGrowthChart${branch_id}-${mode}`);
     const key = `branchGrowth${branch_id}-${mode}`;
-    if (!ctx) return;
-
-    // If you only want to render the grouped chart once (e.g., for "all" branch)
-    if (branch_id === "all" && mode === "grouped") {
-        renderGroupedBranchChart(branch_id);
+    
+    if (!ctx) {
+        console.error(`Canvas element not found: branchGrowthChart${branch_id}-${mode}`);
         return;
     }
+    
+    const parentContainer = ctx.parentElement;
+    if (parentContainer && !parentContainer.style.height) {
+        parentContainer.style.height = '350px'; 
+        parentContainer.style.position = 'relative';
+    }
 
-    if (!branchGrowthData || !branchGrowthData.length) return;
     if (charts[key]) {
         charts[key].destroy();
         delete charts[key];
     }
 
-    const labels = branchGrowthData.map(b => b.branch_name);
-    const data = branchGrowthData.map(b => b.revenue);
-    const bg = ['#3498db','#2ecc71','#e74c3c','#f39c12','#9b59b6','#1abc9c','#34495e','#e67e22','#95a5a6','#c0392b'].slice(0, data.length);
+    if (!branchGrowthChartData || !branchGrowthChartData.labels || !branchGrowthChartData.datasets) {
+        console.warn(`No data for Branch Growth Chart (${mode})`);
+        return;
+    }
+
+    const colorPalette = [
+        '#1abc9c', '#3498db', '#9b59b6', '#f1c40f',
+        '#e74c3c', '#2ecc71', '#34495e', '#16a085',
+        '#d35400', '#7f8c8d'
+    ];
+
+    const datasets = branchGrowthChartData.datasets.map((dataset, i) => ({
+        label: dataset.label,
+        data: dataset.data,
+        backgroundColor: colorPalette[i % colorPalette.length],
+        borderColor: '#fff',
+        borderWidth: 2,
+        borderRadius: 6
+    }));
+
+    let xLabel = 'Date';
+    if (mode === 'weekly') xLabel = 'Day of Week';
+    else if (mode === 'monthly') xLabel = 'Month';
 
     charts[key] = new Chart(ctx, {
         type: chartType,
         data: {
-            labels,
-            datasets: [{
-                label: `${mode.charAt(0).toUpperCase() + mode.slice(1)} Revenue`,
-                data,
-                backgroundColor: bg,
-                borderColor: '#fff',
-                borderWidth: 2,
-                borderRadius: 8
-            }]
+            labels: branchGrowthChartData.labels,
+            datasets: datasets
         },
         options: {
             responsive: true,
-            maintainAspectRatio: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
             scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: xLabel,
+                        font: { size: 13, weight: 'bold' },
+                        color: '#333'
+                    },
+                    ticks: {
+                        color: '#333',
+                        font: { size: 12, weight: 'bold' }
+                    }
+                },
                 y: {
                     beginAtZero: true,
-                    title: { display: true, text: 'Revenue (₱)' }
-                },
-                x: { title: { display: true, text: 'Branch' } }
+                    title: {
+                        display: true,
+                        text: 'Revenue (₱)',
+                        font: { size: 13, weight: 'bold' },
+                        color: '#333'
+                    },
+                    ticks: {
+                        callback: value => '₱' + value.toLocaleString('en-US')
+                    }
+                }
             },
             plugins: {
-                legend: { display: false },
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: '#333',
+                        font: { size: 12, weight: 'bold' },
+                        usePointStyle: true
+                    }
+                },
                 tooltip: {
                     callbacks: {
-                        label(ctx) {
-                            const i = ctx.dataIndex;
-                            const val = ctx.dataset.data[i];
-                            const pct = branchGrowthData[i].percentage;
-                            return `${ctx.label}: ₱${val.toLocaleString('en-US',{minimumFractionDigits:2})} (${pct}%)`;
+                        label: ctx => {
+                            const label = ctx.dataset.label || '';
+                            const value = ctx.parsed.y;
+                            return `${label}: ₱${value.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
                         }
-                    }
-                },
-                datalabels: {
-                    anchor: 'end',
-                    align: 'end',
-                    color: '#333',
-                    font: { weight: 'bold' },
-                    formatter(value) {
-                        return `₱${value.toLocaleString('en-US',{minimumFractionDigits:2})}`;
                     }
                 }
             }
-        },
-        plugins: [ChartDataLabels]
+        }
     });
 }
-
-function renderGroupedBranchChart(branch_id) {
-    const ctx = document.getElementById(`branchGrowthChart${branch_id}-grouped`);
-    if (!ctx) return;
-
-    // Fetch all 3 datasets in parallel
-    Promise.all([
-        fetch(`/Smile-ify/processes/fetch_Reports.php?branch_id=${branch_id}&mode=daily`).then(res => res.json()),
-        fetch(`/Smile-ify/processes/fetch_Reports.php?branch_id=${branch_id}&mode=weekly`).then(res => res.json()),
-        fetch(`/Smile-ify/processes/fetch_Reports.php?branch_id=${branch_id}&mode=monthly`).then(res => res.json())
-    ]).then(([daily, weekly, monthly]) => {
-        const labels = [...new Set([
-            ...daily.branchGrowthData.map(b => b.branch_name),
-            ...weekly.branchGrowthData.map(b => b.branch_name),
-            ...monthly.branchGrowthData.map(b => b.branch_name)
-        ])];
-
-        const colors = {
-            daily: '#3498db',
-            weekly: '#2ecc71',
-            monthly: '#f39c12'
-        };
-
-        const datasets = [
-            {
-                label: 'Daily',
-                backgroundColor: colors.daily,
-                data: labels.map(l => daily.branchGrowthData.find(b => b.branch_name === l)?.revenue || 0)
-            },
-            {
-                label: 'Weekly',
-                backgroundColor: colors.weekly,
-                data: labels.map(l => weekly.branchGrowthData.find(b => b.branch_name === l)?.revenue || 0)
-            },
-            {
-                label: 'Monthly',
-                backgroundColor: colors.monthly,
-                data: labels.map(l => monthly.branchGrowthData.find(b => b.branch_name === l)?.revenue || 0)
-            }
-        ];
-
-        const key = `branchGrowthGrouped-${branch_id}`;
-        if (charts[key]) charts[key].destroy();
-
-        charts[key] = new Chart(ctx, {
-            type: 'bar',
-            data: { labels, datasets },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: { display: true, text: 'Revenue (₱)' }
-                    },
-                    x: { title: { display: true, text: 'Branch' } }
-                },
-                plugins: {
-                    legend: { position: 'bottom' },
-                    tooltip: {
-                        callbacks: {
-                            label(ctx) {
-                                return `${ctx.dataset.label}: ₱${ctx.formattedValue}`;
-                            }
-                        }
-                    },
-                    datalabels: {
-                        anchor: 'end',
-                        align: 'end',
-                        color: '#333',
-                        font: { weight: 'bold' },
-                        formatter(value) {
-                            return `₱${value.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
-                        }
-                    }
-                }
-            },
-            plugins: [ChartDataLabels]
-        });
-    }).catch(err => console.error('Grouped chart fetch error:', err));
-}
-
 
 function renderDeclineTable(branch_id, mode, declineData) {
     const tbody = document.getElementById(`declineTableBody${branch_id}-${mode}`);

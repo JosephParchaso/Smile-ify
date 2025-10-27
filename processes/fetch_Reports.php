@@ -359,50 +359,153 @@ try {
         $avgRevPerPatient = (float) $row['avg_revenue_per_patient'];
     }
 
-    $branchGrowthData = [];
-    if ($_SESSION['role'] === 'owner') {
-        $sql = "
-        SELECT 
-            b.branch_id,
-            b.name AS branch_name,
-            COALESCE(SUM(dt.total), 0) AS revenue
-        FROM branch AS b
-        LEFT JOIN appointment_transaction AS at 
-            ON b.branch_id = at.branch_id
-        LEFT JOIN dental_transaction AS dt 
-            ON at.appointment_transaction_id = dt.appointment_transaction_id
-        WHERE b.status = 'active'
-        AND DATE(at.appointment_date) BETWEEN ? AND ?
-        AND at.status = 'Completed'
-        GROUP BY b.branch_id, b.name
-        ORDER BY revenue DESC";
+    $branchGrowthChartData = [];
+    if ($_SESSION['role'] === 'owner' && $branch_id === 'all') {
         
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ss", $startDate, $endDate);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        
-        $totalRevenue = 0;
-        $branches = [];
-        
-        while ($row = $result->fetch_assoc()) {
-            $branches[] = $row;
-            $totalRevenue += (float)$row['revenue'];
+        $branchesQuery = "SELECT branch_id, name FROM branch WHERE status = 'active' ORDER BY branch_id";
+        $branchesResult = $conn->query($branchesQuery);
+        $allBranches = [];
+        while ($b = $branchesResult->fetch_assoc()) {
+            $allBranches[] = $b;
         }
         
-        foreach ($branches as $branch) {
-            $revenue = (float)$branch['revenue'];
-            $percentage = $totalRevenue > 0 ? round(($revenue / $totalRevenue) * 100, 2) : 0;
+        if ($mode === 'daily') {
+            $labels = [date('Y-m-d')];
+            $datasets = [];
             
-            $branchGrowthData[] = [
-                'branch_id' => $branch['branch_id'],
-                'branch_name' => $branch['branch_name'],
-                'revenue' => $revenue,
-                'percentage' => $percentage
+            foreach ($allBranches as $branch) {
+                $sql = "SELECT COALESCE(SUM(dt.total), 0) AS revenue
+                        FROM appointment_transaction AS at
+                        LEFT JOIN dental_transaction AS dt ON at.appointment_transaction_id = dt.appointment_transaction_id
+                        WHERE at.branch_id = ? 
+                            AND DATE(at.appointment_date) = ?
+                            AND at.status = 'Completed'";
+                
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("is", $branch['branch_id'], $startDate);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $row = $result->fetch_assoc();
+                $revenue = (float)$row['revenue'];
+                $stmt->close();
+                
+                $datasets[] = [
+                    'label' => $branch['name'],
+                    'data' => [$revenue],
+                    'branch_id' => $branch['branch_id']
+                ];
+            }
+            
+            $branchGrowthChartData = [
+                'labels' => $labels,
+                'datasets' => $datasets
+            ];
+            
+        } elseif ($mode === 'weekly') {
+            $labels = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            $weekStart = date('Y-m-d', strtotime('monday this week'));
+            $datasets = [];
+            
+            foreach ($allBranches as $branch) {
+                $branchData = [];
+                
+                for ($i = 0; $i < 7; $i++) {
+                    $date = date('Y-m-d', strtotime($weekStart . " +$i days"));
+                    
+                    $sql = "SELECT COALESCE(SUM(dt.total), 0) AS revenue
+                            FROM appointment_transaction AS at
+                            LEFT JOIN dental_transaction AS dt ON at.appointment_transaction_id = dt.appointment_transaction_id
+                            WHERE at.branch_id = ? 
+                                AND DATE(at.appointment_date) = ?
+                                AND at.status = 'Completed'";
+                    
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("is", $branch['branch_id'], $date);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    $row = $result->fetch_assoc();
+                    $revenue = (float)$row['revenue'];
+                    $stmt->close();
+                    
+                    $branchData[] = $revenue;
+                }
+                
+                $datasets[] = [
+                    'label' => $branch['name'],
+                    'data' => $branchData,
+                    'branch_id' => $branch['branch_id']
+                ];
+            }
+            
+            $branchGrowthChartData = [
+                'labels' => $labels,
+                'datasets' => $datasets
+            ];
+            
+        } elseif ($mode === 'monthly') {
+            $currentYear = date('Y');
+            $labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            $datasets = [];
+            
+            foreach ($allBranches as $branch) {
+                $branchData = [];
+                
+                for ($month = 1; $month <= 12; $month++) {
+                    $monthStart = date("$currentYear-" . str_pad($month, 2, '0', STR_PAD_LEFT) . "-01");
+                    $monthEnd = date("Y-m-t", strtotime($monthStart));
+                    
+                    $sql = "SELECT COALESCE(SUM(dt.total), 0) AS revenue
+                            FROM appointment_transaction AS at
+                            LEFT JOIN dental_transaction AS dt ON at.appointment_transaction_id = dt.appointment_transaction_id
+                            WHERE at.branch_id = ? 
+                                AND DATE(at.appointment_date) BETWEEN ? AND ?
+                                AND at.status = 'Completed'";
+                    
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("iss", $branch['branch_id'], $monthStart, $monthEnd);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    $row = $result->fetch_assoc();
+                    $revenue = (float)$row['revenue'];
+                    $stmt->close();
+                    
+                    $branchData[] = $revenue;
+                }
+                
+                $datasets[] = [
+                    'label' => $branch['name'],
+                    'data' => $branchData,
+                    'branch_id' => $branch['branch_id']
+                ];
+            }
+            
+            $branchGrowthChartData = [
+                'labels' => $labels,
+                'datasets' => $datasets
             ];
         }
-        
-        $stmt->close();
+    }
+
+    $branchGrowthData = [];
+    $totalRevenue = 0;
+
+    // Compute total revenue
+    foreach ($branchGrowthChartData['datasets'] as $ds) {
+        // Sum values across labels (daily, weekly, monthly all work)
+        $branchRevenue = array_sum($ds['data']);
+        $totalRevenue += $branchRevenue;
+    }
+
+    // Build table rows with percentage contribution
+    foreach ($branchGrowthChartData['datasets'] as $ds) {
+        $branchRevenue = array_sum($ds['data']);
+        $percentage = $totalRevenue > 0 ? round(($branchRevenue / $totalRevenue) * 100, 2) : 0;
+
+        $branchGrowthData[] = [
+            'branch_name' => $ds['label'],
+            'revenue' => $branchRevenue,
+            'percentage' => $percentage
+        ];
     }
 
     $declineData = [];
@@ -739,6 +842,7 @@ try {
         'promosAvailed' => $promosAvailed,
         "patientMix" => $patientMix,
         "branchGrowthData" => $branchGrowthData,
+        "branchGrowthChartData" => $branchGrowthChartData,
         "declineData" => $declineData,
         "peakHours" => $peakHours
     ]);

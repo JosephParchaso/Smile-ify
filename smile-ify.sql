@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 24, 2025 at 09:49 PM
+-- Generation Time: Oct 27, 2025 at 08:13 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `smile-ify`
+-- Database: `smile_ify`
 --
 
 -- --------------------------------------------------------
@@ -854,17 +854,7 @@ INSERT INTO `dentist_service` (`dentist_services_id`, `dentist_id`, `service_id`
 (144, 5, 9),
 (145, 5, 10),
 (149, 3, 1),
-(150, 3, 2),
-(151, 9, 8),
-(152, 9, 1),
-(153, 9, 5),
-(154, 9, 3),
-(155, 9, 10),
-(156, 9, 6),
-(157, 9, 9),
-(158, 9, 4),
-(159, 9, 7),
-(160, 9, 2);
+(150, 3, 2);
 
 -- --------------------------------------------------------
 
@@ -1707,20 +1697,6 @@ ALTER TABLE `dentist_service`
 --
 ALTER TABLE `notifications`
   ADD CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
-
---
--- Constraints for table `service_supplies`
---
-ALTER TABLE `service_supplies`
-  ADD CONSTRAINT `fk_service_supplies_branch` FOREIGN KEY (`branch_id`) REFERENCES `branch` (`branch_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_service_supplies_service` FOREIGN KEY (`service_id`) REFERENCES `service` (`service_id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_service_supplies_supply` FOREIGN KEY (`supply_id`) REFERENCES `supply` (`supply_id`) ON DELETE CASCADE;
-
---
--- Constraints for table `users`
---
-ALTER TABLE `users`
-  ADD CONSTRAINT `fk_users_branch` FOREIGN KEY (`branch_id`) REFERENCES `branch` (`branch_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
