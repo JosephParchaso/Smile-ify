@@ -141,17 +141,8 @@ Form {
 
 
 
+==========================================================================================================================================================================================  
 ==========================================================================================================================================================================================
-
-Notes:
-gmail suspicious spams - sendgrid?
-
-dungan register/book different user  
-==========================================================================================================================================================================================
-
-Contact Fr. Peter for the database hosting 💖
-Minimum of 5 minutes for OTP time remaining expiration time 💖
-dungan register/book different user 💖
 
 Error on change password OTP Fix 👍
 Validation for the Date of Birth, so that it will not accept 0000 👍
@@ -213,13 +204,13 @@ Appointment History PATIENT & ADMIN: change 'manage' to 'view' 👍
 
 ADMIN/SECRETARY SIDE
 Upcoming Appointments: exclude tomorrow, instead this 'month'. 👍
-In the calendar, add buttons to separate the branches. remain the colors 
+In the calendar, add buttons to separate the branches. remain the colors 👍
 IF POSSIBLE: Pre selected branch in the book appointment. If not keri, its okay my love 👍
 Add 'ANNOUNCEMENT' in the profile page 👍
 
 OWNER SIDE
 remove 'change vs last month' 👍
-add 'ALL' tab in the report
+add 'ALL' tab in the report 👍
 add 'BRANCHES' in the profile 👍
 remove opening/closing time 👍
 
@@ -229,3 +220,8 @@ uppercase the first letter ex. Patient 👍
 ASK DURING CONSULTATION
 Ask if the services and promos are under admin or it should be under the owner since it involves MONEY? 
 and if retain: it should have a notification about the updates.
+gmail suspicious spams - sendgrid? brevo or google parin
+
+Contact Fr. Peter for the database hosting and server💖
+Minimum of 5 minutes for OTP time remaining expiration time 💖
+dungan register/book different user 💖
