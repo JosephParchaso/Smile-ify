@@ -65,7 +65,7 @@ require_once BASE_PATH . '/processes/load_notifications.php';
                             <?php foreach ($notifications as $n): ?>
                                 <li class="notif-item <?= $n['is_read'] ? '' : 'unread' ?>" data-id="<?= $n['notification_id'] ?>">
                                     <span class="notif-message"><?= htmlspecialchars($n['message']) ?></span>
-                                    <span class="notif-date"><?= date('M d, Y H:i', strtotime($n['created_at'])) ?></span>
+                                    <span class="notif-date"><?= date('M d, Y H:i', strtotime($n['date_created'])) ?></span>
                                 </li>
                             <?php endforeach; ?>
                         <?php endif; ?>

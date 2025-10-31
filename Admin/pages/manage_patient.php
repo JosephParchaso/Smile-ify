@@ -113,8 +113,87 @@ $backTab = $_GET['tab'] ?? 'recent';
     </div>
 </div>
 
+<div id="medCertModal" class="manage-patient-modal">
+    <div class="manage-patient-modal-content">
+        <h2>Medical Certificate</h2>
+
+        <form id="medCertForm" method="POST" action="<?= BASE_URL ?>/Admin/processes/manage_patient/upload_medcert.php" autocomplete="off">
+            <input type="hidden" name="dental_transaction_id" id="transactionIdInput">
+
+            <div id="receiptPreview" style="text-align:center; margin:15px 0; display:flex; justify-content:center;">
+                <img id="receiptImage" alt="Payment QR Code" style="width: 250px; height: 440px;">
+            </div>
+
+            <div class="form-group">
+                <input type="text" id="fitnessStatus" name="fitness_status" class="form-control" placeholder=" " required />
+                <label for="fitnessStatus" class="form-label">Fitness Status <span class="required">*</span></label>
+            </div>
+
+            <div class="form-group">
+                <input type="text" id="diagnosis" name="diagnosis" class="form-control" placeholder=" " required />
+                <label for="diagnosis" class="form-label">Diagnosis <span class="required">*</span></label>
+            </div>
+
+            <div class="form-group">
+                <textarea id="remarks" name="remarks" class="form-control" placeholder=" " required></textarea>
+                <label for="remarks" class="form-label">Remarks <span class="required">*</span></label>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="confirm-btn">Save</button>
+                <button type="button" class="cancel-btn" id="cancelMedCertRequest">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="imageModal" class="promo-modal">
+    <div class="promo-modal-content">
+        <img id="imageModalContent" src="" alt="Receipt Preview">
+    </div>
+</div>
+
 <script>
     const userId = "<?= htmlspecialchars($userId) ?>";
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const receiptImage = document.getElementById("receiptImage");
+        const imageModal = document.getElementById("imageModal");
+        const imageModalContent = document.getElementById("imageModalContent");
+
+        if (receiptImage) {
+            receiptImage.addEventListener("click", () => {
+                if (receiptImage.src) {
+                    imageModalContent.src = receiptImage.src;
+                    imageModal.style.display = "flex";
+                }
+            });
+        }
+
+        imageModalContent.addEventListener("click", (e) => {
+            e.stopPropagation();
+            imageModalContent.classList.toggle("zoomed");
+        });
+
+        imageModal.addEventListener("click", () => {
+            imageModal.style.display = "none";
+            imageModalContent.classList.remove("zoomed");
+        });
+    });
 </script>
+
+<style>
+#imageModalContent {
+    border-radius: 4px;
+    transition: transform 0.3s ease;
+    cursor: zoom-in;
+}
+
+#imageModalContent.zoomed {
+    transform: scale(1.5);
+    cursor: zoom-out;
+}
+
+</style>
 
 <?php require_once BASE_PATH . '/includes/footer.php'; ?>

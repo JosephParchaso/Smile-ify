@@ -340,7 +340,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 <div class="form-group">
                     <input type="file" id="signatureImage" name="signatureImage" class="form-control" accept="image/*" ${isEdit ? "" : "required"}>
-                    <label for="signatureImage" class="form-label">Signature Image <span class="required">*</span></label>
+                    <label for="signatureImage" class="form-label">Signature Image </label>
 
                     ${isEdit && data.signature_image 
                         ? `<div class="mt-2">

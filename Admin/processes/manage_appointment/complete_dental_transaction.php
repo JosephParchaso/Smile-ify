@@ -199,6 +199,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new Exception("Failed to update appointment: " . $stmt->error);
         $stmt->close();
 
+        $hasMedCert = false;
+
+        $checkServiceStmt = $conn->prepare("
+            SELECT s.name
+            FROM dental_transaction_services dts
+            JOIN service s ON s.service_id = dts.service_id
+            WHERE dts.dental_transaction_id = ?
+        ");
+        $checkServiceStmt->bind_param("i", $dentalTransactionId);
+        $checkServiceStmt->execute();
+        $serviceResult = $checkServiceStmt->get_result();
+
+        while ($service = $serviceResult->fetch_assoc()) {
+            if (stripos($service['name'], 'medical certificate') !== false) {
+                $hasMedCert = true;
+                break;
+            }
+        }
+        $checkServiceStmt->close();
+
+        $newMedCertStatus = $hasMedCert ? 'Eligible' : 'None';
+
+        $medCertStmt = $conn->prepare("
+            UPDATE dental_transaction
+            SET med_cert_status = ?, date_updated = NOW()
+            WHERE appointment_transaction_id = ?
+        ");
+        $medCertStmt->bind_param("si", $newMedCertStatus, $appointmentId);
+        $medCertStmt->execute();
+        $medCertStmt->close();
+
         $formattedDate = date("F j, Y", strtotime($row['appointment_date']));
         $formattedTime = date("g:i A", strtotime($row['appointment_time']));
         $message = "Your appointment ($formattedDate at $formattedTime) has been marked as completed. Thank you for visiting!";

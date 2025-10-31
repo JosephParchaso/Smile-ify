@@ -53,7 +53,7 @@ require_once BASE_PATH . '/Owner/includes/navbar.php';
                 <?php foreach (array_slice($notifications, 0, 3) as $n): ?>
                     <div class="announcement <?= $n['is_read'] ? '' : 'unread' ?>">
                         <div class="notif-message"><?= htmlspecialchars($n['message']) ?></div>
-                        <div class="notif-date"><?= date('M d, Y H:i', strtotime($n['created_at'])) ?></div>
+                        <div class="notif-date"><?= date('M d, Y H:i', strtotime($n['date_created'])) ?></div>
                     </div>
                 <?php endforeach; ?>
             <?php endif; ?>

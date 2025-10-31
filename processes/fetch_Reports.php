@@ -489,14 +489,11 @@ try {
     $branchGrowthData = [];
     $totalRevenue = 0;
 
-    // Compute total revenue
     foreach ($branchGrowthChartData['datasets'] as $ds) {
-        // Sum values across labels (daily, weekly, monthly all work)
         $branchRevenue = array_sum($ds['data']);
         $totalRevenue += $branchRevenue;
     }
 
-    // Build table rows with percentage contribution
     foreach ($branchGrowthChartData['datasets'] as $ds) {
         $branchRevenue = array_sum($ds['data']);
         $percentage = $totalRevenue > 0 ? round(($branchRevenue / $totalRevenue) * 100, 2) : 0;

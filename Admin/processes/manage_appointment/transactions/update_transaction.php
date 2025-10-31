@@ -20,9 +20,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $services = $_POST['appointmentServices'] ?? [];
     $quantities = $_POST['serviceQuantity'] ?? [];
 
+    $fitness_status = trim($_POST['fitness_status'] ?? '');
+    $diagnosis = trim($_POST['diagnosis'] ?? '');
+    $remarks = trim($_POST['remarks'] ?? '');
+
     try {
         $stmtCheck = $conn->prepare("
-            SELECT dentist_id, promo_id, payment_method, total, notes 
+            SELECT dentist_id, promo_id, payment_method, total, notes,
+                    fitness_status, diagnosis, remarks
             FROM dental_transaction 
             WHERE dental_transaction_id = ? AND appointment_transaction_id = ?
         ");
@@ -37,7 +42,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $existing['promo_id'] != $promo_id ||
             $existing['payment_method'] !== $payment_method ||
             $existing['total'] != $total_payment ||
-            trim($existing['notes']) !== $notes
+            trim($existing['notes']) !== $notes ||
+            trim($existing['fitness_status']) !== $fitness_status ||
+            trim($existing['diagnosis']) !== $diagnosis ||
+            trim($existing['remarks']) !== $remarks
         );
 
         if ($hasChanges) {
@@ -51,18 +59,24 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     payment_method = ?, 
                     total = ?, 
                     notes = ?, 
+                    fitness_status = ?,
+                    diagnosis = ?,
+                    remarks = ?,
                     admin_user_id = ?, 
                     date_updated = NOW()
                 WHERE dental_transaction_id = ? 
                 AND appointment_transaction_id = ?
             ");
             $stmt->bind_param(
-                "iisdssii",
+                "iisdsssiii",
                 $dentist_id,
                 $promo_id,
                 $payment_method,
                 $total_payment,
                 $notes,
+                $fitness_status,
+                $diagnosis,
+                $remarks,
                 $admin_user_id,
                 $dental_transaction_id,
                 $appointment_transaction_id

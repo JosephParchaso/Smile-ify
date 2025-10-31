@@ -24,7 +24,7 @@ Patients
 | Type                       | Example                            | Notation Style                             |
 | -------------------------- | ---------------------------------- | ------------------------------------------ |
 | **Table**                  | `users`, `order_items`             | snake\_case (lowercase, underscores)       |
-| **Column**                 | `email`, `user_name`, `created_at` | snake\_case                                |
+| **Column**                 | `email`, `user_name`, `date_created` | snake\_case                                |
 | **Primary Key**            | `id`                               | Usually `id` for primary key in each table |
 | **Foreign Key**            | `user_id`, `product_id`            | `table_singular_id`                        |
 | **Foreign Key Constraint** | `fk_user_id`, `fk_product_id`      | `fk_table_singular_id`                     |
@@ -216,6 +216,30 @@ remove opening/closing time 👍
 
 ROLE
 uppercase the first letter ex. Patient 👍
+
+patient can view dentists w/ pic
+prescription availabilty 1 year 👍
+upload qr on admin or owner? best owner
+medcert {
+    PATIENT
+    WALKIN, REQUEST FOR MEDCERT 👍
+
+    PATIENT 
+    ONLINE REQUEST PATIENT 👍
+    CHECK VALIDITY 7 DAYS - EXPIRED 👍
+    PAY VIA QR, UPLOAD RECEIPT, PENDING, 👍
+    NOTIFY ALL ADMINS IN THAT BRANCHES 👍
+
+    ADMINS
+    CHECK AND DISPLAY PAYMENT WITH 3 INPUTS
+    AFTER ISSUE MEDCERT, UPDATE TOTAL 
+    NOTIFY PATIENT 
+    
+    PATIENT
+    CHECK STATUS, DOWNLOAD MEDCERT, UPDATE STATUS
+    
+
+}
 
 ASK DURING CONSULTATION
 Ask if the services and promos are under admin or it should be under the owner since it involves MONEY? 

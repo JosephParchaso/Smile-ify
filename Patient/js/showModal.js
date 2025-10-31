@@ -59,6 +59,58 @@ document.addEventListener("DOMContentLoaded", () => {
                     } 
 
                     else if (type === "transaction") {
+
+                        // ===== MEDCERT VALIDITY =====
+                        let medCertButtonHtml = "";
+                        let medCertExpired = false;
+
+                        if (data.date_created) {
+                            const createdDate = new Date(data.date_created);
+                            const now = new Date();
+                            const diffDays = (now - createdDate) / (1000 * 60 * 60 * 24);
+                            medCertExpired = diffDays >= 3;
+                        }
+
+                        if (medCertExpired && data.med_cert_status !== 'Expired') {
+                            medCertButtonHtml = `<button class="confirm-btn expired-btn" disabled>Expired</button>`;
+                        } else {
+                            medCertButtonHtml =
+                                data.med_cert_status === 'None'
+                                    ? `<button class="confirm-btn" id="requestMedicalCertificate" data-id="${data.dental_transaction_id}">Request Medical Certificate</button>`
+                                    : data.med_cert_status === 'Requested'
+                                        ? `<button class="confirm-btn pending-btn" disabled>Pending</button>`
+                                        : data.med_cert_status === 'Eligible'
+                                            ? `<button class="confirm-btn" id="downloadMedicalCertificate">Download Medical Certificate</button>`
+                                            : data.med_cert_status === 'Issued'
+                                                ? `<button class="confirm-btn issued-btn" disabled>Issued</button>`
+                                                : data.med_cert_status === 'Expired'
+                                                    ? `<button class="confirm-btn expired-btn" disabled>Expired</button>`
+                                                    : '';
+                        }
+
+                        // ===== PRESCRIPTIONS VALIDITY =====
+                        let prescriptionButtonHtml = "";
+
+                        const hasPrescriptions = data.prescriptions && data.prescriptions.length > 0;
+
+                        let isExpired = false;
+                        if (data.date_created) {
+                            const createdDate = new Date(data.date_created);
+                            const now = new Date();
+                            const diffYears = (now - createdDate) / (1000 * 60 * 60 * 24 * 365);
+                            isExpired = diffYears >= 1;
+                        }
+
+                        if (!hasPrescriptions) {
+                            prescriptionButtonHtml = `<button class="confirm-btn" disabled>No Prescription Available</button>`;
+                        } else if (isExpired) {
+                            prescriptionButtonHtml = `<button class="confirm-btn expired-btn" disabled>Expired</button>`;
+                        } else if (data.prescription_downloaded == 0) {
+                            prescriptionButtonHtml = `<button class="confirm-btn" id="downloadPrescription">Download Prescription</button>`;
+                        } else {
+                            prescriptionButtonHtml = `<button class="confirm-btn" disabled>Already Downloaded</button>`;
+                        }
+
                         transactionBody.innerHTML = `
                             <div class="transaction-columns">
                                 <div class="transaction-section">
@@ -84,6 +136,10 @@ document.addEventListener("DOMContentLoaded", () => {
                                             ? new Date(data.date_created).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
                                             : '-'
                                     }</span></p>
+
+                                    <div class="button-group button-group-profile">
+                                        ${medCertButtonHtml}
+                                    </div>
                                 </div>
 
                                 <div class="transaction-section">
@@ -104,11 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                     <div id="prescriptionList"></div>
 
                                     <div class="button-group button-group-profile">
-                                        ${
-                                            data.prescription_downloaded == 0
-                                            ? `<button class="confirm-btn" id="downloadPrescription">Download Prescription</button>`
-                                            : `<button class="confirm-btn" disabled>Already Downloaded</button>`
-                                        }
+                                        ${prescriptionButtonHtml}
                                     </div>
                                 </div>
                             </div>
@@ -136,6 +188,210 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         document.getElementById("prescriptionList").innerHTML = prescriptionHtml;
                         transactionModal.style.display = "block";
+
+                        // ========= DOWNLOAD MEDICAL CERTIFICATE =========
+                        const medCertBtn = document.getElementById("downloadMedicalCertificate");
+                        if (medCertBtn) {
+                            medCertBtn.addEventListener("click", async () => {
+                                const { jsPDF } = window.jspdf;
+                                const doc = new jsPDF();
+
+                                async function getBase64ImageFromUrl(url) {
+                                    const res = await fetch(url);
+                                    const blob = await res.blob();
+                                    return new Promise((resolve, reject) => {
+                                        const reader = new FileReader();
+                                        reader.onloadend = () => resolve(reader.result);
+                                        reader.onerror = reject;
+                                        reader.readAsDataURL(blob);
+                                    });
+                                }
+
+                                const pageHeight = doc.internal.pageSize.getHeight();
+
+                                // ===== HEADER =====
+                                const logoUrl = `${BASE_URL}/images/logo/logo_default.png`;
+                                const logoBase64 = await getBase64ImageFromUrl(logoUrl);
+                                doc.addImage(logoBase64, "PNG", 10, 10, 50, 30);
+
+                                doc.setFont("helvetica", "bold");
+                                doc.setFontSize(14);
+                                doc.text("Arriesgado Dental Clinic", 105, 18, { align: "center" });
+
+                                const response = await fetch(`${BASE_URL}/Patient/processes/profile/get_branches.php`);
+                                const branchesData = await response.json();
+                                const branchesText = branchesData.branches ? branchesData.branches.join(" • ") : "-";
+
+                                doc.setFont("helvetica", "normal");
+                                doc.setFontSize(11);
+                                doc.text(branchesText, 105, 25, { align: "center" });
+                                doc.text("Contact Us: 09955446451", 105, 31, { align: "center" });
+                                doc.text("Smile-ify@gmail.com", 105, 37, { align: "center" });
+                                doc.text("Clinic Hours: 9AM - 3PM | Mon–Sun (All Branches)", 105, 43, { align: "center" });
+
+                                doc.line(10, 48, 200, 48);
+
+                                // ===== TITLE =====
+                                doc.setFont("helvetica", "bold");
+                                doc.setFontSize(18);
+                                doc.text("MEDICAL CERTIFICATE", 105, 60, { align: "center" });
+
+                                // ===== PATIENT INFO =====
+                                const patientFullName = `${data.patient_last_name}, ${data.patient_first_name} ${data.patient_middle_name ? data.patient_middle_name[0] + '.' : ''}`;
+                                let patientAge = "-";
+                                if (data.patient_dob) {
+                                    const dob = new Date(data.patient_dob);
+                                    const diff = Date.now() - dob.getTime();
+                                    patientAge = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25)) + " yrs";
+                                }
+
+                                const formattedDate = data.date_created
+                                    ? new Date(data.date_created).toLocaleDateString("en-US", {
+                                        year: "numeric",
+                                        month: "long",
+                                        day: "numeric"
+                                    })
+                                    : "-";
+
+                                let y = 80;
+                                doc.setFontSize(12);
+                                doc.setFont("helvetica", "normal");
+
+                                // ===== MAIN CERTIFICATE BODY =====
+                                doc.text(
+                                    `This is to certify that ${patientFullName}, aged ${patientAge}, was examined and treated at Arriesgado Dental Clinic on ${formattedDate}.`,
+                                    20, y, { maxWidth: 170, align: "justify" }
+                                );
+                                y += 20;
+
+                                // ===== DIAGNOSIS =====
+                                const diagnosis = data.diagnosis && data.diagnosis.trim() !== "" ? data.diagnosis : "Not specified.";
+                                doc.setFont("helvetica", "normal");
+                                doc.setFontSize(12);
+                                doc.text(
+                                    `The patient was diagnosed with ${diagnosis.toLowerCase()}.`,
+                                    20, y, { maxWidth: 170, align: "justify" }
+                                );
+                                y += 15;
+
+                                // ===== SERVICES / PROCEDURES =====
+                                let servicesText = "";
+                                if (data.services) {
+                                    let filtered = Array.isArray(data.services)
+                                        ? data.services
+                                            .map(s => s.service_name || s.name || s)
+                                            .filter(name => !/medical certificate/i.test(name)) // exclude "Medical Certificate"
+                                        : (data.services_text || data.services || "")
+                                            .split(",")
+                                            .filter(name => !/medical certificate/i.test(name.trim()));
+
+                                    if (filtered.length > 0) {
+                                        servicesText = filtered.join(", ");
+                                    }
+                                }
+
+                                if (servicesText) {
+                                    doc.text(
+                                        "The patient underwent the following dental procedure(s):",
+                                        20, y, { maxWidth: 170 }
+                                    );
+                                    y += 8;
+                                    const serviceLines = doc.splitTextToSize(servicesText, 160);
+                                    doc.text(serviceLines, 30, y);
+                                    y += serviceLines.length * 8 + 10;
+                                }
+
+                                // ===== FITNESS STATUS =====
+                                const fitness = data.fitness_status && data.fitness_status.trim() !== "" ? data.fitness_status : "Fit for dental procedures.";
+                                doc.setFont("helvetica", "bold");
+                                doc.text("Fitness Status:", 20, y);
+                                doc.setFont("helvetica", "normal");
+                                doc.text(fitness, 60, y);
+                                y += 10;
+
+                                // ===== REMARKS =====
+                                const remarks = data.remarks && data.remarks.trim() !== "" ? data.remarks : "No additional remarks.";
+                                doc.setFont("helvetica", "bold");
+                                doc.text("Remarks:", 20, y);
+                                doc.setFont("helvetica", "normal");
+                                doc.text(remarks, 60, y);
+                                y += 20;
+
+                                // ===== RECOMMENDATION =====
+                                doc.setFont("helvetica", "normal");
+                                doc.text(
+                                    "It is hereby recommended that the patient take adequate rest and avoid strenuous activity as advised by the attending dentist.",
+                                    20, y, { maxWidth: 170, align: "justify" }
+                                );
+                                y += 20;
+
+                                doc.text(
+                                    "This certificate is issued upon the patient’s request for whatever legal or personal purpose it may serve.",
+                                    20, y, { maxWidth: 170, align: "justify" }
+                                );
+                                y += 20;
+
+                                doc.text(
+                                    `Issued this ${formattedDate} at Arriesgado Dental Clinic.`,
+                                    20, y, { maxWidth: 170 }
+                                );
+
+                                // ===== SIGNATURE =====
+                                y += 25;
+                                if (data.signature_image) {
+                                    try {
+                                        const sigUrl = `${BASE_URL}/images/signatures/${data.signature_image}`;
+                                        const sigBase64 = await getBase64ImageFromUrl(sigUrl);
+                                        doc.addImage(sigBase64, "PNG", 130, y - 10, 50, 25);
+                                    } catch (err) {
+                                        console.warn("Signature not found", err);
+                                    }
+                                }
+
+                                doc.line(120, y + 20, 200, y + 20);
+                                const dentistFullName = `${data.dentist_last_name}, ${data.dentist_first_name} ${data.dentist_middle_name ? data.dentist_middle_name[0] + '.' : ''}`;
+                                doc.text("Dr. " + dentistFullName, 160, y + 30, { align: "center" });
+                                doc.text("License No: " + (data.license_number ?? "-"), 160, y + 38, { align: "center" });
+
+                                // ===== PAGE NUMBER =====
+                                const pageCount = doc.internal.getNumberOfPages();
+                                for (let i = 1; i <= pageCount; i++) {
+                                    doc.setPage(i);
+                                    doc.setFontSize(10);
+                                    doc.text(`Page ${i} of ${pageCount}`, 105, pageHeight - 10, { align: "center" });
+                                }
+
+                                // ===== SAVE FILE =====
+                                const safeName = (data.patient_last_name || "patient").replace(/\s+/g, "_");
+                                const safeDate = (data.date_created ? data.date_created.split(" ")[0] : "unknown");
+                                const fileName = `${safeName}_${safeDate}_medical_certificate.pdf`;
+                                doc.save(fileName);
+
+                                // ===== UPDATE STATUS TO ISSUED =====
+                                try {
+                                    const updateResponse = await fetch(`${BASE_URL}/Patient/processes/profile/update_medcert_status.php`, {
+                                        method: "POST",
+                                    headers: { "Content-Type": "application/json" },
+                                        body: JSON.stringify({
+                                            dental_transaction_id: data.dental_transaction_id,
+                                            new_status: "Issued"
+                                        })
+                                    });
+
+                                    const updateResult = await updateResponse.json();
+
+                                    if (updateResult.success) {
+                                        medCertBtn.textContent = "Issued";
+                                        medCertBtn.disabled = true;
+                                        medCertBtn.classList.add("issued-btn");
+                                    } else {
+                                        console.warn("Failed to update med cert status:", updateResult.error);
+                                    }
+                                } catch (error) {
+                                    console.error("Error updating med cert status:", error);
+                                }
+                            });
+                        }
 
                         // ========= DOWNLOAD PRESCRIPTION =========
                         const btn = document.getElementById("downloadPrescription");
@@ -367,4 +623,39 @@ document.addEventListener("DOMContentLoaded", () => {
             transactionModal.style.display = "none";
         }
     };
+
+    document.body.addEventListener("click", function(e) {
+        if (e.target && e.target.id === "requestMedicalCertificate") {
+            const medCertModal = document.getElementById("medCertModal");
+            const transactionId = e.target.getAttribute("data-id");
+            document.getElementById("transactionIdInput").value = transactionId;
+            medCertModal.style.display = "block";
+        }
+    });
+
+    function openMedCertModal(transactionId) {
+        const modal = document.getElementById("medCertModal");
+        const transactionInput = document.getElementById("transactionIdInput");
+
+        transactionInput.value = transactionId;
+        modal.style.display = "block";
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const cancelBtn = document.getElementById("cancelMedCertRequest");
+        const medCertModal = document.getElementById("medCertModal");
+
+        if (cancelBtn && medCertModal) {
+            cancelBtn.addEventListener("click", () => {
+                medCertModal.style.display = "none";
+            });
+        }
+    });
+
+    window.addEventListener("click", (e) => {
+        const medCertModal = document.getElementById("medCertModal");
+        if (e.target === medCertModal) {
+            medCertModal.style.display = "none";
+        }
+    });
 });

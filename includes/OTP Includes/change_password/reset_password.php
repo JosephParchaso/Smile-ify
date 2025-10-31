@@ -40,7 +40,7 @@ $cancelRedirect = $redirects[$role] ?? BASE_URL . '/Patient/pages/profile.php';
             <form action="<?= BASE_URL ?>/processes/OTP Processes/change_password/reset_password.php" method="POST">
                 <div class="form-group">
                     <input type="password" id="newPassword" name="new_password" class="form-control" placeholder=" " required autocomplete="off" 
-                        pattern="^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                        pattern="^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$"
                         title="Must contain at least 8 characters, including uppercase, lowercase, number, and special character"
                         onpaste="return false" />
                     <label for="newPassword" class="form-label">Enter Password <span class="required">*</span></label>
@@ -49,7 +49,7 @@ $cancelRedirect = $redirects[$role] ?? BASE_URL . '/Patient/pages/profile.php';
 
                 <div class="form-group">
                     <input type="password" id="confirmPassword" name="confirm_password" class="form-control" placeholder=" " required autocomplete="off" 
-                        pattern="^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                        pattern="^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$"
                         title="Must contain at least 8 characters, including uppercase, lowercase, number, and special character"
                         onpaste="return false" />
                     <label for="confirmPassword" class="form-label">Confirm Password <span class="required">*</span></label>

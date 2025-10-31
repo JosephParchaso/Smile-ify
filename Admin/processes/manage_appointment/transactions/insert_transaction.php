@@ -18,24 +18,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $quantities = $_POST['serviceQuantity'] ?? [];
     $total_payment = floatval($_POST['total_payment'] ?? 0);
     $payment_method = $_POST['payment_method'] ?? null;
+    
+    $fitness_status = trim($_POST['fitness_status'] ?? '');
+    $diagnosis = trim($_POST['diagnosis'] ?? '');
+    $remarks = trim($_POST['remarks'] ?? '');
 
     try {
         $conn->begin_transaction();
 
         $stmt = $conn->prepare("
             INSERT INTO dental_transaction (
-                appointment_transaction_id, dentist_id, promo_id, payment_method, total, notes, admin_user_id, date_created, date_updated
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+                appointment_transaction_id, dentist_id, promo_id, payment_method, total, notes,
+                admin_user_id, fitness_status, diagnosis, remarks, date_created, date_updated
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
         ");
         $stmt->bind_param(
-            "iiisdsi",
+            "iiisdsisss",
             $appointment_transaction_id,
             $dentist_id,
             $promo_id,
             $payment_method,
             $total_payment,
             $notes,
-            $admin_user_id
+            $admin_user_id,
+            $fitness_status,
+            $diagnosis,
+            $remarks
         );
         $stmt->execute();
 
@@ -56,7 +64,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $conn->commit();
-
         $_SESSION['updateSuccess'] = "Transaction added successfully!";
     } catch (Exception $e) {
         $conn->rollback();

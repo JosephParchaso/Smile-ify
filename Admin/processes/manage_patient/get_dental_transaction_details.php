@@ -21,13 +21,21 @@ if (!$transactionId || !is_numeric($transactionId)) {
 $sql = "
     SELECT 
         dt.dental_transaction_id,
-        dt.notes,
-        dt.payment_method,
-        dt.total,
-        dt.date_created,
-        dt.prescription_downloaded,
+        dt.appointment_transaction_id,
+        dt.dentist_id,
         dt.admin_user_id,
         dt.promo_id,
+        dt.payment_method,
+        dt.total,
+        dt.notes,
+        dt.med_cert_status,
+        dt.fitness_status,
+        dt.diagnosis,
+        dt.remarks,
+        dt.med_cert_requested_date,
+        dt.date_created,
+        dt.date_updated,
+        dt.prescription_downloaded,
 
         CONCAT(ua.first_name, ' ', ua.last_name) AS admin_name,
 
@@ -64,11 +72,16 @@ $sql = "
     FROM dental_transaction dt
     INNER JOIN appointment_transaction a 
         ON dt.appointment_transaction_id = a.appointment_transaction_id
-    LEFT JOIN branch b ON a.branch_id = b.branch_id
-    LEFT JOIN dentist d ON d.dentist_id = COALESCE(dt.dentist_id, a.dentist_id)
-    LEFT JOIN dental_vital dv ON dv.appointment_transaction_id = a.appointment_transaction_id
-    LEFT JOIN users u ON a.user_id = u.user_id
-    LEFT JOIN users ua ON ua.user_id = dt.admin_user_id
+    LEFT JOIN branch b 
+        ON a.branch_id = b.branch_id
+    LEFT JOIN dentist d 
+        ON d.dentist_id = COALESCE(dt.dentist_id, a.dentist_id)
+    LEFT JOIN dental_vital dv 
+        ON dv.appointment_transaction_id = a.appointment_transaction_id
+    LEFT JOIN users u 
+        ON a.user_id = u.user_id
+    LEFT JOIN users ua 
+        ON ua.user_id = dt.admin_user_id
     WHERE dt.dental_transaction_id = ?
     GROUP BY dt.dental_transaction_id
 ";

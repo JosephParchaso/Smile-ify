@@ -22,10 +22,16 @@ $sql = "
         dt.payment_method,
         dt.total,
         dt.notes,
+        dt.med_cert_status,
+        dt.fitness_status,
+        dt.diagnosis,
+        dt.remarks,
+        dt.med_cert_requested_date,
         dt.admin_user_id,
         dt.date_created,
         dt.date_updated,
-        CONCAT(u.first_name, ' ', u.last_name) AS recorded_by
+        CONCAT(u.first_name, ' ', u.last_name) AS recorded_by,
+        CASE WHEN DATE_ADD(dt.date_created, INTERVAL 7 DAY) >= NOW() THEN 1 ELSE 0 END AS med_cert_eligible
     FROM dental_transaction dt
     LEFT JOIN users u ON dt.admin_user_id = u.user_id
     WHERE dt.dental_transaction_id = ?
@@ -41,6 +47,7 @@ if ($result->num_rows === 0) {
 }
 
 $data = $result->fetch_assoc();
+$stmt->close();
 
 $servicesSql = "
     SELECT 
@@ -75,11 +82,18 @@ $response = [
     'payment_method' => $data['payment_method'] ?? '',
     'total' => (float)$data['total'],
     'notes' => $data['notes'] ?? '',
+    'med_cert_status' => $data['med_cert_status'],
+    'fitness_status' => $data['fitness_status'],
+    'diagnosis' => $data['diagnosis'],
+    'remarks' => $data['remarks'],
+    'med_cert_requested_date' => $data['med_cert_requested_date'],
     'admin_user_id' => (int)$data['admin_user_id'],
     'recorded_by' => $data['recorded_by'] ?? 'Unknown',
     'date_created' => $data['date_created'],
     'date_updated' => !empty($data['date_updated']) ? $data['date_updated'] : '-',
+    'med_cert_eligible' => (int)$data['med_cert_eligible'],
     'services' => $services
 ];
 
 echo json_encode($response);
+exit;

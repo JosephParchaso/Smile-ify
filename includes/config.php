@@ -80,9 +80,16 @@ if (!isset($_SESSION['tab_token'])) {
 }
 
 // ===== Define constants =====
-$baseUrl = (strpos($_SERVER['REQUEST_URI'], '/Smile-ify') !== false || $_SERVER['HTTP_HOST'] === 'localhost') ? '/Smile-ify' : '';
-define('BASE_URL', $baseUrl);
-define('BASE_PATH', $_SERVER['DOCUMENT_ROOT'] . BASE_URL);
+// $baseUrl = (strpos($_SERVER['REQUEST_URI'], '/Smile-ify') !== false || $_SERVER['HTTP_HOST'] === 'localhost') ? '/Smile-ify' : '';
+// define('BASE_URL', $baseUrl);
+// define('BASE_PATH', $_SERVER['DOCUMENT_ROOT'] . BASE_URL);
+$protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+$host = $_SERVER['HTTP_HOST'];
+$basePath = (strpos($_SERVER['REQUEST_URI'], '/Smile-ify') !== false || $host === 'localhost') ? '/Smile-ify' : '';
+
+define('BASE_URL', "$protocol://$host$basePath");
+define('BASE_PATH', $_SERVER['DOCUMENT_ROOT'] . $basePath);
+
 
 // ===== Session timeout =====
 $timeout_duration = 1800;

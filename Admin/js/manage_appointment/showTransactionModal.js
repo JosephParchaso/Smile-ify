@@ -86,6 +86,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                 </div>
 
+                <div id="medicalCertFields"></div>
+
                 <div class="form-group">
                     <select id="transactionPromo" class="form-control" name="promo_id">
                         <option value="" selected hidden>None</option>
@@ -157,11 +159,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const appointmentServiceIds = data?.appointment_service_ids || [];
         const appointmentDentistId = data?.dentist_id || window.appointmentDentistId || null;
         const effectiveBranchId = data?.branch_id || branchId;
+        const mcFields = modalBody.querySelector("#medicalCertFields");
 
         if (!isEdit) {
             loadServices(effectiveBranchId, servicesContainer, null, appointmentServiceIds, () => {
                 loadDentists(effectiveBranchId, appointmentServiceIds, dentistSelect, appointmentDentistId);
                 updateServicesSummary();
+                toggleMedicalCertFields();
             });
         } else {
             const selectedServices = data.services?.map(s => s.service_id) || [];
@@ -181,6 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 });
                 updateServicesSummary();
+                toggleMedicalCertFields();
             });
         }
         
@@ -199,6 +204,53 @@ document.addEventListener("DOMContentLoaded", () => {
             if (subtotalDisplay) subtotalDisplay.textContent = `₱${parseFloat(data.total).toFixed(2)}`;
             if (discountDisplay) discountDisplay.textContent = `₱0.00`;
             if (totalPaymentInput) totalPaymentInput.value = parseFloat(data.total).toFixed(2);
+            
+        }
+
+        function getMedicalCertCheckbox() {
+            return [...servicesContainer.querySelectorAll('input[type="checkbox"][name="appointmentServices[]"]')]
+                .find(cb => {
+                    const lbl = cb.closest("label")?.textContent?.toLowerCase() || "";
+                    return lbl.includes("certificate");
+                });
+        }
+
+        function toggleMedicalCertFields() {
+            const mcCheckbox = getMedicalCertCheckbox();
+
+            if (mcCheckbox && mcCheckbox.checked) {
+                const fitnessStatus = data?.fitness_status || "";
+                const diagnosis = data?.diagnosis || "";
+                const remarks = data?.remarks || "";
+
+                mcFields.innerHTML = `
+                    <div class="form-group">
+                        <input type="text" id="fitnessStatus" class="form-control" 
+                            name="fitness_status" placeholder=" " 
+                            value="${fitnessStatus}">
+                        <label for="fitnessStatus" class="form-label">
+                            Fitness Status <span class="required">*</span>
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" id="diagnosis" class="form-control" 
+                            name="diagnosis" placeholder=" " 
+                            value="${diagnosis}">
+                        <label for="diagnosis" class="form-label">
+                            Diagnosis <span class="required">*</span>
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <textarea id="remarks" class="form-control" 
+                                name="remarks" rows="2" placeholder=" ">${remarks}</textarea>
+                        <label for="remarks" class="form-label">Remarks</label>
+                    </div>
+                `;
+            } else {
+                mcFields.innerHTML = "";
+            }
         }
 
         document.body.addEventListener("input", e => {
@@ -206,6 +258,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 e.target.matches('input[name^="serviceQuantity"]') ||
                 e.target.matches('input[type="checkbox"][name="appointmentServices[]"]')
             ) {
+                toggleMedicalCertFields();
                 updateServicesSummary();
             }
         });
@@ -213,43 +266,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (promoSelect) {
             promoSelect.addEventListener("change", updateServicesSummary);
         }
-    }
-
-    function loadPromos(promoSelect, selectedId = null, branchId = null) {
-        $.ajax({
-            type: "GET",
-            url: `${BASE_URL}/processes/load_promos.php`,
-            data: { branch_id: branchId || window.branchId || null },
-            dataType: "json",
-            success: function (promos) {
-                promoSelect.innerHTML = '<option value="">None</option>';
-
-                promos.forEach(p => {
-                    const opt = document.createElement("option");
-                    opt.value = p.id;
-                    opt.dataset.discountType = p.discount_type;
-                    opt.dataset.discountValue = p.discount_value;
-
-                    let discountLabel = "";
-                    if (p.discount_type === "percent" || p.discount_type === "percentage") {
-                        discountLabel = ` (${parseFloat(p.discount_value).toFixed(2)}% OFF)`;
-                    } else if (p.discount_type === "fixed") {
-                        discountLabel = ` (₱${parseFloat(p.discount_value).toFixed(2)} OFF)`;
-                    }
-
-                    opt.textContent = `${p.name}${discountLabel}`;
-                    if (selectedId && selectedId == p.id) opt.selected = true;
-                    promoSelect.appendChild(opt);
-                });
-
-                promoSelect.addEventListener("change", updateServicesSummary);
-                updateServicesSummary();
-            },
-            error: function (xhr, status, error) {
-                console.error("Promo load failed:", status, error);
-                promoSelect.innerHTML = '<option disabled>Error loading promos</option>';
-            }
-        });
     }
 
     function updateServicesSummary() {
@@ -319,6 +335,43 @@ document.addEventListener("DOMContentLoaded", () => {
         if (totalPaymentInput) {
             totalPaymentInput.value = total.toFixed(2);
         }
+    }
+
+    function loadPromos(promoSelect, selectedId = null, branchId = null) {
+        $.ajax({
+            type: "GET",
+            url: `${BASE_URL}/processes/load_promos.php`,
+            data: { branch_id: branchId || window.branchId || null },
+            dataType: "json",
+            success: function (promos) {
+                promoSelect.innerHTML = '<option value="">None</option>';
+
+                promos.forEach(p => {
+                    const opt = document.createElement("option");
+                    opt.value = p.id;
+                    opt.dataset.discountType = p.discount_type;
+                    opt.dataset.discountValue = p.discount_value;
+
+                    let discountLabel = "";
+                    if (p.discount_type === "percent" || p.discount_type === "percentage") {
+                        discountLabel = ` (${parseFloat(p.discount_value).toFixed(2)}% OFF)`;
+                    } else if (p.discount_type === "fixed") {
+                        discountLabel = ` (₱${parseFloat(p.discount_value).toFixed(2)} OFF)`;
+                    }
+
+                    opt.textContent = `${p.name}${discountLabel}`;
+                    if (selectedId && selectedId == p.id) opt.selected = true;
+                    promoSelect.appendChild(opt);
+                });
+
+                promoSelect.addEventListener("change", updateServicesSummary);
+                updateServicesSummary();
+            },
+            error: function (xhr, status, error) {
+                console.error("Promo load failed:", status, error);
+                promoSelect.innerHTML = '<option disabled>Error loading promos</option>';
+            }
+        });
     }
 
     function loadDentists(branchId, serviceIds = [], dentistSelect, selectedId = null, preserveIfStillValid = false) {

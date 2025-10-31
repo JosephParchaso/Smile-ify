@@ -14,6 +14,14 @@ require_once BASE_PATH . '/includes/header.php';
 require_once BASE_PATH . '/Patient/includes/navbar.php';
 $updateSuccess = $_SESSION['updateSuccess'] ?? "";
 $updateError = $_SESSION['updateError'] ?? "";
+
+$expireSql = "
+    UPDATE dental_transaction
+    SET med_cert_status = 'Expired', date_updated = NOW()
+    WHERE med_cert_status NOT IN ('None')
+        AND DATEDIFF(NOW(), date_created) >= 3
+";
+$conn->query($expireSql);
 ?>
 <title>Profile</title>
 
@@ -115,6 +123,34 @@ $updateError = $_SESSION['updateError'] ?? "";
         <div id="transactionModalBody">
             <!-- Transaction info will be loaded here -->
         </div>
+    </div>
+</div>
+
+<div id="medCertModal" class="booking-modal" data-transaction-id="">
+    <div class="booking-modal-content">
+        <h2>Request Medical Certificate</h2>
+        <p>Please scan the QR code below to pay for the medical certificate fee.</p>
+
+        <div style="text-align: center; margin: 15px 0;">
+        <img src="<?= BASE_URL ?>/images/qr/qr_payment.jpg" alt="Payment QR Code" style="width: 210px; height: 300px;">
+        <p><strong>Amount:</strong> ₱150</p>
+        </div>
+
+        <form action="<?= BASE_URL ?>/Patient/processes/profile/upload_medcert_payment.php"
+            method="POST"
+            enctype="multipart/form-data"
+            id="medCertForm">
+
+        <input type="hidden" name="dental_transaction_id" id="transactionIdInput">
+
+        <label for="paymentReceipt" style="font-weight: bold;">Upload Payment Screenshot:</label>
+        <input type="file" id="paymentReceipt" name="payment_receipt" accept="image/*" required style="margin-top: 10px; width: 100%;">
+
+        <div class="button-group">
+            <button type="submit" class="confirm-btn">Submit</button>
+            <button type="button" class="cancel-btn" id="cancelMedCertRequest">Cancel</button>
+        </div>
+        </form>
     </div>
 </div>
 

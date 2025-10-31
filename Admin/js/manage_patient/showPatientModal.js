@@ -90,7 +90,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
                                 <div class="button-group button-group-profile">
                                     <button class="confirm-btn" id="downloadReceipt">Download Receipt</button>
-                                    <button class="confirm-btn" id="downloadMedicalCertificate">Download Medical Certificate</button>
+                                    ${
+                                        data.med_cert_status === 'None'
+                                            ? ''
+                                            : data.med_cert_status === 'Requested'
+                                                ? `<button class="confirm-btn issue-medcert-btn" id="issueMedicalCertificate" data-id="${data.dental_transaction_id}">Issue Medical Certificate</button>`
+                                                : data.med_cert_status === 'Eligible'
+                                                    ? `<button class="confirm-btn" id="downloadMedicalCertificate">Download Medical Certificate</button>`
+                                                    : data.med_cert_status === 'Issued'
+                                                        ? `<button class="confirm-btn issued-btn" disabled>Issued</button>`
+                                                        : data.med_cert_status === 'Expired'
+                                                            ? `<button class="confirm-btn expired-btn" disabled>Expired</button>`
+                                                            : ''
+                                    }
                                 </div>
                             </div>
 
@@ -468,39 +480,76 @@ document.addEventListener("DOMContentLoaded", () => {
                             doc.setFontSize(12);
                             doc.setFont("helvetica", "normal");
 
+                            // ===== MAIN CERTIFICATE BODY =====
                             doc.text(
-                                `This is to certify that ${patientFullName}, aged ${patientAge}, was seen and treated at Arriesgado Dental Clinic on ${formattedDate}.`,
+                                `This is to certify that ${patientFullName}, aged ${patientAge}, was examined and treated at Arriesgado Dental Clinic on ${formattedDate}.`,
                                 20, y, { maxWidth: 170, align: "justify" }
                             );
                             y += 20;
 
+                            // ===== DIAGNOSIS =====
+                            const diagnosis = data.diagnosis && data.diagnosis.trim() !== "" ? data.diagnosis : "Not specified.";
+                            doc.setFont("helvetica", "normal");
+                            doc.setFontSize(12);
                             doc.text(
-                                "The patient underwent the following dental procedure(s):",
-                                20, y, { maxWidth: 170 }
+                                `The patient was diagnosed with ${diagnosis.toLowerCase()}.`,
+                                20, y, { maxWidth: 170, align: "justify" }
                             );
-                            y += 8;
+                            y += 15;
 
+                            // ===== SERVICES / PROCEDURES =====
+                            let servicesText = "";
                             if (data.services) {
-                                const servicesList = Array.isArray(data.services)
-                                    ? data.services.map(s => s.service_name || s.name || s).join(", ")
-                                    : data.services_text || data.services;
-                                const serviceLines = doc.splitTextToSize(servicesList, 160);
-                                doc.text(serviceLines, 30, y);
-                                y += serviceLines.length * 8;
-                            } else {
-                                doc.text("-", 30, y);
-                                y += 8;
+                                let filtered = Array.isArray(data.services)
+                                    ? data.services
+                                        .map(s => s.service_name || s.name || s)
+                                        .filter(name => !/medical certificate/i.test(name)) // exclude "Medical Certificate"
+                                    : (data.services_text || data.services || "")
+                                        .split(",")
+                                        .filter(name => !/medical certificate/i.test(name.trim()));
+
+                                if (filtered.length > 0) {
+                                    servicesText = filtered.join(", ");
+                                }
                             }
 
-                            y += 12;
+                            if (servicesText) {
+                                doc.text(
+                                    "The patient underwent the following dental procedure(s):",
+                                    20, y, { maxWidth: 170 }
+                                );
+                                y += 8;
+                                const serviceLines = doc.splitTextToSize(servicesText, 160);
+                                doc.text(serviceLines, 30, y);
+                                y += serviceLines.length * 8 + 10;
+                            }
+
+                            // ===== FITNESS STATUS =====
+                            const fitness = data.fitness_status && data.fitness_status.trim() !== "" ? data.fitness_status : "Fit for dental procedures.";
+                            doc.setFont("helvetica", "bold");
+                            doc.text("Fitness Status:", 20, y);
+                            doc.setFont("helvetica", "normal");
+                            doc.text(fitness, 60, y);
+                            y += 10;
+
+                            // ===== REMARKS =====
+                            const remarks = data.remarks && data.remarks.trim() !== "" ? data.remarks : "No additional remarks.";
+                            doc.setFont("helvetica", "bold");
+                            doc.text("Remarks:", 20, y);
+                            doc.setFont("helvetica", "normal");
+                            doc.text(remarks, 60, y);
+                            y += 20;
+
+                            // ===== RECOMMENDATION =====
+                            doc.setFont("helvetica", "normal");
                             doc.text(
-                                "It is hereby recommended that the patient take adequate rest for at least one to two (1–2) days and refrain from engaging in any strenuous activities during recovery.",
+                                "It is hereby recommended that the patient take adequate rest and avoid strenuous activity as advised by the attending dentist.",
                                 20, y, { maxWidth: 170, align: "justify" }
                             );
                             y += 20;
 
                             doc.text(
-                                "This medical certificate is issued upon the patient’s request for whatever legal or personal purpose it may serve.",
+                                "This certificate is issued upon the patient’s request for whatever legal or personal purpose it may serve.",
                                 20, y, { maxWidth: 170, align: "justify" }
                             );
                             y += 20;
@@ -540,6 +589,30 @@ document.addEventListener("DOMContentLoaded", () => {
                             const safeDate = (data.date_created ? data.date_created.split(" ")[0] : "unknown");
                             const fileName = `${safeName}_${safeDate}_medical_certificate.pdf`;
                             doc.save(fileName);
+
+                            // ===== UPDATE STATUS TO ISSUED =====
+                            try {
+                                const updateResponse = await fetch(`${BASE_URL}/Admin/processes/manage_patient/update_medcert_status.php`, {
+                                    method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                    body: JSON.stringify({
+                                        dental_transaction_id: data.dental_transaction_id,
+                                        new_status: "Issued"
+                                    })
+                                });
+
+                                const updateResult = await updateResponse.json();
+
+                                if (updateResult.success) {
+                                    medCertBtn.textContent = "Issued";
+                                    medCertBtn.disabled = true;
+                                    medCertBtn.classList.add("issued-btn");
+                                } else {
+                                    console.warn("Failed to update med cert status:", updateResult.error);
+                                }
+                            } catch (error) {
+                                console.error("Error updating med cert status:", error);
+                            }
                         });
                     }
 
@@ -764,4 +837,60 @@ document.addEventListener("DOMContentLoaded", () => {
             transactionModal.style.display = "none";
         }
     };
+
+    document.body.addEventListener("click", async function (e) {
+        if (e.target && e.target.id === "issueMedicalCertificate") {
+            const medCertModal = document.getElementById("medCertModal");
+            const transactionId = e.target.getAttribute("data-id");
+            const transactionInput = document.getElementById("transactionIdInput");
+            const receiptImage = document.getElementById("receiptImage");
+
+            if (transactionInput) {
+                transactionInput.value = transactionId;
+            }
+
+            fetch(`${BASE_URL}/Admin/processes/manage_patient/get_medcert_details.php?id=${transactionId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        if (data.medcert_receipt) {
+                            receiptImage.src = `${BASE_URL}${data.medcert_receipt}`;
+                            receiptImage.style.display = "block";
+                        } else {
+                            receiptImage.style.display = "none";
+                        }
+
+                        document.getElementById("fitnessStatus").value = data.fitness_status || "";
+                        document.getElementById("diagnosis").value = data.diagnosis || "";
+                        document.getElementById("remarks").value = data.remarks || "";
+                    } else {
+                        receiptImage.style.display = "none";
+                        console.warn("No med cert details found:", data.error);
+                    }
+                })
+                .catch(err => console.error("Error loading med cert details:", err));
+
+            if (medCertModal) {
+                medCertModal.style.display = "block";
+            }
+        }
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const cancelBtn = document.getElementById("cancelMedCertRequest");
+        const medCertModal = document.getElementById("medCertModal");
+
+        if (cancelBtn && medCertModal) {
+            cancelBtn.addEventListener("click", () => {
+                medCertModal.style.display = "none";
+            });
+        }
+    });
+
+    window.addEventListener("click", (e) => {
+        const medCertModal = document.getElementById("medCertModal");
+        if (e.target === medCertModal) {
+            medCertModal.style.display = "none";
+        }
+    });
 });

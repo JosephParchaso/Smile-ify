@@ -45,6 +45,11 @@ $sql = "
         dt.date_created,
         dt.prescription_downloaded,
 
+        dt.med_cert_status,
+        dt.diagnosis,
+        dt.fitness_status,
+        dt.remarks,
+
         dv.body_temp,
         dv.pulse_rate,
         dv.respiratory_rate,
