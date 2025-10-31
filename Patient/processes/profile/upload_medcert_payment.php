@@ -103,8 +103,9 @@ if (move_uploaded_file($fileTmpPath, $targetPath)) {
 
     $updateSql = "
         UPDATE dental_transaction
-        SET med_cert_status = 'Requested',
+        SET medcert_status = 'Requested',
             medcert_receipt = ?,
+            medcert_requested_date = NOW(),
             date_updated = NOW()
         WHERE dental_transaction_id = ?
     ";

@@ -28,7 +28,7 @@ if (!in_array($newStatus, $allowedStatuses)) {
 }
 
 $sql = "UPDATE dental_transaction 
-        SET med_cert_status = ?, date_updated = NOW() 
+        SET medcert_status = ?, date_updated = NOW() 
         WHERE dental_transaction_id = ?";
 
 $stmt = $conn->prepare($sql);

@@ -223,7 +223,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $medCertStmt = $conn->prepare("
             UPDATE dental_transaction
-            SET med_cert_status = ?, date_updated = NOW()
+            SET medcert_status = ?, date_updated = NOW()
             WHERE appointment_transaction_id = ?
         ");
         $medCertStmt->bind_param("si", $newMedCertStatus, $appointmentId);

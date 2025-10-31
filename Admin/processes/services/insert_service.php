@@ -40,6 +40,36 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $stmt2->execute();
             $stmt2->close();
 
+            $branch_name = "";
+            $branchQuery = $conn->prepare("SELECT name FROM branch WHERE branch_id = ?");
+            $branchQuery->bind_param("i", $branch_id);
+            $branchQuery->execute();
+            $branchResult = $branchQuery->get_result();
+            if ($branchResult->num_rows > 0) {
+                $branchRow = $branchResult->fetch_assoc();
+                $branch_name = $branchRow['name'];
+            }
+            $branchQuery->close();
+
+            $notif_message = "A new service '" . htmlspecialchars($name) . "' has been added in " . htmlspecialchars($branch_name) . ".";
+
+            $getOwners = $conn->prepare("SELECT user_id FROM users WHERE role = 'owner' AND status = 'Active'");
+            $getOwners->execute();
+            $ownersResult = $getOwners->get_result();
+
+            if ($ownersResult->num_rows > 0) {
+                $notifSQL = "INSERT INTO notifications (user_id, message, is_read, date_created) VALUES (?, ?, 0, NOW())";
+                $notifStmt = $conn->prepare($notifSQL);
+
+                while ($owner = $ownersResult->fetch_assoc()) {
+                    $notifStmt->bind_param("is", $owner['user_id'], $notif_message);
+                    $notifStmt->execute();
+                }
+
+                $notifStmt->close();
+            }
+            $getOwners->close();
+
             $_SESSION['updateSuccess'] = "Service added successfully!";
         } else {
             $_SESSION['updateError'] = "Failed to add service: " . $stmt->error;

@@ -141,7 +141,6 @@ $backTab = $_GET['tab'] ?? 'recent';
 
             <div class="button-group">
                 <button type="submit" class="confirm-btn">Save</button>
-                <button type="button" class="cancel-btn" id="cancelMedCertRequest">Cancel</button>
             </div>
         </form>
     </div>
@@ -150,6 +149,12 @@ $backTab = $_GET['tab'] ?? 'recent';
 <div id="imageModal" class="promo-modal">
     <div class="promo-modal-content">
         <img id="imageModalContent" src="" alt="Receipt Preview">
+    </div>
+</div>
+
+<div id="medCertReceiptModal" class="booking-modal">
+    <div class="booking-modal-content" id="medCertReceiptBody">
+        <!-- Receipt will be loaded dynamically -->
     </div>
 </div>
 
@@ -179,6 +184,14 @@ $backTab = $_GET['tab'] ?? 'recent';
             imageModal.style.display = "none";
             imageModalContent.classList.remove("zoomed");
         });
+    });
+    
+    function closeMedCertReceiptModal() {
+        document.getElementById("medCertReceiptModal").style.display = "none";
+    }
+    document.addEventListener("click", (e) => {
+        const modal = document.getElementById("medCertReceiptModal");
+        if (e.target === modal) closeMedCertReceiptModal();
     });
 </script>
 

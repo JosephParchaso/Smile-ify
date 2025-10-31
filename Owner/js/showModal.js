@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.body.addEventListener("change", function (e) {
         const todayDate = new Date();
-        todayDate.setDate(today.getDate() + 1);
+        todayDate.setDate(todayDate.getDate() + 1);
 
         if (e.target && e.target.id === "dateofBirth") {
             const dobInput = e.target;
@@ -266,6 +266,26 @@ document.addEventListener("DOMContentLoaded", () => {
             <form id="dentistForm" action="${BASE_URL}/Owner/processes/employees/${isEdit ? "update_dentist.php" : "insert_dentist.php"}" method="POST" enctype="multipart/form-data" autocomplete="off">
                 ${isEdit ? `<input type="hidden" name="dentist_id" value="${data.dentist_id}">` : ""}
 
+                <div class="form-group" style="position: relative; margin-bottom: 18px;">
+                    <input type="file" id="profileImage" name="profileImage" class="form-control" accept="image/*" ${isEdit ? "" : "required"}>
+                    <label for="profileImage" class="form-label" style="display: block; margin-top: 6px; margin-bottom: 4px;">Profile Picture </label>
+                    
+                    ${isEdit && data.profile_image 
+                        ? `<div class="mt-2" style="margin-top: 6px;">
+                                <p style="margin-bottom: 4px;">Current Profile Picture:</p>
+                                <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px;">
+                                    <img src="${BASE_URL}/images/dentists/${data.profile_image}" alt="Profile Image"
+                                        style="max-width:150px; border:1px solid #ccc; padding:4px; border-radius:6px; margin-bottom: 6px;">
+                                    <button type="button" class="confirm-btn"
+                                        style="width:150px; margin-top:4px;"
+                                        onclick="clearImage('profileImage', 'profileCleared')">Remove</button>
+                                </div>
+                                <input type="hidden" name="profileCleared" id="profileCleared" value="0">
+                        </div>`
+                        : ""
+                    }
+                </div>
+
                 <div class="form-group">
                     <input type="text" id="lastName" name="lastName" class="form-control"
                         value="${isEdit ? data.last_name : ""}" required placeholder=" " autocomplete="off">
@@ -338,15 +358,22 @@ document.addEventListener("DOMContentLoaded", () => {
                     <label for="status" class="form-label">Status <span class="required">*</span></label>
                 </div>
 
-                <div class="form-group">
-                    <input type="file" id="signatureImage" name="signatureImage" class="form-control" accept="image/*" ${isEdit ? "" : "required"}>
-                    <label for="signatureImage" class="form-label">Signature Image </label>
+                <div class="form-group" style="position: relative; margin-bottom: 18px;">
+                    <input type="file" id="signatureImage" name="signatureImage" class="form-control" accept="image/*">
+                    <label for="signatureImage" class="form-label" style="display: block; margin-top: 6px; margin-bottom: 4px;">Signature Image </label>
 
                     ${isEdit && data.signature_image 
-                        ? `<div class="mt-2">
-                                <p>Current Signature:</p>
-                                <img src="${BASE_URL}/images/signatures/${data.signature_image}" alt="Signature" style="max-width:150px; border:1px solid #ccc; padding:4px; border-radius:6px;">
-                        </div>` 
+                        ? `<div class="mt-2" style="margin-top: 6px;">
+                                <p style="margin-bottom: 4px;">Current Signature:</p>
+                                <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px;">
+                                    <img src="${BASE_URL}/images/signatures/${data.signature_image}" alt="Signature"
+                                        style="max-width:150px; border:1px solid #ccc; padding:4px; border-radius:6px; margin-bottom: 6px;">
+                                    <button type="button" class="confirm-btn"
+                                        style="width:150px; margin:4px 0px 10px 0px;"
+                                        onclick="clearImage('signatureImage', 'signatureCleared')">Remove</button>
+                                </div>
+                                <input type="hidden" name="signatureCleared" id="signatureCleared" value="0">
+                        </div>`
                         : ""
                     }
                 </div>
@@ -448,4 +475,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function closeEmployeeModal() {
     document.getElementById("manageModal").style.display = "none";
+}
+
+function clearImage(inputId, hiddenId) {
+    const input = document.getElementById(inputId);
+    const hidden = document.getElementById(hiddenId);
+
+    if (input) input.value = "";
+    if (hidden) hidden.value = "1";
+
+    const imgPreview = input.closest(".form-group").querySelector("img");
+    if (imgPreview) imgPreview.remove();
+
+    const btn = input.closest(".form-group").querySelector("button");
+    if (btn) btn.remove();
 }

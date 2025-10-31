@@ -40,11 +40,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $query = "
         UPDATE dental_transaction
-        SET fitness_status   = ?,
-            diagnosis        = ?,
-            remarks          = ?,
-            med_cert_status  = 'Eligible',
-            date_updated     = NOW()
+        SET fitness_status         = ?,
+            diagnosis              = ?,
+            remarks                = ?,
+            medcert_status         = 'Eligible',
+            medcert_requested_date = NOW(),
+            medcert_payment        = 150,
+            date_updated           = NOW()
         WHERE dental_transaction_id = ?
     ";
     $stmt = $conn->prepare($query);

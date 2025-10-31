@@ -169,6 +169,19 @@ document.addEventListener("DOMContentLoaded", () => {
                     <label for="dateUpdated" class="form-label">Last Update</label>
                 </div>` : ""}
 
+                <div class="form-group">
+                    <label class="confirmation-label">
+                        <input type="checkbox" id="confirmationCheck" required>
+                        I hereby confirm that all information provided above is true and accurate. <br>
+                        I understand that any updates made — including changes to promo details, discounts, or validity dates —
+                        may affect active promotions or patient offers. I take responsibility to ensure that 
+                        the <strong>Owner</strong> is notified about these changes.
+                    </label>
+                    <span id="confirmError" class="error-msg" style="display:none; color:red; font-size:0.9em;">
+                        Please confirm before proceeding.
+                    </span>
+                </div>
+
                 <div class="button-group button-group-profile">
                     <button type="submit" class="form-button confirm-btn">${isEdit ? "Save Changes" : "Add Promo"}</button>
                     <button type="button" class="form-button cancel-btn" onclick="closePromoModal()">Cancel</button>

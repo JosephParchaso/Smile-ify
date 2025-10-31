@@ -116,6 +116,7 @@ if (isset($_SESSION['user_id'])) {
         <script src="<?= BASE_URL ?>/Patient/js/loadProfileDetails.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Patient/js/loadAppointments.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Patient/js/loadTransactions.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Patient/js/loadDentists.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Patient/js/showModal.js?v=<?= time(); ?>"></script>
     <?php endif; ?>
 

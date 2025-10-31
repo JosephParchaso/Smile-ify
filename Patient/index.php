@@ -29,26 +29,23 @@ require_once BASE_PATH . '/Patient/includes/navbar.php';
         <div class="top-section">
             <div class="welcome">
                 <h1>
-    👋 Welcome, 
-    <?php
-        $prefix = '';
-        if (isset($_SESSION['gender'])) {
-            $gender = strtolower($_SESSION['gender']);
-            $prefix = ($gender === 'male') ? 'Mr.' : (($gender === 'female') ? 'Ms.' : '');
-        }
+                    👋 Welcome, 
+                    <?php
+                        $prefix = '';
+                        if (isset($_SESSION['gender'])) {
+                            $gender = strtolower($_SESSION['gender']);
+                            $prefix = ($gender === 'male') ? 'Mr.' : (($gender === 'female') ? 'Ms.' : '');
+                        }
 
-        // Always define a default value first
-        $fullName = htmlspecialchars($_SESSION['username'] ?? 'User');
+                        $fullName = htmlspecialchars($_SESSION['username'] ?? 'User');
 
-        // Replace with full name if available
-        if (!empty($_SESSION['first_name']) && !empty($_SESSION['last_name'])) {
-            $fullName = htmlspecialchars($_SESSION['first_name'] . ' ' . $_SESSION['last_name']);
-        }
+                        if (!empty($_SESSION['first_name']) && !empty($_SESSION['last_name'])) {
+                            $fullName = htmlspecialchars($_SESSION['first_name'] . ' ' . $_SESSION['last_name']);
+                        }
 
-        echo trim("$prefix $fullName!") ;
-    ?>
-</h1>
-
+                        echo trim("$prefix $fullName!") ;
+                    ?>
+                </h1>
             </div>
 
             <div class="promos swiper promo-slider">
@@ -88,6 +85,7 @@ require_once BASE_PATH . '/Patient/includes/navbar.php';
                 <h2><span class="material-symbols-outlined">bolt</span> Quick Links</h2>
                 <div class="quick-links">
                     <a href="#" onclick="openBookingModal()"><span class="material-symbols-outlined">calendar_add_on</span> Book Appointment</a>
+                    <a href="#" onclick="openDentistsModal()"><span class="material-symbols-outlined">medical_information</span> View Dentists</a>
                     <a href="<?= BASE_URL ?>/Patient/pages/profile.php"><span class="material-symbols-outlined">manage_accounts</span> Profile Settings</a><br>
                     <a href="#" onclick="openEducationalModal()"><span class="material-symbols-outlined">info</span> About</a>
                 </div>
@@ -176,6 +174,21 @@ require_once BASE_PATH . '/Patient/includes/navbar.php';
 
     <div id="educationalModal" class="educational-modal">
         <div class="educational-modal-content" id="educationalModalContent">
+        </div>
+    </div>
+
+    <div id="dentistsModal" class="booking-modal">
+        <div class="booking-modal-content">
+            <h2>Available Dentists</h2>
+            <p>Below is the list of dentists, their assigned branches, and services.</p>
+
+            <div id="dentistsContainer" style="max-height: 400px; overflow-y: auto;">
+                <p>Loading dentists...</p>
+            </div>
+
+            <div class="button-group">
+                <button type="button" class="cancel-btn" onclick="closeDentistsModal()">Close</button>
+            </div>
         </div>
     </div>
 

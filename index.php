@@ -241,6 +241,27 @@ if (isset($_SESSION['timeoutError'])) {
         </div>
     </div>
 
+    <div class="center-button">
+        <a href="#" onclick="openDentistsModal()" class="educational-button">
+            Available Dentists
+        </a>
+    </div>
+
+    <div id="dentistsModal" class="booking-modal">
+        <div class="booking-modal-content">
+            <h2>Available Dentists</h2>
+            <p>Below is the list of dentists, their assigned branches, and services.</p>
+
+            <div id="dentistsContainer" style="max-height: 400px; overflow-y: auto;">
+                <p>Loading dentists...</p>
+            </div>
+
+            <div class="button-group">
+                <button type="button" class="cancel-btn" onclick="closeDentistsModal()">Close</button>
+            </div>
+        </div>
+    </div>
+                    
     <div class="welcome-container">
         <div class="welcome-text">We are open and welcoming, Patients!</div>
     </div>

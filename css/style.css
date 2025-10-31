@@ -1006,6 +1006,54 @@ form {
     padding: 10px;
 }
 
+.dentist-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+}
+
+.dentist-photo {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+}
+
+.dentist-info {
+    flex: 1;
+}
+
+.dentist-info h3 {
+    margin: 0 0 8px 0;
+    font-weight: 600;
+}
+
+.dentist-details p {
+    display: flex;
+    margin: 2px 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.dentist-details p span {
+    width: 90px;
+    font-weight: 600;
+    color: #333;
+    flex-shrink: 0;
+}
+
+.center-button {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
 .carousel-container {
     overflow-x: auto;
     white-space: nowrap;

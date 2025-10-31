@@ -63,71 +63,101 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     try {
-    $checkSql = "SELECT p.name, p.description, p.discount_type, p.discount_value, p.image_path,
-                        bp.status, bp.start_date, bp.end_date
-                    FROM promo p
-                    JOIN branch_promo bp ON p.promo_id = bp.promo_id
-                    WHERE p.promo_id = ? AND bp.branch_id = ?";
-    $checkStmt = $conn->prepare($checkSql);
-    $checkStmt->bind_param("ii", $promo_id, $branch_id);
-    $checkStmt->execute();
-    $current = $checkStmt->get_result()->fetch_assoc();
-    $checkStmt->close();
+        $checkSql = "SELECT p.name, p.description, p.discount_type, p.discount_value, p.image_path,
+                            bp.status, bp.start_date, bp.end_date
+                        FROM promo p
+                        JOIN branch_promo bp ON p.promo_id = bp.promo_id
+                        WHERE p.promo_id = ? AND bp.branch_id = ?";
+        $checkStmt = $conn->prepare($checkSql);
+        $checkStmt->bind_param("ii", $promo_id, $branch_id);
+        $checkStmt->execute();
+        $current = $checkStmt->get_result()->fetch_assoc();
+        $checkStmt->close();
 
-    if (!$current) {
-        $_SESSION['updateError'] = "Promo not found.";
-        header("Location: " . BASE_URL . "/Admin/pages/promos.php");
-        exit;
-    }
-
-    $promoChanged = (
-        $current['name'] !== $name ||
-        $current['description'] !== $description ||
-        $current['discount_type'] !== $discount_type ||
-        floatval($current['discount_value']) !== $discount_value ||
-        ($image_path !== null)
-    );
-
-    $branchChanged = (
-        $current['status'] !== $status ||
-        $current['start_date'] !== $start_date ||
-        $current['end_date'] !== $end_date
-    );
-
-    if (!$promoChanged && !$branchChanged) {
-        $_SESSION['updateInfo'] = "No changes were made.";
-    } else {
-        if ($promoChanged) {
-            if ($image_path) {
-                $sql = "UPDATE promo 
-                        SET name = ?, image_path = ?, description = ?, discount_type = ?, discount_value = ?
-                        WHERE promo_id = ?";
-                $stmt = $conn->prepare($sql);
-                $stmt->bind_param("ssssdi", $name, $image_path, $description, $discount_type, $discount_value, $promo_id);
-            } else {
-                $sql = "UPDATE promo 
-                        SET name = ?, description = ?, discount_type = ?, discount_value = ?
-                        WHERE promo_id = ?";
-                $stmt = $conn->prepare($sql);
-                $stmt->bind_param("sssdi", $name, $description, $discount_type, $discount_value, $promo_id);
-            }
-            $stmt->execute();
-            $stmt->close();
+        if (!$current) {
+            $_SESSION['updateError'] = "Promo not found.";
+            header("Location: " . BASE_URL . "/Admin/pages/promos.php");
+            exit;
         }
 
-        $sql2 = "UPDATE branch_promo 
-                    SET status = ?, start_date = ?, end_date = ?, date_updated = NOW()
-                    WHERE branch_id = ? AND promo_id = ?";
-        $stmt2 = $conn->prepare($sql2);
-        $stmt2->bind_param("sssii", $status, $start_date, $end_date, $branch_id, $promo_id);
-        $stmt2->execute();
-        $stmt2->close();
+        $promoChanged = (
+            $current['name'] !== $name ||
+            $current['description'] !== $description ||
+            $current['discount_type'] !== $discount_type ||
+            floatval($current['discount_value']) !== $discount_value ||
+            ($image_path !== null)
+        );
 
-        $_SESSION['updateSuccess'] = "Promo updated successfully!";
+        $branchChanged = (
+            $current['status'] !== $status ||
+            $current['start_date'] !== $start_date ||
+            $current['end_date'] !== $end_date
+        );
+
+        // 🚫 Removed the "No changes were made" message — now do nothing if no changes
+        if ($promoChanged || $branchChanged) {
+
+            if ($promoChanged) {
+                if ($image_path) {
+                    $sql = "UPDATE promo 
+                            SET name = ?, image_path = ?, description = ?, discount_type = ?, discount_value = ?
+                            WHERE promo_id = ?";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("ssssdi", $name, $image_path, $description, $discount_type, $discount_value, $promo_id);
+                } else {
+                    $sql = "UPDATE promo 
+                            SET name = ?, description = ?, discount_type = ?, discount_value = ?
+                            WHERE promo_id = ?";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("sssdi", $name, $description, $discount_type, $discount_value, $promo_id);
+                }
+                $stmt->execute();
+                $stmt->close();
+            }
+
+            $sql2 = "UPDATE branch_promo 
+                        SET status = ?, start_date = ?, end_date = ?, date_updated = NOW()
+                        WHERE branch_id = ? AND promo_id = ?";
+            $stmt2 = $conn->prepare($sql2);
+            $stmt2->bind_param("sssii", $status, $start_date, $end_date, $branch_id, $promo_id);
+            $stmt2->execute();
+            $stmt2->close();
+
+            $_SESSION['updateSuccess'] = "Promo updated successfully!";
+
+            $branch_name = "";
+            $branchQuery = $conn->prepare("SELECT name FROM branch WHERE branch_id = ?");
+            $branchQuery->bind_param("i", $branch_id);
+            $branchQuery->execute();
+            $branchResult = $branchQuery->get_result();
+            if ($branchResult->num_rows > 0) {
+                $branchRow = $branchResult->fetch_assoc();
+                $branch_name = $branchRow['name'];
+            }
+            $branchQuery->close();
+
+            $notif_message = "The promo " . htmlspecialchars($name) . " has been updated in " . htmlspecialchars($branch_name) . ".";
+
+            $getOwners = $conn->prepare("SELECT user_id FROM users WHERE role = 'owner' AND status = 'Active'");
+            $getOwners->execute();
+            $ownersResult = $getOwners->get_result();
+
+            if ($ownersResult->num_rows > 0) {
+                $notifSQL = "INSERT INTO notifications (user_id, message, is_read, date_created) VALUES (?, ?, 0, NOW())";
+                $notifStmt = $conn->prepare($notifSQL);
+
+                while ($owner = $ownersResult->fetch_assoc()) {
+                    $notifStmt->bind_param("is", $owner['user_id'], $notif_message);
+                    $notifStmt->execute();
+                }
+
+                $notifStmt->close();
+            }
+            $getOwners->close();
+        }
+    } catch (Exception $e) {
+        $_SESSION['updateError'] = "Database error: " . $e->getMessage();
     }
-} catch (Exception $e) {
-    $_SESSION['updateError'] = "Database error: " . $e->getMessage();
-}
 
     header("Location: " . BASE_URL . "/Admin/pages/promos.php");
     exit;
@@ -137,3 +167,4 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 }
 
 $conn->close();
+?>

@@ -29,6 +29,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['userName'], $_POST['p
             }
 
             if (password_verify($password, $user['password'])) {
+
+                if ($user['force_logout'] == 1) {
+                    $resetStmt = $conn->prepare("UPDATE users SET force_logout = 0 WHERE user_id = ?");
+                    $resetStmt->bind_param("i", $user['user_id']);
+                    $resetStmt->execute();
+                    $resetStmt->close();
+
+                    $_SESSION['login_error'] = "Your account was updated. Please log in again.";
+                    header("Location: " . BASE_URL . "/index.php");
+                    exit;
+                }
+
                 $otp = rand(100000, 999999);
                 $_SESSION['pending_login_user'] = $user;
                 $_SESSION['otp'] = $otp;

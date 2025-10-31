@@ -245,7 +245,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <div class="form-group">
                         <textarea id="remarks" class="form-control" 
                                 name="remarks" rows="2" placeholder=" ">${remarks}</textarea>
-                        <label for="remarks" class="form-label">Remarks</label>
+                        <label for="remarks" class="form-label">Remarks <span class="required">*</span></label>
                     </div>
                 `;
             } else {

@@ -34,13 +34,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
+    $safeBaseName = preg_replace("/[^a-zA-Z0-9_-]/", "", strtolower($lastName . "_" . $firstName));
+
     $signatureImage = null;
     if (isset($_FILES['signatureImage']) && $_FILES['signatureImage']['error'] === UPLOAD_ERR_OK) {
         $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/signatures/';
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0777, true);
-        }
-        $fileName = uniqid() . "_" . basename($_FILES['signatureImage']['name']);
+        if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+
+        $fileExt = strtolower(pathinfo($_FILES['signatureImage']['name'], PATHINFO_EXTENSION));
+        $fileName = "sig_{$safeBaseName}." . $fileExt;
         $targetPath = $uploadDir . $fileName;
 
         if (move_uploaded_file($_FILES['signatureImage']['tmp_name'], $targetPath)) {
@@ -48,14 +50,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    $profileImage = null;
+    if (isset($_FILES['profileImage']) && $_FILES['profileImage']['error'] === UPLOAD_ERR_OK) {
+        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/dentists/';
+        if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+
+        $fileExt = strtolower(pathinfo($_FILES['profileImage']['name'], PATHINFO_EXTENSION));
+        $allowedExt = ['jpg', 'jpeg', 'png', 'webp'];
+        if (in_array($fileExt, $allowedExt)) {
+            $fileName = "dentist_{$safeBaseName}." . $fileExt;
+            $targetPath = $uploadDir . $fileName;
+
+            if (move_uploaded_file($_FILES['profileImage']['tmp_name'], $targetPath)) {
+                $profileImage = $fileName;
+            }
+        }
+    }
+
     try {
         $stmt = $conn->prepare("
             INSERT INTO dentist 
-                (last_name, first_name, middle_name, gender, date_of_birth, email, contact_number, license_number, date_started, status, signature_image)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                (last_name, first_name, middle_name, gender, date_of_birth, email, contact_number, license_number, date_started, status, signature_image, profile_image)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
         $stmt->bind_param(
-            "sssssssssss",
+            "ssssssssssss",
             $lastName,
             $firstName,
             $middleName,
@@ -66,7 +85,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $licenseNumber,
             $dateStarted,
             $status,
-            $signatureImage
+            $signatureImage,
+            $profileImage
         );
 
         if ($stmt->execute()) {

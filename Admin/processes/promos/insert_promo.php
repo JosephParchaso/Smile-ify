@@ -86,6 +86,40 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $stmt2->close();
 
             $_SESSION['updateSuccess'] = "Promo added successfully!";
+
+            $notif_message = "";
+            $branch_name = "";
+
+            $branchQuery = $conn->prepare("SELECT name FROM branch WHERE branch_id = ?");
+            $branchQuery->bind_param("i", $branch_id);
+            $branchQuery->execute();
+            $branchResult = $branchQuery->get_result();
+
+            if ($branchResult->num_rows > 0) {
+                $branchRow = $branchResult->fetch_assoc();
+                $branch_name = $branchRow['name'];
+            }
+            $branchQuery->close();
+
+            $notif_message = "The promo " . $name . " has been updated in " . $branch_name . ".";
+
+            $getOwners = $conn->prepare("SELECT user_id FROM users WHERE role = 'owner' AND status = 'Active'");
+            $getOwners->execute();
+            $ownersResult = $getOwners->get_result();
+
+            if ($ownersResult->num_rows > 0) {
+                $notifSQL = "INSERT INTO notifications (user_id, message, is_read, date_created) VALUES (?, ?, 0, NOW())";
+                $notifStmt = $conn->prepare($notifSQL);
+
+                while ($owner = $ownersResult->fetch_assoc()) {
+                    $notifStmt->bind_param("is", $owner['user_id'], $notif_message);
+                    $notifStmt->execute();
+                }
+
+                $notifStmt->close();
+            }
+            $getOwners->close();
+
         } else {
             $_SESSION['updateError'] = "Failed to add promo: " . $stmt->error;
             $stmt->close();

@@ -31,6 +31,7 @@ $sql = "SELECT
             license_number,
             status,
             signature_image,
+            profile_image,
             date_started,
             date_updated,
             date_created

@@ -35,19 +35,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             exit;
         }
 
-        if (
-            $current['name'] === $name &&
-            floatval($current['price']) === $price &&
-            intval($current['duration_minutes']) === $duration &&
-            $current['status'] === $status
-        ) {
-            $_SESSION['updateInfo'] = "No changes were made.";
+        $serviceChanged = (
+            $current['name'] !== $name ||
+            floatval($current['price']) !== $price ||
+            intval($current['duration_minutes']) !== $duration
+        );
+
+        $branchChanged = ($current['status'] !== $status);
+
+        if (!$serviceChanged && !$branchChanged) {
         } else {
-            if (
-                $current['name'] !== $name ||
-                floatval($current['price']) !== $price ||
-                intval($current['duration_minutes']) !== $duration
-            ) {
+            if ($serviceChanged) {
                 $sql = "UPDATE service 
                         SET name = ?, price = ?, duration_minutes = ?
                         WHERE service_id = ?";
@@ -58,14 +56,43 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             }
 
             $sql2 = "UPDATE branch_service 
-                    SET status = ?, date_updated = NOW()
-                    WHERE branch_id = ? AND service_id = ?";
+                        SET status = ?, date_updated = NOW()
+                        WHERE branch_id = ? AND service_id = ?";
             $stmt2 = $conn->prepare($sql2);
             $stmt2->bind_param("sii", $status, $branch_id, $service_id);
             $stmt2->execute();
             $stmt2->close();
 
             $_SESSION['updateSuccess'] = "Service updated successfully!";
+
+            $branch_name = "";
+            $branchQuery = $conn->prepare("SELECT name FROM branch WHERE branch_id = ?");
+            $branchQuery->bind_param("i", $branch_id);
+            $branchQuery->execute();
+            $branchResult = $branchQuery->get_result();
+            if ($branchResult->num_rows > 0) {
+                $branchRow = $branchResult->fetch_assoc();
+                $branch_name = $branchRow['name'];
+            }
+            $branchQuery->close();
+
+            $notif_message = "The service " . htmlspecialchars($name) . " has been updated in " . htmlspecialchars($branch_name) . ".";
+
+            $getOwners = $conn->prepare("SELECT user_id FROM users WHERE role = 'owner' AND status = 'Active'");
+            $getOwners->execute();
+            $ownersResult = $getOwners->get_result();
+
+            if ($ownersResult->num_rows > 0) {
+                $notifSQL = "INSERT INTO notifications (user_id, message, is_read, date_created)
+                                VALUES (?, ?, 0, NOW())";
+                $notifStmt = $conn->prepare($notifSQL);
+                while ($owner = $ownersResult->fetch_assoc()) {
+                    $notifStmt->bind_param("is", $owner['user_id'], $notif_message);
+                    $notifStmt->execute();
+                }
+                $notifStmt->close();
+            }
+            $getOwners->close();
         }
     } catch (Exception $e) {
         $_SESSION['updateError'] = "Database error: " . $e->getMessage();
@@ -79,3 +106,4 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 }
 
 $conn->close();
+?>

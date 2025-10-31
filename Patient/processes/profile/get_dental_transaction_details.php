@@ -45,7 +45,7 @@ $sql = "
         dt.date_created,
         dt.prescription_downloaded,
 
-        dt.med_cert_status,
+        dt.medcert_status,
         dt.diagnosis,
         dt.fitness_status,
         dt.remarks,

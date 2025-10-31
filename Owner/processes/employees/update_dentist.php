@@ -36,8 +36,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     $checkSql = "SELECT last_name, first_name, middle_name, gender, date_of_birth, email, 
-                        contact_number, license_number, date_started, status, signature_image 
-                        FROM dentist WHERE dentist_id = ?";
+                        contact_number, license_number, date_started, status, 
+                        signature_image, profile_image
+                FROM dentist WHERE dentist_id = ?";
     $checkStmt = $conn->prepare($checkSql);
     $checkStmt->bind_param("i", $dentistId);
     $checkStmt->execute();
@@ -47,18 +48,63 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $changed = false;
     $signatureImage = $current['signature_image'];
+    $profileImage = $current['profile_image'];
 
-    if (isset($_FILES['signatureImage']) && $_FILES['signatureImage']['error'] === UPLOAD_ERR_OK) {
-        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/signatures/';
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0777, true);
+    $safeLast  = strtolower(preg_replace("/[^a-zA-Z0-9]+/", "_", $lastName));
+    $safeFirst = strtolower(preg_replace("/[^a-zA-Z0-9]+/", "_", $firstName));
+
+    if (!empty($_POST['signatureCleared']) && $_POST['signatureCleared'] === "1") {
+        if (!empty($current['signature_image'])) {
+            $oldPath = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/signatures/' . $current['signature_image'];
+            if (file_exists($oldPath)) unlink($oldPath);
         }
-        $fileName = uniqid() . "_" . basename($_FILES['signatureImage']['name']);
+        $signatureImage = null;
+        $changed = true;
+    } elseif (isset($_FILES['signatureImage']) && $_FILES['signatureImage']['error'] === UPLOAD_ERR_OK) {
+        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/signatures/';
+        if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+
+        if (!empty($current['signature_image'])) {
+            $oldPath = $uploadDir . $current['signature_image'];
+            if (file_exists($oldPath)) unlink($oldPath);
+        }
+
+        $fileExt = strtolower(pathinfo($_FILES['signatureImage']['name'], PATHINFO_EXTENSION));
+        $fileName = "{$safeLast}_{$safeFirst}_signature." . $fileExt;
         $targetPath = $uploadDir . $fileName;
 
         if (move_uploaded_file($_FILES['signatureImage']['tmp_name'], $targetPath)) {
             $signatureImage = $fileName;
             $changed = true;
+        }
+    }
+
+    if (!empty($_POST['profileCleared']) && $_POST['profileCleared'] === "1") {
+        if (!empty($current['profile_image'])) {
+            $oldPath = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/dentists/' . $current['profile_image'];
+            if (file_exists($oldPath)) unlink($oldPath);
+        }
+        $profileImage = null;
+        $changed = true;
+    } elseif (isset($_FILES['profileImage']) && $_FILES['profileImage']['error'] === UPLOAD_ERR_OK) {
+        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/dentists/';
+        if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+
+        if (!empty($current['profile_image'])) {
+            $oldPath = $uploadDir . $current['profile_image'];
+            if (file_exists($oldPath)) unlink($oldPath);
+        }
+
+        $fileExt = strtolower(pathinfo($_FILES['profileImage']['name'], PATHINFO_EXTENSION));
+        $allowedExt = ['jpg', 'jpeg', 'png', 'webp'];
+        if (in_array($fileExt, $allowedExt)) {
+            $fileName = "{$safeLast}_{$safeFirst}_profile." . $fileExt;
+            $targetPath = $uploadDir . $fileName;
+
+            if (move_uploaded_file($_FILES['profileImage']['tmp_name'], $targetPath)) {
+                $profileImage = $fileName;
+                $changed = true;
+            }
         }
     }
 
@@ -73,19 +119,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $current['license_number'] !== $licenseNumber ||
         $current['date_started'] !== $dateStarted ||
         $current['status'] !== $status ||
-        $current['signature_image'] !== $signatureImage)) {
+        $current['signature_image'] !== $signatureImage ||
+        $current['profile_image'] !== $profileImage)) {
 
         $sql = "UPDATE dentist
                 SET last_name=?, first_name=?, middle_name=?, gender=?, date_of_birth=?, 
                     email=?, contact_number=?, license_number=?, date_started=?, 
-                    status=?, signature_image=?, date_updated = NOW()
+                    status=?, signature_image=?, profile_image=?, date_updated = NOW()
                 WHERE dentist_id=?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param(
-            "sssssssssssi",
+            "ssssssssssssi",
             $lastName, $firstName, $middleName, $gender, $dateofBirth,
             $email, $contactNumber, $licenseNumber, $dateStarted,
-            $status, $signatureImage, $dentistId
+            $status, $signatureImage, $profileImage, $dentistId
         );
         $stmt->execute();
         $stmt->close();
@@ -106,11 +153,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     sort($branches);
 
     if ($currentBranches !== $branches) {
-        $deleteSql = "DELETE FROM dentist_branch WHERE dentist_id = ?";
-        $deleteStmt = $conn->prepare($deleteSql);
-        $deleteStmt->bind_param("i", $dentistId);
-        $deleteStmt->execute();
-        $deleteStmt->close();
+        $del = $conn->prepare("DELETE FROM dentist_branch WHERE dentist_id = ?");
+        $del->bind_param("i", $dentistId);
+        $del->execute();
+        $del->close();
 
         if (!empty($branches)) {
             $insertSql = "INSERT INTO dentist_branch (dentist_id, branch_id) VALUES (?, ?)";
@@ -138,11 +184,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     sort($services);
 
     if ($currentServices !== $services) {
-        $deleteSql = "DELETE FROM dentist_service WHERE dentist_id = ?";
-        $deleteStmt = $conn->prepare($deleteSql);
-        $deleteStmt->bind_param("i", $dentistId);
-        $deleteStmt->execute();
-        $deleteStmt->close();
+        $del = $conn->prepare("DELETE FROM dentist_service WHERE dentist_id = ?");
+        $del->bind_param("i", $dentistId);
+        $del->execute();
+        $del->close();
 
         if (!empty($services)) {
             $insertSql = "INSERT INTO dentist_service (dentist_id, service_id) VALUES (?, ?)";

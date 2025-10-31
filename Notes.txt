@@ -217,9 +217,12 @@ remove opening/closing time 👍
 ROLE
 uppercase the first letter ex. Patient 👍
 
-patient can view dentists w/ pic
+patient and outside can view dentists w/ pic 👍
+fixed, files downloadable without image sign 👍
 prescription availabilty 1 year 👍
-upload qr on admin or owner? best owner
+upload qr on admin or owner? best owner 👍
+notify owner if services, promos change 👍
+
 medcert {
     PATIENT
     WALKIN, REQUEST FOR MEDCERT 👍
@@ -231,15 +234,18 @@ medcert {
     NOTIFY ALL ADMINS IN THAT BRANCHES 👍
 
     ADMINS
-    CHECK AND DISPLAY PAYMENT WITH 3 INPUTS
-    AFTER ISSUE MEDCERT, UPDATE TOTAL 
-    NOTIFY PATIENT 
+    CHECK AND DISPLAY PAYMENT WITH 3 INPUTS 👍
+    AFTER ISSUE MEDCERT, UPDATE TOTAL medcert_payment 👍
+    NOTIFY PATIENT 👍
     
     PATIENT
-    CHECK STATUS, DOWNLOAD MEDCERT, UPDATE STATUS
-    
+    CHECK STATUS, DOWNLOAD MEDCERT, UPDATE STATUS 👍
 
+    view issued button admins and patients, receipt  👍
+    walkin request medcert
+    medcert reports
 }
+
 
 ASK DURING CONSULTATION
 Ask if the services and promos are under admin or it should be under the owner since it involves MONEY? 

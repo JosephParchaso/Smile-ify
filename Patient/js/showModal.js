@@ -68,22 +68,22 @@ document.addEventListener("DOMContentLoaded", () => {
                             const createdDate = new Date(data.date_created);
                             const now = new Date();
                             const diffDays = (now - createdDate) / (1000 * 60 * 60 * 24);
-                            medCertExpired = diffDays >= 3;
+                            medCertExpired = diffDays >= 15;
                         }
 
-                        if (medCertExpired && data.med_cert_status !== 'Expired') {
+                        if (medCertExpired && data.medcert_status !== 'Expired') {
                             medCertButtonHtml = `<button class="confirm-btn expired-btn" disabled>Expired</button>`;
                         } else {
                             medCertButtonHtml =
-                                data.med_cert_status === 'None'
+                                data.medcert_status === 'None'
                                     ? `<button class="confirm-btn" id="requestMedicalCertificate" data-id="${data.dental_transaction_id}">Request Medical Certificate</button>`
-                                    : data.med_cert_status === 'Requested'
+                                    : data.medcert_status === 'Requested'
                                         ? `<button class="confirm-btn pending-btn" disabled>Pending</button>`
-                                        : data.med_cert_status === 'Eligible'
+                                        : data.medcert_status === 'Eligible'
                                             ? `<button class="confirm-btn" id="downloadMedicalCertificate">Download Medical Certificate</button>`
-                                            : data.med_cert_status === 'Issued'
-                                                ? `<button class="confirm-btn issued-btn" disabled>Issued</button>`
-                                                : data.med_cert_status === 'Expired'
+                                            : data.medcert_status === 'Issued'
+                                                ? `<button class="confirm-btn issued-btn" id="viewMedCertReceipt" data-id="${data.dental_transaction_id}">Issued</button>`
+                                                : data.medcert_status === 'Expired'
                                                     ? `<button class="confirm-btn expired-btn" disabled>Expired</button>`
                                                     : '';
                         }
@@ -337,21 +337,41 @@ document.addEventListener("DOMContentLoaded", () => {
                                 );
 
                                 // ===== SIGNATURE =====
-                                y += 25;
-                                if (data.signature_image) {
-                                    try {
-                                        const sigUrl = `${BASE_URL}/images/signatures/${data.signature_image}`;
-                                        const sigBase64 = await getBase64ImageFromUrl(sigUrl);
-                                        doc.addImage(sigBase64, "PNG", 130, y - 10, 50, 25);
-                                    } catch (err) {
-                                        console.warn("Signature not found", err);
-                                    }
-                                }
+                                if (data.dentist_last_name || data.dentist_first_name) {
+                                    let sigY = y + 5;
+                                    if (sigY < 60) sigY = 60;
 
-                                doc.line(120, y + 20, 200, y + 20);
-                                const dentistFullName = `${data.dentist_last_name}, ${data.dentist_first_name} ${data.dentist_middle_name ? data.dentist_middle_name[0] + '.' : ''}`;
-                                doc.text("Dr. " + dentistFullName, 160, y + 30, { align: "center" });
-                                doc.text("License No: " + (data.license_number ?? "-"), 160, y + 38, { align: "center" });
+                                    if (sigY > pageHeight - 80) {
+                                        doc.addPage();
+                                        sigY = 50;
+                                    }
+
+                                    const sigUrl = `${BASE_URL}/images/signatures/${data.signature_image}`;
+                                    let hasSignature = false;
+
+                                    if (data.signature_image) {
+                                        try {
+                                            const sigBase64 = await getBase64ImageFromUrl(sigUrl);
+                                            doc.addImage(sigBase64, "PNG", 125, sigY, 50, 30);
+                                            hasSignature = true;
+                                        } catch (err) {
+                                            console.warn("Could not load signature", err);
+                                        }
+                                    }
+
+                                    const lineY = hasSignature ? sigY + 35 : sigY + 25;
+                                    doc.line(120, lineY, 200, lineY);
+
+                                    const nameY = lineY + 10;
+                                    const licenseY = lineY + 20;
+
+                                    const dentistFullName = `${data.dentist_last_name}, ${data.dentist_first_name} ${
+                                        data.dentist_middle_name ? data.dentist_middle_name[0] + '.' : ''
+                                    }`;
+
+                                    doc.text("Dr. " + dentistFullName, 160, nameY, { align: "center" });
+                                    doc.text("License No: " + (data.license_number ?? "-"), 160, licenseY, { align: "center" });
+                                }
 
                                 // ===== PAGE NUMBER =====
                                 const pageCount = doc.internal.getNumberOfPages();
@@ -535,7 +555,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 }
 
                                 // ===== SIGNATURE =====
-                                if (data.signature_image) {
+                                if (data.dentist_last_name || data.dentist_first_name) {
                                     let sigY = y + 5;
                                     if (sigY < 60) sigY = 60;
 
@@ -545,17 +565,30 @@ document.addEventListener("DOMContentLoaded", () => {
                                     }
 
                                     const sigUrl = `${BASE_URL}/images/signatures/${data.signature_image}`;
-                                    try {
-                                        const sigBase64 = await getBase64ImageFromUrl(sigUrl);
-                                        doc.addImage(sigBase64, "PNG", 125, sigY, 50, 30);
-                                    } catch (err) {
-                                        console.warn("Could not load signature", err);
+                                    let hasSignature = false;
+
+                                    if (data.signature_image) {
+                                        try {
+                                            const sigBase64 = await getBase64ImageFromUrl(sigUrl);
+                                            doc.addImage(sigBase64, "PNG", 125, sigY, 50, 30);
+                                            hasSignature = true;
+                                        } catch (err) {
+                                            console.warn("Could not load signature", err);
+                                        }
                                     }
 
-                                    doc.line(120, sigY + 32, 200, sigY + 32);
-                                    const dentistFullName = `${data.dentist_last_name}, ${data.dentist_first_name} ${data.dentist_middle_name ? data.dentist_middle_name[0] + '.' : ''}`;
-                                    doc.text("Dr. " + dentistFullName, 160, sigY + 42, { align: "center" });
-                                    doc.text("License No: " + (data.license_number ?? "-"), 160, sigY + 52, { align: "center" });
+                                    const lineY = hasSignature ? sigY + 35 : sigY + 25;
+                                    doc.line(120, lineY, 200, lineY);
+
+                                    const nameY = lineY + 10;
+                                    const licenseY = lineY + 20;
+
+                                    const dentistFullName = `${data.dentist_last_name}, ${data.dentist_first_name} ${
+                                        data.dentist_middle_name ? data.dentist_middle_name[0] + '.' : ''
+                                    }`;
+
+                                    doc.text("Dr. " + dentistFullName, 160, nameY, { align: "center" });
+                                    doc.text("License No: " + (data.license_number ?? "-"), 160, licenseY, { align: "center" });
                                 }
 
                                 // ===== PAGE NUMBERS =====
@@ -641,21 +674,35 @@ document.addEventListener("DOMContentLoaded", () => {
         modal.style.display = "block";
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
-        const cancelBtn = document.getElementById("cancelMedCertRequest");
-        const medCertModal = document.getElementById("medCertModal");
-
-        if (cancelBtn && medCertModal) {
-            cancelBtn.addEventListener("click", () => {
-                medCertModal.style.display = "none";
-            });
-        }
-    });
-
     window.addEventListener("click", (e) => {
         const medCertModal = document.getElementById("medCertModal");
         if (e.target === medCertModal) {
             medCertModal.style.display = "none";
+        }
+    });
+
+    document.body.addEventListener("click", async function (e) {
+        if (e.target && e.target.id === "viewMedCertReceipt") {
+            const transactionId = e.target.getAttribute("data-id");
+
+            try {
+                const response = await fetch(`${BASE_URL}/Patient/processes/profile/get_medcert_receipt.php?id=${transactionId}`);
+                const data = await response.json();
+
+                if (data.success && data.file_path) {
+                    const imgUrl = `${BASE_URL}${data.file_path}`;
+                    const modal = document.getElementById("medCertReceiptModal");
+                    const modalBody = document.getElementById("medCertReceiptBody");
+
+                    modalBody.innerHTML = `
+                        <h2>Medical Certificate Payment Receipt</h2>
+                        <img src="${imgUrl}" alt="Medical Certificate Receipt" style="width:50%;display:block;margin:auto;">
+                    `;
+                    modal.style.display = "flex";
+                }
+            } catch (error) {
+                console.error("Error loading receipt:", error);
+            }
         }
     });
 });
