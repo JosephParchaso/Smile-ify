@@ -57,7 +57,7 @@ if ($fileSize > $maxFileSize) {
     exit();
 }
 
-$uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/medcert_payments/';
+$uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/payments/medcert_payments/';
 if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
 
 $fileName = $transaction_id . "_" . $last_name_clean . "." . $fileExt;
@@ -69,7 +69,7 @@ foreach ($oldFiles as $oldFile) {
 }
 
 if (move_uploaded_file($fileTmpPath, $targetPath)) {
-    $imagePath = "/images/medcert_payments/" . $fileName;
+    $imagePath = "/images/payments/medcert_payments/" . $fileName;
 
     $checkSql = "
         SELECT dt.dental_transaction_id, atx.appointment_transaction_id, atx.branch_id

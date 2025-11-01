@@ -12,7 +12,7 @@ function loadDentists() {
     const container = document.getElementById("dentistsContainer");
     container.innerHTML = "<p>Loading...</p>";
 
-    fetch(`${BASE_URL}/Patient/processes/load_dentists.php`)
+    fetch(`${BASE_URL}/processes/fetch_dentists.php`)
         .then((response) => response.json())
         .then((data) => {
             if (data.success && data.dentists.length > 0) {

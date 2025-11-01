@@ -26,6 +26,7 @@ $sql = "
         dt.admin_user_id,
         dt.promo_id,
         dt.payment_method,
+        dt.cashless_receipt,
         dt.total,
         dt.notes,
         dt.medcert_status,

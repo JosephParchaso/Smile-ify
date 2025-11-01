@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             const createdDate = new Date(data.date_created);
                             const now = new Date();
                             const diffDays = (now - createdDate) / (1000 * 60 * 60 * 24);
-                            medCertExpired = diffDays >= 15;
+                            medCertExpired = diffDays >= 7;
                         }
 
                         if (medCertExpired && data.medcert_status !== 'Expired') {
@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                             : data.medcert_status === 'Issued'
                                                 ? `<button class="confirm-btn issued-btn" id="viewMedCertReceipt" data-id="${data.dental_transaction_id}">Issued</button>`
                                                 : data.medcert_status === 'Expired'
-                                                    ? `<button class="confirm-btn expired-btn" disabled>Expired</button>`
+                                                    ? `<button class="confirm-btn expired-btn" id="viewMedCertReceipt" data-id="${data.dental_transaction_id}">Expired</button>`
                                                     : '';
                         }
 
@@ -338,12 +338,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
                                 // ===== SIGNATURE =====
                                 if (data.dentist_last_name || data.dentist_first_name) {
-                                    let sigY = y + 5;
-                                    if (sigY < 60) sigY = 60;
+                                    let sigY = y + 25;
 
-                                    if (sigY > pageHeight - 80) {
+                                    const bottomMargin = 40;
+                                    if (sigY > pageHeight - bottomMargin) {
                                         doc.addPage();
-                                        sigY = 50;
+                                        sigY = 60;
                                     }
 
                                     const sigUrl = `${BASE_URL}/images/signatures/${data.signature_image}`;
@@ -352,18 +352,18 @@ document.addEventListener("DOMContentLoaded", () => {
                                     if (data.signature_image) {
                                         try {
                                             const sigBase64 = await getBase64ImageFromUrl(sigUrl);
-                                            doc.addImage(sigBase64, "PNG", 125, sigY, 50, 30);
+                                            doc.addImage(sigBase64, "PNG", 125, sigY, 50, 20);
                                             hasSignature = true;
                                         } catch (err) {
                                             console.warn("Could not load signature", err);
                                         }
                                     }
 
-                                    const lineY = hasSignature ? sigY + 35 : sigY + 25;
+                                    const lineY = hasSignature ? sigY + 25 : sigY + 20;
                                     doc.line(120, lineY, 200, lineY);
 
-                                    const nameY = lineY + 10;
-                                    const licenseY = lineY + 20;
+                                    const nameY = lineY + 8;
+                                    const licenseY = lineY + 16;
 
                                     const dentistFullName = `${data.dentist_last_name}, ${data.dentist_first_name} ${
                                         data.dentist_middle_name ? data.dentist_middle_name[0] + '.' : ''
@@ -696,7 +696,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     modalBody.innerHTML = `
                         <h2>Medical Certificate Payment Receipt</h2>
-                        <img src="${imgUrl}" alt="Medical Certificate Receipt" style="width:50%;display:block;margin:auto;">
+                        <img src="${imgUrl}" alt="Medical Certificate Receipt" style="width:50%;display:block;margin:auto;border-radius:4px;">
                     `;
                     modal.style.display = "flex";
                 }

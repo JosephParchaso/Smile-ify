@@ -48,9 +48,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             trim($existing['remarks']) !== $remarks
         );
 
-        if ($hasChanges) {
-            $conn->begin_transaction();
+        $conn->begin_transaction();
 
+        if ($hasChanges) {
             $stmt = $conn->prepare("
                 UPDATE dental_transaction 
                 SET 
@@ -68,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 AND appointment_transaction_id = ?
             ");
             $stmt->bind_param(
-                "iisdsssiii",
+                "iisdssssiii",
                 $dentist_id,
                 $promo_id,
                 $payment_method,
@@ -85,7 +85,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $stmt->close();
 
             $conn->query("DELETE FROM dental_transaction_services WHERE dental_transaction_id = " . $dental_transaction_id);
-
             if (!empty($services)) {
                 $stmtService = $conn->prepare("
                     INSERT INTO dental_transaction_services (dental_transaction_id, service_id, quantity)
@@ -98,12 +97,67 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 }
                 $stmtService->close();
             }
-
-            $conn->commit();
-            $_SESSION['updateSuccess'] = "Transaction updated successfully!";
-        } else {
-            $_SESSION['updateInfo'] = "No changes made.";
         }
+
+        if (strtolower($payment_method) === 'cashless' && isset($_FILES['receipt_upload']) && $_FILES['receipt_upload']['error'] === UPLOAD_ERR_OK) {
+            $getPatient = $conn->prepare("
+                SELECT u.last_name 
+                FROM appointment_transaction at
+                JOIN users u ON u.user_id = at.user_id
+                WHERE at.appointment_transaction_id = ?
+            ");
+            $getPatient->bind_param("i", $appointment_transaction_id);
+            $getPatient->execute();
+            $result = $getPatient->get_result();
+            $patient = $result->fetch_assoc();
+            $getPatient->close();
+
+            $last_name_clean = $patient ? preg_replace('/[^a-zA-Z0-9_-]/', '', strtolower($patient['last_name'])) : 'unknown';
+
+            $fileTmpPath = $_FILES['receipt_upload']['tmp_name'];
+            $fileExt = strtolower(pathinfo($_FILES['receipt_upload']['name'], PATHINFO_EXTENSION));
+            $allowedTypes = ['jpg', 'jpeg', 'png', 'webp'];
+
+            if (!in_array($fileExt, $allowedTypes)) {
+                $_SESSION['updateError'] = "Invalid file type. Allowed: JPG, PNG, WEBP.";
+                header("Location: " . BASE_URL . "/Admin/pages/manage_appointment.php?id=" . $appointment_transaction_id . "&backTab=recent&tab=transaction");
+                exit();
+            }
+
+            $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/payments/cashless_payments/';
+            if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+
+            $fileName = $dental_transaction_id . "_" . $last_name_clean . "." . $fileExt;
+            $targetPath = $uploadDir . $fileName;
+
+            $oldFiles = glob($uploadDir . $dental_transaction_id . "_*.*");
+            foreach ($oldFiles as $oldFile) {
+                if (is_file($oldFile)) unlink($oldFile);
+            }
+
+            if (!move_uploaded_file($fileTmpPath, $targetPath)) {
+                $_SESSION['updateError'] = "Failed to upload receipt file.";
+                header("Location: " . BASE_URL . "/Admin/pages/manage_appointment.php?id=" . $appointment_transaction_id . "&backTab=recent&tab=transaction");
+                exit();
+            }
+
+            $receiptPath = "/images/payments/cashless_payments/" . $fileName;
+
+            $updateReceipt = $conn->prepare("
+                UPDATE dental_transaction 
+                SET cashless_receipt = ?, date_updated = NOW()
+                WHERE dental_transaction_id = ?
+            ");
+            $updateReceipt->bind_param("si", $receiptPath, $dental_transaction_id);
+            $updateReceipt->execute();
+            $updateReceipt->close();
+        }
+
+        $conn->commit();
+        if ($hasChanges || (isset($_FILES['receipt_upload']) && $_FILES['receipt_upload']['error'] === UPLOAD_ERR_OK)) {
+            $_SESSION['updateSuccess'] = "Transaction updated successfully!";
+        }
+
     } catch (Exception $e) {
         if ($conn->in_transaction()) $conn->rollback();
         error_log("UPDATE TRANSACTION ERROR: " . $e->getMessage());

@@ -20,6 +20,7 @@ $sql = "
         dt.dentist_id,
         dt.promo_id,
         dt.payment_method,
+        dt.cashless_receipt,
         dt.total,
         dt.notes,
         dt.medcert_status,
@@ -36,6 +37,7 @@ $sql = "
     LEFT JOIN users u ON dt.admin_user_id = u.user_id
     WHERE dt.dental_transaction_id = ?
 ";
+
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $transactionId);
 $stmt->execute();
@@ -80,6 +82,7 @@ $response = [
     'dentist_id' => (int)$data['dentist_id'],
     'promo_id' => $data['promo_id'] ? (int)$data['promo_id'] : null,
     'payment_method' => $data['payment_method'] ?? '',
+    'cashless_receipt' => $data['cashless_receipt'] ?? null,
     'total' => (float)$data['total'],
     'notes' => $data['notes'] ?? '',
     'medcert_status' => $data['medcert_status'],

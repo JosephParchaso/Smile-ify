@@ -81,8 +81,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if ($stmt->affected_rows > 0) {
             $_SESSION['updateSuccess'] = "Vital updated successfully!";
-        } else {
-            $_SESSION['updateInfo'] = "No changes made.";
         }
 
         $stmt->close();

@@ -63,6 +63,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmtService->close();
         }
 
+        if (strtolower($payment_method) === 'cashless' && isset($_FILES['receipt_upload']) && $_FILES['receipt_upload']['error'] === UPLOAD_ERR_OK) {
+            $getPatient = $conn->prepare("
+                SELECT u.last_name 
+                FROM appointment_transaction at
+                JOIN users u ON u.user_id = at.user_id
+                WHERE at.appointment_transaction_id = ?
+            ");
+            $getPatient->bind_param("i", $appointment_transaction_id);
+            $getPatient->execute();
+            $result = $getPatient->get_result();
+            $patient = $result->fetch_assoc();
+            $getPatient->close();
+
+            $last_name_clean = $patient ? preg_replace('/[^a-zA-Z0-9_-]/', '', strtolower($patient['last_name'])) : 'unknown';
+
+            $fileTmpPath = $_FILES['receipt_upload']['tmp_name'];
+            $fileExt = strtolower(pathinfo($_FILES['receipt_upload']['name'], PATHINFO_EXTENSION));
+            $allowedTypes = ['jpg', 'jpeg', 'png', 'webp'];
+
+            if (!in_array($fileExt, $allowedTypes)) {
+                $_SESSION['updateError'] = "Invalid file type. Allowed: JPG, PNG, WEBP.";
+                header("Location: " . BASE_URL . "/Admin/pages/manage_appointment.php?id=" . $appointment_transaction_id . "&backTab=recent&tab=transaction");
+                exit();
+            }
+
+            $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/payments/cashless_payments/';
+            if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+
+            $fileName = $dental_transaction_id . "_" . $last_name_clean . "." . $fileExt;
+            $targetPath = $uploadDir . $fileName;
+
+            $oldFiles = glob($uploadDir . $dental_transaction_id . "_*.*");
+            foreach ($oldFiles as $oldFile) {
+                if (is_file($oldFile)) unlink($oldFile);
+            }
+
+            if (!move_uploaded_file($fileTmpPath, $targetPath)) {
+                $_SESSION['updateError'] = "Failed to upload receipt file.";
+                header("Location: " . BASE_URL . "/Admin/pages/manage_appointment.php?id=" . $appointment_transaction_id . "&backTab=recent&tab=transaction");
+                exit();
+            }
+
+            $receiptPath = "/images/payments/cashless_payments/" . $fileName;
+
+            $updateReceipt = $conn->prepare("
+                UPDATE dental_transaction 
+                SET cashless_receipt = ?, date_updated = NOW()
+                WHERE dental_transaction_id = ?
+            ");
+            $updateReceipt->bind_param("si", $receiptPath, $dental_transaction_id);
+            $updateReceipt->execute();
+            $updateReceipt->close();
+        }
+
         $conn->commit();
         $_SESSION['updateSuccess'] = "Transaction added successfully!";
     } catch (Exception $e) {

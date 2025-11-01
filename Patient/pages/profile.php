@@ -30,6 +30,17 @@ $result = $conn->query("SELECT file_path FROM qr_payment ORDER BY id DESC LIMIT 
 if ($result && $row = $result->fetch_assoc()) {
     $qrImage = BASE_URL . $row['file_path'];
 }
+
+$medcertPrice = 150;
+$priceStmt = $conn->prepare("SELECT price FROM service WHERE name = 'Medical Certificate' LIMIT 1");
+$priceStmt->execute();
+$priceStmt->bind_result($priceFromDB);
+$priceStmt->fetch();
+$priceStmt->close();
+
+if ($priceFromDB !== null) {
+    $medcertPrice = $priceFromDB;
+}
 ?>
 
 <title>Profile</title>
@@ -139,8 +150,8 @@ if ($result && $row = $result->fetch_assoc()) {
         <p>Please scan the QR code below to pay for the medical certificate fee.</p>
 
         <div style="text-align: center; margin: 15px 0;">
-            <img src="<?= htmlspecialchars($qrImage) ?>" alt="Payment QR Code" style="width: 210px; height: 300px; border: 1px solid #ccc; border-radius: 8px;">
-            <p><strong>Amount:</strong> ₱150</p>
+            <img src="<?= htmlspecialchars($qrImage) ?>" alt="Payment QR Code" style="width: 210px; height: 300px; border: 1px solid #ccc; border-radius: 4px;">
+            <p><strong>Amount:</strong> ₱<?= number_format($medcertPrice, 2) ?></p>
         </div>
 
         <form action="<?= BASE_URL ?>/Patient/processes/profile/upload_medcert_payment.php" method="POST" enctype="multipart/form-data" id="medCertForm">

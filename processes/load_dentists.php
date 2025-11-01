@@ -142,6 +142,11 @@ if (!empty($dentists)) {
     $options .= '<option disabled>No dentists available</option>';
 }
 
+if (empty($selectedDentistId)) {
+    $options = preg_replace('/selected/', '', $options);
+    $options = '<option value="" disabled selected>Select Dentist</option>' . $options;
+}
+
 echo $options;
 
 $stmt->close();

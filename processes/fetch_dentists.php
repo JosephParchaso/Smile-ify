@@ -4,11 +4,6 @@ session_start();
 require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'patient') {
-    header("Location: " . BASE_URL . "/index.php");
-    exit();
-}
-
 header('Content-Type: application/json; charset=utf-8');
 
 try {
@@ -26,7 +21,7 @@ try {
         LEFT JOIN dentist_branch db ON d.dentist_id = db.dentist_id
         LEFT JOIN branch b ON db.branch_id = b.branch_id
         LEFT JOIN dentist_service ds ON d.dentist_id = ds.dentist_id
-        LEFT JOIN service s ON ds.service_id = s.service_id
+        LEFT JOIN service s ON ds.service_id = s.service_id AND s.name != 'Medical Certificate'
         WHERE d.status = 'Active'
         GROUP BY d.dentist_id
         ORDER BY d.last_name ASC
@@ -36,8 +31,7 @@ try {
     $dentists = [];
 
     while ($row = $result->fetch_assoc()) {
-        $prefix = (strtolower($row['gender']) === 'female') ? 'Dra.' : 'Dr.';
-        $row['dentist_name'] = $prefix . ' ' . $row['full_name'];
+        $row['dentist_name'] = 'Dr. ' . $row['full_name'];
 
         $row['profile_image'] = !empty($row['profile_image'])
             ? BASE_URL . '/images/dentists/' . $row['profile_image']

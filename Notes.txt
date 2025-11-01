@@ -222,6 +222,11 @@ fixed, files downloadable without image sign 👍
 prescription availabilty 1 year 👍
 upload qr on admin or owner? best owner 👍
 notify owner if services, promos change 👍
+added cashless receipt if payment method is cashless, display also in transaction 👍
+ilahi ba ang 150 if nirequest sa total
+
+payment methods in reports
+medcert reports
 
 medcert {
     PATIENT
@@ -235,15 +240,14 @@ medcert {
 
     ADMINS
     CHECK AND DISPLAY PAYMENT WITH 3 INPUTS 👍
-    AFTER ISSUE MEDCERT, UPDATE TOTAL medcert_payment 👍
+    AFTER ISSUE MEDCERT, UPDATE TOTAL medcert_request_payment 👍
     NOTIFY PATIENT 👍
     
     PATIENT
     CHECK STATUS, DOWNLOAD MEDCERT, UPDATE STATUS 👍
 
-    view issued button admins and patients, receipt  👍
-    walkin request medcert
-    medcert reports
+    view issued button admins and patients, receipt 👍
+    walkin request medcert 👍
 }
 
 

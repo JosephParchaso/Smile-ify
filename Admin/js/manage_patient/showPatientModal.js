@@ -115,9 +115,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
                                 <div class="button-group button-group-profile">
                                     <button class="confirm-btn" id="downloadReceipt">Download Receipt</button>
+
+                                    ${
+                                        data.payment_method === "Cashless" && data.cashless_receipt
+                                            ? `<button class="confirm-btn" id="viewCashlessReceipt" data-id="${data.dental_transaction_id}">View Cashless Receipt</button>`
+                                            : ""
+                                    }
+
                                     ${
                                         data.medcert_status === 'None'
-                                            ? ''
+                                            ? `<button class="confirm-btn issue-medcert-btn" id="issueMedicalCertificate" data-id="${data.dental_transaction_id}">Issue Medical Certificate</button>`
                                             : data.medcert_status === 'Requested'
                                                 ? `<button class="confirm-btn issue-medcert-btn" id="issueMedicalCertificate" data-id="${data.dental_transaction_id}">Issue Medical Certificate</button>`
                                                 : data.medcert_status === 'Eligible'
@@ -125,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                                     : data.medcert_status === 'Issued'
                                                         ? `<button class="confirm-btn issued-btn" id="viewMedCertReceipt" data-id="${data.dental_transaction_id}">Issued</button>`
                                                         : data.medcert_status === 'Expired'
-                                                            ? `<button class="confirm-btn expired-btn" disabled>Expired</button>`
+                                                            ? `<button class="confirm-btn expired-btn" id="viewMedCertReceipt" data-id="${data.dental_transaction_id}">Expired</button>`
                                                             : ''
                                     }
                                 </div>
@@ -918,6 +925,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const transactionId = e.target.getAttribute("data-id");
             const transactionInput = document.getElementById("transactionIdInput");
             const receiptImage = document.getElementById("receiptImage");
+            const receiptPreview = document.getElementById("receiptPreview");
+            const paymentSection = document.getElementById("paymentSection");
 
             if (transactionInput) {
                 transactionInput.value = transactionId;
@@ -927,19 +936,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        if (data.medcert_receipt) {
-                            receiptImage.src = `${BASE_URL}${data.medcert_receipt}`;
-                            receiptImage.style.display = "block";
-                        } else {
-                            receiptImage.style.display = "none";
-                        }
-
                         document.getElementById("fitnessStatus").value = data.fitness_status || "";
                         document.getElementById("diagnosis").value = data.diagnosis || "";
                         document.getElementById("remarks").value = data.remarks || "";
+
+                        if (data.medcert_receipt) {
+                            receiptImage.src = `${BASE_URL}${data.medcert_receipt}`;
+                            receiptPreview.style.display = "flex";
+                            paymentSection.style.display = "none";
+                        } else {
+                            receiptPreview.style.display = "none";
+                            paymentSection.style.display = "block";
+                        }
                     } else {
-                        receiptImage.style.display = "none";
                         console.warn("No med cert details found:", data.error);
+                        receiptPreview.style.display = "none";
+                        paymentSection.style.display = "block";
                     }
                 })
                 .catch(err => console.error("Error loading med cert details:", err));
@@ -950,10 +962,54 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    document.addEventListener("change", (e) => {
+        if (e.target.id === "paymentMethod") {
+            const uploadGroup = document.getElementById("receiptUploadGroup");
+            if (e.target.value === "cashless") {
+                uploadGroup.style.display = "block";
+                document.getElementById("receiptUpload").required = true;
+            } else {
+                uploadGroup.style.display = "none";
+                document.getElementById("receiptUpload").required = false;
+            }
+        }
+    });
+
     window.addEventListener("click", (e) => {
         const medCertModal = document.getElementById("medCertModal");
         if (e.target === medCertModal) {
             medCertModal.style.display = "none";
+        }
+    });
+
+    document.body.addEventListener("click", async function (e) {
+        if (e.target && e.target.id === "viewCashlessReceipt") {
+            const transactionId = e.target.getAttribute("data-id");
+
+            try {
+                const response = await fetch(`${BASE_URL}/Admin/processes/manage_patient/get_cashless_receipt.php?id=${transactionId}`);
+                const data = await response.json();
+
+                if (data.success && data.file_path) {
+                    const imgUrl = `${BASE_URL}${data.file_path}`;
+                    const modal = document.getElementById("medCertReceiptModal");
+                    const modalBody = document.getElementById("medCertReceiptBody");
+
+                    modalBody.innerHTML = `
+                        <h2>Cashless Payment Receipt</h2>
+                        ${
+                            imgUrl.toLowerCase().endsWith('.pdf')
+                                ? `<iframe src="${imgUrl}" style="width:80%;height:600px;margin:auto;display:block;border:none;"></iframe>`
+                                : `<img src="${imgUrl}" alt="Cashless Receipt" style="width:50%;display:block;margin:auto;border-radius:4px;">`
+                        }
+                    `;
+                    modal.style.display = "flex";
+                } else {
+                    alert("No cashless receipt available.");
+                }
+            } catch (error) {
+                console.error("Error loading cashless receipt:", error);
+            }
         }
     });
 
@@ -972,7 +1028,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     modalBody.innerHTML = `
                         <h2>Medical Certificate Payment Receipt</h2>
-                        <img src="${imgUrl}" alt="Medical Certificate Receipt" style="width:50%;display:block;margin:auto;">
+                        <img src="${imgUrl}" alt="Medical Certificate Receipt" style="width:50%;display:block;margin:auto;border-radius:4px;">
                     `;
                     modal.style.display = "flex";
                 }

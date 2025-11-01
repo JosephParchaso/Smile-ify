@@ -67,23 +67,23 @@ document.addEventListener("DOMContentLoaded", () => {
             <h2>${isEdit ? "Manage Transaction" : "Add Transaction"}</h2>
             <form id="transactionForm" 
                 action="${BASE_URL}/Admin/processes/manage_appointment/transactions/${isEdit ? 'update_transaction.php' : 'insert_transaction.php'}" 
-                method="POST" autocomplete="off">
+                method="POST" enctype="multipart/form-data" autocomplete="off">
 
                 ${isEdit ? `<input type="hidden" name="dental_transaction_id" value="${data.dental_transaction_id}">` : ""}
                 <input type="hidden" name="appointment_transaction_id" value="${appointmentId}">
                 <input type="hidden" name="admin_user_id" value="${userId}" readonly required>
 
                 <div class="form-group">
+                    <div id="servicesContainer" class="checkbox-group">
+                        <p class="loading-text">Loading Services</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
                     <select id="transactionDentist" class="form-control" name="dentist_id" required>
                         <option value="" disabled ${isEdit ? "" : "selected"} hidden></option>
                     </select>
                     <label for="transactionDentist" class="form-label">Dentist <span class="required">*</span></label>
-                </div>
-
-                <div class="form-group">
-                    <div id="servicesContainer" class="checkbox-group">
-                        <p class="loading-text">Loading Services</p>
-                    </div>
                 </div>
 
                 <div id="medicalCertFields"></div>
@@ -102,6 +102,12 @@ document.addEventListener("DOMContentLoaded", () => {
                         <option value="Cashless" ${isEdit && data.payment_method === 'Cashless' ? 'selected' : ''}>Cashless</option>
                     </select>
                     <label for="paymentMethod" class="form-label">Payment Method <span class="required">*</span></label>
+                </div>
+
+                <div class="form-group" id="cashlessReceiptGroup" style="display: none;">
+                    <input type="file" id="cashlessReceipt" class="form-control" name="receipt_upload" accept="image/*,.pdf">
+                    <label for="cashlessReceipt" class="form-label">Upload Cashless Receipt</label>
+                    ${isEdit && data.cashless_receipt ? `<p>Current file:</p><img src="${BASE_URL}/${data.cashless_receipt}" alt="Cashless Receipt" style="max-width:200px;border-radius:4px;margin-top:5px;">` : ""}
                 </div>
 
                 <div class="form-group">
@@ -160,6 +166,28 @@ document.addEventListener("DOMContentLoaded", () => {
         const appointmentDentistId = data?.dentist_id || window.appointmentDentistId || null;
         const effectiveBranchId = data?.branch_id || branchId;
         const mcFields = modalBody.querySelector("#medicalCertFields");
+        const paymentMethodSelect = modalBody.querySelector("#paymentMethod");
+        const cashlessGroup = modalBody.querySelector("#cashlessReceiptGroup");
+        const cashlessInput = modalBody.querySelector("#cashlessReceipt");
+
+        function toggleCashlessField() {
+            if (paymentMethodSelect.value === "Cashless") {
+                cashlessGroup.style.display = "block";
+
+                if (!isEdit || !data.cashless_receipt) {
+                    cashlessInput.required = true;
+                } else {
+                    cashlessInput.required = false;
+                }
+            } else {
+                cashlessGroup.style.display = "none";
+                cashlessInput.required = false;
+                cashlessInput.value = "";
+            }
+        }
+        toggleCashlessField();
+
+        paymentMethodSelect.addEventListener("change", toggleCashlessField);
 
         if (!isEdit) {
             loadServices(effectiveBranchId, servicesContainer, null, appointmentServiceIds, () => {

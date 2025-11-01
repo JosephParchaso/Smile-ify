@@ -117,31 +117,47 @@ $backTab = $_GET['tab'] ?? 'recent';
     <div class="manage-patient-modal-content">
         <h2>Medical Certificate</h2>
 
-        <form id="medCertForm" method="POST" action="<?= BASE_URL ?>/Admin/processes/manage_patient/upload_medcert.php" autocomplete="off">
-            <input type="hidden" name="dental_transaction_id" id="transactionIdInput">
+        <form id="medCertForm" method="POST" action="<?= BASE_URL ?>/Admin/processes/manage_patient/upload_medcert.php" enctype="multipart/form-data" autocomplete="off">
+        <input type="hidden" name="dental_transaction_id" id="transactionIdInput">
 
-            <div id="receiptPreview" style="text-align:center; margin:15px 0; display:flex; justify-content:center;">
-                <img id="receiptImage" alt="Payment QR Code" style="width: 250px; height: 440px;">
-            </div>
+        <div id="receiptPreview" style="text-align:center; margin:15px 0; display:flex; justify-content:center;">
+            <img id="receiptImage" alt="Payment QR Code" style="width: 250px; height: 440px;">
+        </div>
 
+        <div id="paymentSection" style="display: none;">
             <div class="form-group">
-                <input type="text" id="fitnessStatus" name="fitness_status" class="form-control" placeholder=" " required />
-                <label for="fitnessStatus" class="form-label">Fitness Status <span class="required">*</span></label>
+                <select id="paymentMethod" name="payment_method" class="form-control" required>
+                    <option value="">Select Payment Method</option>
+                    <option value="cash">Cash</option>
+                    <option value="cashless">Cashless</option>
+                </select>
+                <label for="paymentMethod" class="form-label">Payment Method <span class="required">*</span></label>
             </div>
 
-            <div class="form-group">
-                <input type="text" id="diagnosis" name="diagnosis" class="form-control" placeholder=" " required />
-                <label for="diagnosis" class="form-label">Diagnosis <span class="required">*</span></label>
+            <div class="form-group" id="receiptUploadGroup" style="display: none;">
+                <input type="file" id="receiptUpload" name="receipt_upload" class="form-control" accept="image/*" required>
+                <label for="receiptUpload" class="form-label">Upload Receipt (if Cashless) <span class="required">*</span></label>
             </div>
+        </div>
 
-            <div class="form-group">
-                <textarea id="remarks" name="remarks" class="form-control" placeholder=" " required></textarea>
-                <label for="remarks" class="form-label">Remarks <span class="required">*</span></label>
-            </div>
+        <div class="form-group">
+            <input type="text" id="fitnessStatus" name="fitness_status" class="form-control" placeholder=" " required />
+            <label for="fitnessStatus" class="form-label">Fitness Status <span class="required">*</span></label>
+        </div>
 
-            <div class="button-group">
-                <button type="submit" class="confirm-btn">Save</button>
-            </div>
+        <div class="form-group">
+            <input type="text" id="diagnosis" name="diagnosis" class="form-control" placeholder=" " required />
+            <label for="diagnosis" class="form-label">Diagnosis <span class="required">*</span></label>
+        </div>
+
+        <div class="form-group">
+            <textarea id="remarks" name="remarks" class="form-control" placeholder=" " required></textarea>
+            <label for="remarks" class="form-label">Remarks <span class="required">*</span></label>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="confirm-btn">Save</button>
+        </div>
         </form>
     </div>
 </div>

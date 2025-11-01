@@ -275,7 +275,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 <p style="margin-bottom: 4px;">Current Profile Picture:</p>
                                 <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px;">
                                     <img src="${BASE_URL}/images/dentists/${data.profile_image}" alt="Profile Image"
-                                        style="max-width:150px; border:1px solid #ccc; padding:4px; border-radius:6px; margin-bottom: 6px;">
+                                        style="max-width:150px; border:1px solid #ccc; padding:4px; border-radius:4px;; margin-bottom: 6px;">
                                     <button type="button" class="confirm-btn"
                                         style="width:150px; margin-top:4px;"
                                         onclick="clearImage('profileImage', 'profileCleared')">Remove</button>
@@ -367,7 +367,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 <p style="margin-bottom: 4px;">Current Signature:</p>
                                 <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px;">
                                     <img src="${BASE_URL}/images/signatures/${data.signature_image}" alt="Signature"
-                                        style="max-width:150px; border:1px solid #ccc; padding:4px; border-radius:6px; margin-bottom: 6px;">
+                                        style="max-width:150px; border:1px solid #ccc; padding:4px; border-radius:4px;; margin-bottom: 6px;">
                                     <button type="button" class="confirm-btn"
                                         style="width:150px; margin:4px 0px 10px 0px;"
                                         onclick="clearImage('signatureImage', 'signatureCleared')">Remove</button>

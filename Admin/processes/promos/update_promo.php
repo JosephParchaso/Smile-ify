@@ -94,7 +94,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $current['end_date'] !== $end_date
         );
 
-        // 🚫 Removed the "No changes were made" message — now do nothing if no changes
         if ($promoChanged || $branchChanged) {
 
             if ($promoChanged) {

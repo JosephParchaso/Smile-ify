@@ -21,8 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($stmt->execute()) {
             if ($stmt->affected_rows > 0) {
                 $_SESSION['updateSuccess'] = "Patient set to " . ucfirst($status) . ".";
-            } else {
-                $_SESSION['updateError'] = "No changes made.";
             }
         } else {
             $_SESSION['updateError'] = "Failed to update status.";

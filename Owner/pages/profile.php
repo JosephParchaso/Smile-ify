@@ -39,7 +39,7 @@ $updateError = $_SESSION['updateError'] ?? "";
             <?php if ($qrImage): ?>
                 <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
                     <img src="<?= htmlspecialchars($qrImage) ?>" alt="QR Code"
-                        style="width:150px; border:1px solid #ccc; border-radius:8px;">
+                        style="width:150px; border:1px solid #ccc; border-radius:4px;">
                     <form method="POST" action="<?= BASE_URL ?>/Owner/processes/profile/upload_qr.php" enctype="multipart/form-data">
                         <input type="file" name="qrImage" accept="image/*" required style="margin-top:10px;">
                         <button type="submit" class="confirm-btn" style="width:150px; margin-top:5px;">Replace QR</button>
