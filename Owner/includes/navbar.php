@@ -30,6 +30,16 @@ require_once BASE_PATH . '/Owner/processes/load_employees_status.php';
                 </a>
             </li>
             <li>
+                <a href="<?= BASE_URL ?>/Owner/pages/services.php" class="<?= ($currentPage == 'services') ? 'active' : '' ?>">
+                    <span class="link-text">Services</span>
+                </a>
+            </li>
+            <li>
+                <a href="<?= BASE_URL ?>/Owner/pages/promos.php" class="<?= ($currentPage == 'promos') ? 'active' : '' ?>">
+                    <span class="link-text">Promos</span>
+                </a>
+            </li>
+            <li>
                 <a href="<?= BASE_URL ?>/Owner/pages/profile.php" class="<?= ($currentPage == 'profile') ? 'active' : '' ?>">
                     <span class="link-text">Profile</span>
                 </a>

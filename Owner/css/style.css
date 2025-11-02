@@ -93,7 +93,10 @@
     width: 80%;
 }
 
-#adminsTable, #dentistsTable {
+#adminsTable,
+#dentistsTable,
+#servicesTable,
+#promosTable {
     width: 100% !important;
 }
 
@@ -101,18 +104,36 @@
     width: 100% !important;
 }
 
-#adminsTable_filter, #dentistsTable_filter, #branchesTable_filter {
+.services-table,
+.promos-table {
+    width: 80% !important;
+    margin: 3% auto;
+}
+
+#adminsTable_filter,
+#dentistsTable_filter,
+#branchesTable_filter,
+#servicesTable_filter,
+#promosTable_filter {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-#adminsTable_filter input[type="search"], #dentistsTable_filter input[type="search"], #branchesTable_filter input[type="search"] {
+#adminsTable_filter input[type="search"],
+#dentistsTable_filter input[type="search"],
+#branchesTable_filter input[type="search"],
+#servicesTable_filter input[type="search"],
+#promosTable_filter input[type="search"] {
     height: 38px;
     padding: 6px 12px;
 }
 
-#adminsTable_filter button, #dentistsTable_filter button, #branchesTable_filter button {
+#adminsTable_filter button,
+#dentistsTable_filter button,
+#branchesTable_filter button,
+#servicesTable_filter button,
+#promosTable_filter button {
     height: 38px;
     padding: 6px 12px;
     border: 1px solid #1e293b;
@@ -121,6 +142,18 @@
     color: #fff;
     cursor: pointer;
 }
+
+#servicesTable th:nth-child(1), #servicesTable td:nth-child(1) { width: 5% !important; text-align: center;}
+#servicesTable th:nth-child(2), #servicesTable td:nth-child(2) { width: 25% !important; }
+#servicesTable th:nth-child(3), #servicesTable td:nth-child(3) { width: 10% !important; }
+#servicesTable th:nth-child(4), #servicesTable td:nth-child(4) { width: 10% !important; }
+#servicesTable th:nth-child(5), #servicesTable td:nth-child(5) { width: 10% !important; text-align: center;}
+
+#promosTable_filter th:nth-child(1), #promosTable_filter td:nth-child(1) { width: 5% !important; text-align: center;}
+#promosTable_filter th:nth-child(2), #promosTable_filter td:nth-child(2) { width: 25% !important; }
+#promosTable_filter th:nth-child(3), #promosTable_filter td:nth-child(3) { width: 10% !important; }
+#promosTable_filter th:nth-child(4), #promosTable_filter td:nth-child(4) { width: 15% !important; }
+#promosTable_filter th:nth-child(5), #promosTable_filter td:nth-child(5) { width: 20% !important; text-align: center;}
 
 #branchesTable th:nth-child(1), #branchesTable td:nth-child(1) { width: 5% !important; text-align: center;}
 #branchesTable th:nth-child(2), #branchesTable td:nth-child(2) { width: 20% !important; }

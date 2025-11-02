@@ -31,8 +31,8 @@ $sql = "SELECT
             s.price,
             s.duration_minutes,
             bs.status,
-            bs.date_created,
-            bs.date_updated
+            s.date_created,
+            s.date_updated
         FROM service s
         INNER JOIN branch_service bs ON s.service_id = bs.service_id
         WHERE s.service_id = ? AND bs.branch_id = ?

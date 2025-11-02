@@ -223,7 +223,8 @@ prescription availabilty 1 year 👍
 upload qr on admin or owner? best owner 👍
 notify owner if services, promos change 👍
 added cashless receipt if payment method is cashless, display also in transaction 👍
-ilahi ba ang 150 if nirequest sa total
+added promo and service in owner for add and edit, admin only change status 👍
+fix promo, service update in receipt
 
 payment methods in reports
 medcert reports

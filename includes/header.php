@@ -87,6 +87,9 @@ if (isset($_SESSION['user_id'])) {
         <script src="<?= BASE_URL ?>/Owner/js/loadDentists.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Owner/js/showModal.js?v=<?= time(); ?>"></script>
         <script src="<?= BASE_URL ?>/Owner/js/showBranchModal.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Owner/js/loadTables.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Owner/js/showServiceModal.js?v=<?= time(); ?>"></script>
+        <script src="<?= BASE_URL ?>/Owner/js/showPromoModal.js?v=<?= time(); ?>"></script>
     
     <?php elseif ($role === 'admin'): ?>
         <!-- Admin-specific -->

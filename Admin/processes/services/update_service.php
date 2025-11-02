@@ -13,57 +13,45 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     $service_id = intval($_POST["service_id"]);
-    $name       = trim($_POST["serviceName"]);
-    $price      = floatval($_POST["price"]);
     $status     = trim($_POST["status"]);
-    $duration   = intval($_POST["duration_minutes"]);
+
+    if (!$service_id || empty($status)) {
+        $_SESSION['updateError'] = "Invalid request.";
+        header("Location: " . BASE_URL . "/Admin/pages/services.php");
+        exit;
+    }
 
     try {
-        $checkSql = "SELECT s.name, s.price, s.duration_minutes, bs.status
-                        FROM service s
-                        JOIN branch_service bs ON s.service_id = bs.service_id
-                        WHERE s.service_id = ? AND bs.branch_id = ?";
+        $checkSql = "SELECT status FROM branch_service WHERE branch_id = ? AND service_id = ?";
         $checkStmt = $conn->prepare($checkSql);
-        $checkStmt->bind_param("ii", $service_id, $branch_id);
+        $checkStmt->bind_param("ii", $branch_id, $service_id);
         $checkStmt->execute();
-        $current = $checkStmt->get_result()->fetch_assoc();
+        $result = $checkStmt->get_result();
+        $current = $result->fetch_assoc();
         $checkStmt->close();
 
         if (!$current) {
-            $_SESSION['updateError'] = "Service not found.";
+            $_SESSION['updateError'] = "Service not found for this branch.";
             header("Location: " . BASE_URL . "/Admin/pages/services.php");
             exit;
         }
 
-        $serviceChanged = (
-            $current['name'] !== $name ||
-            floatval($current['price']) !== $price ||
-            intval($current['duration_minutes']) !== $duration
-        );
+        if ($current['status'] !== $status) {
+            $updateSQL = "UPDATE branch_service 
+                            SET status = ?, date_updated = NOW() 
+                            WHERE branch_id = ? AND service_id = ?";
+            $updateStmt = $conn->prepare($updateSQL);
+            $updateStmt->bind_param("sii", $status, $branch_id, $service_id);
+            $updateStmt->execute();
+            $updateStmt->close();
 
-        $branchChanged = ($current['status'] !== $status);
+            $updateServiceSQL = "UPDATE service SET date_updated = NOW() WHERE service_id = ?";
+            $updateServiceStmt = $conn->prepare($updateServiceSQL);
+            $updateServiceStmt->bind_param("i", $service_id);
+            $updateServiceStmt->execute();
+            $updateServiceStmt->close();
 
-        if (!$serviceChanged && !$branchChanged) {
-        } else {
-            if ($serviceChanged) {
-                $sql = "UPDATE service 
-                        SET name = ?, price = ?, duration_minutes = ?
-                        WHERE service_id = ?";
-                $stmt = $conn->prepare($sql);
-                $stmt->bind_param("sdii", $name, $price, $duration, $service_id);
-                $stmt->execute();
-                $stmt->close();
-            }
-
-            $sql2 = "UPDATE branch_service 
-                        SET status = ?, date_updated = NOW()
-                        WHERE branch_id = ? AND service_id = ?";
-            $stmt2 = $conn->prepare($sql2);
-            $stmt2->bind_param("sii", $status, $branch_id, $service_id);
-            $stmt2->execute();
-            $stmt2->close();
-
-            $_SESSION['updateSuccess'] = "Service updated successfully!";
+            $_SESSION['updateSuccess'] = "Service status updated successfully!";
 
             $branch_name = "";
             $branchQuery = $conn->prepare("SELECT name FROM branch WHERE branch_id = ?");
@@ -76,7 +64,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             }
             $branchQuery->close();
 
-            $notif_message = "The service " . htmlspecialchars($name) . " has been updated in " . htmlspecialchars($branch_name) . ".";
+            $service_name = "";
+            $serviceQuery = $conn->prepare("SELECT name FROM service WHERE service_id = ?");
+            $serviceQuery->bind_param("i", $service_id);
+            $serviceQuery->execute();
+            $serviceResult = $serviceQuery->get_result();
+            if ($serviceResult->num_rows > 0) {
+                $serviceRow = $serviceResult->fetch_assoc();
+                $service_name = $serviceRow['name'];
+            }
+            $serviceQuery->close();
+
+            $notif_message = "The service " . htmlspecialchars($service_name) . " in " . htmlspecialchars($branch_name) . " was set to " . htmlspecialchars($status) . ".";
 
             $getOwners = $conn->prepare("SELECT user_id FROM users WHERE role = 'owner' AND status = 'Active'");
             $getOwners->execute();
@@ -84,7 +83,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             if ($ownersResult->num_rows > 0) {
                 $notifSQL = "INSERT INTO notifications (user_id, message, is_read, date_created)
-                                VALUES (?, ?, 0, NOW())";
+                            VALUES (?, ?, 0, NOW())";
                 $notifStmt = $conn->prepare($notifSQL);
                 while ($owner = $ownersResult->fetch_assoc()) {
                     $notifStmt->bind_param("is", $owner['user_id'], $notif_message);
@@ -94,6 +93,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             }
             $getOwners->close();
         }
+
     } catch (Exception $e) {
         $_SESSION['updateError'] = "Database error: " . $e->getMessage();
     }

@@ -30,8 +30,8 @@ $sql = "SELECT
             bp.start_date,
             bp.end_date,
             bp.status,
-            bp.date_created,
-            bp.date_updated
+            p.date_created,
+            p.date_updated
         FROM promo p
         INNER JOIN branch_promo bp ON p.promo_id = bp.promo_id
         WHERE bp.branch_id = ? AND p.promo_id = ?";

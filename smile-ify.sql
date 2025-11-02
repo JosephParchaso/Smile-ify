@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 01, 2025 at 11:13 PM
+-- Generation Time: Nov 02, 2025 at 11:30 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -130,7 +130,8 @@ INSERT INTO `appointment_services` (`appointment_services_id`, `appointment_tran
 (64, 130, 9, '2025-11-02 02:46:49'),
 (65, 131, 8, '2025-11-02 03:59:58'),
 (66, 132, 9, '2025-11-02 04:29:12'),
-(67, 133, 2, '2025-11-02 04:35:15');
+(67, 133, 2, '2025-11-02 04:35:15'),
+(68, 134, 2, '2025-11-03 05:52:52');
 
 -- --------------------------------------------------------
 
@@ -282,7 +283,8 @@ INSERT INTO `appointment_transaction` (`appointment_transaction_id`, `user_id`, 
 (130, 28, 2, NULL, '2025-11-03', '12:30:00', '', '2025-11-01 18:46:49', '2025-11-02 03:43:25', 'Completed', 0),
 (131, 28, 2, 1, '2025-11-24', '09:30:00', '', '2025-11-01 19:59:58', '2025-11-02 05:32:43', 'Completed', 0),
 (132, 73, 2, 1, '2025-11-17', '09:30:00', '', '2025-11-01 20:29:12', '2025-11-02 05:57:50', 'Completed', 0),
-(133, 54, 2, NULL, '2025-11-17', '11:30:00', '', '2025-11-01 20:35:15', '2025-11-02 06:01:40', 'Completed', 0);
+(133, 54, 2, NULL, '2025-11-17', '11:30:00', '', '2025-11-01 20:35:15', '2025-11-02 06:01:40', 'Completed', 0),
+(134, 28, 1, NULL, '2025-11-10', '09:00:00', '', '2025-11-02 21:52:52', '2025-11-03 06:03:25', 'Completed', 0);
 
 -- --------------------------------------------------------
 
@@ -345,29 +347,30 @@ INSERT INTO `branch_announcements` (`id`, `announcement_id`, `branch_id`, `statu
 
 CREATE TABLE `branch_promo` (
   `branch_promo_id` int(11) NOT NULL,
-  `branch_id` int(11) NOT NULL,
+  `branch_id` int(11) DEFAULT NULL,
   `promo_id` int(11) NOT NULL,
   `status` enum('Active','Inactive') DEFAULT 'Active',
   `start_date` date DEFAULT NULL,
-  `end_date` date DEFAULT NULL,
-  `date_created` datetime DEFAULT current_timestamp(),
-  `date_updated` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `end_date` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `branch_promo`
 --
 
-INSERT INTO `branch_promo` (`branch_promo_id`, `branch_id`, `promo_id`, `status`, `start_date`, `end_date`, `date_created`, `date_updated`) VALUES
-(1, 1, 1, 'Inactive', NULL, NULL, '2025-09-21 06:48:42', '2025-10-07 23:44:40'),
-(2, 1, 2, 'Active', NULL, NULL, '2025-09-21 06:54:12', '2025-10-17 15:02:24'),
-(3, 1, 3, 'Active', '2025-10-01', '2025-10-27', '2025-09-21 07:11:00', '2025-10-02 06:15:45'),
-(4, 1, 4, 'Active', '2025-10-07', '2025-10-31', '2025-09-21 07:19:41', '2025-10-07 23:53:21'),
-(5, 1, 5, 'Active', NULL, NULL, '2025-09-24 08:30:01', '2025-10-02 06:18:16'),
-(6, 2, 6, 'Active', NULL, NULL, '2025-10-07 23:59:49', '2025-10-08 00:00:32'),
-(7, 1, 7, 'Inactive', NULL, NULL, '2025-11-01 05:12:56', '2025-11-01 05:13:24'),
-(8, 1, 8, 'Inactive', NULL, NULL, '2025-11-01 05:17:18', '2025-11-01 05:20:36'),
-(9, 1, 9, 'Inactive', NULL, NULL, '2025-11-01 05:19:21', '2025-11-01 05:29:32');
+INSERT INTO `branch_promo` (`branch_promo_id`, `branch_id`, `promo_id`, `status`, `start_date`, `end_date`) VALUES
+(4, 1, 4, 'Active', '2025-10-07', '2025-10-31'),
+(6, 2, 6, 'Active', NULL, NULL),
+(7, 1, 7, 'Inactive', NULL, NULL),
+(8, 1, 8, 'Inactive', NULL, NULL),
+(9, 1, 9, 'Inactive', NULL, NULL),
+(10, 1, 5, 'Active', NULL, NULL),
+(11, 2, 5, '', NULL, NULL),
+(12, 3, 5, '', NULL, NULL),
+(13, 6, 5, '', NULL, NULL),
+(14, 7, 5, '', NULL, NULL),
+(28, 1, 10, '', NULL, NULL),
+(29, 2, 10, '', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -377,7 +380,7 @@ INSERT INTO `branch_promo` (`branch_promo_id`, `branch_id`, `promo_id`, `status`
 
 CREATE TABLE `branch_service` (
   `branch_services_id` int(11) NOT NULL,
-  `branch_id` int(11) NOT NULL,
+  `branch_id` int(11) DEFAULT NULL,
   `service_id` int(11) NOT NULL,
   `status` enum('Active','Inactive') NOT NULL,
   `date_created` datetime DEFAULT current_timestamp(),
@@ -389,33 +392,64 @@ CREATE TABLE `branch_service` (
 --
 
 INSERT INTO `branch_service` (`branch_services_id`, `branch_id`, `service_id`, `status`, `date_created`, `date_updated`) VALUES
-(1, 1, 1, 'Active', '2025-09-21 05:51:14', '2025-11-01 05:31:09'),
-(2, 1, 2, 'Active', '2025-09-21 05:51:14', '2025-10-04 06:59:02'),
-(3, 1, 3, 'Active', '2025-09-21 05:51:14', '2025-10-04 06:59:13'),
-(4, 1, 4, 'Active', '2025-09-21 05:51:14', '2025-10-04 06:59:21'),
-(5, 1, 5, 'Inactive', '2025-09-21 05:51:14', '2025-10-13 03:34:38'),
-(6, 2, 6, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
-(7, 2, 7, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
-(8, 2, 8, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
-(9, 2, 9, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
-(10, 2, 10, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
-(11, 3, 1, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
-(12, 3, 2, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
-(13, 3, 3, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
-(14, 3, 4, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
-(15, 3, 5, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
-(16, 3, 6, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
-(17, 3, 7, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
-(18, 3, 8, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
-(19, 3, 9, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
-(20, 3, 10, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
-(21, 2, 2, 'Active', '2025-09-21 05:51:14', '2025-09-21 05:51:14'),
 (24, 1, 13, 'Active', '2025-11-01 02:20:48', '2025-11-01 02:20:48'),
-(25, 1, 14, 'Inactive', '2025-11-01 05:31:38', '2025-11-01 05:31:38'),
 (26, 2, 13, 'Active', '2025-11-02 04:48:39', '2025-11-02 05:03:58'),
 (27, 3, 13, 'Active', '2025-11-02 05:12:23', '2025-11-02 05:12:23'),
 (28, 6, 13, 'Active', '2025-11-02 05:12:23', '2025-11-02 05:12:23'),
-(29, 7, 13, 'Active', '2025-11-02 05:12:23', '2025-11-02 05:12:23');
+(29, 7, 13, 'Active', '2025-11-02 05:12:23', '2025-11-02 05:12:23'),
+(64, 1, 2, 'Active', '2025-11-03 03:37:27', '2025-11-03 03:37:27'),
+(65, 2, 2, 'Active', '2025-11-03 03:37:27', '2025-11-03 03:37:27'),
+(66, 3, 2, 'Active', '2025-11-03 03:37:27', '2025-11-03 03:37:27'),
+(67, 6, 2, 'Active', '2025-11-03 03:37:27', '2025-11-03 03:37:27'),
+(68, 7, 2, 'Active', '2025-11-03 03:37:27', '2025-11-03 03:37:27'),
+(69, 1, 3, 'Active', '2025-11-03 03:37:31', '2025-11-03 03:37:31'),
+(70, 2, 3, 'Active', '2025-11-03 03:37:31', '2025-11-03 03:37:31'),
+(71, 3, 3, 'Active', '2025-11-03 03:37:31', '2025-11-03 03:37:31'),
+(72, 6, 3, 'Active', '2025-11-03 03:37:31', '2025-11-03 03:37:31'),
+(73, 7, 3, 'Active', '2025-11-03 03:37:31', '2025-11-03 03:37:31'),
+(74, 1, 4, 'Active', '2025-11-03 03:37:39', '2025-11-03 03:37:39'),
+(75, 2, 4, 'Active', '2025-11-03 03:37:39', '2025-11-03 03:37:39'),
+(76, 3, 4, 'Active', '2025-11-03 03:37:39', '2025-11-03 03:37:39'),
+(77, 6, 4, 'Active', '2025-11-03 03:37:39', '2025-11-03 03:37:39'),
+(78, 7, 4, 'Active', '2025-11-03 03:37:39', '2025-11-03 03:37:39'),
+(79, 1, 5, 'Active', '2025-11-03 03:37:47', '2025-11-03 03:37:47'),
+(80, 2, 5, 'Active', '2025-11-03 03:37:47', '2025-11-03 03:37:47'),
+(81, 3, 5, 'Active', '2025-11-03 03:37:47', '2025-11-03 03:37:47'),
+(82, 6, 5, 'Active', '2025-11-03 03:37:47', '2025-11-03 03:37:47'),
+(83, 7, 5, 'Active', '2025-11-03 03:37:47', '2025-11-03 03:37:47'),
+(84, 1, 6, 'Active', '2025-11-03 03:37:55', '2025-11-03 03:37:55'),
+(85, 2, 6, 'Active', '2025-11-03 03:37:55', '2025-11-03 03:37:55'),
+(86, 3, 6, 'Active', '2025-11-03 03:37:55', '2025-11-03 03:37:55'),
+(87, 6, 6, 'Active', '2025-11-03 03:37:55', '2025-11-03 03:37:55'),
+(88, 7, 6, 'Active', '2025-11-03 03:37:55', '2025-11-03 03:37:55'),
+(89, 1, 7, 'Active', '2025-11-03 03:38:00', '2025-11-03 03:38:00'),
+(90, 2, 7, 'Active', '2025-11-03 03:38:00', '2025-11-03 03:38:00'),
+(91, 3, 7, 'Active', '2025-11-03 03:38:00', '2025-11-03 03:38:00'),
+(92, 6, 7, 'Active', '2025-11-03 03:38:00', '2025-11-03 03:38:00'),
+(93, 7, 7, 'Active', '2025-11-03 03:38:00', '2025-11-03 03:38:00'),
+(94, 1, 8, 'Active', '2025-11-03 03:38:06', '2025-11-03 03:38:06'),
+(95, 2, 8, 'Active', '2025-11-03 03:38:06', '2025-11-03 03:38:06'),
+(96, 3, 8, 'Active', '2025-11-03 03:38:06', '2025-11-03 03:38:06'),
+(97, 6, 8, 'Active', '2025-11-03 03:38:06', '2025-11-03 03:38:06'),
+(98, 7, 8, 'Active', '2025-11-03 03:38:06', '2025-11-03 03:38:06'),
+(99, 1, 9, 'Active', '2025-11-03 03:38:14', '2025-11-03 03:38:14'),
+(100, 2, 9, 'Active', '2025-11-03 03:38:14', '2025-11-03 03:38:14'),
+(101, 3, 9, 'Active', '2025-11-03 03:38:14', '2025-11-03 03:38:14'),
+(102, 6, 9, 'Active', '2025-11-03 03:38:14', '2025-11-03 03:38:14'),
+(103, 7, 9, 'Active', '2025-11-03 03:38:14', '2025-11-03 03:38:14'),
+(104, 1, 10, 'Active', '2025-11-03 03:38:19', '2025-11-03 03:38:19'),
+(105, 2, 10, 'Active', '2025-11-03 03:38:19', '2025-11-03 03:38:19'),
+(106, 3, 10, 'Active', '2025-11-03 03:38:19', '2025-11-03 03:38:19'),
+(107, 6, 10, 'Active', '2025-11-03 03:38:19', '2025-11-03 03:38:19'),
+(108, 7, 10, 'Active', '2025-11-03 03:38:19', '2025-11-03 03:38:19'),
+(109, 2, 16, 'Active', '2025-11-03 03:47:56', '2025-11-03 03:47:56'),
+(110, 3, 16, 'Active', '2025-11-03 03:47:56', '2025-11-03 03:47:56'),
+(111, 6, 16, 'Active', '2025-11-03 03:47:56', '2025-11-03 03:47:56'),
+(112, 7, 16, 'Active', '2025-11-03 03:47:56', '2025-11-03 03:47:56'),
+(132, 1, 1, 'Active', '2025-11-03 06:29:26', '2025-11-03 06:29:26'),
+(133, 2, 1, 'Active', '2025-11-03 06:29:26', '2025-11-03 06:29:26'),
+(134, 3, 1, 'Active', '2025-11-03 06:29:26', '2025-11-03 06:29:26'),
+(135, 6, 1, 'Active', '2025-11-03 06:29:26', '2025-11-03 06:29:26');
 
 -- --------------------------------------------------------
 
@@ -440,7 +474,7 @@ CREATE TABLE `branch_supply` (
 --
 
 INSERT INTO `branch_supply` (`branch_supplies_id`, `branch_id`, `supply_id`, `quantity`, `reorder_level`, `expiration_date`, `status`, `date_created`, `date_updated`) VALUES
-(1, 1, 1, 24, 12, '2025-10-31', 'Available', '2025-09-21 05:51:59', '2025-11-01 07:11:54'),
+(1, 1, 1, 22, 12, '2025-10-31', 'Available', '2025-09-21 05:51:59', '2025-11-03 06:03:25'),
 (2, 3, 2, 5, 10, NULL, 'Available', '2025-09-21 06:05:54', '2025-09-21 06:05:54'),
 (3, 1, 3, 455, 10, NULL, 'Available', '2025-10-13 04:59:52', '2025-10-17 15:14:42'),
 (8, 1, 6, 30, 10, NULL, 'Available', '2025-10-19 03:55:10', '2025-11-01 07:11:54'),
@@ -614,9 +648,10 @@ INSERT INTO `dental_transaction` (`dental_transaction_id`, `appointment_transact
 (54, 128, 2, 2, NULL, 'Cash', NULL, 7300.00, '', 'Issued', '/images/payments/medcert_payments/54_parchaso.jpg', '10 days', 'Headache', 'none', '2025-11-01 23:06:31', 150.00, '2025-10-31 23:11:52', '2025-11-01 23:10:48', 0),
 (55, 129, 1, 39, NULL, 'Cash', NULL, 6000.00, '', 'Issued', '/images/payments/medcert_payments/55_parchaso.jpg', 'none', 'none', '0', '2025-11-02 02:44:59', 150.00, '2025-11-01 17:19:53', '2025-11-02 02:45:12', 1),
 (56, 130, 3, 39, 6, 'Cash', NULL, 7500.00, '', 'Issued', '/images/payments/medcert_payments/56_parchaso.jpg', 'nonr', 'nonr', '0', '2025-11-02 03:44:49', 150.00, '2025-11-01 19:43:17', '2025-11-02 03:45:01', 0),
-(57, 131, 1, 39, NULL, 'Cashless', '/images/payments/cashless_payments/cashless_receipt_57_parchaso.jpg', 15150.00, 'with cert and receipt cashless', 'Issued', NULL, 'with cert and receipt cashless', 'with cert and receipt cashless', 'with cert and receipt cashless', NULL, NULL, '2025-11-01 20:20:37', '2025-11-02 05:37:55', 0),
-(58, 132, 1, 39, NULL, 'Cashless', '/images/payments/cashless_payments/cashless_receipt_58_potot.png', 8000.00, '', 'None', NULL, '', '', '', NULL, NULL, '2025-11-01 20:30:05', '2025-11-02 05:57:50', 0),
-(59, 133, 3, 39, 6, 'Cashless', '/images/payments/cashless_payments/59_tan.png', 700.00, '', 'None', NULL, '', '', '', NULL, NULL, '2025-11-01 20:35:33', '2025-11-02 06:01:40', 0);
+(57, 131, 1, 39, NULL, 'Cashless', '/images/payments/cashless_payments/57_parchaso.jpg', 15150.00, 'with cert and receipt cashless', 'Issued', NULL, 'with cert and receipt cashless', 'with cert and receipt cashless', 'with cert and receipt cashless', NULL, NULL, '2025-11-01 20:20:37', '2025-11-02 05:37:55', 0),
+(58, 132, 1, 39, NULL, 'Cashless', '/images/payments/cashless_payments/58_potot.png', 8000.00, '', 'None', NULL, '', '', '', NULL, NULL, '2025-11-01 20:30:05', '2025-11-02 05:57:50', 0),
+(59, 133, 3, 39, 6, 'Cashless', '/images/payments/cashless_payments/59_tan.png', 700.00, '', 'None', NULL, '', '', '', NULL, NULL, '2025-11-01 20:35:33', '2025-11-02 06:01:40', 0),
+(65, 134, 3, 2, 5, 'Cashless', '/images/payments/cashless_payments/65_parchaso.png', 900.00, '25 off', 'None', NULL, '', '', '', NULL, NULL, '2025-11-02 22:02:54', '2025-11-03 06:03:25', 0);
 
 -- --------------------------------------------------------
 
@@ -698,7 +733,8 @@ INSERT INTO `dental_transaction_services` (`id`, `dental_transaction_id`, `servi
 (106, 58, 9, 1),
 (109, 59, 2, 1),
 (116, 57, 8, 1),
-(117, 57, 13, 1);
+(117, 57, 13, 1),
+(120, 65, 2, 1);
 
 -- --------------------------------------------------------
 
@@ -777,7 +813,8 @@ INSERT INTO `dental_vital` (`vitals_id`, `appointment_transaction_id`, `admin_us
 (49, 130, 39, 120.0, 120, 120, '120', 120.00, 120.00, 'No', 'No', 'No', '2025-11-01 18:47:39', '2025-11-02 02:47:39'),
 (50, 131, 39, 12.0, 12, 121, '21', 12.00, 12.00, 'No', 'No', 'No', '2025-11-01 20:00:06', '2025-11-02 04:00:06'),
 (51, 132, 39, 35.0, 353, 5, '353', 353.00, 35.00, 'No', 'No', 'No', '2025-11-01 20:29:38', '2025-11-02 04:29:38'),
-(52, 133, 39, 10.0, 10, 10, '10', 10.00, 10.00, 'No', 'No', 'No', '2025-11-01 22:01:38', '2025-11-02 06:01:38');
+(52, 133, 39, 10.0, 10, 10, '10', 10.00, 10.00, 'No', 'No', 'No', '2025-11-01 22:01:38', '2025-11-02 06:01:38'),
+(53, 134, 2, 213.0, 123, 1, '23', 123.00, 123.00, 'No', 'No', 'No', '2025-11-02 21:52:59', '2025-11-03 05:52:59');
 
 -- --------------------------------------------------------
 
@@ -1198,7 +1235,7 @@ INSERT INTO `notifications` (`notification_id`, `user_id`, `message`, `is_read`,
 (810, 1, 'A new service \'sample notif\' has been added in Babag.', 1, '2025-10-31 21:31:38'),
 (811, 28, 'Your appointment on 2025-11-17 at 09:00 was successfully booked!', 1, '2025-10-31 23:11:28'),
 (812, 28, 'Your appointment (November 17, 2025 at 9:00 AM) has been marked as completed. Thank you for visiting!', 1, '2025-10-31 23:11:54'),
-(813, 2, 'Patient Jhon Joseph E. Parchaso has requested a medical certificate for transaction #54', 0, '2025-11-01 15:05:33'),
+(813, 2, 'Patient Jhon Joseph E. Parchaso has requested a medical certificate for transaction #54', 1, '2025-11-01 15:05:33'),
 (814, 38, 'Patient Jhon Joseph E. Parchaso has requested a medical certificate for transaction #54', 0, '2025-11-01 15:05:33'),
 (815, 51, 'Patient Jhon Joseph E. Parchaso has requested a medical certificate for transaction #54', 0, '2025-11-01 15:05:33'),
 (816, 52, 'Patient Jhon Joseph E. Parchaso has requested a medical certificate for transaction #54', 0, '2025-11-01 15:05:33'),
@@ -1213,11 +1250,24 @@ INSERT INTO `notifications` (`notification_id`, `user_id`, `message`, `is_read`,
 (856, 28, 'Your appointment on 2025-11-24 at 09:30 was successfully booked!', 0, '2025-11-01 19:59:58'),
 (857, 73, 'Your appointment on 2025-11-17 at 09:30 was successfully booked!', 0, '2025-11-01 20:29:12'),
 (858, 54, 'Your appointment on 2025-11-17 at 11:30 was successfully booked!', 0, '2025-11-01 20:35:15'),
-(859, 1, 'A new service \'Medical Certificate\' has been added in Pusok.', 0, '2025-11-01 20:48:39'),
-(860, 1, 'The service Medical Certificate has been updated in Pusok.', 0, '2025-11-01 20:50:37'),
+(859, 1, 'A new service \'Medical Certificate\' has been added in Pusok.', 1, '2025-11-01 20:48:39'),
+(860, 1, 'The service Medical Certificate has been updated in Pusok.', 1, '2025-11-01 20:50:37'),
 (861, 28, 'Your appointment (November 24, 2025 at 9:30 AM) has been marked as completed. Thank you for visiting!', 0, '2025-11-01 21:32:43'),
 (862, 73, 'Your appointment (November 17, 2025 at 9:30 AM) has been marked as completed. Thank you for visiting!', 0, '2025-11-01 21:57:50'),
-(863, 54, 'Your appointment (November 17, 2025 at 11:30 AM) has been marked as completed. Thank you for visiting!', 0, '2025-11-01 22:01:40');
+(863, 54, 'Your appointment (November 17, 2025 at 11:30 AM) has been marked as completed. Thank you for visiting!', 0, '2025-11-01 22:01:40'),
+(864, 1, 'The service Consultation in Babag was set to Inactive.', 1, '2025-11-02 19:53:36'),
+(865, 1, 'The service Consultation in Babag was set to Active.', 1, '2025-11-02 19:53:59'),
+(866, 1, 'The promo <strong>owner promo</strong> has been updated in <strong>Babag</strong>.', 1, '2025-11-02 20:44:14'),
+(867, 1, 'The promo owner promo in Babag was set to Active.', 1, '2025-11-02 20:48:34'),
+(868, 1, 'The promo owner promo in Babag was set to Inactive.', 1, '2025-11-02 20:51:47'),
+(869, 1, 'The promo owner promo in Babag was set to Inactive.', 1, '2025-11-02 20:57:25'),
+(870, 1, 'The promo owner promo in Babag was set to Active.', 1, '2025-11-02 20:59:14'),
+(871, 1, 'The promo owner promo in Babag was set to Inactive.', 1, '2025-11-02 21:04:31'),
+(872, 28, 'Your appointment on 2025-11-10 at 09:00 was successfully booked!', 0, '2025-11-02 21:52:52'),
+(873, 1, 'The promo Senior in Babag was set to Active.', 1, '2025-11-02 21:53:42'),
+(874, 28, 'Your appointment (November 10, 2025 at 9:00 AM) has been marked as completed. Thank you for visiting!', 0, '2025-11-02 22:03:25'),
+(875, 1, 'The service Consultation in Babag was set to Active.', 1, '2025-11-02 22:24:40'),
+(876, 1, 'The service Consultation in Babag was set to Inactive.', 1, '2025-11-02 22:28:55');
 
 -- --------------------------------------------------------
 
@@ -1231,23 +1281,26 @@ CREATE TABLE `promo` (
   `image_path` varchar(255) DEFAULT NULL,
   `description` text DEFAULT NULL,
   `discount_type` enum('percentage','fixed') NOT NULL DEFAULT 'percentage',
-  `discount_value` decimal(10,2) NOT NULL
+  `discount_value` decimal(10,2) NOT NULL,
+  `date_created` datetime DEFAULT current_timestamp(),
+  `date_updated` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `promo`
 --
 
-INSERT INTO `promo` (`promo_id`, `name`, `image_path`, `description`, `discount_type`, `discount_value`) VALUES
-(1, 'openinggg', '/images/promos/promo_1.jpg', 'openinggg', 'fixed', 500.00),
-(2, 'Grand Opening', '/images/promos/promo_2.jpg', 'Grand Opening', 'fixed', 45.00),
-(3, 'joseph', '/images/promos/promo_3.jpg', 'jj', 'percentage', 80.00),
-(4, 'sample', '/images/promos/promo_4.jpg', 'qwerrt', 'fixed', 123.00),
-(5, 'Senior', '/images/promos/promo_5.jpeg', '60 above', 'percentage', 25.00),
-(6, 'pusok', '/images/promos/promo_6.jpg', 'sample', 'fixed', 500.00),
-(7, 'sample notif', NULL, '', 'fixed', 50.00),
-(8, 'sample notif', NULL, '', 'percentage', 50.00),
-(9, 'sample notif', NULL, '', 'percentage', 500.00);
+INSERT INTO `promo` (`promo_id`, `name`, `image_path`, `description`, `discount_type`, `discount_value`, `date_created`, `date_updated`) VALUES
+(1, 'dummy', NULL, '', 'percentage', 0.00, '2025-11-03 04:35:59', '2025-11-03 05:25:33'),
+(2, 'dummy', NULL, '', 'percentage', 0.00, '2025-11-03 04:35:59', '2025-11-03 05:25:25'),
+(3, 'dummy', NULL, '', 'percentage', 0.00, '2025-11-03 04:35:59', '2025-11-03 05:25:58'),
+(4, 'sample', '/images/promos/promo_4.jpg', 'qwerrt', 'fixed', 123.00, '2025-11-03 04:35:59', '2025-11-03 04:35:59'),
+(5, 'Senior', '/images/promos/promo_5.jpeg', '60 above', 'percentage', 25.00, '2025-11-03 04:35:59', '2025-11-03 05:53:42'),
+(6, 'pusok', '/images/promos/promo_6.jpg', 'sample', 'fixed', 500.00, '2025-11-03 04:35:59', '2025-11-03 04:35:59'),
+(7, 'sample notif', NULL, '', 'fixed', 50.00, '2025-11-03 04:35:59', '2025-11-03 04:35:59'),
+(8, 'sample notif', NULL, '', 'percentage', 50.00, '2025-11-03 04:35:59', '2025-11-03 04:35:59'),
+(9, 'sample notif', NULL, '', 'percentage', 500.00, '2025-11-03 04:35:59', '2025-11-03 04:35:59'),
+(10, 'owner promo', NULL, '', 'fixed', 0.00, '2025-11-03 04:43:44', '2025-11-03 05:05:25');
 
 -- --------------------------------------------------------
 
@@ -1279,26 +1332,29 @@ CREATE TABLE `service` (
   `service_id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
   `price` double NOT NULL,
-  `duration_minutes` int(11) NOT NULL DEFAULT 45
+  `duration_minutes` int(11) NOT NULL DEFAULT 45,
+  `date_created` datetime DEFAULT current_timestamp(),
+  `date_updated` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `service`
 --
 
-INSERT INTO `service` (`service_id`, `name`, `price`, `duration_minutes`) VALUES
-(1, 'Consultation', 300, 15),
-(2, 'Tooth Extraction', 1200, 45),
-(3, 'Dental Filling', 1500, 60),
-(4, 'Root Canal Treatment', 7000, 120),
-(5, 'Dental Crown Placement', 10000, 90),
-(6, 'Orthodontic Braces', 45000, 60),
-(7, 'Teeth Whitening', 6000, 60),
-(8, 'Complete Denture', 15000, 90),
-(9, 'Partial Denture', 8000, 60),
-(10, 'Dental Implant', 70000, 120),
-(13, 'Medical Certificate', 150, 0),
-(14, 'sample notif', 0, 0);
+INSERT INTO `service` (`service_id`, `name`, `price`, `duration_minutes`, `date_created`, `date_updated`) VALUES
+(1, 'Consultation', 150, 15, '2025-11-03 06:15:30', '2025-11-03 06:29:26'),
+(2, 'Tooth Extraction', 500, 45, '2025-11-03 06:15:30', '2025-11-03 06:15:30'),
+(3, 'Dental Filling', 1500, 60, '2025-11-03 06:15:30', '2025-11-03 06:15:30'),
+(4, 'Root Canal Treatment', 7000, 120, '2025-11-03 06:15:30', '2025-11-03 06:15:30'),
+(5, 'Dental Crown Placement', 10000, 90, '2025-11-03 06:15:30', '2025-11-03 06:15:30'),
+(6, 'Orthodontic Braces', 45000, 60, '2025-11-03 06:15:30', '2025-11-03 06:15:30'),
+(7, 'Teeth Whitening', 6000, 60, '2025-11-03 06:15:30', '2025-11-03 06:15:30'),
+(8, 'Complete Denture', 15000, 90, '2025-11-03 06:15:30', '2025-11-03 06:15:30'),
+(9, 'Partial Denture', 8000, 60, '2025-11-03 06:15:30', '2025-11-03 06:15:30'),
+(10, 'Dental Implant', 70000, 120, '2025-11-03 06:15:30', '2025-11-03 06:15:30'),
+(13, 'Medical Certificate', 150, 0, '2025-11-03 06:15:30', '2025-11-03 06:15:30'),
+(14, 'Shift to Ownerr', 200, 100, '2025-11-03 06:15:30', '2025-11-03 06:15:30'),
+(16, 'Impaction', 800, 40, '2025-11-03 06:15:30', '2025-11-03 06:15:30');
 
 -- --------------------------------------------------------
 
@@ -1411,7 +1467,7 @@ INSERT INTO `users` (`user_id`, `username`, `password`, `last_name`, `middle_nam
 (25, 'AchasGG', '$2y$10$csrxQ1iwxHEcfkhQHKf3se586DUSZSK.WhXgNKB39m9js/HfPwuYK', 'Achas', '', 'Gab', 'Male', '0000-00-00', '18100807@usc.edu.ph', '0922626262', NULL, 'patient', NULL, NULL, 'Inactive', '2025-07-14 10:25:16', NULL, 0),
 (26, 'DazeP', '$2y$10$du.PYFR4vnJv9ecdNWDox.UUDcjoC0cTUAvtnsnSG.tXwdqn5vLKO', 'Daze', '', 'Pretot', 'Male', '0000-00-00', 'parchasoresidence@gmail.com', '9055626239', NULL, 'patient', NULL, NULL, 'Inactive', '2025-07-14 10:33:22', NULL, 0),
 (27, 'ChikuY', '$2y$10$h7C7FiWzWuf7oS0hUaav/OZwJX4rYOExaPk3NJu3O39mmsutOsUvm', 'Chiku', 'Wix', 'Yel', 'Female', '0000-00-00', 'parchasoresidence@gmail.com', '9055626239', NULL, 'patient', NULL, NULL, 'Inactive', '2025-07-14 11:14:19', '2025-10-04 05:51:10', 0),
-(28, 'Josephp', '$2y$10$OYynxpSPEJmsmDYgUlzNh.bnp1SH8.yJNckex9WXSvwA79LxPQ4Wm', 'Parchaso', 'España', 'Jhon Joseph', 'Male', '1999-08-17', 'josephparchaso@gmail.com', '9055626239', 'Block 22, Lot 6, Deca 4 Bankal Lapu Lapu City Cebu', 'patient', 1, NULL, 'Active', '2025-07-14 11:26:32', '2025-11-02 03:59:58', 0),
+(28, 'Josephp', '$2y$10$OYynxpSPEJmsmDYgUlzNh.bnp1SH8.yJNckex9WXSvwA79LxPQ4Wm', 'Parchaso', 'España', 'Jhon Joseph', 'Male', '1999-08-17', 'josephparchaso@gmail.com', '9055626239', 'Block 22, Lot 6, Deca 4 Bankal Lapu Lapu City Cebu', 'patient', 1, NULL, 'Active', '2025-07-14 11:26:32', '2025-11-03 05:52:52', 0),
 (29, 'pototj', '$2y$10$9Swzre20c9pLQ8ejMr1ySufYwaARXiCYpp8sUXyb5CP1oI7xNjtC2', 'potot', '', 'jj', 'Male', '0000-00-00', '18102727@usc.edu.ph', '9527194102', NULL, 'patient', NULL, NULL, 'Inactive', '2025-07-14 15:48:41', NULL, 0),
 (30, 'pret', '$2y$10$z7r/dpwWQ2m.RZK8EcwJGu2MkUM3tRY2EgG/7OyfSubN.bmXm2yTW', 'pre', '', 'tot', 'Male', '0000-00-00', '18102727@usc.edu.ph', '9205251545', NULL, 'patient', NULL, NULL, 'Inactive', '2025-07-14 16:03:59', NULL, 0),
 (31, 'Parchaso_J', '$2y$10$14IUZVVauGdjCe04vSuVTechUS8.EYYzOO5yZ0Li6Lq/IUhGx0.Ny', 'Parchaso', 'Espana', 'Jhon', 'Female', '0000-00-00', '18100807@usc.edu.ph', '9055626239', NULL, 'patient', NULL, NULL, 'Inactive', '2025-07-31 14:32:30', NULL, 0),
@@ -1646,13 +1702,13 @@ ALTER TABLE `announcements`
 -- AUTO_INCREMENT for table `appointment_services`
 --
 ALTER TABLE `appointment_services`
-  MODIFY `appointment_services_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
+  MODIFY `appointment_services_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=69;
 
 --
 -- AUTO_INCREMENT for table `appointment_transaction`
 --
 ALTER TABLE `appointment_transaction`
-  MODIFY `appointment_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=134;
+  MODIFY `appointment_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=135;
 
 --
 -- AUTO_INCREMENT for table `branch`
@@ -1670,13 +1726,13 @@ ALTER TABLE `branch_announcements`
 -- AUTO_INCREMENT for table `branch_promo`
 --
 ALTER TABLE `branch_promo`
-  MODIFY `branch_promo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `branch_promo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `branch_service`
 --
 ALTER TABLE `branch_service`
-  MODIFY `branch_services_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `branch_services_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=136;
 
 --
 -- AUTO_INCREMENT for table `branch_supply`
@@ -1700,19 +1756,19 @@ ALTER TABLE `dental_tips`
 -- AUTO_INCREMENT for table `dental_transaction`
 --
 ALTER TABLE `dental_transaction`
-  MODIFY `dental_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
+  MODIFY `dental_transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
 
 --
 -- AUTO_INCREMENT for table `dental_transaction_services`
 --
 ALTER TABLE `dental_transaction_services`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=118;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=121;
 
 --
 -- AUTO_INCREMENT for table `dental_vital`
 --
 ALTER TABLE `dental_vital`
-  MODIFY `vitals_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+  MODIFY `vitals_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
 
 --
 -- AUTO_INCREMENT for table `dentist`
@@ -1736,13 +1792,13 @@ ALTER TABLE `dentist_service`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=864;
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=877;
 
 --
 -- AUTO_INCREMENT for table `promo`
 --
 ALTER TABLE `promo`
-  MODIFY `promo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `promo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `qr_payment`
@@ -1754,7 +1810,7 @@ ALTER TABLE `qr_payment`
 -- AUTO_INCREMENT for table `service`
 --
 ALTER TABLE `service`
-  MODIFY `service_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `service_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `service_supplies`

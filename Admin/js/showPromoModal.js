@@ -2,10 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const promoModal = document.getElementById("managePromoModal");
     const promoBody = document.getElementById("promoModalBody");
 
-    const today = new Date();
-    today.setDate(today.getDate() + 1);
-    const formattedToday = today.toISOString().split("T")[0];
-
     document.body.addEventListener("click", function (e) {
         if (e.target.classList.contains("btn-promo")) {
             const id = e.target.getAttribute("data-id");
@@ -26,164 +22,75 @@ document.addEventListener("DOMContentLoaded", () => {
                     promoModal.style.display = "block";
                 });
         }
-
-        if (e.target.id === "insertPromoBtn") {
-            renderPromoForm(null);
-            promoModal.style.display = "block";
-        }
-    });
-
-    document.body.addEventListener("focusin", function (e) {
-        if (e.target && (e.target.id === "startDate" || e.target.id === "endDate")) {
-            e.target.setAttribute("min", formattedToday);
-        }
-    });
-
-    document.body.addEventListener("change", function (e) {
-        const target = e.target;
-
-        if (target && target.id === "startDate") {
-            const startInput = target;
-            const errorEl = document.getElementById("startDateError");
-
-            if (startInput.value) {
-                const selectedDate = new Date(startInput.value);
-                selectedDate.setHours(0, 0, 0, 0);
-
-                if (selectedDate < today) {
-                    errorEl.textContent = "Please enter a valid date.";
-                    errorEl.style.display = "block";
-                    startInput.value = "";
-                } else {
-                    errorEl.style.display = "none";
-                }
-            }
-        }
-
-        if (target && target.id === "endDate") {
-            const startInput = document.getElementById("startDate");
-            const endInput = target;
-            const errorEl = document.getElementById("endDateError");
-
-            if (endInput.value) {
-                const endDate = new Date(endInput.value);
-                const startDate = startInput.value ? new Date(startInput.value) : null;
-                endDate.setHours(0, 0, 0, 0);
-
-                if (endDate < today) {
-                    errorEl.textContent = "Please enter a valid date.";
-                    errorEl.style.display = "block";
-                    endInput.value = "";
-                } else if (startDate && endDate < startDate) {
-                    errorEl.textContent = "Please enter a valid date.";
-                    errorEl.style.display = "block";
-                    endInput.value = "";
-                } else {
-                    errorEl.style.display = "none";
-                }
-            }
-        }
     });
 
     function renderPromoForm(data) {
-        const isEdit = !!data;
-            
-        const startDate = isEdit && data.start_date ? data.start_date : "";
-        const endDate   = isEdit && data.end_date   ? data.end_date   : "";
-
         promoBody.innerHTML = `
-            <h2>${isEdit ? "Manage Promo" : "Add Promo"}</h2>
-            <form id="promoForm" action="${BASE_URL}/Admin/processes/promos/${isEdit ? "update_promo.php" : "insert_promo.php"}" method="POST" enctype="multipart/form-data" autocomplete="off">
-                ${isEdit ? `<input type="hidden" name="promo_id" value="${data.promo_id}">` : ""}
+            <h2>Manage Promo Status</h2>
+            <form id="promoForm" action="${BASE_URL}/Admin/processes/promos/update_promo.php" method="POST" autocomplete="off">
+                <input type="hidden" name="promo_id" value="${data.promo_id}">
 
                 <div class="form-group">
-                    <input type="text" id="promoName" name="promoName" class="form-control"
-                        value="${isEdit ? data.name : ""}" required placeholder=" ">
-                    <label for="promoName" class="form-label">Promo Name <span class="required">*</span></label>
+                    <input type="text" class="form-control" value="${data.name}" disabled>
+                    <label class="form-label">Promo Name</label>
                 </div>
 
                 <div class="form-group">
-                    <textarea id="description" name="description" class="form-control" rows="3" placeholder=" ">${isEdit ? (data.description || "") : ""}</textarea>
-                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" rows="3" disabled>${data.description || ""}</textarea>
+                    <label class="form-label">Description</label>
                 </div>
 
+                ${data.image_path ? `
                 <div class="form-group">
-                    <input type="file" id="promoImage" name="promoImage" class="form-control" accept="image/*">
-                    <label for="promoImage" class="form-label">Promo Image</label>
-                    ${isEdit && data.image_path 
-                    ? `<div style="margin-top:10px;">
+                    <label class="form-label">Promo Image</label>
+                    <div style="margin-top:10px;">
                         <img src="${BASE_URL}${data.image_path}" 
                             alt="Promo Image" 
                             style="max-width:300px; max-height:300px; border-radius:4px; object-fit:cover; display:block;">
-                    </div>` 
-                    : ""}
+                    </div>
+                </div>` : ""}
+
+                <div class="form-group">
+                    <input type="text" class="form-control" 
+                        value="${data.discount_type === 'percentage' ? 'Percentage (%)' : 'Fixed Amount'}" disabled>
+                    <label class="form-label">Discount Type</label>
                 </div>
 
                 <div class="form-group">
-                    <select id="discountType" name="discountType" class="form-control" required>
-                        <option value="" disabled ${!isEdit ? "selected" : ""}></option>
-                        <option value="percentage" ${isEdit && data.discount_type === "percentage" ? "selected" : ""}>Percentage (%)</option>
-                        <option value="fixed" ${isEdit && data.discount_type === "fixed" ? "selected" : ""}>Fixed Amount</option>
-                    </select>
-                    <label for="discountType" class="form-label">Discount Type <span class="required">*</span></label>
+                    <input type="number" class="form-control" value="${data.discount_value}" disabled>
+                    <label class="form-label">Discount Value</label>
                 </div>
 
                 <div class="form-group">
-                    <input type="number" id="discountValue" name="discountValue" class="form-control"
-                        value="${isEdit ? data.discount_value : ""}" required placeholder=" " min="0">
-                    <label for="discountValue" class="form-label">Discount Value <span class="required">*</span></label>
+                    <input type="date" class="form-control" value="${data.start_date || ''}" disabled>
+                    <label class="form-label">Start Date</label>
                 </div>
 
                 <div class="form-group">
-                    <input type="date" id="startDate" name="startDate" class="form-control"
-                        value="${startDate}">
-                    <label for="startDate" class="form-label">Start Date </label>
-                    <span id="startDateError" class="error-msg-calendar error" style="display: none;"></span>
+                    <input type="date" class="form-control" value="${data.end_date || ''}" disabled>
+                    <label class="form-label">End Date</label>
                 </div>
 
                 <div class="form-group">
-                    <input type="date" id="endDate" name="endDate" class="form-control"
-                        value="${endDate}">
-                    <label for="endDate" class="form-label">End Date </label>
-                    <span id="endDateError" class="error-msg-calendar error" style="display: none;"></span>
+                    <input type="text" class="form-control" value="${data.date_created || ''}" disabled>
+                    <label class="form-label">Date Created</label>
+                </div>
+
+                <div class="form-group">
+                    <input type="text" class="form-control" value="${data.date_updated || ''}" disabled>
+                    <label class="form-label">Last Updated</label>
                 </div>
 
                 <div class="form-group">
                     <select id="status" name="status" class="form-control" required>
-                        <option value="" disabled ${!isEdit ? "selected" : ""}></option>
-                        <option value="Active" ${isEdit && data.status === "Active" ? "selected" : ""}>Active</option>
-                        <option value="Inactive" ${isEdit && data.status === "Inactive" ? "selected" : ""}>Inactive</option>
+                        <option value="Active" ${data.status === "Active" ? "selected" : ""}>Active</option>
+                        <option value="Inactive" ${data.status === "Inactive" ? "selected" : ""}>Inactive</option>
                     </select>
                     <label for="status" class="form-label">Status <span class="required">*</span></label>
                 </div>
 
-                ${isEdit ? `
-                <div class="form-group">
-                    <input type="text" id="dateCreated" class="form-control" value="${data.date_created}" disabled>
-                    <label for="dateCreated" class="form-label">Date Created</label>
-                </div>` : ""}
-
-                ${isEdit ? `
-                <div class="form-group">
-                    <input type="text" id="dateUpdated" class="form-control" value="${data.date_updated}" disabled>
-                    <label for="dateUpdated" class="form-label">Last Update</label>
-                </div>` : ""}
-
-                <div class="form-group">
-                    <label class="confirmation-label">
-                        <input type="checkbox" id="confirmationCheck" required>
-                        I hereby confirm that all information provided above is true and accurate. <br>
-                        I understand that any updates made — including changes to promo details, discounts, or validity dates —
-                        may affect active promotions or patient offers. I take responsibility to ensure that 
-                        the <strong>Owner</strong> is notified about these changes.
-                    </label>
-                    <span id="confirmError" class="error-msg" style="display:none; color:red; font-size:0.9em;">
-                        Please confirm before proceeding.
-                    </span>
-                </div>
-
                 <div class="button-group button-group-profile">
-                    <button type="submit" class="form-button confirm-btn">${isEdit ? "Save Changes" : "Add Promo"}</button>
+                    <button type="submit" class="form-button confirm-btn">Save Changes</button>
                     <button type="button" class="form-button cancel-btn" onclick="closePromoModal()">Cancel</button>
                 </div>
             </form>
@@ -194,3 +101,4 @@ document.addEventListener("DOMContentLoaded", () => {
 function closePromoModal() {
     document.getElementById("managePromoModal").style.display = "none";
 }
+

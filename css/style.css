@@ -434,7 +434,7 @@ form {
     animation: fadeIn 0.3s ease-in-out;
 }
 
-.change-password-modal-content, .edit-profile-modal-content, .manage-calendar-modal-content, .manage-service-modal-content {
+.change-password-modal-content, .edit-profile-modal-content, .manage-calendar-modal-content{
     max-width: 500px;
     max-height: 150vh;
     width: 100%;
