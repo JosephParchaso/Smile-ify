@@ -270,5 +270,11 @@ gmail suspicious spams - sendgrid? brevo or google parin 💖
 Contact Fr. Peter for the database hosting and server💖
 Minimum of 5 minutes for OTP time remaining expiration time 💖
 dungan register/book different user 💖
-task scheduler 💖
 verify if 8 am mawa ang booking for current date 💖
+task scheduler 💖
+
+Minimum of 5 minutes for OTP time remaining expiration time 💖{
+    const expiryLimit = 60;
+    $expiry_limit = 60;
+    if (($currentTime - $otpCreatedTime) > 60)
+}

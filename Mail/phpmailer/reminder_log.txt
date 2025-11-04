@@ -837,3 +837,27 @@ Reminders checked at 2025-11-05 01:00:02. Sent to 0 recipient(s).
 [2025-11-05 01:03:36] Checking between 2025-11-05 01:58:36 and 2025-11-05 02:08:36
 Reminders checked at 2025-11-05 01:03:36. Sent to 0 recipient(s).
 
+[2025-11-05 01:29:37] Script started
+[2025-11-05 01:29:37] Checking between 2025-11-05 02:24:37 and 2025-11-05 02:34:37
+Reminders checked at 2025-11-05 01:29:37. Sent to 0 recipient(s).
+
+[2025-11-05 01:29:38] Script started
+[2025-11-05 01:29:38] Checking between 2025-11-05 02:24:38 and 2025-11-05 02:34:38
+Reminders checked at 2025-11-05 01:29:38. Sent to 0 recipient(s).
+
+[2025-11-05 01:29:40] Script started
+[2025-11-05 01:29:40] Checking between 2025-11-05 02:24:40 and 2025-11-05 02:34:40
+Reminders checked at 2025-11-05 01:29:40. Sent to 0 recipient(s).
+
+[2025-11-05 02:00:03] Script started
+[2025-11-05 02:00:03] Checking between 2025-11-05 09:00:03 and 2025-11-05 10:00:03
+Reminders checked at 2025-11-05 02:00:03. Sent to 0 recipient(s).
+
+[2025-11-05 02:15:08] Script started
+[2025-11-05 02:15:08] Checking between 2025-11-05 09:15:08 and 2025-11-05 10:15:08
+Reminders checked at 2025-11-05 02:15:08. Sent to 0 recipient(s).
+
+[2025-11-05 02:30:01] Script started
+[2025-11-05 02:30:01] Checking between 2025-11-05 08:30:01 and 2025-11-05 09:30:01
+Reminders checked at 2025-11-05 02:30:01. Sent to 0 recipient(s).
+

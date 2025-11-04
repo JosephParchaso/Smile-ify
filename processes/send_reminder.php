@@ -15,8 +15,14 @@ $logFile = BASE_PATH . '/Mail/phpmailer/reminder_log.txt';
 file_put_contents($logFile, '[' . date('Y-m-d H:i:s') . "] Script started\n", FILE_APPEND);
 
 $now = new DateTime();
-$targetStart = (clone $now)->modify('+55 minutes');
-$targetEnd   = (clone $now)->modify('+65 minutes');
+$targetStart = (clone $now)->modify('+6 hours');
+$targetEnd   = (clone $now)->modify('+7 hours');
+
+// $hoursBefore = 24; // reminder 24 hours before appointment
+// $now = new DateTime();
+
+// $targetStart = (clone $now)->modify("+{$hoursBefore} hours");
+// $targetEnd   = (clone $now)->modify("+{$hoursBefore} hours +30 minutes");
 
 $currentDateTime = $targetStart->format('Y-m-d H:i:s');
 $nextDateTime = $targetEnd->format('Y-m-d H:i:s');
