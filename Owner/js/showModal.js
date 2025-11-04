@@ -2,15 +2,56 @@ document.addEventListener("DOMContentLoaded", () => {
     const employeeModal = document.getElementById("manageModal");
     const employeeBody = document.getElementById("modalBody");
 
-    const today = new Date().toISOString().split("T")[0];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+    const tomorrowISO = tomorrow.toISOString().split("T")[0];
 
     document.body.addEventListener("focusin", function (e) {
         if (e.target && e.target.id === "dateofBirth") {
             e.target.setAttribute("min", "1900-01-01");
-            e.target.setAttribute("max", today);
+            e.target.setAttribute("max", today.toISOString().split("T")[0]);
         }
+
         if (e.target && e.target.id === "dateStarted") {
-            e.target.setAttribute("min", today);
+            e.target.setAttribute("min", tomorrowISO);
+        }
+    });
+
+    document.body.addEventListener("change", function (e) {
+        if (e.target && e.target.id === "dateStarted") {
+            const dateInput = e.target;
+            const errorEl = document.getElementById("dateError");
+
+            if (dateInput.value) {
+                const selectedDate = new Date(dateInput.value);
+                selectedDate.setHours(0, 0, 0, 0);
+                const day = selectedDate.getDay();
+
+                const now = new Date();
+                now.setHours(0, 0, 0, 0);
+                const tomorrowCheck = new Date(now);
+                tomorrowCheck.setDate(now.getDate() + 1);
+
+                if (isNaN(selectedDate)) {
+                    errorEl.textContent = "Please enter a valid date.";
+                    errorEl.style.display = "block";
+                    dateInput.value = "";
+                } else if (selectedDate < tomorrowCheck) {
+                    errorEl.textContent = "Please enter a valid date.";
+                    errorEl.style.display = "block";
+                    dateInput.value = "";
+                } else if (day === 0) {
+                    errorEl.textContent =
+                        "Sundays are not available. Please select another date.";
+                    errorEl.style.display = "block";
+                    dateInput.value = "";
+                } else {
+                    errorEl.style.display = "none";
+                }
+            }
         }
     });
 
@@ -58,64 +99,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.target.id === "addDentistBtn") {
             renderDentistForm(null);
             employeeModal.style.display = "block";
-        }
-    });
-
-    document.body.addEventListener("change", function (e) {
-        const todayDate = new Date();
-        todayDate.setDate(todayDate.getDate() + 1);
-
-        if (e.target && e.target.id === "dateofBirth") {
-            const dobInput = e.target;
-            const errorEl = document.getElementById("dobError");
-
-            if (dobInput.value) {
-                const selectedDate = new Date(dobInput.value);
-                selectedDate.setHours(0, 0, 0, 0);
-
-                if (
-                    isNaN(selectedDate) ||
-                    selectedDate.getFullYear() < 1900 ||
-                    selectedDate >= todayDate
-                ) {
-                    errorEl.textContent = "Please enter a valid date of birth.";
-                    errorEl.style.display = "block";
-                    dobInput.value = "";
-                } else {
-                    errorEl.style.display = "none";
-                }
-            }
-        }
-
-        if (e.target && e.target.id === "dateStarted") {
-            const dateInput = e.target;
-            const errorEl = document.getElementById("dateError");
-
-            if (dateInput.value) {
-                const selectedDate = new Date(dateInput.value);
-                selectedDate.setHours(0, 0, 0, 0);
-                const day = selectedDate.getUTCDay();
-
-                if (isNaN(selectedDate)) {
-                    errorEl.textContent = "Please enter a valid date.";
-                    errorEl.style.display = "block";
-                    dateInput.value = "";
-                } else if (
-                    selectedDate.getFullYear() < 1900 ||
-                    selectedDate < todayDate ||
-                    day === 0
-                ) {
-                    if (day === 0) {
-                        errorEl.textContent = "Please enter a valid date.";
-                    } else {
-                        errorEl.textContent = "Please enter a valid date.";
-                    }
-                    errorEl.style.display = "block";
-                    dateInput.value = "";
-                } else {
-                    errorEl.style.display = "none";
-                }
-            }
         }
     });
 
@@ -225,10 +208,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="form-group">
                     <label class="confirmation-label">
                         <input type="checkbox" id="confirmationCheck" required>
-                        I hereby confirm that all information provided above is true and accurate. <br>
-                        I understand that any updates made — including changes to branches, dentists, or supplies — 
-                        may affect existing appointments or records. I take responsibility to ensure that 
-                        the Admins are notified to inform any affected users or patients about these changes.
+                        I hereby confirm that all information provided above for this <strong>Admin account</strong> is true and accurate. <br>
+                        I understand that adding or updating an Admin may affect access permissions, assigned branches, or ongoing operations. 
+                        I take responsibility to ensure that the <strong>Admin</strong> is notified about any significant changes made to this account.
                     </label>
                     <span id="confirmError" class="error-msg" style="display:none; color:red; font-size:0.9em;">
                         Please confirm before proceeding.
@@ -402,10 +384,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="form-group">
                     <label class="confirmation-label">
                         <input type="checkbox" id="confirmationCheck" required>
-                        I hereby confirm that all information provided above is true and accurate. <br>
-                        I understand that any updates made — including changes to branches, dentists, or supplies — 
-                        may affect existing appointments or records. I take responsibility to ensure that 
-                        the Admins are notified to inform any affected users or patients about these changes.
+                        I hereby confirm that all information provided above for this <strong>Dentist Info</strong> is true and accurate. <br>
+                        I understand that adding or updating a Dentist may affect access permissions, assigned branches, or ongoing operations. 
+                        I take responsibility to ensure that the <strong>Admin and Dentist</strong> are notified about any significant changes made to this account.
                     </label>
                     <span id="confirmError" class="error-msg" style="display:none; color:red; font-size:0.9em;">
                         Please confirm before proceeding.

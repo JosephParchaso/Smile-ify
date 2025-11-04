@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const promoBody = document.getElementById("promoModalBody");
 
     const today = new Date();
-    today.setDate(today.getDate() + 1);
     const formattedToday = today.toISOString().split("T")[0];
 
     document.body.addEventListener("click", function (e) {
@@ -42,20 +41,33 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.addEventListener("change", function (e) {
         const target = e.target;
 
+        function parseLocalDate(dateStr) {
+            const [year, month, day] = dateStr.split('-').map(Number);
+            return new Date(year, month - 1, day);
+        }
+
         if (target && target.id === "startDate") {
             const startInput = target;
+            const endInput = document.getElementById("endDate");
             const errorEl = document.getElementById("startDateError");
 
             if (startInput.value) {
-                const selectedDate = new Date(startInput.value);
-                selectedDate.setHours(0, 0, 0, 0);
+                const startDate = parseLocalDate(startInput.value);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
 
-                if (selectedDate < today) {
+                if (startDate < today) {
                     errorEl.textContent = "Please enter a valid date.";
                     errorEl.style.display = "block";
                     startInput.value = "";
                 } else {
                     errorEl.style.display = "none";
+
+                    endInput.setAttribute("min", startInput.value);
+
+                    if (!endInput.value || parseLocalDate(endInput.value) < startDate) {
+                        endInput.value = startInput.value;
+                    }
                 }
             }
         }
@@ -66,16 +78,17 @@ document.addEventListener("DOMContentLoaded", () => {
             const errorEl = document.getElementById("endDateError");
 
             if (endInput.value) {
-                const endDate = new Date(endInput.value);
-                const startDate = startInput.value ? new Date(startInput.value) : null;
-                endDate.setHours(0, 0, 0, 0);
+                const endDate = parseLocalDate(endInput.value);
+                const startDate = startInput.value ? parseLocalDate(startInput.value) : null;
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
 
                 if (endDate < today) {
                     errorEl.textContent = "Please enter a valid date.";
                     errorEl.style.display = "block";
                     endInput.value = "";
                 } else if (startDate && endDate < startDate) {
-                    errorEl.textContent = "Please enter a valid date.";
+                    errorEl.textContent = "End date cannot be before start date.";
                     errorEl.style.display = "block";
                     endInput.value = "";
                 } else {

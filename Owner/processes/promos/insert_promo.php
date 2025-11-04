@@ -80,8 +80,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if (!empty($branches)) {
             $sql2 = "INSERT INTO branch_promo 
-                        (branch_id, promo_id, start_date, end_date, date_created) 
-                        VALUES (?, ?, ?, ?, NOW())";
+                        (branch_id, promo_id, start_date, end_date) 
+                        VALUES (?, ?, ?, ?)";
             $stmt2 = $conn->prepare($sql2);
             if (!$stmt2) {
                 throw new Exception("Prepare failed (branch_promo): " . $conn->error);

@@ -12,6 +12,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 }
 require_once BASE_PATH . '/includes/header.php';
 require_once BASE_PATH . '/Admin/includes/navbar.php';
+require_once BASE_PATH . '/Admin/processes/patients/auto_deactivate_patients.php';
 $activeTab = $_GET['tab'] ?? 'recent';
 $updateSuccess = $_SESSION['updateSuccess'] ?? '';
 $updateError   = $_SESSION['updateError'] ?? '';

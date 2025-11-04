@@ -16,10 +16,12 @@ $sql = "
         p.name, 
         p.discount_type, 
         p.discount_value,
+        GROUP_CONCAT(DISTINCT b.name ORDER BY b.name SEPARATOR ', ') AS branches,
         MIN(bp.start_date) AS start_date, 
         MAX(bp.end_date) AS end_date
     FROM promo p
     LEFT JOIN branch_promo bp ON p.promo_id = bp.promo_id
+    LEFT JOIN branch b ON b.branch_id = bp.branch_id
     GROUP BY p.promo_id, p.name, p.discount_type, p.discount_value
     ORDER BY p.promo_id ASC
 ";
@@ -39,11 +41,14 @@ while ($row = $result->fetch_assoc()) {
 
     $validity = (!empty($row['start_date']) && !empty($row['end_date']))
         ? date("M d, Y", strtotime($row['start_date'])) . " - " . date("M d, Y", strtotime($row['end_date']))
-        : 'No date set';
+        : '-';
+
+    $branchList = $row['branches'] ?: '-';
 
     $promos[] = [
         $row['promo_id'],
         htmlspecialchars($row['name']),
+        htmlspecialchars($branchList),
         $discount,
         $validity,
         '<button class="btn-promo" data-id="' . $row['promo_id'] . '">Manage</button>'

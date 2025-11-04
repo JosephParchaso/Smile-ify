@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
     const supplyModal = document.getElementById("manageSupplyModal");
     const supplyBody = document.getElementById("supplyModalBody");
+    
     const today = new Date();
-    today.setDate(today.getDate() + 1);
     const todayISO = today.toISOString().split("T")[0];
 
     document.body.addEventListener("click", function (e) {
@@ -114,6 +114,19 @@ document.addEventListener("DOMContentLoaded", () => {
                     <label for="dateUpdated" class="form-label">Last Update</label>
                 </div>` : ""}
 
+                <div class="form-group">
+                    <label class="confirmation-label">
+                        <input type="checkbox" id="confirmationCheck" required>
+                        I hereby confirm that all information provided above is true and accurate. <br>
+                        I understand that any updates made — including changes to supply details, or quantity —
+                        may affect current inventory records or operations. I take responsibility to ensure that 
+                        the <strong>Owner</strong> is notified about these changes.
+                    </label>
+                    <span id="confirmError" class="error-msg" style="display:none; color:red; font-size:0.9em;">
+                        Please confirm before proceeding.
+                    </span>
+                </div>
+
                 <div class="button-group button-group-profile">
                     <button type="submit" class="form-button confirm-btn">${isEdit ? "Save Changes" : "Add Supply"}</button>
                     <button type="button" class="form-button cancel-btn" onclick="closeSupplyModal()">Cancel</button>
@@ -132,7 +145,6 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.addEventListener("change", function (e) {
             if (e.target && e.target.id === "expiration_date") {
                 const todayDate = new Date();
-                todayDate.setDate(today.getDate() + 1);
 
                 const selectedDate = new Date(e.target.value);
 

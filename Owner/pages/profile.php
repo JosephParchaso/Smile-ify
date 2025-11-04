@@ -79,4 +79,12 @@ $updateError = $_SESSION['updateError'] ?? "";
     </div>
 </div>
 
+<div id="manageBranchModal" class="manage-branch-modal">
+    <div class="manage-branch-modal-content">
+        <div id="branchModalBody" class="manage-branch-modal-content-body">
+            <!-- Branch info will be loaded here -->
+        </div>
+    </div>
+</div>
+
 <?php require_once BASE_PATH . '/includes/footer.php'; ?>

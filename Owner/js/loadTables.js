@@ -9,6 +9,7 @@ $(document).ready(function() {
             "columns": [
                 { "title": "ID" },
                 { "title": "Service Name" },
+                { "title": "Branch" },
                 { "title": "Price" },
                 { "title": "Duration" },
                 { "title": "Action", "orderable": false }
@@ -40,6 +41,7 @@ $(document).ready(function() {
             "columns": [
                 { "title": "ID" },
                 { "title": "Promo Name" },
+                { "title": "Branch" },
                 { "title": "Discount" },
                 { "title": "Validity" },
                 { "title": "Action", "orderable": false }

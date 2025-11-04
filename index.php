@@ -49,7 +49,7 @@ if (isset($_SESSION['timeoutError'])) {
         </div>
 
         <div class="login-container">
-            <img src="images/logo/logo_default.png" alt="Logo" class="logo" />
+            <img src="<?= BASE_URL ?>/images/logo/logo_default.png" alt="Logo" class="logo" />
             
             <?php if (!empty($loginSuccess)): ?>
                 <div class="success flash-msg"><?php echo htmlspecialchars($loginSuccess); ?></div>
@@ -220,22 +220,22 @@ if (isset($_SESSION['timeoutError'])) {
 
     <div class="tagline-container">
         <div class="column1" style="background-color: #e7c6ff">
-            <img src="images/icons/experienced_dentist.png" alt="Experienced Dentist">
+            <img src="<?= BASE_URL ?>/images/icons/experienced_dentist.png" alt="Experienced Dentist">
             <h2>Experienced Dentist</h2>
             <p>With the team's expertise, your smile is in the best hands possible.</p>
         </div>
         <div class="column2" style="background-color: #c8b6ff">
-            <img src="images/icons/advance_treament.png" alt="Advance Treatment">
+            <img src="<?= BASE_URL ?>/images/icons/advance_treament.png" alt="Advance Treatment">
             <h2>Advance Treatment</h2>
             <p>Backed by expertise and advanced technology, our team ensures your satisfaction.</p>
         </div>
         <div class="column3" style="background-color: #b8c0ff">
-            <img src="images/icons/guaranteed_results.png" alt="Guaranteed Results">
+            <img src="<?= BASE_URL ?>/images/icons/guaranteed_results.png" alt="Guaranteed Results">
             <h2>Guaranteed Results</h2>
             <p>Skilled team and techniques ensure your smile transformation is delivered.</p>
         </div>
         <div class="column4" style="background-color: #bbd0ff">
-            <img src="images/icons/affordable_rates.png" alt="Affordable Rates">
+            <img src="<?= BASE_URL ?>/images/icons/affordable_rates.png" alt="Affordable Rates">
             <h2>Affordable Rates</h2>
             <p>Offers affordable rates and top-notch care, so you get the best of both worlds.</p>
         </div>
@@ -273,27 +273,27 @@ if (isset($_SESSION['timeoutError'])) {
     <div class="service-container">
         <div class="grid">
             <div class="image-column">
-                <img src="images/services/checkup.jpg" alt="Check Up and Cleaning">
+                <img src="<?= BASE_URL ?>/images/services/checkup.jpg" alt="Check Up and Cleaning">
                 <p>Check Up and Cleaning</p>
             </div>
             <div class="image-column">
-                <img src="images/services/root_canal.jpg" alt="Root Canal">
+                <img src="<?= BASE_URL ?>/images/services/root_canal.jpg" alt="Root Canal">
                 <p>Root Canal</p>
             </div>
             <div class="image-column">
-                <img src="images/services/crown.jpg" alt="Crown">
+                <img src="<?= BASE_URL ?>/images/services/crown.jpg" alt="Crown">
                 <p>Crown</p>
             </div>
             <div class="image-column">
-                <img src="images/services/veneers.jpg" alt="Veneers">
+                <img src="<?= BASE_URL ?>/images/services/veneers.jpg" alt="Veneers">
                 <p>Veneers</p>
             </div>
             <div class="image-column">
-                <img src="images/services/index_brace.jpg" alt="Braces">
+                <img src="<?= BASE_URL ?>/images/services/index_brace.jpg" alt="Braces">
                 <p>Braces</p>
             </div>
             <div class="image-column">
-                <img src="images/services/denture.jpg" alt="Dentures and Porcelain">
+                <img src="<?= BASE_URL ?>/images/services/denture.jpg" alt="Dentures and Porcelain">
                 <p>Dentures and Porcelain</p>
             </div>
         </div>
@@ -328,7 +328,7 @@ if (isset($_SESSION['timeoutError'])) {
 
         <div class="branch-list">
             <div class="branch-column">
-                <img src="images/logo/mandaue.png">
+                <img src="<?= BASE_URL ?>/images/logo/mandaue.png">
                 <a href="https://www.google.com/maps?s=web&..." onclick="window.open(this.href,'_blank');return false;">
                 <h2>Mandaue</h2>
                 </a>
@@ -336,7 +336,7 @@ if (isset($_SESSION['timeoutError'])) {
             </div>
 
             <div class="branch-column">
-                <img src="images/logo/babag.png">
+                <img src="<?= BASE_URL ?>/images/logo/babag.png">
                 <a href="https://www.google.com/maps/dir//7WHV..." onclick="window.open(this.href,'_blank');return false;">
                 <h2>Babag</h2>
                 </a>
@@ -344,7 +344,7 @@ if (isset($_SESSION['timeoutError'])) {
             </div>
 
             <div class="branch-column">
-                <img src="images/logo/branch_default.jpg">
+                <img src="<?= BASE_URL ?>/images/logo/branch_default.jpg">
                 <a href="https://www.google.com/maps/dir//Mondejar..." onclick="window.open(this.href,'_blank');return false;">
                 <h2>Pusok</h2>
                 </a>

@@ -19,15 +19,18 @@ $sql = "
         p.description,
         p.discount_type,
         p.discount_value,
-        bp.start_date,
-        bp.end_date,
-        bp.status,
-        b.address AS branch_name
+        MIN(bp.start_date) AS start_date,
+        MAX(bp.end_date) AS end_date,
+        GROUP_CONCAT(DISTINCT b.name ORDER BY b.name SEPARATOR ', ') AS branch_names,
+        CASE 
+            WHEN SUM(bp.status = 'Active') > 0 THEN 'Active'
+            ELSE 'Inactive'
+        END AS status
     FROM promo p
-    INNER JOIN branch_promo bp ON p.promo_id = bp.promo_id
-    INNER JOIN branch b ON bp.branch_id = b.branch_id
+    LEFT JOIN branch_promo bp ON p.promo_id = bp.promo_id
+    LEFT JOIN branch b ON bp.branch_id = b.branch_id
     WHERE p.promo_id = ?
-    LIMIT 1
+    GROUP BY p.promo_id, p.name, p.image_path, p.description, p.discount_type, p.discount_value
 ";
 
 $stmt = $conn->prepare($sql);
@@ -36,6 +39,10 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 if ($row = $result->fetch_assoc()) {
+    $row['description'] = $row['description'] ?: 'No description available.';
+    $row['branch_names'] = $row['branch_names'] ?: 'Not specified';
+    $row['start_date'] = $row['start_date'] ?: null;
+    $row['end_date'] = $row['end_date'] ?: null;
     echo json_encode($row);
 } else {
     echo json_encode(['error' => 'Promo not found.']);
@@ -43,3 +50,4 @@ if ($row = $result->fetch_assoc()) {
 
 $stmt->close();
 $conn->close();
+?>

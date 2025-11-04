@@ -102,9 +102,35 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         $conn->commit();
 
-        if ($hasChanges) {
-            $_SESSION['updateSuccess'] = "Announcement updated successfully!";
+    if ($hasChanges) {
+        $branchQuery = $conn->prepare("SELECT name FROM branch WHERE branch_id = ?");
+        $branchQuery->bind_param("i", $branch_id);
+        $branchQuery->execute();
+        $branchName = $branchQuery->get_result()->fetch_assoc()['name'] ?? 'Unknown Branch';
+        $branchQuery->close();
+
+        $notif_message = "The announcement '" . htmlspecialchars($title) . "' in " . htmlspecialchars($branchName) . " was updated.";
+
+        $getOwners = $conn->prepare("SELECT user_id FROM users WHERE role = 'owner' AND status = 'Active'");
+        $getOwners->execute();
+        $ownersResult = $getOwners->get_result();
+
+        if ($ownersResult->num_rows > 0) {
+            $notifSQL = "INSERT INTO notifications (user_id, message, is_read, date_created)
+                            VALUES (?, ?, 0, NOW())";
+            $notifStmt = $conn->prepare($notifSQL);
+
+            while ($owner = $ownersResult->fetch_assoc()) {
+                $notifStmt->bind_param("is", $owner['user_id'], $notif_message);
+                $notifStmt->execute();
+            }
+
+            $notifStmt->close();
         }
+        $getOwners->close();
+
+        $_SESSION['updateSuccess'] = "Announcement updated successfully and owners notified!";
+    }
 
     } catch (Exception $e) {
         $conn->rollback();
@@ -119,3 +145,4 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 }
 
 $conn->close();
+?>

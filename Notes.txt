@@ -224,11 +224,18 @@ upload qr on admin or owner? best owner 👍
 notify owner if services, promos change 👍
 added cashless receipt if payment method is cashless, display also in transaction 👍
 added promo and service in owner for add and edit, admin only change status 👍
-fix promo, service update in receipt
+fix promo, service update in receipt 👍
+auto deactivate accounts 3 years 👍
+add checkmark on admin 👍
+promos at index and patient 👍
+display also index in the home pages 👍
+fixed date pickers{
+    employees, start date - only accepts tomorrow 👍
+    promos - start date, end date validation 👍
 
-payment methods in reports
-medcert reports
-
+    supplies - expiration date - only accepts tomorrow 👍
+    announcments - start date, end date validation 👍
+}
 medcert {
     PATIENT
     WALKIN, REQUEST FOR MEDCERT 👍
@@ -251,12 +258,17 @@ medcert {
     walkin request medcert 👍
 }
 
+payment methods in reports
+medcert reports
+
 
 ASK DURING CONSULTATION
-Ask if the services and promos are under admin or it should be under the owner since it involves MONEY? 
-and if retain: it should have a notification about the updates.
-gmail suspicious spams - sendgrid? brevo or google parin
+Ask if the services and promos are under admin or it should be under the owner since it involves MONEY? 💖
+and if retain: it should have a notification about the updates. 💖
+gmail suspicious spams - sendgrid? brevo or google parin 💖
 
 Contact Fr. Peter for the database hosting and server💖
 Minimum of 5 minutes for OTP time remaining expiration time 💖
 dungan register/book different user 💖
+task scheduler 💖
+verify if 8 am mawa ang booking for current date 💖

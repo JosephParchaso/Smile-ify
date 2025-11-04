@@ -25,6 +25,9 @@ $sql = "
         dt.dentist_id,
         dt.admin_user_id,
         dt.promo_id,
+        dt.promo_name,
+        dt.promo_type,
+        dt.promo_value,
         dt.payment_method,
         dt.cashless_receipt,
         dt.total,
@@ -98,14 +101,16 @@ if (!$data) {
     exit();
 }
 
+/**
+ * ✅ Use snapshot values from dental_transaction_services
+ * (no join with service table to avoid current data changes)
+ */
 $servicesSql = "
     SELECT 
-        s.name AS service_name,
+        dts.service_name,
         dts.quantity,
-        s.price,
-        (dts.quantity * s.price) AS subtotal
+        dts.service_price
     FROM dental_transaction_services dts
-    INNER JOIN service s ON s.service_id = dts.service_id
     WHERE dts.dental_transaction_id = ?
 ";
 $stmtServices = $conn->prepare($servicesSql);
@@ -116,6 +121,7 @@ $resServices = $stmtServices->get_result();
 $services = [];
 $serviceStrings = [];
 while ($row = $resServices->fetch_assoc()) {
+    $row['subtotal'] = $row['quantity'] * $row['service_price'];
     $services[] = $row;
     $serviceStrings[] = $row['service_name'] . " × " . $row['quantity'];
 }
@@ -123,17 +129,23 @@ $data['services_raw'] = $services;
 $data['services'] = $services;
 $data['services_text'] = implode("\n", $serviceStrings);
 
-if (!empty($data['promo_id'])) {
-    $promoSql = "SELECT name, discount_type, discount_value FROM promo WHERE promo_id = ?";
-    $stmtPromo = $conn->prepare($promoSql);
-    $stmtPromo->bind_param("i", $data['promo_id']);
-    $stmtPromo->execute();
-    $resPromo = $stmtPromo->get_result();
-    $data['promo'] = $resPromo->fetch_assoc() ?: null;
+/**
+ * ✅ Use stored promo snapshot in dental_transaction
+ * (no need to fetch from promo table)
+ */
+if (!empty($data['promo_name'])) {
+    $data['promo'] = [
+        'name' => $data['promo_name'],
+        'discount_type' => $data['promo_type'],
+        'discount_value' => (float)$data['promo_value']
+    ];
 } else {
     $data['promo'] = null;
 }
 
+/**
+ * 🩺 Fetch prescriptions (unchanged)
+ */
 $presSql = "
     SELECT 
         drug, 

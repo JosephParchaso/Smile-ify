@@ -33,8 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         ");
         $stmtCheck->bind_param("ii", $dental_transaction_id, $appointment_transaction_id);
         $stmtCheck->execute();
-        $result = $stmtCheck->get_result();
-        $existing = $result->fetch_assoc();
+        $existing = $stmtCheck->get_result()->fetch_assoc();
         $stmtCheck->close();
 
         $hasChanges = (
@@ -51,6 +50,41 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $conn->begin_transaction();
 
         if ($hasChanges) {
+            $serviceNames = [];
+            $servicePrices = [];
+
+            if (!empty($services)) {
+                $serviceIdsStr = implode(',', array_map('intval', $services));
+                $resultServices = $conn->query("SELECT service_id, service_name, price FROM service WHERE service_id IN ($serviceIdsStr)");
+
+                while ($row = $resultServices->fetch_assoc()) {
+                    $sid = $row['service_id'];
+                    $serviceNames[] = $row['service_name'];
+                    $servicePrices[] = number_format($row['price'], 2, '.', '');
+                }
+            }
+
+            $service_name_snapshot = implode(', ', $serviceNames);
+            $service_price_snapshot = implode(', ', $servicePrices);
+
+            $promo_name_snapshot = null;
+            $promo_type_snapshot = null;
+            $promo_value_snapshot = null;
+
+            if (!empty($promo_id)) {
+                $stmtPromo = $conn->prepare("SELECT promo_name, promo_type, promo_value FROM promo WHERE promo_id = ?");
+                $stmtPromo->bind_param("i", $promo_id);
+                $stmtPromo->execute();
+                $promo = $stmtPromo->get_result()->fetch_assoc();
+                $stmtPromo->close();
+
+                if ($promo) {
+                    $promo_name_snapshot = $promo['promo_name'];
+                    $promo_type_snapshot = $promo['promo_type'];
+                    $promo_value_snapshot = $promo['promo_value'];
+                }
+            }
+
             $stmt = $conn->prepare("
                 UPDATE dental_transaction 
                 SET 
@@ -63,12 +97,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     diagnosis = ?,
                     remarks = ?,
                     admin_user_id = ?, 
-                    date_updated = NOW()
+                    date_updated = NOW(),
+                    service_name = ?, 
+                    service_price = ?, 
+                    promo_name = ?, 
+                    promo_type = ?, 
+                    promo_value = ?
                 WHERE dental_transaction_id = ? 
-                AND appointment_transaction_id = ?
+                    AND appointment_transaction_id = ?
             ");
+
             $stmt->bind_param(
-                "iisdssssiii",
+                "iisdssssisssssii",
                 $dentist_id,
                 $promo_id,
                 $payment_method,
@@ -78,6 +118,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $diagnosis,
                 $remarks,
                 $admin_user_id,
+                $service_name_snapshot,
+                $service_price_snapshot,
+                $promo_name_snapshot,
+                $promo_type_snapshot,
+                $promo_value_snapshot,
                 $dental_transaction_id,
                 $appointment_transaction_id
             );
@@ -108,8 +153,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             ");
             $getPatient->bind_param("i", $appointment_transaction_id);
             $getPatient->execute();
-            $result = $getPatient->get_result();
-            $patient = $result->fetch_assoc();
+            $patient = $getPatient->get_result()->fetch_assoc();
             $getPatient->close();
 
             $last_name_clean = $patient ? preg_replace('/[^a-zA-Z0-9_-]/', '', strtolower($patient['last_name'])) : 'unknown';
@@ -130,8 +174,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $fileName = $dental_transaction_id . "_" . $last_name_clean . "." . $fileExt;
             $targetPath = $uploadDir . $fileName;
 
-            $oldFiles = glob($uploadDir . $dental_transaction_id . "_*.*");
-            foreach ($oldFiles as $oldFile) {
+            foreach (glob($uploadDir . $dental_transaction_id . "_*.*") as $oldFile) {
                 if (is_file($oldFile)) unlink($oldFile);
             }
 
@@ -142,7 +185,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             }
 
             $receiptPath = "/images/payments/cashless_payments/" . $fileName;
-
             $updateReceipt = $conn->prepare("
                 UPDATE dental_transaction 
                 SET cashless_receipt = ?, date_updated = NOW()

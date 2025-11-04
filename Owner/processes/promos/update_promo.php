@@ -140,8 +140,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         $conn->commit();
 
-        $_SESSION['updateSuccess'] = $hasChanges ? "Promo updated successfully!" : "No changes detected.";
+        $updateDatesStmt = $conn->prepare("
+            UPDATE branch_promo
+            SET start_date = ?, end_date = ?
+            WHERE promo_id = ?
+        ");
+        $updateDatesStmt->bind_param("ssi", $start_date, $end_date, $promo_id);
+        $updateDatesStmt->execute();
+        $updateDatesStmt->close();
 
+        $hasChanges = true;
+        $conn->query("UPDATE promo SET date_updated = NOW() WHERE promo_id = $promo_id");
+
+        if ($hasChanges) {
+            $_SESSION['updateSuccess'] = "Promo updated successfully!";
+        }
     } catch (Exception $e) {
         $conn->rollback();
         $_SESSION['updateError'] = "Database error: " . $e->getMessage();

@@ -319,7 +319,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 services.forEach((s) => {
                                     const name = s.service_name || s.name || "-";
                                     const qty = s.quantity ?? 1;
-                                    const price = s.price ?? 0;
+                                    const price = s.service_price ?? s.price ?? 0;
                                     const lineTotal = s.subtotal ?? (price * qty);
                                     subtotal += Number(lineTotal);
 
@@ -786,10 +786,8 @@ document.addEventListener("DOMContentLoaded", () => {
                             if (data.services) {
                                 let y = row3Y - 1;
                                 if (Array.isArray(data.services)) {
-                                    // data.services is an array of objects
                                     serviceLines = data.services.map(s => s.service_name || s.name || s);
                                 } else if (typeof data.services === "string") {
-                                    // data.services is a simple string
                                     serviceLines = data.services.split(",").map(s => s.trim()).filter(Boolean);
                                 } else {
                                     serviceLines = [];

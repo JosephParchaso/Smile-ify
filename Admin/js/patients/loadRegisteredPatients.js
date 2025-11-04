@@ -9,6 +9,7 @@ $(document).ready(function() {
             "columns": [
                 { "title": "ID" },
                 { "title": "Name" },
+                { "title": "Recent Transaction" },
                 { "title": "Branch Registered" },
                 { "title": "Action", "orderable": false, "searchable": false }
             ],
