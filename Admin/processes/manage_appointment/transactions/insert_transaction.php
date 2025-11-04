@@ -30,7 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $conn->begin_transaction();
 
-        // ✅ Insert main transaction
         $stmt = $conn->prepare("
             INSERT INTO dental_transaction (
                 appointment_transaction_id, dentist_id, promo_id, payment_method, total, notes,
@@ -42,7 +41,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new Exception("Prepare failed: " . $conn->error);
         }
 
-        // types: i=int, s=string, d=double
         $stmt->bind_param(
             "iiisdsisss",
             $appointment_transaction_id,
@@ -89,7 +87,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $promoQuery->close();
         }
 
-        // ✅ Services snapshot
         if (!empty($services)) {
             $stmtService = $conn->prepare("
                 INSERT INTO dental_transaction_services 
@@ -133,7 +130,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $serviceFetch->close();
         }
 
-        // ✅ Handle receipt upload if cashless
         if (strtolower($payment_method) === 'cashless' && isset($_FILES['receipt_upload']) && $_FILES['receipt_upload']['error'] === UPLOAD_ERR_OK) {
             $getPatient = $conn->prepare("
                 SELECT u.last_name 

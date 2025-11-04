@@ -177,6 +177,15 @@ if ($priceFromDB !== null) {
 <?php require_once BASE_PATH . '/includes/footer.php'; ?>
 
 <script>
+
+function openMedCertModal(transactionId) {
+    const modal = document.getElementById("medCertModal");
+    const transactionInput = document.getElementById("transactionIdInput");
+
+    transactionInput.value = transactionId;
+    modal.style.display = "block";
+}
+
 function closeMedCertReceiptModal() {
     document.getElementById("medCertReceiptModal").style.display = "none";
 }

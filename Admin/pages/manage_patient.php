@@ -191,38 +191,19 @@ $backTab = $_GET['tab'] ?? 'recent';
             });
         }
 
-        imageModalContent.addEventListener("click", (e) => {
-            e.stopPropagation();
-            imageModalContent.classList.toggle("zoomed");
-        });
-
         imageModal.addEventListener("click", () => {
             imageModal.style.display = "none";
-            imageModalContent.classList.remove("zoomed");
         });
     });
     
     function closeMedCertReceiptModal() {
         document.getElementById("medCertReceiptModal").style.display = "none";
     }
+
     document.addEventListener("click", (e) => {
         const modal = document.getElementById("medCertReceiptModal");
         if (e.target === modal) closeMedCertReceiptModal();
     });
 </script>
-
-<style>
-#imageModalContent {
-    border-radius: 4px;
-    transition: transform 0.3s ease;
-    cursor: zoom-in;
-}
-
-#imageModalContent.zoomed {
-    transform: scale(1.5);
-    cursor: zoom-out;
-}
-
-</style>
 
 <?php require_once BASE_PATH . '/includes/footer.php'; ?>

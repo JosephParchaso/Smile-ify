@@ -666,14 +666,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    function openMedCertModal(transactionId) {
-        const modal = document.getElementById("medCertModal");
-        const transactionInput = document.getElementById("transactionIdInput");
-
-        transactionInput.value = transactionId;
-        modal.style.display = "block";
-    }
-
     window.addEventListener("click", (e) => {
         const medCertModal = document.getElementById("medCertModal");
         if (e.target === medCertModal) {

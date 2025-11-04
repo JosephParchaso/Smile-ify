@@ -925,6 +925,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const receiptImage = document.getElementById("receiptImage");
             const receiptPreview = document.getElementById("receiptPreview");
             const paymentSection = document.getElementById("paymentSection");
+            const paymentMethod = document.getElementById("paymentMethod");
+            const receiptUpload = document.getElementById("receiptUpload");
 
             if (transactionInput) {
                 transactionInput.value = transactionId;
@@ -942,14 +944,26 @@ document.addEventListener("DOMContentLoaded", () => {
                             receiptImage.src = `${BASE_URL}${data.medcert_receipt}`;
                             receiptPreview.style.display = "flex";
                             paymentSection.style.display = "none";
+                            paymentMethod.required = false;
+                            paymentMethod.disabled = true;
+                            receiptUpload.required = false;
+                            receiptUpload.disabled = true;
                         } else {
                             receiptPreview.style.display = "none";
                             paymentSection.style.display = "block";
+                            paymentMethod.disabled = false;
+                            paymentMethod.required = true;
+                            receiptUpload.disabled = false;
+                            receiptUpload.required = (paymentMethod.value === "cashless");
                         }
                     } else {
                         console.warn("No med cert details found:", data.error);
                         receiptPreview.style.display = "none";
                         paymentSection.style.display = "block";
+                        paymentMethod.disabled = false;
+                        paymentMethod.required = true;
+                        receiptUpload.disabled = false;
+                        receiptUpload.required = false;
                     }
                 })
                 .catch(err => console.error("Error loading med cert details:", err));
@@ -963,12 +977,14 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener("change", (e) => {
         if (e.target.id === "paymentMethod") {
             const uploadGroup = document.getElementById("receiptUploadGroup");
+            const receiptUpload = document.getElementById("receiptUpload");
+
             if (e.target.value === "cashless") {
                 uploadGroup.style.display = "block";
-                document.getElementById("receiptUpload").required = true;
+                receiptUpload.required = true;
             } else {
                 uploadGroup.style.display = "none";
-                document.getElementById("receiptUpload").required = false;
+                receiptUpload.required = false;
             }
         }
     });

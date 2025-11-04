@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <div class="appointment">
                         <strong>${a.date}</strong> at ${a.time}<br>
                         ${a.service ? `${a.service}` : ""}
-                        with ${a.dentist} (${a.branch})
+                        with ${a.dentist} in ${a.branch}
                     </div>
                 `).join("");
             })

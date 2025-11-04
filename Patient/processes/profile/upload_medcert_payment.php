@@ -33,7 +33,6 @@ $stmtUser->fetch();
 $stmtUser->close();
 
 $last_name_clean = preg_replace('/[^a-zA-Z0-9_-]/', '', strtolower($last_name));
-
 $middle_initial = $middle_name ? strtoupper(substr($middle_name, 0, 1)) . '. ' : '';
 $patient_fullname = $first_name . ' ' . $middle_initial . $last_name;
 
@@ -118,14 +117,14 @@ if (move_uploaded_file($fileTmpPath, $targetPath)) {
         $notifySql = "
             INSERT INTO notifications (user_id, message, is_read, date_created)
             SELECT u.user_id,
-                    CONCAT('Patient ', ?, ' has requested a medical certificate for transaction #', ?),
-                    0,
-                    NOW()
+                CONCAT('Patient #', ?, ' ', ?, ' has requested a medical certificate for transaction #', ?),
+                0,
+                NOW()
             FROM users u
             WHERE u.role = 'admin' AND u.branch_id = ?
         ";
         $notifyStmt = $conn->prepare($notifySql);
-        $notifyStmt->bind_param("sii", $patient_fullname, $transaction_id, $branch_id);
+        $notifyStmt->bind_param("isii", $user_id, $patient_fullname, $transaction_id, $branch_id);
         $notifyStmt->execute();
         $notifyStmt->close();
     } else {

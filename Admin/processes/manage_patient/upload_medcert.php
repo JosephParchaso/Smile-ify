@@ -8,11 +8,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit();
 }
 
-$transaction_id = $_POST['dental_transaction_id'] ?? null;
-$fitness_status = trim($_POST['fitness_status'] ?? '');
-$diagnosis      = trim($_POST['diagnosis'] ?? '');
-$remarks        = trim($_POST['remarks'] ?? '');
-$payment_method = $_POST['payment_method'] ?? null;
+$transaction_id  = $_POST['dental_transaction_id'] ?? null;
+$fitness_status  = trim($_POST['fitness_status'] ?? '');
+$diagnosis       = trim($_POST['diagnosis'] ?? '');
+$remarks         = trim($_POST['remarks'] ?? '');
+$payment_method  = $_POST['payment_method'] ?? null;
 
 if (!$transaction_id || $fitness_status === '' || $diagnosis === '' || $remarks === '') {
     $_SESSION['updateError'] = "All fields are required.";
@@ -21,7 +21,8 @@ if (!$transaction_id || $fitness_status === '' || $diagnosis === '' || $remarks 
 }
 
 $getPatient = $conn->prepare("
-    SELECT at.user_id, at.appointment_date, at.appointment_time, u.first_name, u.middle_name, u.last_name, at.branch_id
+    SELECT at.user_id, at.appointment_date, at.appointment_time, u.first_name, u.middle_name, u.last_name, at.branch_id,
+            dt.medcert_receipt
     FROM dental_transaction dt
     JOIN appointment_transaction at ON at.appointment_transaction_id = dt.appointment_transaction_id
     JOIN users u ON u.user_id = at.user_id
@@ -43,17 +44,18 @@ $patientId = $patientData['user_id'];
 $appointmentDate = date("F j, Y", strtotime($patientData['appointment_date']));
 $appointmentTime = date("g:i A", strtotime($patientData['appointment_time']));
 $branchId = $patientData['branch_id'];
+$existingReceipt = $patientData['medcert_receipt'];
 
 $last_name_clean = preg_replace('/[^a-zA-Z0-9_-]/', '', strtolower($patientData['last_name']));
 $middle_initial = $patientData['middle_name'] ? strtoupper(substr($patientData['middle_name'], 0, 1)) . '. ' : '';
 $patient_fullname = $patientData['first_name'] . ' ' . $middle_initial . $patientData['last_name'];
 
-$receiptPath = null;
+$receiptPath = $existingReceipt;
 
-if ($payment_method === 'cashless' && isset($_FILES['receipt_upload']) && $_FILES['receipt_upload']['error'] === UPLOAD_ERR_OK) {
+if (empty($existingReceipt) && $payment_method === 'cashless' && isset($_FILES['receipt_upload']) && $_FILES['receipt_upload']['error'] === UPLOAD_ERR_OK) {
     $fileTmpPath = $_FILES['receipt_upload']['tmp_name'];
     $fileExt = strtolower(pathinfo($_FILES['receipt_upload']['name'], PATHINFO_EXTENSION));
-    $allowedTypes = ['jpg','jpeg','png','webp'];
+    $allowedTypes = ['jpg', 'jpeg', 'png', 'webp'];
     if (!in_array($fileExt, $allowedTypes)) {
         $_SESSION['updateError'] = "Invalid file type. Allowed: JPG, PNG, WEBP.";
         header("Location: " . BASE_URL . "/Admin/pages/manage_patient.php?id=" . urlencode($patientId) . "&tab=dental_transaction");
@@ -85,10 +87,7 @@ $priceStmt->execute();
 $priceStmt->bind_result($medcertPayment);
 $priceStmt->fetch();
 $priceStmt->close();
-
-if (!$medcertPayment) {
-    $medcertPayment = 150;
-}
+if (!$medcertPayment) $medcertPayment = 150;
 
 $updateSql = "
     UPDATE dental_transaction
@@ -112,9 +111,9 @@ if ($stmt->execute()) {
     $notif->execute();
     $notif->close();
 
-    $_SESSION['updateSuccess'] = "Medical certificate issued successfully and patient notified.";
+    $_SESSION['updateSuccess'] = "Medical certificate verified successfully and patient notified.";
 } else {
-    $_SESSION['updateError'] = "Error issuing medical certificate: " . $stmt->error;
+    $_SESSION['updateError'] = "Error verifying medical certificate: " . $stmt->error;
 }
 
 $stmt->close();

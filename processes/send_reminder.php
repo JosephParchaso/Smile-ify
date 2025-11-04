@@ -14,15 +14,13 @@ date_default_timezone_set('Asia/Manila');
 $logFile = BASE_PATH . '/Mail/phpmailer/reminder_log.txt';
 file_put_contents($logFile, '[' . date('Y-m-d H:i:s') . "] Script started\n", FILE_APPEND);
 
+$hoursBefore = 24;
+$minutesBefore = 0;
+$windowMinutes = 30; 
+
 $now = new DateTime();
-$targetStart = (clone $now)->modify('+6 hours');
-$targetEnd   = (clone $now)->modify('+7 hours');
-
-// $hoursBefore = 24; // reminder 24 hours before appointment
-// $now = new DateTime();
-
-// $targetStart = (clone $now)->modify("+{$hoursBefore} hours");
-// $targetEnd   = (clone $now)->modify("+{$hoursBefore} hours +30 minutes");
+$targetStart = (clone $now)->modify("+{$hoursBefore} hours +{$minutesBefore} minutes");
+$targetEnd   = (clone $now)->modify("+{$hoursBefore} hours +{$minutesBefore} minutes +{$windowMinutes} minutes");
 
 $currentDateTime = $targetStart->format('Y-m-d H:i:s');
 $nextDateTime = $targetEnd->format('Y-m-d H:i:s');
