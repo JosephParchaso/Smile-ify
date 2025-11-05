@@ -81,16 +81,37 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $default_password = generatePassword($lastName);
         $hashed_password  = password_hash($default_password, PASSWORD_DEFAULT);
 
+        [$dob_enc, $dob_iv, $dob_tag] = encryptField($dateofBirth);
+        [$contact_enc, $contact_iv, $contact_tag] = encryptField($contactNumber);
+
         $insert_patient = $conn->prepare("
             INSERT INTO users 
-            (username, password, last_name, first_name, middle_name, gender, date_of_birth, email, contact_number, role, status, branch_id)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'patient', 'Active', ?)
+            (username, password, last_name, first_name, middle_name, gender,
+            date_of_birth, date_of_birth_iv, date_of_birth_tag,
+            email,
+            contact_number, contact_number_iv, contact_number_tag,
+            role, status, branch_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'patient', 'Active', ?)
         ");
+
         $insert_patient->bind_param(
-            "sssssssssi",
-            $username, $hashed_password, $lastName, $firstName, $middleName, $gender,
-            $dateofBirth, $email, $contactNumber, $appointmentBranch
+            "sssssssssssssi",
+            $username,
+            $hashed_password,
+            $lastName,
+            $firstName,
+            $middleName,
+            $gender,
+            $dob_enc,
+            $dob_iv,
+            $dob_tag,
+            $email,
+            $contact_enc,
+            $contact_iv,
+            $contact_tag,
+            $appointmentBranch
         );
+
         $insert_patient->execute();
         $user_id = $insert_patient->insert_id;
         $insert_patient->close();

@@ -48,11 +48,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["verify"])) {
         try {
             $conn->begin_transaction();
 
+            [$dob_enc, $dob_iv, $dob_tag] = encryptField($dateofBirth, $ENCRYPTION_KEY);
+            [$contact_enc, $contact_iv, $contact_tag] = encryptField($contactNumber, $ENCRYPTION_KEY);
+
             $user_sql = "INSERT INTO users 
-                (username, password, last_name, middle_name, first_name, gender, date_of_birth, email, contact_number, role, branch_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'patient', ?)";
+                (username, password, last_name, middle_name, first_name, gender,
+                date_of_birth, date_of_birth_iv, date_of_birth_tag,
+                email,
+                contact_number, contact_number_iv, contact_number_tag,
+                role, branch_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'patient', ?)";
+
             $user_stmt = $conn->prepare($user_sql);
-            $user_stmt->bind_param("sssssssssi", $username, $hashed_password, $lastName, $middleName, $firstName, $gender, $dateofBirth, $email, $contactNumber, $appointmentBranch);
+            $user_stmt->bind_param(
+                "sssssssssssssi",
+                $username,
+                $hashed_password,
+                $lastName,
+                $middleName,
+                $firstName,
+                $gender,
+                $dob_enc,
+                $dob_iv,
+                $dob_tag,
+                $email,
+                $contact_enc,
+                $contact_iv,
+                $contact_tag,
+                $appointmentBranch
+            );
+
             $user_stmt->execute();
 
             $user_id = $user_stmt->insert_id;
@@ -156,6 +181,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["verify"])) {
         $mail->addAddress($email);
 
         $mail->isHTML(true);
+        $mail->CharSet = 'UTF-8';
+        $mail->Encoding = 'base64';
         $mail->Subject = "Smile-ify Login Credentials and Appointment Details";
         $mail->Body = "
             <p>Dear <strong>$username</strong>,</p>

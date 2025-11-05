@@ -16,10 +16,16 @@ $sql = "SELECT
             middle_name, 
             last_name, 
             gender, 
-            date_of_birth, 
+            date_of_birth,
+            date_of_birth_iv,
+            date_of_birth_tag,
             email, 
             contact_number,
-            address, 
+            contact_number_iv,
+            contact_number_tag,
+            address,
+            address_iv,
+            address_tag,
             date_created,
             date_updated 
         FROM users 
@@ -31,18 +37,50 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 if ($row = $result->fetch_assoc()) {
+
+    $decryptedDOB = null;
+    if (!empty($row['date_of_birth']) && !empty($row['date_of_birth_iv']) && !empty($row['date_of_birth_tag'])) {
+        $decryptedDOB = decryptField(
+            $row['date_of_birth'],
+            $row['date_of_birth_iv'],
+            $row['date_of_birth_tag']
+        );
+    }
+
+    $decryptedContact = null;
+    if (!empty($row['contact_number']) && !empty($row['contact_number_iv']) && !empty($row['contact_number_tag'])) {
+        $decryptedContact = decryptField(
+            $row['contact_number'],
+            $row['contact_number_iv'],
+            $row['contact_number_tag']
+        );
+    }
+
+    $decryptedAddress = null;
+    if (!empty($row['address']) && !empty($row['address_iv']) && !empty($row['address_tag'])) {
+        $decryptedAddress = decryptField(
+            $row['address'],
+            $row['address_iv'],
+            $row['address_tag']
+        );
+    }
+
+    $formattedDOB = $decryptedDOB 
+        ? date("F j, Y", strtotime($decryptedDOB)) 
+        : '-';
+
     $profile = [
         'full_name'      => trim(($row['first_name'] ?? '') . ' ' . ($row['middle_name'] ?? '') . ' ' . ($row['last_name'] ?? '')),
         'gender'         => ucfirst($row['gender'] ?? '-'),
-        'date_of_birth'  => !empty($row['date_of_birth']) ? date("F j, Y", strtotime($row['date_of_birth'])) : '-',
+        'date_of_birth'  => $formattedDOB,
         'email'          => $row['email'] ?? '-',
-        'contact_number' => $row['contact_number'] ?? '-',
-        'address'        => $row['address'] ?? '-',
+        'contact_number' => $decryptedContact ?? '-',
+        'address'        => $decryptedAddress ?? '-',
         'joined'         => !empty($row['date_created']) ? date("F j, Y", strtotime($row['date_created'])) : '-',
         'date_updated'   => !empty($row['date_updated']) ? date("F j, Y", strtotime($row['date_updated'])) : '-',
     ];
 
-    header('Content-Type: application/json');
+    header('Content-Type: application/json; charset=utf-8');
     echo json_encode($profile);
 } else {
     http_response_code(404);

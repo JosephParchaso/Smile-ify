@@ -1,5 +1,4 @@
 <?php
-
 // ===== Load .env file =====
 $envPath = __DIR__ . '/../.env';
 if (file_exists($envPath)) {
@@ -11,20 +10,14 @@ if (file_exists($envPath)) {
 
 // ===== Encryption key setup =====
 define('APP_ENC_KEY', getenv('APP_ENC_KEY'));
-$ENCRYPTION_KEY = base64_decode(APP_ENC_KEY);
+$ENCRYPTION_KEY = hex2bin(APP_ENC_KEY);
 
-// ===== SMTP CONFIG =====
-define('SMTP_HOST', getenv('SMTP_HOST') ?: 'smtp.gmail.com');
-define('SMTP_PORT', getenv('SMTP_PORT') ?: 587);
-define('SMTP_SECURE', getenv('SMTP_SECURE') ?: 'tls');
-define('SMTP_AUTH', filter_var(getenv('SMTP_AUTH'), FILTER_VALIDATE_BOOLEAN));
-define('SMTP_USER', getenv('SMTP_USER'));
-define('SMTP_PASS', getenv('SMTP_PASS'));
-
-// ===== AES-256-GCM ENCRYPTION/DECRYPTION FUNCTIONS =====
+// ===== AES-256-GCM ENCRYPTION / DECRYPTION =====
 if (!function_exists('encryptField')) {
-    function encryptField($plaintext, $key)
+    function encryptField($plaintext)
     {
+        global $ENCRYPTION_KEY;
+
         if ($plaintext === null || $plaintext === '') {
             return [null, null, null];
         }
@@ -34,7 +27,7 @@ if (!function_exists('encryptField')) {
         $ciphertext = openssl_encrypt(
             $plaintext,
             'aes-256-gcm',
-            $key,
+            $ENCRYPTION_KEY,
             OPENSSL_RAW_DATA,
             $iv,
             $tag
@@ -47,6 +40,34 @@ if (!function_exists('encryptField')) {
         ];
     }
 }
+
+if (!function_exists('decryptField')) {
+    function decryptField($data, $iv, $tag)
+    {
+        global $ENCRYPTION_KEY;
+
+        if (empty($data) || empty($iv) || empty($tag)) {
+            return null;
+        }
+
+        return openssl_decrypt(
+            base64_decode($data),
+            'aes-256-gcm',
+            $ENCRYPTION_KEY,
+            OPENSSL_RAW_DATA,
+            base64_decode($iv),
+            base64_decode($tag)
+        );
+    }
+}
+
+// ===== SMTP CONFIG =====
+define('SMTP_HOST', getenv('SMTP_HOST') ?: 'smtp.gmail.com');
+define('SMTP_PORT', getenv('SMTP_PORT') ?: 587);
+define('SMTP_SECURE', getenv('SMTP_SECURE') ?: 'tls');
+define('SMTP_AUTH', filter_var(getenv('SMTP_AUTH'), FILTER_VALIDATE_BOOLEAN));
+define('SMTP_USER', getenv('SMTP_USER'));
+define('SMTP_PASS', getenv('SMTP_PASS'));
 
 if (!function_exists('decryptField')) {
     function decryptField($data, $iv, $tag, $key)

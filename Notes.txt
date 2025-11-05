@@ -229,6 +229,11 @@ auto deactivate accounts 3 years 👍
 add checkmark on admin 👍
 promos at index and patient 👍
 display also index in the home pages 👍
+Consultation - â‚±150.00 (15 mins), Total: â‚±150.00 (15 mins total) try again appointment confirmation
+owner creation how
+payment methods in reports
+medcert reports
+
 fixed date pickers{
     employees, start date - only accepts tomorrow 👍
     promos - start date, end date validation 👍
@@ -257,9 +262,21 @@ medcert {
     view issued button admins and patients, receipt 👍
     walkin request medcert 👍
 }
+ENCRYPTION {
+    New Patient, insert appointment dob, contact number 👍
 
-payment methods in reports
-medcert reports
+    Users {
+        Patient display edit, contact number, address 👍
+    }
+    Admins {
+        Walkin Patient insert appointment to check
+    }
+    Owners {
+        Dentist
+        Admins
+    }
+}
+
 
 
 ASK DURING CONSULTATION
