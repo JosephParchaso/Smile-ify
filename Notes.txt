@@ -231,6 +231,7 @@ promos at index and patient 👍
 display also index in the home pages 👍
 Consultation - â‚±150.00 (15 mins), Total: â‚±150.00 (15 mins total) try again appointment confirmation
 owner creation how
+add text box on medcert payment for contact number or reference
 payment methods in reports
 medcert reports
 
@@ -269,11 +270,11 @@ ENCRYPTION {
         Patient display edit, contact number, address 👍
     }
     Admins {
-        Walkin Patient insert appointment to check
+        Walkin Patient insert appointment 👍
     }
     Owners {
-        Dentist
-        Admins
+        Dentist sub address into license number 👍
+        Admins 👍
     }
 }
 

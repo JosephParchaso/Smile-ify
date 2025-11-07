@@ -28,9 +28,15 @@ $sql = "SELECT
             CONCAT(u.last_name, ', ', u.first_name, ' ', IFNULL(u.middle_name, '')) AS name,
             u.gender,
             u.date_of_birth,
+            u.date_of_birth_iv,
+            u.date_of_birth_tag,
             u.email,
             u.contact_number,
+            u.contact_number_iv,
+            u.contact_number_tag,
             u.address,
+            u.address_iv,
+            u.address_tag,
             b.branch_id,
             b.name AS branch,
             u.status,
@@ -49,9 +55,28 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 if ($row = $result->fetch_assoc()) {
+    if (!empty($row['date_of_birth']) && !empty($row['date_of_birth_iv']) && !empty($row['date_of_birth_tag'])) {
+        $row['date_of_birth'] = decryptField($row['date_of_birth'], $row['date_of_birth_iv'], $row['date_of_birth_tag'], $ENCRYPTION_KEY);
+    }
+
+    if (!empty($row['contact_number']) && !empty($row['contact_number_iv']) && !empty($row['contact_number_tag'])) {
+        $row['contact_number'] = decryptField($row['contact_number'], $row['contact_number_iv'], $row['contact_number_tag'], $ENCRYPTION_KEY);
+    }
+
+    if (!empty($row['address']) && !empty($row['address_iv']) && !empty($row['address_tag'])) {
+        $row['address'] = decryptField($row['address'], $row['address_iv'], $row['address_tag'], $ENCRYPTION_KEY);
+    }
+
+    unset(
+        $row['date_of_birth_iv'], $row['date_of_birth_tag'],
+        $row['contact_number_iv'], $row['contact_number_tag'],
+        $row['address_iv'], $row['address_tag']
+    );
+
     echo json_encode($row);
 } else {
     echo json_encode(["error" => "Admin not found"]);
 }
 
 $conn->close();
+?>

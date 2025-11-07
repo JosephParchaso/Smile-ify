@@ -35,16 +35,28 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit();
     }
 
-    $checkSql = "SELECT last_name, first_name, middle_name, gender, date_of_birth, email, 
-                        contact_number, license_number, date_started, status, 
-                        signature_image, profile_image
-                FROM dentist WHERE dentist_id = ?";
+    $checkSql = "SELECT last_name, first_name, middle_name, gender,
+                        date_of_birth, date_of_birth_iv, date_of_birth_tag,
+                        email, contact_number, contact_number_iv, contact_number_tag,
+                        license_number, license_number_iv, license_number_tag,
+                        date_started, status, signature_image, profile_image
+                    FROM dentist WHERE dentist_id = ?";
     $checkStmt = $conn->prepare($checkSql);
     $checkStmt->bind_param("i", $dentistId);
     $checkStmt->execute();
     $result = $checkStmt->get_result();
     $current = $result->fetch_assoc();
     $checkStmt->close();
+
+    if (!$current) {
+        $_SESSION['updateError'] = "Dentist not found.";
+        header("Location: " . BASE_URL . "/Owner/pages/employees.php?tab=dentist");
+        exit();
+    }
+
+    $current_dob = decryptField($current['date_of_birth'], $current['date_of_birth_iv'], $current['date_of_birth_tag'], $ENCRYPTION_KEY);
+    $current_contact = decryptField($current['contact_number'], $current['contact_number_iv'], $current['contact_number_tag'], $ENCRYPTION_KEY);
+    $current_license = decryptField($current['license_number'], $current['license_number_iv'], $current['license_number_tag'], $ENCRYPTION_KEY);
 
     $changed = false;
     $signatureImage = $current['signature_image'];
@@ -63,16 +75,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     } elseif (isset($_FILES['signatureImage']) && $_FILES['signatureImage']['error'] === UPLOAD_ERR_OK) {
         $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/signatures/';
         if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
-
         if (!empty($current['signature_image'])) {
             $oldPath = $uploadDir . $current['signature_image'];
             if (file_exists($oldPath)) unlink($oldPath);
         }
-
         $fileExt = strtolower(pathinfo($_FILES['signatureImage']['name'], PATHINFO_EXTENSION));
         $fileName = "{$safeLast}_{$safeFirst}_signature." . $fileExt;
         $targetPath = $uploadDir . $fileName;
-
         if (move_uploaded_file($_FILES['signatureImage']['tmp_name'], $targetPath)) {
             $signatureImage = $fileName;
             $changed = true;
@@ -89,18 +98,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     } elseif (isset($_FILES['profileImage']) && $_FILES['profileImage']['error'] === UPLOAD_ERR_OK) {
         $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/dentists/';
         if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
-
         if (!empty($current['profile_image'])) {
             $oldPath = $uploadDir . $current['profile_image'];
             if (file_exists($oldPath)) unlink($oldPath);
         }
-
         $fileExt = strtolower(pathinfo($_FILES['profileImage']['name'], PATHINFO_EXTENSION));
         $allowedExt = ['jpg', 'jpeg', 'png', 'webp'];
         if (in_array($fileExt, $allowedExt)) {
             $fileName = "{$safeLast}_{$safeFirst}_profile." . $fileExt;
             $targetPath = $uploadDir . $fileName;
-
             if (move_uploaded_file($_FILES['profileImage']['tmp_name'], $targetPath)) {
                 $profileImage = $fileName;
                 $changed = true;
@@ -108,31 +114,45 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
     }
 
-    if ($current &&
-        ($current['last_name'] !== $lastName ||
+    $hasChanges = (
+        $current['last_name'] !== $lastName ||
         $current['first_name'] !== $firstName ||
         $current['middle_name'] !== $middleName ||
         $current['gender'] !== $gender ||
-        $current['date_of_birth'] !== $dateofBirth ||
+        $current_dob !== $dateofBirth ||
         $current['email'] !== $email ||
-        $current['contact_number'] !== $contactNumber ||
-        $current['license_number'] !== $licenseNumber ||
+        $current_contact !== $contactNumber ||
+        $current_license !== $licenseNumber ||
         $current['date_started'] !== $dateStarted ||
         $current['status'] !== $status ||
         $current['signature_image'] !== $signatureImage ||
-        $current['profile_image'] !== $profileImage)) {
+        $current['profile_image'] !== $profileImage
+    );
+
+    if ($hasChanges) {
+        [$dob_enc, $dob_iv, $dob_tag] = encryptField($dateofBirth, $ENCRYPTION_KEY);
+        [$contact_enc, $contact_iv, $contact_tag] = encryptField($contactNumber, $ENCRYPTION_KEY);
+        [$license_enc, $license_iv, $license_tag] = encryptField($licenseNumber, $ENCRYPTION_KEY);
 
         $sql = "UPDATE dentist
-                SET last_name=?, first_name=?, middle_name=?, gender=?, date_of_birth=?, 
-                    email=?, contact_number=?, license_number=?, date_started=?, 
-                    status=?, signature_image=?, profile_image=?, date_updated = NOW()
+                SET last_name=?, first_name=?, middle_name=?, gender=?, 
+                    date_of_birth=?, date_of_birth_iv=?, date_of_birth_tag=?,
+                    email=?, 
+                    contact_number=?, contact_number_iv=?, contact_number_tag=?,
+                    license_number=?, license_number_iv=?, license_number_tag=?,
+                    date_started=?, status=?, signature_image=?, profile_image=?, 
+                    date_updated = NOW()
                 WHERE dentist_id=?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param(
-            "ssssssssssssi",
-            $lastName, $firstName, $middleName, $gender, $dateofBirth,
-            $email, $contactNumber, $licenseNumber, $dateStarted,
-            $status, $signatureImage, $profileImage, $dentistId
+            "ssssssssssssssssssi",
+            $lastName, $firstName, $middleName, $gender,
+            $dob_enc, $dob_iv, $dob_tag,
+            $email,
+            $contact_enc, $contact_iv, $contact_tag,
+            $license_enc, $license_iv, $license_tag,
+            $dateStarted, $status, $signatureImage, $profileImage,
+            $dentistId
         );
         $stmt->execute();
         $stmt->close();
@@ -212,3 +232,4 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     header("Location: " . BASE_URL . "/Owner/pages/employees.php?tab=dentist");
     exit();
 }
+?>

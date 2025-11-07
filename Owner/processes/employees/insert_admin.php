@@ -40,29 +40,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $username = generateUniqueUsername($lastName, $firstName, $conn);
-
         $raw_password = generatePasswordFromLastName($lastName);
         $password = password_hash($raw_password, PASSWORD_DEFAULT);
 
+        [$dob_enc, $dob_iv, $dob_tag]         = encryptField($dateofBirth, $ENCRYPTION_KEY);
+        [$contact_enc, $contact_iv, $contact_tag] = encryptField($contactNumber, $ENCRYPTION_KEY);
+        [$address_enc, $address_iv, $address_tag] = encryptField($address, $ENCRYPTION_KEY);
+
         $stmt = $conn->prepare("
             INSERT INTO users (
-                username, last_name, first_name, middle_name, gender, date_of_birth,
-                email, contact_number, address, branch_id, role, status, password, date_started
+                username, last_name, first_name, middle_name, gender,
+                date_of_birth, date_of_birth_iv, date_of_birth_tag,
+                email,
+                contact_number, contact_number_iv, contact_number_tag,
+                address, address_iv, address_tag,
+                branch_id, role, status, password, date_started
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'admin', ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'admin', ?, ?, ?)
         ");
 
         $stmt->bind_param(
-            "sssssssssisss",
+            "sssssssssssssssisss",
             $username,
             $lastName,
             $firstName,
             $middleName,
             $gender,
-            $dateofBirth,
+            $dob_enc,
+            $dob_iv,
+            $dob_tag,
             $email,
-            $contactNumber,
-            $address,
+            $contact_enc,
+            $contact_iv,
+            $contact_tag,
+            $address_enc,
+            $address_iv,
+            $address_tag,
             $branch_id,
             $status,
             $password,
@@ -112,12 +125,9 @@ function generateUniqueUsername($lastName, $firstName, $conn) {
 function generatePasswordFromLastName($lastName) {
     $cleanLastName = preg_replace("/[^a-zA-Z]/", "", $lastName);
     $prefix = strtolower($cleanLastName);
-
     $number = rand(1000, 9999);
-
     $specials = ['!', '@', '#', '$', '%'];
     $symbol = $specials[array_rand($specials)];
-
     return $prefix . $number . $symbol;
 }
 
@@ -125,3 +135,4 @@ function isValidEmailDomain($email) {
     $domain = substr(strrchr($email, "@"), 1);
     return checkdnsrr($domain, "MX");
 }
+?>

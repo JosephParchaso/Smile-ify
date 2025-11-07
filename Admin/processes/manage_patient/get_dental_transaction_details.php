@@ -54,6 +54,8 @@ $sql = "
         d.middle_name AS dentist_middle_name,
         CONCAT('Dr. ', d.last_name, ', ', d.first_name, ' ', IFNULL(d.middle_name, '')) AS dentist_name,
         d.license_number,
+        d.license_number_iv,
+        d.license_number_tag,
         d.signature_image,
 
         dv.vitals_id,
@@ -101,10 +103,15 @@ if (!$data) {
     exit();
 }
 
-/**
- * ✅ Use snapshot values from dental_transaction_services
- * (no join with service table to avoid current data changes)
- */
+if (!empty($data['license_number']) && !empty($data['license_number_iv']) && !empty($data['license_number_tag'])) {
+    $data['license_number'] = decryptField(
+        $data['license_number'],
+        $data['license_number_iv'],
+        $data['license_number_tag'],
+        $ENCRYPTION_KEY
+    );
+}
+
 $servicesSql = "
     SELECT 
         dts.service_name,
@@ -129,10 +136,6 @@ $data['services_raw'] = $services;
 $data['services'] = $services;
 $data['services_text'] = implode("\n", $serviceStrings);
 
-/**
- * ✅ Use stored promo snapshot in dental_transaction
- * (no need to fetch from promo table)
- */
 if (!empty($data['promo_name'])) {
     $data['promo'] = [
         'name' => $data['promo_name'],
@@ -143,9 +146,6 @@ if (!empty($data['promo_name'])) {
     $data['promo'] = null;
 }
 
-/**
- * 🩺 Fetch prescriptions (unchanged)
- */
 $presSql = "
     SELECT 
         drug, 

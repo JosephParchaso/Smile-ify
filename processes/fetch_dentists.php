@@ -14,6 +14,8 @@ try {
             CONCAT(d.first_name, ' ', d.last_name) AS full_name,
             d.email,
             d.contact_number,
+            d.contact_number_iv,
+            d.contact_number_tag,
             d.profile_image,
             GROUP_CONCAT(DISTINCT b.name ORDER BY b.name SEPARATOR ', ') AS branch_name,
             GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', ') AS services
@@ -31,6 +33,12 @@ try {
     $dentists = [];
 
     while ($row = $result->fetch_assoc()) {
+        if (!empty($row['contact_number']) && !empty($row['contact_number_iv']) && !empty($row['contact_number_tag'])) {
+            $row['contact_number'] = decryptField($row['contact_number'], $row['contact_number_iv'], $row['contact_number_tag'], $ENCRYPTION_KEY);
+        }
+
+        unset($row['contact_number_iv'], $row['contact_number_tag']);
+
         $row['dentist_name'] = 'Dr. ' . $row['full_name'];
 
         $row['profile_image'] = !empty($row['profile_image'])
@@ -47,3 +55,4 @@ try {
 } catch (Exception $e) {
     echo json_encode(['success' => false, 'error' => $e->getMessage()]);
 }
+?>

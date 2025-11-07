@@ -68,21 +68,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
+        [$dob_enc, $dob_iv, $dob_tag] = encryptField($dateofBirth, $ENCRYPTION_KEY);
+        [$contact_enc, $contact_iv, $contact_tag] = encryptField($contactNumber, $ENCRYPTION_KEY);
+        [$license_enc, $license_iv, $license_tag] = encryptField($licenseNumber, $ENCRYPTION_KEY);
+
         $stmt = $conn->prepare("
-            INSERT INTO dentist 
-                (last_name, first_name, middle_name, gender, date_of_birth, email, contact_number, license_number, date_started, status, signature_image, profile_image)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO dentist (
+                last_name, first_name, middle_name, gender,
+                date_of_birth, date_of_birth_iv, date_of_birth_tag,
+                email,
+                contact_number, contact_number_iv, contact_number_tag,
+                license_number, license_number_iv, license_number_tag,
+                date_started, status, signature_image, profile_image
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
+
+        if (!$stmt) {
+            throw new Exception("SQL Prepare failed: " . $conn->error);
+        }
+
         $stmt->bind_param(
-            "ssssssssssss",
+            "ssssssssssssssssss",
             $lastName,
             $firstName,
             $middleName,
             $gender,
-            $dateofBirth,
+            $dob_enc,
+            $dob_iv,
+            $dob_tag,
             $email,
-            $contactNumber,
-            $licenseNumber,
+            $contact_enc,
+            $contact_iv,
+            $contact_tag,
+            $license_enc,
+            $license_iv,
+            $license_tag,
             $dateStarted,
             $status,
             $signatureImage,
@@ -126,3 +147,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header("Location: " . BASE_URL . "/Owner/pages/employees.php?tab=dentist");
     exit();
 }
+?>

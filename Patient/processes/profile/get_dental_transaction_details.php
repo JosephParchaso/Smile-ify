@@ -27,14 +27,14 @@ $sql = "
         d.first_name AS dentist_first_name,
         d.middle_name AS dentist_middle_name,
         d.license_number,
+        d.license_number_iv,
+        d.license_number_tag,
         d.signature_image,
-
         u.last_name AS patient_last_name,
         u.first_name AS patient_first_name,
         u.middle_name AS patient_middle_name,
         u.date_of_birth AS patient_dob,
         u.gender AS gender,
-
         a.appointment_transaction_id,
         a.appointment_date,
         a.appointment_time,
@@ -44,12 +44,10 @@ $sql = "
         dt.payment_method,
         dt.date_created,
         dt.prescription_downloaded,
-
         dt.medcert_status,
         dt.diagnosis,
         dt.fitness_status,
         dt.remarks,
-
         dv.body_temp,
         dv.pulse_rate,
         dv.respiratory_rate,
@@ -86,6 +84,16 @@ $result = $stmt->get_result();
 
 if ($row = $result->fetch_assoc()) {
     $row['services'] = $row['services'] ?: '-';
+
+    if (!empty($row['license_number'])) {
+        $encryptionKey = 'your-secret-key-here';
+        $row['license_number'] = decryptData(
+            $row['license_number'],
+            $row['license_number_iv'],
+            $row['license_number_tag'],
+            $encryptionKey
+        );
+    }
 
     $appointmentTransactionId = $row['appointment_transaction_id'];
 

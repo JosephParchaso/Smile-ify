@@ -62,9 +62,9 @@ if (!function_exists('decryptField')) {
 }
 
 // ===== SMTP CONFIG =====
-define('SMTP_HOST', getenv('SMTP_HOST') ?: 'smtp.gmail.com');
-define('SMTP_PORT', getenv('SMTP_PORT') ?: 587);
-define('SMTP_SECURE', getenv('SMTP_SECURE') ?: 'tls');
+define('SMTP_HOST', getenv('SMTP_HOST'));
+define('SMTP_PORT', getenv('SMTP_PORT'));
+define('SMTP_SECURE', getenv('SMTP_SECURE'));
 define('SMTP_AUTH', filter_var(getenv('SMTP_AUTH'), FILTER_VALIDATE_BOOLEAN));
 define('SMTP_USER', getenv('SMTP_USER'));
 define('SMTP_PASS', getenv('SMTP_PASS'));

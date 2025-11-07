@@ -26,9 +26,15 @@ $sql = "SELECT
             first_name,
             gender,
             date_of_birth,
+            date_of_birth_iv,
+            date_of_birth_tag,
             email,
             contact_number,
+            contact_number_iv,
+            contact_number_tag,
             license_number,
+            license_number_iv,
+            license_number_tag,
             status,
             signature_image,
             profile_image,
@@ -45,6 +51,24 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 if ($row = $result->fetch_assoc()) {
+    if (!empty($row['date_of_birth']) && !empty($row['date_of_birth_iv']) && !empty($row['date_of_birth_tag'])) {
+        $row['date_of_birth'] = decryptField($row['date_of_birth'], $row['date_of_birth_iv'], $row['date_of_birth_tag'], $ENCRYPTION_KEY);
+    }
+
+    if (!empty($row['contact_number']) && !empty($row['contact_number_iv']) && !empty($row['contact_number_tag'])) {
+        $row['contact_number'] = decryptField($row['contact_number'], $row['contact_number_iv'], $row['contact_number_tag'], $ENCRYPTION_KEY);
+    }
+
+    if (!empty($row['license_number']) && !empty($row['license_number_iv']) && !empty($row['license_number_tag'])) {
+        $row['license_number'] = decryptField($row['license_number'], $row['license_number_iv'], $row['license_number_tag'], $ENCRYPTION_KEY);
+    }
+
+    unset(
+        $row['date_of_birth_iv'], $row['date_of_birth_tag'],
+        $row['contact_number_iv'], $row['contact_number_tag'],
+        $row['license_number_iv'], $row['license_number_tag']
+    );
+
     $branchSql = "SELECT branch_id FROM dentist_branch WHERE dentist_id = ?";
     $branchStmt = $conn->prepare($branchSql);
     $branchStmt->bind_param("i", $dentistId);
@@ -56,6 +80,7 @@ if ($row = $result->fetch_assoc()) {
         $branches[] = (int)$branchRow['branch_id'];
     }
     $row['branches'] = $branches;
+    $branchStmt->close();
 
     $serviceSql = "SELECT service_id FROM dentist_service WHERE dentist_id = ?";
     $serviceStmt = $conn->prepare($serviceSql);
@@ -68,6 +93,7 @@ if ($row = $result->fetch_assoc()) {
         $services[] = (int)$serviceRow['service_id'];
     }
     $row['services'] = $services;
+    $serviceStmt->close();
 
     echo json_encode($row);
 } else {
@@ -75,3 +101,4 @@ if ($row = $result->fetch_assoc()) {
 }
 
 $conn->close();
+?>
