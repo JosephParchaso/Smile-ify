@@ -229,9 +229,12 @@ auto deactivate accounts 3 years 👍
 add checkmark on admin 👍
 promos at index and patient 👍
 display also index in the home pages 👍
-Consultation - â‚±150.00 (15 mins), Total: â‚±150.00 (15 mins total) try again appointment confirmation
+add text box on medcert payment for contact number or reference 👍
+Consultation - â‚±150.00 (15 mins), Total: â‚±150.00 (15 mins total) try again appointment confirmation 👍
+
 owner creation how
-add text box on medcert payment for contact number or reference
+prescription
+
 payment methods in reports
 medcert reports
 

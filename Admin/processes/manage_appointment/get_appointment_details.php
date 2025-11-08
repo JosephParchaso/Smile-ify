@@ -23,10 +23,16 @@ $sql = "
         u.middle_name, 
         u.last_name, 
         u.gender, 
-        u.date_of_birth, 
+        u.date_of_birth,
+        u.date_of_birth_iv,
+        u.date_of_birth_tag,
         u.email, 
-        u.contact_number, 
+        u.contact_number,
+        u.contact_number_iv,
+        u.contact_number_tag,
         u.address,
+        u.address_iv,
+        u.address_tag,
         u.date_created AS user_created,
         u.date_updated,
         a.appointment_transaction_id,
@@ -55,17 +61,44 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 if ($row = $result->fetch_assoc()) {
+    $decryptedDOB = null;
+    if (!empty($row['date_of_birth']) && !empty($row['date_of_birth_iv']) && !empty($row['date_of_birth_tag'])) {
+        $decryptedDOB = decryptField(
+            $row['date_of_birth'],
+            $row['date_of_birth_iv'],
+            $row['date_of_birth_tag']
+        );
+    }
+
+    $decryptedContact = null;
+    if (!empty($row['contact_number']) && !empty($row['contact_number_iv']) && !empty($row['contact_number_tag'])) {
+        $decryptedContact = decryptField(
+            $row['contact_number'],
+            $row['contact_number_iv'],
+            $row['contact_number_tag']
+        );
+    }
+
+    $decryptedAddress = null;
+    if (!empty($row['address']) && !empty($row['address_iv']) && !empty($row['address_tag'])) {
+        $decryptedAddress = decryptField(
+            $row['address'],
+            $row['address_iv'],
+            $row['address_tag']
+        );
+    }
+
     $profile = [
         'full_name'       => trim($row['first_name'] . ' ' . ($row['middle_name'] ?? '') . ' ' . $row['last_name']),
         'gender'          => ucfirst($row['gender']),
-        'date_of_birth'   => $row['date_of_birth'] ? date("F j, Y", strtotime($row['date_of_birth'])) : '-',
+        'date_of_birth'   => $decryptedDOB ? date("F j, Y", strtotime($decryptedDOB)) : '-',
         'email'           => $row['email'],
-        'contact_number'  => $row['contact_number'],
-        'address'         => $row['address'] ?? '-',
+        'contact_number'  => $decryptedContact ?? '-',
+        'address'         => $decryptedAddress ?? '-',
         'joined'          => $row['user_created'] ? date("F j, Y", strtotime($row['user_created'])) : '-',
         'date_updated'    => $row['date_updated'] ? date("F j, Y", strtotime($row['date_updated'])) : '-',
 
-        'appointment_transaction_id'           => $row['appointment_transaction_id'],
+        'appointment_transaction_id' => $row['appointment_transaction_id'],
         'appointment_date' => $row['appointment_date'] ? date("F j, Y", strtotime($row['appointment_date'])) : '-',
         'appointment_time' => $row['appointment_time'] ? date("g:i A", strtotime($row['appointment_time'])) : '-',
         'status'           => $row['status'],

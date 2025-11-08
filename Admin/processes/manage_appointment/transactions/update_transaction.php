@@ -31,10 +31,45 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             FROM dental_transaction 
             WHERE dental_transaction_id = ? AND appointment_transaction_id = ?
         ");
+        if (!$stmtCheck) {
+            throw new Exception("Prepare failed: " . $conn->error);
+        }
+
         $stmtCheck->bind_param("ii", $dental_transaction_id, $appointment_transaction_id);
-        $stmtCheck->execute();
-        $existing = $stmtCheck->get_result()->fetch_assoc();
+        if (!$stmtCheck->execute()) {
+            throw new Exception("Execute failed: " . $stmtCheck->error);
+        }
+
+        if (method_exists($stmtCheck, 'get_result')) {
+            $result = $stmtCheck->get_result();
+            if ($result === false) {
+                throw new Exception("get_result() failed. Possibly mysqlnd not enabled.");
+            }
+            $existing = $result->fetch_assoc();
+        } else {
+            $stmtCheck->bind_result($dentist_id_old, $promo_id_old, $payment_method_old, $total_old, $notes_old, $fitness_old, $diagnosis_old, $remarks_old);
+            if ($stmtCheck->fetch()) {
+                $existing = [
+                    'dentist_id' => $dentist_id_old,
+                    'promo_id' => $promo_id_old,
+                    'payment_method' => $payment_method_old,
+                    'total' => $total_old,
+                    'notes' => $notes_old,
+                    'fitness_status' => $fitness_old,
+                    'diagnosis' => $diagnosis_old,
+                    'remarks' => $remarks_old
+                ];
+            } else {
+                $existing = null;
+            }
+        }
         $stmtCheck->close();
+
+        if (!$existing) {
+            $_SESSION['updateError'] = "Transaction not found.";
+            header("Location: " . BASE_URL . "/Admin/pages/manage_appointment.php?id=" . $appointment_transaction_id);
+            exit();
+        }
 
         $hasChanges = (
             $existing['dentist_id'] != $dentist_id ||
@@ -50,38 +85,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $conn->begin_transaction();
 
         if ($hasChanges) {
-            $serviceNames = [];
-            $servicePrices = [];
-
-            if (!empty($services)) {
-                $serviceIdsStr = implode(',', array_map('intval', $services));
-                $resultServices = $conn->query("SELECT service_id, service_name, price FROM service WHERE service_id IN ($serviceIdsStr)");
-
-                while ($row = $resultServices->fetch_assoc()) {
-                    $sid = $row['service_id'];
-                    $serviceNames[] = $row['service_name'];
-                    $servicePrices[] = number_format($row['price'], 2, '.', '');
-                }
-            }
-
-            $service_name_snapshot = implode(', ', $serviceNames);
-            $service_price_snapshot = implode(', ', $servicePrices);
-
             $promo_name_snapshot = null;
             $promo_type_snapshot = null;
             $promo_value_snapshot = null;
 
             if (!empty($promo_id)) {
-                $stmtPromo = $conn->prepare("SELECT promo_name, promo_type, promo_value FROM promo WHERE promo_id = ?");
+                $stmtPromo = $conn->prepare("SELECT name, discount_type, discount_value FROM promo WHERE promo_id = ?");
                 $stmtPromo->bind_param("i", $promo_id);
                 $stmtPromo->execute();
                 $promo = $stmtPromo->get_result()->fetch_assoc();
                 $stmtPromo->close();
 
                 if ($promo) {
-                    $promo_name_snapshot = $promo['promo_name'];
-                    $promo_type_snapshot = $promo['promo_type'];
-                    $promo_value_snapshot = $promo['promo_value'];
+                    $promo_name_snapshot = $promo['name'];
+                    $promo_type_snapshot = $promo['discount_type'];
+                    $promo_value_snapshot = $promo['discount_value'];
                 }
             }
 
@@ -98,17 +116,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     remarks = ?,
                     admin_user_id = ?, 
                     date_updated = NOW(),
-                    service_name = ?, 
-                    service_price = ?, 
                     promo_name = ?, 
                     promo_type = ?, 
                     promo_value = ?
                 WHERE dental_transaction_id = ? 
                     AND appointment_transaction_id = ?
             ");
-
             $stmt->bind_param(
-                "iisdssssisssssii",
+                "iisdssssisssii",
                 $dentist_id,
                 $promo_id,
                 $payment_method,
@@ -118,8 +133,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $diagnosis,
                 $remarks,
                 $admin_user_id,
-                $service_name_snapshot,
-                $service_price_snapshot,
                 $promo_name_snapshot,
                 $promo_type_snapshot,
                 $promo_value_snapshot,
@@ -128,18 +141,60 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             );
             $stmt->execute();
             $stmt->close();
+            
+            if (strtolower($payment_method) === 'cash') {
+                $getReceipt = $conn->prepare("SELECT cashless_receipt FROM dental_transaction WHERE dental_transaction_id = ?");
+                $getReceipt->bind_param("i", $dental_transaction_id);
+                $getReceipt->execute();
+                $resultReceipt = $getReceipt->get_result()->fetch_assoc();
+                $getReceipt->close();
 
-            $conn->query("DELETE FROM dental_transaction_services WHERE dental_transaction_id = " . $dental_transaction_id);
+                if (!empty($resultReceipt['cashless_receipt'])) {
+                    $oldPath = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify' . $resultReceipt['cashless_receipt'];
+                    if (is_file($oldPath)) {
+                        unlink($oldPath);
+                    }
+
+                    $stmtClear = $conn->prepare("
+                        UPDATE dental_transaction
+                        SET cashless_receipt = NULL, date_updated = NOW()
+                        WHERE dental_transaction_id = ?
+                    ");
+                    $stmtClear->bind_param("i", $dental_transaction_id);
+                    $stmtClear->execute();
+                    $stmtClear->close();
+                }
+            }
+
+            $conn->query("DELETE FROM dental_transaction_services WHERE dental_transaction_id = " . intval($dental_transaction_id));
+
             if (!empty($services)) {
+                $serviceIdsStr = implode(',', array_map('intval', $services));
+                $serviceQuery = $conn->query("SELECT service_id, name, price FROM service WHERE service_id IN ($serviceIdsStr)");
+
+                $serviceMap = [];
+                while ($row = $serviceQuery->fetch_assoc()) {
+                    $serviceMap[$row['service_id']] = [
+                        'name' => $row['name'],
+                        'price' => $row['price']
+                    ];
+                }
+
                 $stmtService = $conn->prepare("
-                    INSERT INTO dental_transaction_services (dental_transaction_id, service_id, quantity)
-                    VALUES (?, ?, ?)
+                    INSERT INTO dental_transaction_services 
+                    (dental_transaction_id, service_id, service_name, service_price, quantity)
+                    VALUES (?, ?, ?, ?, ?)
                 ");
+
                 foreach ($services as $service_id) {
                     $quantity = isset($quantities[$service_id]) ? intval($quantities[$service_id]) : 1;
-                    $stmtService->bind_param("iii", $dental_transaction_id, $service_id, $quantity);
+                    $service_name = $serviceMap[$service_id]['name'] ?? '';
+                    $service_price = $serviceMap[$service_id]['price'] ?? 0;
+
+                    $stmtService->bind_param("iisdi", $dental_transaction_id, $service_id, $service_name, $service_price, $quantity);
                     $stmtService->execute();
                 }
+
                 $stmtService->close();
             }
         }
@@ -196,6 +251,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
         $conn->commit();
+
         if ($hasChanges || (isset($_FILES['receipt_upload']) && $_FILES['receipt_upload']['error'] === UPLOAD_ERR_OK)) {
             $_SESSION['updateSuccess'] = "Transaction updated successfully!";
         }

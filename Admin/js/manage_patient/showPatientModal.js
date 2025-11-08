@@ -981,7 +981,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (e.target.value === "cashless") {
                 uploadGroup.style.display = "block";
-                receiptUpload.required = true;
+                receiptUpload.required = false;
             } else {
                 uploadGroup.style.display = "none";
                 receiptUpload.required = false;

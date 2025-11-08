@@ -169,6 +169,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["verify"])) {
 
         require BASE_PATH . '/Mail/phpmailer/PHPMailerAutoload.php';
         $mail = new PHPMailer;
+        $mail->CharSet = 'UTF-8';
+        $mail->Encoding = 'base64';
         $mail->isSMTP();
         $mail->Host       = SMTP_HOST;
         $mail->Port       = SMTP_PORT;
@@ -181,8 +183,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["verify"])) {
         $mail->addAddress($email);
 
         $mail->isHTML(true);
-        $mail->CharSet = 'UTF-8';
-        $mail->Encoding = 'base64';
         $mail->Subject = "Smile-ify Login Credentials and Appointment Details";
         $mail->Body = "
             <p>Dear <strong>$username</strong>,</p>

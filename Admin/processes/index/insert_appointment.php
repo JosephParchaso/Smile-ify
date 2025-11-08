@@ -197,6 +197,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         require BASE_PATH . '/Mail/phpmailer/PHPMailerAutoload.php';
         $mail = new PHPMailer;
+        $mail->CharSet = 'UTF-8';
+        $mail->Encoding = 'base64';
         $mail->isSMTP();
         $mail->Host       = SMTP_HOST;
         $mail->Port       = SMTP_PORT;

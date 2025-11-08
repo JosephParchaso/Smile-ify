@@ -13,6 +13,7 @@ $fitness_status  = trim($_POST['fitness_status'] ?? '');
 $diagnosis       = trim($_POST['diagnosis'] ?? '');
 $remarks         = trim($_POST['remarks'] ?? '');
 $payment_method  = $_POST['payment_method'] ?? null;
+$medcert_notes   = trim($_POST['medcert_notes'] ?? '');
 
 if (!$transaction_id || $fitness_status === '' || $diagnosis === '' || $remarks === '') {
     $_SESSION['updateError'] = "All fields are required.";
@@ -94,6 +95,7 @@ $updateSql = "
     SET fitness_status = ?,
         diagnosis = ?,
         remarks = ?,
+        medcert_notes = ?,
         medcert_status = 'Eligible',
         medcert_requested_date = NOW(),
         medcert_request_payment = ?,
@@ -102,7 +104,8 @@ $updateSql = "
     WHERE dental_transaction_id = ?
 ";
 $stmt = $conn->prepare($updateSql);
-$stmt->bind_param("sssisi", $fitness_status, $diagnosis, $remarks, $medcertPayment, $receiptPath, $transaction_id);
+$stmt->bind_param("ssssisi", $fitness_status, $diagnosis, $remarks, $medcert_notes, $medcertPayment, $receiptPath, $transaction_id);
+
 
 if ($stmt->execute()) {
     $message = "Your medical certificate request from your appointment on $appointmentDate at $appointmentTime has been approved.";

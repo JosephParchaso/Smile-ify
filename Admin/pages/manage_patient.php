@@ -135,8 +135,13 @@ $backTab = $_GET['tab'] ?? 'recent';
             </div>
 
             <div class="form-group" id="receiptUploadGroup" style="display: none;">
-                <input type="file" id="receiptUpload" name="receipt_upload" class="form-control" accept="image/*" required>
-                <label for="receiptUpload" class="form-label">Upload Receipt (if Cashless) <span class="required">*</span></label>
+                <input type="file" id="receiptUpload" name="receipt_upload" class="form-control" accept="image/*">
+                <label for="receiptUpload" class="form-label">Upload Receipt (if Cashless)</label>
+            </div>
+
+            <div class="form-group">
+                <textarea id="notesMedcert" name="medcert_notes" class="form-control" placeholder=" "></textarea>
+                <label for="notesMedcert" class="form-label">Notes</label>
             </div>
         </div>
 

@@ -34,6 +34,8 @@ $sql = "
         u.first_name AS patient_first_name,
         u.middle_name AS patient_middle_name,
         u.date_of_birth AS patient_dob,
+        u.date_of_birth_iv AS patient_dob_iv,
+        u.date_of_birth_tag AS patient_dob_tag,
         u.gender AS gender,
         a.appointment_transaction_id,
         a.appointment_date,
@@ -85,15 +87,23 @@ $result = $stmt->get_result();
 if ($row = $result->fetch_assoc()) {
     $row['services'] = $row['services'] ?: '-';
 
-    if (!empty($row['license_number'])) {
-        $encryptionKey = 'your-secret-key-here';
-        $row['license_number'] = decryptData(
-            $row['license_number'],
-            $row['license_number_iv'],
-            $row['license_number_tag'],
-            $encryptionKey
-        );
-    }
+if (!empty($row['license_number']) && !empty($row['license_number_iv']) && !empty($row['license_number_tag'])) {
+    $row['license_number'] = decryptField(
+        $row['license_number'],
+        $row['license_number_iv'],
+        $row['license_number_tag'],
+        $ENCRYPTION_KEY
+    );
+}
+
+if (!empty($row['patient_dob']) && !empty($row['patient_dob_iv']) && !empty($row['patient_dob_tag'])) {
+    $row['patient_dob'] = decryptField(
+        $row['patient_dob'],
+        $row['patient_dob_iv'],
+        $row['patient_dob_tag'],
+        $ENCRYPTION_KEY
+    );
+}
 
     $appointmentTransactionId = $row['appointment_transaction_id'];
 

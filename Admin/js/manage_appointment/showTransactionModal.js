@@ -175,7 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 cashlessGroup.style.display = "block";
 
                 if (!isEdit || !data.cashless_receipt) {
-                    cashlessInput.required = true;
+                    cashlessInput.required = false;
                 } else {
                     cashlessInput.required = false;
                 }
@@ -188,52 +188,6 @@ document.addEventListener("DOMContentLoaded", () => {
         toggleCashlessField();
 
         paymentMethodSelect.addEventListener("change", toggleCashlessField);
-
-        if (!isEdit) {
-            loadServices(effectiveBranchId, servicesContainer, null, appointmentServiceIds, () => {
-                loadDentists(effectiveBranchId, appointmentServiceIds, dentistSelect, appointmentDentistId);
-                updateServicesSummary();
-                toggleMedicalCertFields();
-            });
-        } else {
-            const selectedServices = data.services?.map(s => s.service_id) || [];
-            loadServices(effectiveBranchId, servicesContainer, data.dental_transaction_id, selectedServices, () => {
-                loadDentists(effectiveBranchId, [], dentistSelect, data.dentist_id);
-                        
-                selectedServices.forEach(id => {
-                    const checkbox = servicesContainer.querySelector(`input[type="checkbox"][value="${id}"]`);
-                    if (checkbox) {
-                        checkbox.checked = true;
-                        const quantityInput = document.querySelector(`input[name="serviceQuantity[${id}]"]`);
-                        if (quantityInput) {
-                            const serviceObj = data.services.find(s => s.service_id == id);
-                            quantityInput.value = serviceObj?.quantity || 1;
-                            quantityInput.style.display = 'inline-block';
-                        }
-                    }
-                });
-                updateServicesSummary();
-                toggleMedicalCertFields();
-            });
-        }
-        
-        const promoSelect = modalBody.querySelector("#transactionPromo");
-        if (promoSelect) {
-            loadPromos(promoSelect, isEdit ? data.promo_id : null, effectiveBranchId);
-        }
-
-        if (isEdit && data.total) {
-            const totalDisplay = modalBody.querySelector("#totalDisplay");
-            const subtotalDisplay = modalBody.querySelector("#subtotalDisplay");
-            const discountDisplay = modalBody.querySelector("#discountDisplay");
-            const totalPaymentInput = modalBody.querySelector("#total_payment");
-
-            if (totalDisplay) totalDisplay.textContent = `₱${parseFloat(data.total).toFixed(2)}`;
-            if (subtotalDisplay) subtotalDisplay.textContent = `₱${parseFloat(data.total).toFixed(2)}`;
-            if (discountDisplay) discountDisplay.textContent = `₱0.00`;
-            if (totalPaymentInput) totalPaymentInput.value = parseFloat(data.total).toFixed(2);
-            
-        }
 
         function getMedicalCertCheckbox() {
             return [...servicesContainer.querySelectorAll('input[type="checkbox"][name="appointmentServices[]"]')]
@@ -279,6 +233,52 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 mcFields.innerHTML = "";
             }
+        }
+
+        if (!isEdit) {
+            loadServices(effectiveBranchId, servicesContainer, null, appointmentServiceIds, () => {
+                loadDentists(effectiveBranchId, appointmentServiceIds, dentistSelect, appointmentDentistId);
+                updateServicesSummary();
+                toggleMedicalCertFields();
+            });
+        } else {
+            const selectedServices = data.services?.map(s => s.service_id) || [];
+            loadServices(effectiveBranchId, servicesContainer, data.dental_transaction_id, selectedServices, () => {
+                loadDentists(effectiveBranchId, [], dentistSelect, data.dentist_id);
+                        
+                selectedServices.forEach(id => {
+                    const checkbox = servicesContainer.querySelector(`input[type="checkbox"][value="${id}"]`);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                        const quantityInput = document.querySelector(`input[name="serviceQuantity[${id}]"]`);
+                        if (quantityInput) {
+                            const serviceObj = data.services.find(s => s.service_id == id);
+                            quantityInput.value = serviceObj?.quantity || 1;
+                            quantityInput.style.display = 'inline-block';
+                        }
+                    }
+                });
+                updateServicesSummary();
+                toggleMedicalCertFields();
+            });
+        }
+        
+        const promoSelect = modalBody.querySelector("#transactionPromo");
+        if (promoSelect) {
+            loadPromos(promoSelect, isEdit ? data.promo_id : null, effectiveBranchId);
+        }
+
+        if (isEdit && data.total) {
+            const totalDisplay = modalBody.querySelector("#totalDisplay");
+            const subtotalDisplay = modalBody.querySelector("#subtotalDisplay");
+            const discountDisplay = modalBody.querySelector("#discountDisplay");
+            const totalPaymentInput = modalBody.querySelector("#total_payment");
+
+            if (totalDisplay) totalDisplay.textContent = `₱${parseFloat(data.total).toFixed(2)}`;
+            if (subtotalDisplay) subtotalDisplay.textContent = `₱${parseFloat(data.total).toFixed(2)}`;
+            if (discountDisplay) discountDisplay.textContent = `₱0.00`;
+            if (totalPaymentInput) totalPaymentInput.value = parseFloat(data.total).toFixed(2);
+            
         }
 
         document.body.addEventListener("input", e => {

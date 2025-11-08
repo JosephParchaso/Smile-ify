@@ -13,7 +13,7 @@ $(document).ready(function() {
                 { "title": "Branch Registered" },
                 { "title": "Action", "orderable": false, "searchable": false }
             ],
-            "order": [[1, "asc"]],
+            "order": [[2, "desc"]],
             "language": {
                 search: "",
                 searchPlaceholder: "Search"

@@ -73,6 +73,8 @@ $sql = "
         u.first_name AS patient_first_name,
         u.middle_name AS patient_middle_name,
         u.date_of_birth AS patient_dob,
+        u.date_of_birth_iv AS patient_dob_iv,
+        u.date_of_birth_tag AS patient_dob_tag,
         u.gender AS patient_gender
 
     FROM dental_transaction dt
@@ -108,6 +110,15 @@ if (!empty($data['license_number']) && !empty($data['license_number_iv']) && !em
         $data['license_number'],
         $data['license_number_iv'],
         $data['license_number_tag'],
+        $ENCRYPTION_KEY
+    );
+}
+
+if (!empty($data['patient_dob']) && !empty($data['patient_dob_iv']) && !empty($data['patient_dob_tag'])) {
+    $data['patient_dob'] = decryptField(
+        $data['patient_dob'],
+        $data['patient_dob_iv'],
+        $data['patient_dob_tag'],
         $ENCRYPTION_KEY
     );
 }
