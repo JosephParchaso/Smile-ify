@@ -79,8 +79,8 @@ document.addEventListener("DOMContentLoaded", () => {
                                 <button class="confirm-btn" id="downloadPrescription">Download Prescription</button>
                                 ${
                                     data.prescription_downloaded == 0
-                                    ? `<button class="confirm-btn" disabled>Not yet released</button>`
-                                    : `<button class="confirm-btn" disabled>Released</button>`
+                                    ? `<button class="confirm-btn" disabled>Not yet Issued</button>`
+                                    : `<button class="confirm-btn" disabled>Issued</button>`
                                 }
                             </div>
                         `;
@@ -112,6 +112,14 @@ document.addEventListener("DOMContentLoaded", () => {
                                         ? new Date(data.date_created).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
                                         : '-'
                                 }</span></p>
+                                <p><strong>Med Cert Request Date:</strong>
+                                    <span>${
+                                        data.medcert_requested_date
+                                            ? new Date(data.medcert_requested_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+                                            : '-'
+                                    }</span>
+                                </p>
+                                <p><strong>Med Cert Notes:</strong><span>${data.medcert_notes || '-'}</span></p>
 
                                 <div class="button-group button-group-profile">
                                     <button class="confirm-btn" id="downloadReceipt">Download Receipt</button>
@@ -776,51 +784,20 @@ document.addEventListener("DOMContentLoaded", () => {
                             doc.text(formattedDate, leftValueX + 2, row2Y - 1);
                             doc.text(data.branch || "-", rightValueX + 2, row2Y - 1);
 
-                            // === Row 3: Service ===
-                            const row3Y = 79;
-                            doc.setFont("helvetica", "bold");
-                            doc.text("Service:", leftLabelX, row3Y);
+                                // ===== PRESCRIPTIONS =====
+                                const prescripY = row2Y + 15;
+                                doc.setFont("helvetica", "bold");
+                                doc.text("Prescription:", 10, prescripY);
+
+                                doc.setFontSize(22);
+                                doc.setFont("helvetica", "bolditalic");
+                                doc.text("Rx", 12, prescripY + 15);
+                                doc.setFontSize(12);
+                                doc.setFont("helvetica", "normal");
+
+                                let y = prescripY + 25;
 
                             doc.setFont("helvetica", "normal");
-                            let serviceLines = [];
-                            if (data.services) {
-                                let y = row3Y - 1;
-                                if (Array.isArray(data.services)) {
-                                    serviceLines = data.services.map(s => s.service_name || s.name || s);
-                                } else if (typeof data.services === "string") {
-                                    serviceLines = data.services.split(",").map(s => s.trim()).filter(Boolean);
-                                } else {
-                                    serviceLines = [];
-                                }
-
-                                if (serviceLines.length > 0) {
-                                    serviceLines.forEach((s) => {
-                                        if (y > pageHeight - 40) {
-                                            doc.addPage();
-                                            y = 20;
-                                        }
-                                        doc.text(s, leftValueX + 2, y);
-                                        y += 6;
-                                    });
-                                } else {
-                                    doc.text("-", leftValueX + 2, row3Y - 1);
-                                }
-                            } else {
-                                doc.text("-", leftValueX + 2, row3Y - 1);
-                            }
-
-                            // ===== PRESCRIPTIONS =====
-                            let prescripY = row3Y + 15;
-
-                            if (serviceLines.length > 1) {
-                                prescripY += serviceLines.length * 3;
-                            }
-
-                            doc.setFont("helvetica", "bold");
-                            doc.text("Prescription:", 10, prescripY);
-
-                            doc.setFont("helvetica", "normal");
-                            let y = prescripY + 10;
                             if (data.prescriptions && data.prescriptions.length > 0) {
                                 data.prescriptions.forEach((p, index) => {
                                     if (y > pageHeight - 40) {

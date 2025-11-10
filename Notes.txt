@@ -231,9 +231,8 @@ promos at index and patient 👍
 display also index in the home pages 👍
 add text box on medcert payment for contact number or reference 👍
 Consultation - â‚±150.00 (15 mins), Total: â‚±150.00 (15 mins total) try again appointment confirmation 👍
-
-owner creation how
-prescription
+prescription issued after downloading admin or patient/// keep downloadable 👍
+1 owner only creation, how = CLI thru setup creation 👍 
 
 payment methods in reports
 medcert reports
@@ -299,3 +298,157 @@ Minimum of 5 minutes for OTP time remaining expiration time 💖{
     $expiry_limit = 60;
     if (($currentTime - $otpCreatedTime) > 60)
 }
+
+
+
+OWNER creation
+
+run "php setup/create_owner.php" on cli /Smile-ify/
+then
+"del setup\create_owner.php"
+
+<?php
+/**
+ * Smile-ify One-Time Owner Account Creator
+ * Usage (CLI only): php setup/create_owner.php
+ */
+require_once __DIR__ . '/../includes/config.php';
+require_once BASE_PATH . '/includes/db.php'; // database connection
+
+if (php_sapi_name() !== 'cli') {
+    exit("⚠️ Run this script in CLI only.\n");
+}
+
+// Check if an owner already exists
+$check = $conn->query("SELECT COUNT(*) AS c FROM users WHERE role='owner'");
+$count = $check->fetch_assoc()['c'];
+if ($count > 0) {
+    exit("❌ Owner already exists. Aborting.\n");
+}
+
+echo "=== Smile-ify Owner Setup ===\n";
+
+// --- Helper for required inputs ---
+function prompt($label, $required = true)
+{
+    do {
+        echo "$label: ";
+        $input = trim(fgets(STDIN));
+        if ($required && $input === '') {
+            echo "⚠️ This field is required.\n";
+        }
+    } while ($required && $input === '');
+    return $input;
+}
+
+// --- Helper for hidden password input ---
+function promptPassword($label)
+{
+    if (strncasecmp(PHP_OS, 'WIN', 3) === 0) {
+        // Windows CLI fallback: input visible
+        echo "$label: ";
+        return trim(fgets(STDIN));
+    } else {
+        echo "$label: ";
+        system('stty -echo');
+        $password = trim(fgets(STDIN));
+        system('stty echo');
+        echo "\n";
+        return $password;
+    }
+}
+
+// --- Collect info ---
+$username   = prompt("Enter username");
+
+// Password + confirm
+do {
+    $password = promptPassword("Enter password");
+    $confirm  = promptPassword("Confirm password");
+    if ($password !== $confirm) {
+        echo "⚠️ Passwords do not match. Try again.\n";
+    }
+} while ($password !== $confirm);
+
+$first_name = prompt("Enter first name");
+$last_name  = prompt("Enter last name");
+$email      = prompt("Enter email");
+while (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    echo "⚠️ Invalid email format. Try again.\n";
+    $email = prompt("Enter email");
+}
+
+$contact = prompt("Enter contact number");
+
+$dob = prompt("Enter date of birth (YYYY-MM-DD)");
+while (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $dob)) {
+    echo "⚠️ Invalid date format. Use YYYY-MM-DD.\n";
+    $dob = prompt("Enter date of birth (YYYY-MM-DD)");
+}
+
+$address = prompt("Enter address");
+
+// Gender (required, no default)
+$gender = prompt("Enter gender (Male/Female/Other)");
+
+// --- Account metadata ---
+$role = 'owner';
+$status = 'Active';
+$date_started = date('Y-m-d');
+$hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+// --- Encrypt sensitive fields ---
+list($dob_encrypted, $dob_iv, $dob_tag) = encryptField($dob);
+list($contact_encrypted, $contact_iv, $contact_tag) = encryptField($contact);
+list($address_encrypted, $address_iv, $address_tag) = encryptField($address);
+
+// --- Insert into database ---
+$stmt = $conn->prepare("
+    INSERT INTO users (
+        username, password, first_name, last_name, email, gender,
+        date_of_birth, date_of_birth_iv, date_of_birth_tag,
+        contact_number, contact_number_iv, contact_number_tag,
+        address, address_iv, address_tag,
+        role, status, date_started, date_created
+    ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW())
+");
+
+if (!$stmt) {
+    exit("❌ Prepare failed: " . $conn->error . "\n");
+}
+
+$stmt->bind_param(
+    "ssssssssssssssssss",
+    $username,
+    $hashed_password,
+    $first_name,
+    $last_name,
+    $email,
+    $gender,
+    $dob_encrypted,
+    $dob_iv,
+    $dob_tag,
+    $contact_encrypted,
+    $contact_iv,
+    $contact_tag,
+    $address_encrypted,
+    $address_iv,
+    $address_tag,
+    $role,
+    $status,
+    $date_started
+);
+
+// --- Execute ---
+if ($stmt->execute()) {
+    echo "\n✅ Owner account successfully created!\n";
+    echo "👤 Username: $username\n";
+    echo "📧 Email: $email\n";
+} else {
+    echo "❌ Error inserting record: " . $stmt->error . "\n";
+}
+
+$stmt->close();
+$conn->close();
+
+echo "\n⚠️ IMPORTANT: Delete this script after use for security.\n";

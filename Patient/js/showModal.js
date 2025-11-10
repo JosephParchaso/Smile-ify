@@ -108,7 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         } else if (data.prescription_downloaded == 0) {
                             prescriptionButtonHtml = `<button class="confirm-btn" id="downloadPrescription">Download Prescription</button>`;
                         } else {
-                            prescriptionButtonHtml = `<button class="confirm-btn" disabled>Already Downloaded</button>`;
+                            prescriptionButtonHtml = `<button class="confirm-btn" disabled>Issued</button>`;
                         }
 
                         transactionBody.innerHTML = `
@@ -131,11 +131,19 @@ document.addEventListener("DOMContentLoaded", () => {
                                     <p><strong>Amount Paid:</strong><span>${data.total}</span></p>
                                     <p><strong>Method:</strong><span>${data.payment_method}</span></p>
                                     <p><strong>Notes:</strong><span>${data.notes || '-'}</span></p>
-                                    <p><strong>Date Booked:</strong><span>${
+                                    <p><strong>Date Recorded:</strong><span>${
                                         data.date_created
                                             ? new Date(data.date_created).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
                                             : '-'
                                     }</span></p>
+                                    <p><strong>Med Cert Request Date:</strong>
+                                        <span>${
+                                            data.medcert_requested_date
+                                                ? new Date(data.medcert_requested_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+                                                : '-'
+                                        }</span>
+                                    </p>
+                                    <p><strong>Med Cert Notes:</strong><span>${data.medcert_notes || '-'}</span></p>
 
                                     <div class="button-group button-group-profile">
                                         ${medCertButtonHtml}
@@ -505,35 +513,20 @@ document.addEventListener("DOMContentLoaded", () => {
                                 doc.text(formattedDate, leftValueX + 2, row2Y - 1);
                                 doc.text(data.branch || "-", rightValueX + 2, row2Y - 1);
 
-                                // === Row 3: Service ===
-                                const row3Y = 79;
-                                doc.setFont("helvetica", "bold");
-                                doc.text("Service:", leftLabelX, row3Y);
-
-                                doc.setFont("helvetica", "normal");
-                                let serviceLines = [];
-                                if (data.services) {
-                                    serviceLines = data.services.split("\n").map(s => s.trim()).filter(Boolean);
-                                    let y = row3Y - 1;
-                                    serviceLines.forEach((s, i) => {
-                                        if (y > pageHeight - 40) {
-                                            doc.addPage();
-                                            y = 20;
-                                        }
-                                        doc.text(s, leftValueX + 2, y);
-                                        y += 6;
-                                    });
-                                } else {
-                                    doc.text("-", leftValueX + 2, row3Y - 1);
-                                }
-
                                 // ===== PRESCRIPTIONS =====
-                                const prescripY = row3Y + 15;
+                                const prescripY = row2Y + 15;
                                 doc.setFont("helvetica", "bold");
                                 doc.text("Prescription:", 10, prescripY);
 
+                                doc.setFontSize(22);
+                                doc.setFont("helvetica", "bolditalic");
+                                doc.text("Rx", 12, prescripY + 15);
+                                doc.setFontSize(12);
                                 doc.setFont("helvetica", "normal");
-                                let y = prescripY + 10;
+
+                                let y = prescripY + 25;
+
+                                doc.setFont("helvetica", "normal");
                                 if (data.prescriptions && data.prescriptions.length > 0) {
                                     data.prescriptions.forEach((p, index) => {
                                         if (y > pageHeight - 40) {
@@ -622,7 +615,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                     const json = await res.json();
 
                                     if (json.success) {
-                                        btn.textContent = "Already Downloaded";
+                                        btn.textContent = "Issued";
                                         btn.disabled = true;
                                     } else {
                                         console.error("Update failed:", json.error);

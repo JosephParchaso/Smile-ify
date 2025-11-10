@@ -36,6 +36,7 @@ $sql = "
         dt.fitness_status,
         dt.diagnosis,
         dt.remarks,
+        dt.medcert_notes,
         dt.medcert_requested_date,
         dt.date_created,
         dt.date_updated,

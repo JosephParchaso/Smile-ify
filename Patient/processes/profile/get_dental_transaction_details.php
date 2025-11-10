@@ -50,6 +50,8 @@ $sql = "
         dt.diagnosis,
         dt.fitness_status,
         dt.remarks,
+        dt.medcert_notes,
+        dt.medcert_requested_date,
         dv.body_temp,
         dv.pulse_rate,
         dv.respiratory_rate,

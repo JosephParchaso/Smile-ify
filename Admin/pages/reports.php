@@ -32,7 +32,6 @@ $stmt->close();
 $conn->close();
 
 if (!$branch) {
-    echo "<div class='alert alert-danger'>Assigned branch not found.</div>";
     require_once BASE_PATH . '/includes/footer.php';
     exit();
 }
