@@ -356,7 +356,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const total = Math.max(subtotal - discount, 0);
 
         if (subtotalEl) subtotalEl.textContent = `₱${subtotal.toFixed(2)}`;
-        if (discountEl) discountEl.textContent = `₱${discount.toFixed(2)}`;
+        if (discountEl) discountEl.textContent = `-₱${discount.toFixed(2)}`;
         if (totalEl) totalEl.textContent = `₱${total.toFixed(2)}`;
         
         const totalPaymentInput = document.getElementById("total_payment");

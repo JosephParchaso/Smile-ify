@@ -28,18 +28,8 @@ $sql = "
     WHERE a.branch_id = ?
         AND u.role = 'patient'
         AND a.status = 'booked'
-        AND a.appointment_date >= CURDATE()
     GROUP BY a.appointment_transaction_id
-    ORDER BY 
-        CASE
-            WHEN TIMESTAMP(a.appointment_date, a.appointment_time) >= NOW() - INTERVAL 12 HOUR
-                AND TIMESTAMP(a.appointment_date, a.appointment_time) < NOW() THEN 0
-            WHEN a.appointment_date = CURDATE() THEN 1
-            WHEN a.appointment_date = CURDATE() + INTERVAL 1 DAY THEN 2
-            ELSE 3
-        END,
-        a.appointment_date ASC,
-        a.appointment_time ASC
+    ORDER BY a.appointment_date ASC, a.appointment_time ASC
 ";
 
 $stmt = $conn->prepare($sql);
