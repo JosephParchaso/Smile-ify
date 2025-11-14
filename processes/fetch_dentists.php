@@ -23,7 +23,7 @@ try {
         LEFT JOIN dentist_branch db ON d.dentist_id = db.dentist_id
         LEFT JOIN branch b ON db.branch_id = b.branch_id
         LEFT JOIN dentist_service ds ON d.dentist_id = ds.dentist_id
-        LEFT JOIN service s ON ds.service_id = s.service_id AND s.name != 'Medical Certificate'
+        LEFT JOIN service s ON ds.service_id = s.service_id AND s.name != 'Dental Certificate'
         WHERE d.status = 'Active'
         GROUP BY d.dentist_id
         ORDER BY d.last_name ASC
@@ -42,8 +42,8 @@ try {
         $row['dentist_name'] = 'Dr. ' . $row['full_name'];
 
         $row['profile_image'] = !empty($row['profile_image'])
-            ? BASE_URL . '/images/dentists/' . $row['profile_image']
-            : BASE_URL . '/images/dentists/default_avatar.jpg';
+            ? BASE_URL . '/images/dentists/profile/' . $row['profile_image']
+            : BASE_URL . '/images/dentists/profile/default_avatar.jpg';
 
         $row['branch_name'] = $row['branch_name'] ?: 'N/A';
         $row['services'] = $row['services'] ?: 'No assigned services';

@@ -48,9 +48,21 @@ try {
         $stmt->close();
         
         $sql = "SELECT 
-                    SUM(dt.total) AS total_income,
+                    SUM(
+                        dt.total 
+                        + IFNULL(dt.additional_payment, 0) 
+                        + IFNULL(dt.medcert_request_payment, 0)
+                    ) AS total_income,
+
                     SUM(s.price) AS base_service_income,
-                    SUM(dt.total - s.price) AS extra_charges
+
+                    SUM(
+                        (dt.total 
+                        + IFNULL(dt.additional_payment, 0) 
+                        + IFNULL(dt.medcert_request_payment, 0)
+                        ) - s.price
+                    ) AS extra_charges
+
                 FROM dental_transaction AS dt
                 JOIN appointment_transaction AS at 
                     ON dt.appointment_transaction_id = at.appointment_transaction_id
@@ -132,9 +144,17 @@ try {
             $servicesTrend[] = (int)($stmt->get_result()->fetch_assoc()['cnt'] ?? 0);
             $stmt->close();
 
-            $sql = "SELECT COALESCE(SUM(dt.total),0) AS total
+            $sql = "SELECT 
+                        COALESCE(
+                            SUM(
+                                dt.total 
+                                + IFNULL(dt.additional_payment, 0) 
+                                + IFNULL(dt.medcert_request_payment, 0)
+                            ), 
+                        0) AS total
                     FROM dental_transaction dt
-                    JOIN appointment_transaction at ON dt.appointment_transaction_id = at.appointment_transaction_id
+                    JOIN appointment_transaction at 
+                        ON dt.appointment_transaction_id = at.appointment_transaction_id
                     WHERE at.branch_id = ? 
                     AND DATE(at.appointment_date) = ?";
             $stmt = $conn->prepare($sql);
@@ -161,11 +181,19 @@ try {
             $servicesTrend[] = (int)($stmt->get_result()->fetch_assoc()['cnt'] ?? 0);
             $stmt->close();
 
-            $sql = "SELECT COALESCE(SUM(dt.total),0) AS total
+            $sql = "SELECT 
+                        COALESCE(
+                            SUM(
+                                dt.total 
+                                + IFNULL(dt.additional_payment, 0) 
+                                + IFNULL(dt.medcert_request_payment, 0)
+                            ), 
+                        0) AS total
                     FROM dental_transaction dt
-                    JOIN appointment_transaction at ON dt.appointment_transaction_id = at.appointment_transaction_id
+                    JOIN appointment_transaction at 
+                        ON dt.appointment_transaction_id = at.appointment_transaction_id
                     WHERE at.branch_id = ? 
-                    AND YEARWEEK(at.appointment_date,1) = YEARWEEK(CURDATE(),1)
+                    AND YEARWEEK(at.appointment_date, 1) = YEARWEEK(CURDATE(), 1)
                     AND DAYNAME(at.appointment_date) = ?";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("is", $branch_id, $d);
@@ -192,9 +220,17 @@ try {
             $servicesTrend[] = (int)($stmt->get_result()->fetch_assoc()['cnt'] ?? 0);
             $stmt->close();
 
-            $sql = "SELECT COALESCE(SUM(dt.total),0) AS total
+            $sql = "SELECT 
+                        COALESCE(
+                            SUM(
+                                dt.total 
+                                + IFNULL(dt.additional_payment, 0) 
+                                + IFNULL(dt.medcert_request_payment, 0)
+                            ), 
+                        0) AS total
                     FROM dental_transaction dt
-                    JOIN appointment_transaction at ON dt.appointment_transaction_id = at.appointment_transaction_id
+                    JOIN appointment_transaction at 
+                        ON dt.appointment_transaction_id = at.appointment_transaction_id
                     WHERE at.branch_id = ? 
                     AND YEAR(at.appointment_date) = YEAR(CURDATE()) 
                     AND MONTH(at.appointment_date) = MONTH(CURDATE()) 
@@ -208,11 +244,18 @@ try {
     }
 
     $branchComparison = [];
-    $sql = "SELECT b.name, SUM(dt.total) as total_income
+    $sql = "SELECT 
+                b.name, 
+                SUM(
+                    dt.total 
+                    + IFNULL(dt.additional_payment, 0) 
+                    + IFNULL(dt.medcert_request_payment, 0)
+                ) AS total_income
             FROM dental_transaction AS dt
             JOIN appointment_transaction AS at 
-            ON dt.appointment_transaction_id = at.appointment_transaction_id
-            JOIN branch AS b ON at.branch_id = b.branch_id
+                ON dt.appointment_transaction_id = at.appointment_transaction_id
+            JOIN branch AS b 
+                ON at.branch_id = b.branch_id
             WHERE DATE(dt.date_created) BETWEEN ? AND ?
             GROUP BY b.branch_id";
     $stmt = $conn->prepare($sql);
@@ -269,12 +312,17 @@ try {
 
         $periodSql = "
             SELECT 
-            DATE(at.appointment_date) AS period,
-            SUM(dt.total) AS revenue
+                DATE(at.appointment_date) AS period,
+                SUM(
+                    dt.total 
+                    + IFNULL(dt.additional_payment, 0) 
+                    + IFNULL(dt.medcert_request_payment, 0)
+                ) AS revenue
             FROM appointment_transaction AS at
             JOIN dental_transaction AS dt
-            ON at.appointment_transaction_id = dt.appointment_transaction_id
-            WHERE at.branch_id = ? AND DATE(at.appointment_date) BETWEEN ? AND ?
+                ON at.appointment_transaction_id = dt.appointment_transaction_id
+            WHERE at.branch_id = ? 
+            AND DATE(at.appointment_date) BETWEEN ? AND ?
             GROUP BY period
             ORDER BY period ASC
         ";
@@ -335,14 +383,14 @@ try {
     if ($_SESSION['role'] === 'owner') {
         $sql = "
             SELECT
-            COUNT(*)                           AS appt_count,
-            COUNT(DISTINCT at.user_id)         AS patient_count,
-            SUM(dt.total)                      AS total_revenue,
-            ROUND(SUM(dt.total) / COUNT(*), 2)                    AS avg_revenue_per_appointment,
-            ROUND(SUM(dt.total) / COUNT(DISTINCT at.user_id), 2)   AS avg_revenue_per_patient
+                COUNT(*) AS appt_count,
+                COUNT(DISTINCT at.user_id) AS patient_count,
+                SUM(dt.total + IFNULL(dt.additional_payment,0) + IFNULL(dt.medcert_request_payment,0)) AS total_revenue,
+                ROUND(SUM(dt.total + IFNULL(dt.additional_payment,0) + IFNULL(dt.medcert_request_payment,0)) / COUNT(*), 2) AS avg_revenue_per_appointment,
+                ROUND(SUM(dt.total + IFNULL(dt.additional_payment,0) + IFNULL(dt.medcert_request_payment,0)) / COUNT(DISTINCT at.user_id), 2) AS avg_revenue_per_patient
             FROM appointment_transaction AS at
-            JOIN dental_transaction       AS dt
-            ON at.appointment_transaction_id = dt.appointment_transaction_id
+            JOIN dental_transaction AS dt
+                ON at.appointment_transaction_id = dt.appointment_transaction_id
             WHERE DATE(at.appointment_date) BETWEEN ? AND ?
             AND at.branch_id = ?
         ";
@@ -374,12 +422,15 @@ try {
             $datasets = [];
             
             foreach ($allBranches as $branch) {
-                $sql = "SELECT COALESCE(SUM(dt.total), 0) AS revenue
-                        FROM appointment_transaction AS at
-                        LEFT JOIN dental_transaction AS dt ON at.appointment_transaction_id = dt.appointment_transaction_id
-                        WHERE at.branch_id = ? 
-                            AND DATE(at.appointment_date) = ?
-                            AND at.status = 'Completed'";
+                $sql = "
+                    SELECT COALESCE(SUM(dt.total + IFNULL(dt.additional_payment,0) + IFNULL(dt.medcert_request_payment,0)), 0) AS revenue
+                    FROM appointment_transaction AS at
+                    LEFT JOIN dental_transaction AS dt 
+                        ON at.appointment_transaction_id = dt.appointment_transaction_id
+                    WHERE at.branch_id = ? 
+                    AND DATE(at.appointment_date) = ?
+                    AND at.status = 'Completed'
+                ";
                 
                 $stmt = $conn->prepare($sql);
                 $stmt->bind_param("is", $branch['branch_id'], $startDate);
@@ -412,12 +463,19 @@ try {
                 for ($i = 0; $i < 7; $i++) {
                     $date = date('Y-m-d', strtotime($weekStart . " +$i days"));
                     
-                    $sql = "SELECT COALESCE(SUM(dt.total), 0) AS revenue
-                            FROM appointment_transaction AS at
-                            LEFT JOIN dental_transaction AS dt ON at.appointment_transaction_id = dt.appointment_transaction_id
-                            WHERE at.branch_id = ? 
-                                AND DATE(at.appointment_date) = ?
-                                AND at.status = 'Completed'";
+                    $sql = "
+                        SELECT COALESCE(SUM(
+                            dt.total + 
+                            IFNULL(dt.additional_payment, 0) + 
+                            IFNULL(dt.medcert_request_payment, 0)
+                        ), 0) AS revenue
+                        FROM appointment_transaction AS at
+                        LEFT JOIN dental_transaction AS dt 
+                            ON at.appointment_transaction_id = dt.appointment_transaction_id
+                        WHERE at.branch_id = ? 
+                        AND DATE(at.appointment_date) = ?
+                        AND at.status = 'Completed'
+                    ";
                     
                     $stmt = $conn->prepare($sql);
                     $stmt->bind_param("is", $branch['branch_id'], $date);
@@ -454,12 +512,19 @@ try {
                     $monthStart = date("$currentYear-" . str_pad($month, 2, '0', STR_PAD_LEFT) . "-01");
                     $monthEnd = date("Y-m-t", strtotime($monthStart));
                     
-                    $sql = "SELECT COALESCE(SUM(dt.total), 0) AS revenue
-                            FROM appointment_transaction AS at
-                            LEFT JOIN dental_transaction AS dt ON at.appointment_transaction_id = dt.appointment_transaction_id
-                            WHERE at.branch_id = ? 
-                                AND DATE(at.appointment_date) BETWEEN ? AND ?
-                                AND at.status = 'Completed'";
+                    $sql = "
+                        SELECT COALESCE(SUM(
+                            dt.total + 
+                            IFNULL(dt.additional_payment, 0) + 
+                            IFNULL(dt.medcert_request_payment, 0)
+                        ), 0) AS revenue
+                        FROM appointment_transaction AS at
+                        LEFT JOIN dental_transaction AS dt 
+                            ON at.appointment_transaction_id = dt.appointment_transaction_id
+                        WHERE at.branch_id = ? 
+                        AND DATE(at.appointment_date) BETWEEN ? AND ?
+                        AND at.status = 'Completed'
+                    ";
                     
                     $stmt = $conn->prepare($sql);
                     $stmt->bind_param("iss", $branch['branch_id'], $monthStart, $monthEnd);
@@ -586,18 +651,28 @@ try {
     }
 
     $staffPerformance = [];
-    $sql = "SELECT
-        CONCAT(d.first_name, ' ', d.last_name) AS dentist_name,
-        b.name AS branch_name,
-        COUNT(dt.dental_transaction_id) AS services_rendered,
-        SUM(dt.total) AS total_income
-    FROM dental_transaction AS dt
-    JOIN appointment_transaction AS at ON dt.appointment_transaction_id = at.appointment_transaction_id
-    JOIN dentist AS d ON dt.dentist_id = d.dentist_id
-    JOIN branch AS b ON at.branch_id = b.branch_id
-    WHERE at.branch_id = ? AND DATE(dt.date_created) BETWEEN ? AND ?
-    GROUP BY d.dentist_id, b.branch_id
-    ORDER BY total_income DESC";
+    $sql = "
+        SELECT
+            CONCAT(d.first_name, ' ', d.last_name) AS dentist_name,
+            b.name AS branch_name,
+            COUNT(dt.dental_transaction_id) AS services_rendered,
+            SUM(
+                dt.total + 
+                IFNULL(dt.additional_payment, 0) + 
+                IFNULL(dt.medcert_request_payment, 0)
+            ) AS total_income
+        FROM dental_transaction AS dt
+        JOIN appointment_transaction AS at 
+            ON dt.appointment_transaction_id = at.appointment_transaction_id
+        JOIN dentist AS d 
+            ON dt.dentist_id = d.dentist_id
+        JOIN branch AS b 
+            ON at.branch_id = b.branch_id
+        WHERE at.branch_id = ? 
+        AND DATE(dt.date_created) BETWEEN ? AND ?
+        GROUP BY d.dentist_id, b.branch_id
+        ORDER BY total_income DESC
+    ";
 
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("iss", $branch_id, $startDate, $endDate); 

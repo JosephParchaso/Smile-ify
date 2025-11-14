@@ -202,7 +202,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ${isEdit ? `
                 <div class="form-group">
                     <input type="text" id="dateUpdated" class="form-control" value="${data.date_updated}" disabled>
-                    <label for="dateUpdated" class="form-label">Last Update</label>
+                    <label for="dateUpdated" class="form-label">Last Updated</label>
                 </div>` : ""}
 
                 <div class="form-group">
@@ -256,7 +256,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         ? `<div class="mt-2" style="margin-top: 6px;">
                                 <p style="margin-bottom: 4px;">Current Profile Picture:</p>
                                 <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px;">
-                                    <img src="${BASE_URL}/images/dentists/${data.profile_image}" alt="Profile Image"
+                                    <img src="${BASE_URL}/images/dentists/profile/${data.profile_image}" alt="Profile Image"
                                         style="max-width:150px; border:1px solid #ccc; padding:4px; border-radius:4px;; margin-bottom: 6px;">
                                     <button type="button" class="confirm-btn"
                                         style="width:150px; margin-top:4px;"
@@ -348,7 +348,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         ? `<div class="mt-2" style="margin-top: 6px;">
                                 <p style="margin-bottom: 4px;">Current Signature:</p>
                                 <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px;">
-                                    <img src="${BASE_URL}/images/signatures/${data.signature_image}" alt="Signature"
+                                    <img src="${BASE_URL}/images/dentists/signature/${data.signature_image}" alt="Signature"
                                         style="max-width:150px; border:1px solid #ccc; padding:4px; border-radius:4px;; margin-bottom: 6px;">
                                     <button type="button" class="confirm-btn"
                                         style="width:150px; margin:4px 0px 10px 0px;"
@@ -378,7 +378,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ${isEdit ? `
                 <div class="form-group">
                     <input type="text" id="dateUpdated" class="form-control" value="${data.date_updated}" disabled>
-                    <label for="dateUpdated" class="form-label">Last Update</label>
+                    <label for="dateUpdated" class="form-label">Last Updated</label>
                 </div>` : ""}
 
                 <div class="form-group">

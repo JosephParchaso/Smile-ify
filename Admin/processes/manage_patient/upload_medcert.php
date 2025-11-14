@@ -83,7 +83,7 @@ if (empty($existingReceipt) && $payment_method === 'cashless' && isset($_FILES['
     $receiptPath = "/images/payments/medcert_payments/" . $fileName;
 }
 
-$priceStmt = $conn->prepare("SELECT price FROM service WHERE name = 'Medical Certificate' LIMIT 1");
+$priceStmt = $conn->prepare("SELECT price FROM service WHERE name = 'Dental Certificate' LIMIT 1");
 $priceStmt->execute();
 $priceStmt->bind_result($medcertPayment);
 $priceStmt->fetch();
@@ -108,15 +108,15 @@ $stmt->bind_param("ssssisi", $fitness_status, $diagnosis, $remarks, $medcert_not
 
 
 if ($stmt->execute()) {
-    $message = "Your medical certificate request from your appointment on $appointmentDate at $appointmentTime has been approved.";
+    $message = "Your Dental Certificate request from your appointment on $appointmentDate at $appointmentTime has been approved.";
     $notif = $conn->prepare("INSERT INTO notifications (user_id, message) VALUES (?, ?)");
     $notif->bind_param("is", $patientId, $message);
     $notif->execute();
     $notif->close();
 
-    $_SESSION['updateSuccess'] = "Medical certificate verified successfully and patient notified.";
+    $_SESSION['updateSuccess'] = "Dental Certificate verified successfully and patient notified.";
 } else {
-    $_SESSION['updateError'] = "Error verifying medical certificate: " . $stmt->error;
+    $_SESSION['updateError'] = "Error verifying Dental Certificate: " . $stmt->error;
 }
 
 $stmt->close();

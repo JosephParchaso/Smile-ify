@@ -21,6 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $services = $_POST['appointmentServices'] ?? [];
     $quantities = $_POST['serviceQuantity'] ?? [];
     $total_payment = floatval($_POST['total_payment'] ?? 0);
+    $additional_payment = floatval($_POST['additional_payment'] ?? 0);
     $payment_method = $_POST['payment_method'] ?? null;
     
     $fitness_status = trim($_POST['fitness_status'] ?? '');
@@ -32,28 +33,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $stmt = $conn->prepare("
             INSERT INTO dental_transaction (
-                appointment_transaction_id, dentist_id, promo_id, payment_method, total, notes,
+                appointment_transaction_id, dentist_id, promo_id, payment_method, total, additional_payment, notes,
                 admin_user_id, fitness_status, diagnosis, remarks, date_created, date_updated
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
         ");
 
-        if (!$stmt) {
-            throw new Exception("Prepare failed: " . $conn->error);
-        }
-
         $stmt->bind_param(
-            "iiisdsisss",
+            "iiisddissss",
             $appointment_transaction_id,
             $dentist_id,
             $promo_id,
             $payment_method,
             $total_payment,
+            $additional_payment,
             $notes,
             $admin_user_id,
             $fitness_status,
             $diagnosis,
             $remarks
         );
+
+        if (!$stmt) {
+            throw new Exception("Prepare failed: " . $conn->error);
+        }
 
         $stmt->execute();
         $dental_transaction_id = $stmt->insert_id;

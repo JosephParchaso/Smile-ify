@@ -112,12 +112,12 @@ if (move_uploaded_file($fileTmpPath, $targetPath)) {
     $updateStmt->bind_param("si", $imagePath, $transaction_id);
 
     if ($updateStmt->execute()) {
-        $_SESSION['updateSuccess'] = "Your medical certificate request has been submitted successfully!";
+        $_SESSION['updateSuccess'] = "Your Dental Certificate request has been submitted successfully!";
 
         $notifySql = "
             INSERT INTO notifications (user_id, message, is_read, date_created)
             SELECT u.user_id,
-                CONCAT('Patient #', ?, ' ', ?, ' has requested a medical certificate for transaction #', ?),
+                CONCAT('Patient #', ?, ' ', ?, ' has requested a Dental Certificate for transaction #', ?),
                 0,
                 NOW()
             FROM users u

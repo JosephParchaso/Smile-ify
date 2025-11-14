@@ -76,11 +76,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         } else {
                             medCertButtonHtml =
                                 data.medcert_status === 'None'
-                                    ? `<button class="confirm-btn" id="requestMedicalCertificate" data-id="${data.dental_transaction_id}">Request Medical Certificate</button>`
+                                    ? `<button class="confirm-btn" id="requestMedicalCertificate" data-id="${data.dental_transaction_id}">Request Dental Certificate</button>`
                                     : data.medcert_status === 'Requested'
                                         ? `<button class="confirm-btn pending-btn" disabled>Pending</button>`
                                         : data.medcert_status === 'Eligible'
-                                            ? `<button class="confirm-btn" id="downloadMedicalCertificate">Download Medical Certificate</button>`
+                                            ? `<button class="confirm-btn" id="downloadMedicalCertificate">Download Dental Certificate</button>`
                                             : data.medcert_status === 'Issued'
                                                 ? `<button class="confirm-btn issued-btn" id="viewMedCertReceipt" data-id="${data.dental_transaction_id}">Issued</button>`
                                                 : data.medcert_status === 'Expired'
@@ -129,6 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                             : ''
                                     }</span></p>
                                     <p><strong>Amount Paid:</strong><span>${data.total}</span></p>
+                                    <p><strong>Additional:</strong><span>${data.additional_payment || '-'}</span></p>
                                     <p><strong>Method:</strong><span>${data.payment_method}</span></p>
                                     <p><strong>Notes:</strong><span>${data.notes || '-'}</span></p>
                                     <p><strong>Date Recorded:</strong><span>${
@@ -136,14 +137,14 @@ document.addEventListener("DOMContentLoaded", () => {
                                             ? new Date(data.date_created).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
                                             : '-'
                                     }</span></p>
-                                    <p><strong>Med Cert Request Date:</strong>
+                                    <p><strong>Certificate Request Date:</strong>
                                         <span>${
                                             data.medcert_requested_date
                                                 ? new Date(data.medcert_requested_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
                                                 : '-'
                                         }</span>
                                     </p>
-                                    <p><strong>Med Cert Notes:</strong><span>${data.medcert_notes || '-'}</span></p>
+                                    <p><strong>Certificate Notes:</strong><span>${data.medcert_notes || '-'}</span></p>
 
                                     <div class="button-group button-group-profile">
                                         ${medCertButtonHtml}
@@ -197,7 +198,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         document.getElementById("prescriptionList").innerHTML = prescriptionHtml;
                         transactionModal.style.display = "block";
 
-                        // ========= DOWNLOAD MEDICAL CERTIFICATE =========
+                        // ========= DOWNLOAD Dental Certificate =========
                         const medCertBtn = document.getElementById("downloadMedicalCertificate");
                         if (medCertBtn) {
                             medCertBtn.addEventListener("click", async () => {
@@ -242,7 +243,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 // ===== TITLE =====
                                 doc.setFont("helvetica", "bold");
                                 doc.setFontSize(18);
-                                doc.text("MEDICAL CERTIFICATE", 105, 60, { align: "center" });
+                                doc.text("Dental Certificate", 105, 60, { align: "center" });
 
                                 // ===== PATIENT INFO =====
                                 const patientFullName = `${data.patient_last_name}, ${data.patient_first_name} ${data.patient_middle_name ? data.patient_middle_name[0] + '.' : ''}`;
@@ -288,10 +289,10 @@ document.addEventListener("DOMContentLoaded", () => {
                                     let filtered = Array.isArray(data.services)
                                         ? data.services
                                             .map(s => s.service_name || s.name || s)
-                                            .filter(name => !/medical certificate/i.test(name)) // exclude "Medical Certificate"
+                                            .filter(name => !/Dental Certificate/i.test(name)) // exclude "Dental Certificate"
                                         : (data.services_text || data.services || "")
                                             .split(",")
-                                            .filter(name => !/medical certificate/i.test(name.trim()));
+                                            .filter(name => !/Dental Certificate/i.test(name.trim()));
 
                                     if (filtered.length > 0) {
                                         servicesText = filtered.join(", ");
@@ -354,7 +355,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                         sigY = 60;
                                     }
 
-                                    const sigUrl = `${BASE_URL}/images/signatures/${data.signature_image}`;
+                                    const sigUrl = `${BASE_URL}/images/dentists/signature/${data.signature_image}`;
                                     let hasSignature = false;
 
                                     if (data.signature_image) {
@@ -413,10 +414,10 @@ document.addEventListener("DOMContentLoaded", () => {
                                         medCertBtn.disabled = true;
                                         medCertBtn.classList.add("issued-btn");
                                     } else {
-                                        console.warn("Failed to update med cert status:", updateResult.error);
+                                        console.warn("Failed to update Certificate status:", updateResult.error);
                                     }
                                 } catch (error) {
-                                    console.error("Error updating med cert status:", error);
+                                    console.error("Error updating Certificate status:", error);
                                 }
                             });
                         }
@@ -557,7 +558,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                         sigY = 50;
                                     }
 
-                                    const sigUrl = `${BASE_URL}/images/signatures/${data.signature_image}`;
+                                    const sigUrl = `${BASE_URL}/images/dentists/signature/${data.signature_image}`;
                                     let hasSignature = false;
 
                                     if (data.signature_image) {
@@ -680,8 +681,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     const modalBody = document.getElementById("medCertReceiptBody");
 
                     modalBody.innerHTML = `
-                        <h2>Medical Certificate Payment Receipt</h2>
-                        <img src="${imgUrl}" alt="Medical Certificate Receipt" style="width:50%;display:block;margin:auto;border-radius:4px;">
+                        <h2>Dental Certificate Payment Receipt</h2>
+                        <img src="${imgUrl}" alt="Dental Certificate Receipt" style="width:50%;display:block;margin:auto;border-radius:4px;">
                     `;
                     modal.style.display = "flex";
                 }

@@ -34,36 +34,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    $safeBaseName = preg_replace("/[^a-zA-Z0-9_-]/", "", strtolower($lastName . "_" . $firstName));
+    $safeLast = strtolower(preg_replace("/[^a-zA-Z0-9]+/", "_", $lastName));
 
-    $signatureImage = null;
+    $tempSignature = null;
+    $tempProfile = null;
+
     if (isset($_FILES['signatureImage']) && $_FILES['signatureImage']['error'] === UPLOAD_ERR_OK) {
-        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/signatures/';
+        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/dentists/signature/';
         if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
-
-        $fileExt = strtolower(pathinfo($_FILES['signatureImage']['name'], PATHINFO_EXTENSION));
-        $fileName = "sig_{$safeBaseName}." . $fileExt;
-        $targetPath = $uploadDir . $fileName;
-
-        if (move_uploaded_file($_FILES['signatureImage']['tmp_name'], $targetPath)) {
-            $signatureImage = $fileName;
-        }
+        $ext = strtolower(pathinfo($_FILES['signatureImage']['name'], PATHINFO_EXTENSION));
+        $tempSignature = "tmp_sig_" . uniqid() . "." . $ext;
+        move_uploaded_file($_FILES['signatureImage']['tmp_name'], $uploadDir . $tempSignature);
     }
 
-    $profileImage = null;
     if (isset($_FILES['profileImage']) && $_FILES['profileImage']['error'] === UPLOAD_ERR_OK) {
-        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/dentists/';
+        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/dentists/profile/';
         if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
-
-        $fileExt = strtolower(pathinfo($_FILES['profileImage']['name'], PATHINFO_EXTENSION));
-        $allowedExt = ['jpg', 'jpeg', 'png', 'webp'];
-        if (in_array($fileExt, $allowedExt)) {
-            $fileName = "dentist_{$safeBaseName}." . $fileExt;
-            $targetPath = $uploadDir . $fileName;
-
-            if (move_uploaded_file($_FILES['profileImage']['tmp_name'], $targetPath)) {
-                $profileImage = $fileName;
-            }
+        $ext = strtolower(pathinfo($_FILES['profileImage']['name'], PATHINFO_EXTENSION));
+        $allowed = ['jpg', 'jpeg', 'png', 'webp'];
+        if (in_array($ext, $allowed)) {
+            $tempProfile = "tmp_prof_" . uniqid() . "." . $ext;
+            move_uploaded_file($_FILES['profileImage']['tmp_name'], $uploadDir . $tempProfile);
         }
     }
 
@@ -80,63 +71,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 contact_number, contact_number_iv, contact_number_tag,
                 license_number, license_number_iv, license_number_tag,
                 date_started, status, signature_image, profile_image
-            )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL)
         ");
-
-        if (!$stmt) {
-            throw new Exception("SQL Prepare failed: " . $conn->error);
-        }
-
         $stmt->bind_param(
-            "ssssssssssssssssss",
-            $lastName,
-            $firstName,
-            $middleName,
-            $gender,
-            $dob_enc,
-            $dob_iv,
-            $dob_tag,
+            "ssssssssssssssss",
+            $lastName, $firstName, $middleName, $gender,
+            $dob_enc, $dob_iv, $dob_tag,
             $email,
-            $contact_enc,
-            $contact_iv,
-            $contact_tag,
-            $license_enc,
-            $license_iv,
-            $license_tag,
-            $dateStarted,
-            $status,
-            $signatureImage,
-            $profileImage
+            $contact_enc, $contact_iv, $contact_tag,
+            $license_enc, $license_iv, $license_tag,
+            $dateStarted, $status
         );
+        $stmt->execute();
+        $dentistId = $stmt->insert_id;
+        $stmt->close();
 
-        if ($stmt->execute()) {
-            $dentistId = $stmt->insert_id;
+        $finalSig = null;
+        $finalProf = null;
 
-            if (!empty($branches)) {
-                $stmt2 = $conn->prepare("INSERT INTO dentist_branch (dentist_id, branch_id) VALUES (?, ?)");
-                foreach ($branches as $branchId) {
-                    $stmt2->bind_param("ii", $dentistId, $branchId);
-                    $stmt2->execute();
-                }
-                $stmt2->close();
-            }
-
-            if (!empty($services)) {
-                $stmt3 = $conn->prepare("INSERT INTO dentist_service (dentist_id, service_id) VALUES (?, ?)");
-                foreach ($services as $serviceId) {
-                    $stmt3->bind_param("ii", $dentistId, $serviceId);
-                    $stmt3->execute();
-                }
-                $stmt3->close();
-            }
-
-            $_SESSION['updateSuccess'] = "Dentist added successfully!";
-        } else {
-            $_SESSION['updateError'] = "Failed to add dentist.";
+        if ($tempSignature) {
+            $ext = pathinfo($tempSignature, PATHINFO_EXTENSION);
+            $finalSig = "{$dentistId}_{$safeLast}_signature." . $ext;
+            rename(
+                $_SERVER['DOCUMENT_ROOT'] . "/Smile-ify/images/dentists/signature/" . $tempSignature,
+                $_SERVER['DOCUMENT_ROOT'] . "/Smile-ify/images/dentists/signature/" . $finalSig
+            );
         }
 
-        $stmt->close();
+        if ($tempProfile) {
+            $ext = pathinfo($tempProfile, PATHINFO_EXTENSION);
+            $finalProf = "{$dentistId}_{$safeLast}_profile." . $ext;
+            rename(
+                $_SERVER['DOCUMENT_ROOT'] . "/Smile-ify/images/dentists/profile/" . $tempProfile,
+                $_SERVER['DOCUMENT_ROOT'] . "/Smile-ify/images/dentists/profile/" . $finalProf
+            );
+        }
+
+        $upd = $conn->prepare("UPDATE dentist SET signature_image=?, profile_image=? WHERE dentist_id=?");
+        $upd->bind_param("ssi", $finalSig, $finalProf, $dentistId);
+        $upd->execute();
+        $upd->close();
+
+        if (!empty($branches)) {
+            $stmt2 = $conn->prepare("INSERT INTO dentist_branch (dentist_id, branch_id) VALUES (?, ?)");
+            foreach ($branches as $branchId) {
+                $stmt2->bind_param("ii", $dentistId, $branchId);
+                $stmt2->execute();
+            }
+            $stmt2->close();
+        }
+
+        if (!empty($services)) {
+            $stmt3 = $conn->prepare("INSERT INTO dentist_service (dentist_id, service_id) VALUES (?, ?)");
+            foreach ($services as $serviceId) {
+                $stmt3->bind_param("ii", $dentistId, $serviceId);
+                $stmt3->execute();
+            }
+            $stmt3->close();
+        }
+
+        $_SESSION['updateSuccess'] = "Dentist added successfully!";
+
     } catch (Exception $e) {
         $_SESSION['updateError'] = "Error: " . $e->getMessage();
     }

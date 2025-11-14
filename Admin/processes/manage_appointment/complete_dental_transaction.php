@@ -212,23 +212,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $serviceResult = $checkServiceStmt->get_result();
 
         while ($service = $serviceResult->fetch_assoc()) {
-            if (stripos($service['name'], 'medical certificate') !== false) {
+            if (stripos($service['name'], 'Dental Certificate') !== false) {
                 $hasMedCert = true;
                 break;
             }
         }
         $checkServiceStmt->close();
 
-        $newMedCertStatus = $hasMedCert ? 'Eligible' : 'None';
-
-        $medCertStmt = $conn->prepare("
-            UPDATE dental_transaction
-            SET medcert_status = ?, date_updated = NOW()
-            WHERE appointment_transaction_id = ?
-        ");
-        $medCertStmt->bind_param("si", $newMedCertStatus, $appointmentId);
-        $medCertStmt->execute();
-        $medCertStmt->close();
+        if ($hasMedCert) {
+            $newMedCertStatus = 'Eligible';
+            $medCertStmt = $conn->prepare("
+                UPDATE dental_transaction
+                SET medcert_status = ?, medcert_requested_date = NOW(), date_updated = NOW()
+                WHERE appointment_transaction_id = ?
+            ");
+            $medCertStmt->bind_param("si", $newMedCertStatus, $appointmentId);
+            $medCertStmt->execute();
+            $medCertStmt->close();
+        } else {
+            $newMedCertStatus = 'None';
+            $medCertStmt = $conn->prepare("
+                UPDATE dental_transaction
+                SET medcert_status = ?, date_updated = NOW()
+                WHERE appointment_transaction_id = ?
+            ");
+            $medCertStmt->bind_param("si", $newMedCertStatus, $appointmentId);
+            $medCertStmt->execute();
+            $medCertStmt->close();
+        }
 
         $formattedDate = date("F j, Y", strtotime($row['appointment_date']));
         $formattedTime = date("g:i A", strtotime($row['appointment_time']));

@@ -1,3 +1,165 @@
+Error on change password OTP Fix 👍
+Validation for the Date of Birth, so that it will not accept 0000 👍
+In adding dentist for the owner, autocheck services all by default, and the owner will just uncheck on what the dentist's non specialty 👍
+Disable future dates in choosing date of birth 👍
+Suggestion: Change the color / change the symbol or an indicator which will distinguish by branch 👍 with legend
+Disable letter input in OTP verification 👍
+Change joined in profile to Registered 👍
+appointment Search/' : Service , Branch, Service 👍dentist di lng?
+Completed should not be in the appointment history👍
+Remove Route from prescription 👍
+Prescription Download: Digital Prescription, alignment changes 👍
+Not bullet, but number in the digital prescription 👍
+Signature will adjust on the layput 👍
+Time and Gender will be removed 👍
+Add Quantity of drugs in prescription👍
+Change the Date to date Issued : extraction date In the release of prescription 👍
+pages 👍
+In teh footer, make it formal, and aligned properly Remove space of the branch 👍
+In forgot password, Change the please contact support to please contact the clinic. 👍
+change the view password (eye) to individual 👍
+Adding Branch- Owner Google Maps URL : Cannot be null 👍
+In adding admin, cannot allow multiple unless specified. 👍
+In adding the past dates should not be clickable 👍
+Add Start date in managing of admin by default/ 👍
+
+
+In the Home: place Welcome Joseph on the side, (left) add for the promos home display images 👍
+tabs branch reports owner 👍
+In profile, center and add picture no picutres lng 👍
+date_updated in patients,denitists,admins after booking and updating 👍
+update status when status is inactive in booking appointment 👍
+Switch status from pending ->> booked 👍
+Add the change email function in profile with otp verification 👍
+
+MAJOR CHANGE - MULTIPLE SERVICE 👍
+
+add admin or prepared by admin 👍
+apply promo transact 👍
+one add vitals and transaction only 👍
+supplies with transact / add and link the service materials per transaction 👍
+cancel appointment and complete appointment / to save transaction and status completed notify user 👍
+receipt admin 👍
+prescription admin 👍
+medical cert admin 👍
+announcments, disable dates if branch is closed 👍
+
+send reminder 👍
+Owner - OTP Every Login 👍
+Admin - OTP Every Login 👍
+Patient - OTP Every Login 👍
+
+home/index reports = achas  👍
+
+PATIENT SIDE
+Welcome, Potot_R3! But it should be Welcome Mr. Richard D. Potot 👍
+Last Update: must be last updated 👍
+Appointment History PATIENT & ADMIN: change 'manage' to 'view' 👍
+
+ADMIN/SECRETARY SIDE
+Upcoming Appointments: exclude tomorrow, instead this 'month'. 👍
+In the calendar, add buttons to separate the branches. remain the colors 👍
+IF POSSIBLE: Pre selected branch in the book appointment. If not keri, its okay my love 👍
+Add 'ANNOUNCEMENT' in the profile page 👍
+
+OWNER SIDE
+remove 'change vs last month' 👍
+add 'ALL' tab in the report 👍
+add 'BRANCHES' in the profile 👍
+remove opening/closing time 👍
+
+ROLE
+uppercase the first letter ex. Patient 👍
+
+patient and outside can view dentists w/ pic 👍
+fixed, files downloadable without image sign 👍
+prescription availabilty 1 year 👍
+upload qr on admin or owner? best owner 👍
+notify owner if services, promos change 👍
+added cashless receipt if payment method is cashless, display also in transaction 👍
+added promo and service in owner for add and edit, admin only change status 👍
+fix promo, service update in receipt 👍
+auto deactivate accounts 3 years 👍
+add checkmark on admin 👍
+promos at index and patient 👍
+display also index in the home pages 👍
+add text box on medcert payment for contact number or reference 👍
+Consultation - â‚±150.00 (15 mins), Total: â‚±150.00 (15 mins total) try again appointment confirmation 👍
+prescription issued after downloading admin or patient/// keep downloadable 👍
+1 owner only creation, how = CLI thru setup creation 👍 
+profile image session saved change file name into dentist_id 👍 
+if nay medcert, update medcert_request_date 👍 
+additional payment 👍 
+
+dentist sched
+try removing env, why data still displaying
+
+
+
+fixed date pickers{
+    employees, start date - only accepts tomorrow 👍
+    promos - start date, end date validation 👍
+
+    supplies - expiration date - only accepts tomorrow 👍
+    announcments - start date, end date validation 👍
+}
+medcert {
+    PATIENT
+    WALKIN, REQUEST FOR MEDCERT 👍
+
+    PATIENT 
+    ONLINE REQUEST PATIENT 👍
+    CHECK VALIDITY 7 DAYS - EXPIRED 👍
+    PAY VIA QR, UPLOAD RECEIPT, PENDING, 👍
+    NOTIFY ALL ADMINS IN THAT BRANCHES 👍
+
+    ADMINS
+    CHECK AND DISPLAY PAYMENT WITH 3 INPUTS 👍
+    AFTER ISSUE MEDCERT, UPDATE TOTAL medcert_request_payment 👍
+    NOTIFY PATIENT 👍
+    
+    PATIENT
+    CHECK STATUS, DOWNLOAD MEDCERT, UPDATE STATUS 👍
+
+    view issued button admins and patients, receipt 👍
+    walkin request medcert 👍
+}
+ENCRYPTION {
+    New Patient, insert appointment dob, contact number 👍
+
+    Users {
+        Patient display edit, contact number, address 👍
+    }
+    Admins {
+        Walkin Patient insert appointment 👍
+    }
+    Owners {
+        Dentist sub address into license number 👍
+        Admins 👍
+    }
+}
+
+
+
+ASK DURING CONSULTATION
+Ask if the services and promos are under admin or it should be under the owner since it involves MONEY? 💖
+and if retain: it should have a notification about the updates. 💖
+gmail suspicious spams - sendgrid? brevo or google parin 💖
+
+Contact Fr. Peter for the database hosting and server💖
+Minimum of 5 minutes for OTP time remaining expiration time 💖
+dungan register/book different user 💖
+verify if 8 am mawa ang booking for current date 💖
+task scheduler 💖
+
+Minimum of 5 minutes for OTP time remaining expiration time 💖{
+    const expiryLimit = 60;
+    $expiry_limit = 60;
+    if (($currentTime - $otpCreatedTime) > 60)
+}
+
+
+
 Owner - CEO
 Admin Secretary
 Patients
@@ -143,162 +305,6 @@ Form {
 
 ==========================================================================================================================================================================================  
 ==========================================================================================================================================================================================
-
-Error on change password OTP Fix 👍
-Validation for the Date of Birth, so that it will not accept 0000 👍
-In adding dentist for the owner, autocheck services all by default, and the owner will just uncheck on what the dentist's non specialty 👍
-Disable future dates in choosing date of birth 👍
-Suggestion: Change the color / change the symbol or an indicator which will distinguish by branch 👍 with legend
-Disable letter input in OTP verification 👍
-Change joined in profile to Registered 👍
-appointment Search/' : Service , Branch, Service 👍dentist di lng?
-Completed should not be in the appointment history👍
-Remove Route from prescription 👍
-Prescription Download: Digital Prescription, alignment changes 👍
-Not bullet, but number in the digital prescription 👍
-Signature will adjust on the layput 👍
-Time and Gender will be removed 👍
-Add Quantity of drugs in prescription👍
-Change the Date to date Issued : extraction date In the release of prescription 👍
-pages 👍
-In teh footer, make it formal, and aligned properly Remove space of the branch 👍
-In forgot password, Change the please contact support to please contact the clinic. 👍
-change the view password (eye) to individual 👍
-Adding Branch- Owner Google Maps URL : Cannot be null 👍
-In adding admin, cannot allow multiple unless specified. 👍
-In adding the past dates should not be clickable 👍
-Add Start date in managing of admin by default/ 👍
-
-
-In the Home: place Welcome Joseph on the side, (left) add for the promos home display images 👍
-tabs branch reports owner 👍
-In profile, center and add picture no picutres lng 👍
-date_updated in patients,denitists,admins after booking and updating 👍
-update status when status is inactive in booking appointment 👍
-Switch status from pending ->> booked 👍
-Add the change email function in profile with otp verification 👍
-
-MAJOR CHANGE - MULTIPLE SERVICE 👍
-
-add admin or prepared by admin 👍
-apply promo transact 👍
-one add vitals and transaction only 👍
-supplies with transact / add and link the service materials per transaction 👍
-cancel appointment and complete appointment / to save transaction and status completed notify user 👍
-receipt admin 👍
-prescription admin 👍
-medical cert admin 👍
-announcments, disable dates if branch is closed 👍
-
-send reminder 👍
-Owner - OTP Every Login 👍
-Admin - OTP Every Login 👍
-Patient - OTP Every Login 👍
-
-home/index reports = achas  👍
-
-PATIENT SIDE
-Welcome, Potot_R3! But it should be Welcome Mr. Richard D. Potot 👍
-Last Updated: must be last updated 👍
-Appointment History PATIENT & ADMIN: change 'manage' to 'view' 👍
-
-ADMIN/SECRETARY SIDE
-Upcoming Appointments: exclude tomorrow, instead this 'month'. 👍
-In the calendar, add buttons to separate the branches. remain the colors 👍
-IF POSSIBLE: Pre selected branch in the book appointment. If not keri, its okay my love 👍
-Add 'ANNOUNCEMENT' in the profile page 👍
-
-OWNER SIDE
-remove 'change vs last month' 👍
-add 'ALL' tab in the report 👍
-add 'BRANCHES' in the profile 👍
-remove opening/closing time 👍
-
-ROLE
-uppercase the first letter ex. Patient 👍
-
-patient and outside can view dentists w/ pic 👍
-fixed, files downloadable without image sign 👍
-prescription availabilty 1 year 👍
-upload qr on admin or owner? best owner 👍
-notify owner if services, promos change 👍
-added cashless receipt if payment method is cashless, display also in transaction 👍
-added promo and service in owner for add and edit, admin only change status 👍
-fix promo, service update in receipt 👍
-auto deactivate accounts 3 years 👍
-add checkmark on admin 👍
-promos at index and patient 👍
-display also index in the home pages 👍
-add text box on medcert payment for contact number or reference 👍
-Consultation - â‚±150.00 (15 mins), Total: â‚±150.00 (15 mins total) try again appointment confirmation 👍
-prescription issued after downloading admin or patient/// keep downloadable 👍
-1 owner only creation, how = CLI thru setup creation 👍 
-
-payment methods in reports
-medcert reports
-
-fixed date pickers{
-    employees, start date - only accepts tomorrow 👍
-    promos - start date, end date validation 👍
-
-    supplies - expiration date - only accepts tomorrow 👍
-    announcments - start date, end date validation 👍
-}
-medcert {
-    PATIENT
-    WALKIN, REQUEST FOR MEDCERT 👍
-
-    PATIENT 
-    ONLINE REQUEST PATIENT 👍
-    CHECK VALIDITY 7 DAYS - EXPIRED 👍
-    PAY VIA QR, UPLOAD RECEIPT, PENDING, 👍
-    NOTIFY ALL ADMINS IN THAT BRANCHES 👍
-
-    ADMINS
-    CHECK AND DISPLAY PAYMENT WITH 3 INPUTS 👍
-    AFTER ISSUE MEDCERT, UPDATE TOTAL medcert_request_payment 👍
-    NOTIFY PATIENT 👍
-    
-    PATIENT
-    CHECK STATUS, DOWNLOAD MEDCERT, UPDATE STATUS 👍
-
-    view issued button admins and patients, receipt 👍
-    walkin request medcert 👍
-}
-ENCRYPTION {
-    New Patient, insert appointment dob, contact number 👍
-
-    Users {
-        Patient display edit, contact number, address 👍
-    }
-    Admins {
-        Walkin Patient insert appointment 👍
-    }
-    Owners {
-        Dentist sub address into license number 👍
-        Admins 👍
-    }
-}
-
-
-
-ASK DURING CONSULTATION
-Ask if the services and promos are under admin or it should be under the owner since it involves MONEY? 💖
-and if retain: it should have a notification about the updates. 💖
-gmail suspicious spams - sendgrid? brevo or google parin 💖
-
-Contact Fr. Peter for the database hosting and server💖
-Minimum of 5 minutes for OTP time remaining expiration time 💖
-dungan register/book different user 💖
-verify if 8 am mawa ang booking for current date 💖
-task scheduler 💖
-
-Minimum of 5 minutes for OTP time remaining expiration time 💖{
-    const expiryLimit = 60;
-    $expiry_limit = 60;
-    if (($currentTime - $otpCreatedTime) > 60)
-}
-
 
 
 OWNER creation

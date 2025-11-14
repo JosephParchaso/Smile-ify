@@ -31,6 +31,7 @@ $sql = "
         dt.payment_method,
         dt.cashless_receipt,
         dt.total,
+        dt.additional_payment,
         dt.notes,
         dt.medcert_status,
         dt.fitness_status,

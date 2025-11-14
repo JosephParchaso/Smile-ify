@@ -16,6 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $payment_method = $_POST['payment_method'] ?? null;
     $notes = trim($_POST['notes'] ?? '');
     $total_payment = floatval($_POST['total_payment'] ?? 0);
+    $additional_payment = floatval($_POST['additional_payment'] ?? 0);
     $admin_user_id = intval($_SESSION['user_id'] ?? 0);
     $services = $_POST['appointmentServices'] ?? [];
     $quantities = $_POST['serviceQuantity'] ?? [];
@@ -47,13 +48,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             }
             $existing = $result->fetch_assoc();
         } else {
-            $stmtCheck->bind_result($dentist_id_old, $promo_id_old, $payment_method_old, $total_old, $notes_old, $fitness_old, $diagnosis_old, $remarks_old);
+            $stmtCheck->bind_result($dentist_id_old, $promo_id_old, $payment_method_old, $total_old, $additional_old, $notes_old, $fitness_old, $diagnosis_old, $remarks_old);
             if ($stmtCheck->fetch()) {
                 $existing = [
                     'dentist_id' => $dentist_id_old,
                     'promo_id' => $promo_id_old,
                     'payment_method' => $payment_method_old,
                     'total' => $total_old,
+                    'additional_payment' => $additional_old,
                     'notes' => $notes_old,
                     'fitness_status' => $fitness_old,
                     'diagnosis' => $diagnosis_old,
@@ -76,6 +78,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $existing['promo_id'] != $promo_id ||
             $existing['payment_method'] !== $payment_method ||
             $existing['total'] != $total_payment ||
+            $existing['additional_payment'] != $additional_payment ||
             trim($existing['notes']) !== $notes ||
             trim($existing['fitness_status']) !== $fitness_status ||
             trim($existing['diagnosis']) !== $diagnosis ||
@@ -110,6 +113,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     promo_id = ?, 
                     payment_method = ?, 
                     total = ?, 
+                    additional_payment = ?, 
                     notes = ?, 
                     fitness_status = ?,
                     diagnosis = ?,
@@ -123,11 +127,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     AND appointment_transaction_id = ?
             ");
             $stmt->bind_param(
-                "iisdssssisssii",
+                "iisddssssisssii",
                 $dentist_id,
                 $promo_id,
                 $payment_method,
                 $total_payment,
+                $additional_payment,
                 $notes,
                 $fitness_status,
                 $diagnosis,

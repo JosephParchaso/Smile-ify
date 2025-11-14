@@ -65,52 +65,67 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $safeLast  = strtolower(preg_replace("/[^a-zA-Z0-9]+/", "_", $lastName));
     $safeFirst = strtolower(preg_replace("/[^a-zA-Z0-9]+/", "_", $firstName));
 
-    if (!empty($_POST['signatureCleared']) && $_POST['signatureCleared'] === "1") {
-        if (!empty($current['signature_image'])) {
-            $oldPath = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/signatures/' . $current['signature_image'];
-            if (file_exists($oldPath)) unlink($oldPath);
-        }
-        $signatureImage = null;
-        $changed = true;
-    } elseif (isset($_FILES['signatureImage']) && $_FILES['signatureImage']['error'] === UPLOAD_ERR_OK) {
-        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/signatures/';
-        if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
-        if (!empty($current['signature_image'])) {
-            $oldPath = $uploadDir . $current['signature_image'];
-            if (file_exists($oldPath)) unlink($oldPath);
-        }
-        $fileExt = strtolower(pathinfo($_FILES['signatureImage']['name'], PATHINFO_EXTENSION));
-        $fileName = "{$safeLast}_{$safeFirst}_signature." . $fileExt;
-        $targetPath = $uploadDir . $fileName;
-        if (move_uploaded_file($_FILES['signatureImage']['tmp_name'], $targetPath)) {
-            $signatureImage = $fileName;
-            $changed = true;
-        }
-    }
-
     if (!empty($_POST['profileCleared']) && $_POST['profileCleared'] === "1") {
         if (!empty($current['profile_image'])) {
-            $oldPath = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/dentists/' . $current['profile_image'];
+            $oldPath = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/dentists/profile/' . $current['profile_image'];
             if (file_exists($oldPath)) unlink($oldPath);
         }
         $profileImage = null;
         $changed = true;
+
     } elseif (isset($_FILES['profileImage']) && $_FILES['profileImage']['error'] === UPLOAD_ERR_OK) {
-        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/dentists/';
+
+        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/dentists/profile/';
         if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+
         if (!empty($current['profile_image'])) {
             $oldPath = $uploadDir . $current['profile_image'];
             if (file_exists($oldPath)) unlink($oldPath);
         }
+
         $fileExt = strtolower(pathinfo($_FILES['profileImage']['name'], PATHINFO_EXTENSION));
         $allowedExt = ['jpg', 'jpeg', 'png', 'webp'];
+
         if (in_array($fileExt, $allowedExt)) {
-            $fileName = "{$safeLast}_{$safeFirst}_profile." . $fileExt;
+
+            $fileName = "{$dentistId}_{$safeLast}_profile." . $fileExt;
+
             $targetPath = $uploadDir . $fileName;
+
             if (move_uploaded_file($_FILES['profileImage']['tmp_name'], $targetPath)) {
                 $profileImage = $fileName;
                 $changed = true;
             }
+        }
+    }
+
+    if (!empty($_POST['signatureCleared']) && $_POST['signatureCleared'] === "1") {
+        if (!empty($current['signature_image'])) {
+            $oldPath = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/dentists/signature/' . $current['signature_image'];
+            if (file_exists($oldPath)) unlink($oldPath);
+        }
+        $signatureImage = null;
+        $changed = true;
+
+    } elseif (isset($_FILES['signatureImage']) && $_FILES['signatureImage']['error'] === UPLOAD_ERR_OK) {
+
+        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/dentists/signature/';
+        if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+
+        if (!empty($current['signature_image'])) {
+            $oldPath = $uploadDir . $current['signature_image'];
+            if (file_exists($oldPath)) unlink($oldPath);
+        }
+
+        $fileExt = strtolower(pathinfo($_FILES['signatureImage']['name'], PATHINFO_EXTENSION));
+
+        $fileName = "{$dentistId}_{$safeLast}_signature." . $fileExt;
+
+        $targetPath = $uploadDir . $fileName;
+
+        if (move_uploaded_file($_FILES['signatureImage']['tmp_name'], $targetPath)) {
+            $signatureImage = $fileName;
+            $changed = true;
         }
     }
 

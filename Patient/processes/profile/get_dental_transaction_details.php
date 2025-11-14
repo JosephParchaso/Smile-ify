@@ -43,6 +43,7 @@ $sql = "
         dt.dental_transaction_id,
         dt.notes,
         dt.total,
+        dt.additional_payment,
         dt.payment_method,
         dt.date_created,
         dt.prescription_downloaded,

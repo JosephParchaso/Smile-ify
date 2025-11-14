@@ -115,7 +115,7 @@ $backTab = $_GET['tab'] ?? 'recent';
 
 <div id="medCertModal" class="manage-patient-modal">
     <div class="manage-patient-modal-content">
-        <h2>Medical Certificate</h2>
+        <h2>Dental Certificate</h2>
 
         <form id="medCertForm" method="POST" action="<?= BASE_URL ?>/Admin/processes/manage_patient/upload_medcert.php" enctype="multipart/form-data" autocomplete="off">
         <input type="hidden" name="dental_transaction_id" id="transactionIdInput">

@@ -104,6 +104,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     <label for="paymentMethod" class="form-label">Payment Method <span class="required">*</span></label>
                 </div>
 
+                <div class="form-group">
+                    <input type="number" step="0.01" min="0" id="additionalPayment" class="form-control" 
+                        name="additional_payment" placeholder="₱0.00" 
+                        value="${isEdit ? data.additional_payment || '' : ''}">
+                    <label for="additionalPayment" class="form-label">Additional Payment</label>
+                </div>
+
                 <div class="form-group" id="cashlessReceiptGroup" style="display: none;">
                     <input type="file" id="cashlessReceipt" class="form-control" name="receipt_upload" accept="image/*,.pdf">
                     <label for="cashlessReceipt" class="form-label">Upload Cashless Receipt</label>
@@ -130,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ${isEdit ? `
                 <div class="form-group">
                     <input type="text" id="dateUpdated" class="form-control" value="${data.date_updated}" disabled>
-                    <label for="dateUpdated" class="form-label">Last Update</label>
+                    <label for="dateUpdated" class="form-label">Last Updated</label>
                 </div>` : ""}
 
                 <div class="checkout-summary">
@@ -139,6 +146,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     <div class="summary-item">
                         <span>Subtotal:</span>
                         <span id="subtotalDisplay">₱0.00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Additional Payment:</span>
+                        <span id="additionalPaymentDisplay">₱0.00</span>
                     </div>
                     <div class="summary-item">
                         <span>Discount:</span>
@@ -281,6 +292,11 @@ document.addEventListener("DOMContentLoaded", () => {
             
         }
 
+        const additionalPaymentInput = document.getElementById("additionalPayment");
+        if (additionalPaymentInput) {
+            additionalPaymentInput.addEventListener("input", updateServicesSummary);
+        }
+
         document.body.addEventListener("input", e => {
             if (
                 e.target.matches('input[name^="serviceQuantity"]') ||
@@ -326,13 +342,15 @@ document.addEventListener("DOMContentLoaded", () => {
     function updateCheckoutSummary({ services = [], discountType = null, discountValue = 0 }) {
         const servicesList = document.getElementById("servicesList");
         const subtotalEl = document.getElementById("subtotalDisplay");
+        const additionalPaymentDisplay = document.getElementById("additionalPaymentDisplay");
         const discountEl = document.getElementById("discountDisplay");
         const totalEl = document.getElementById("totalDisplay");
+        const totalPaymentInput = document.getElementById("total_payment");
+        const additionalPaymentInput = document.getElementById("additionalPayment");
 
         if (servicesList) servicesList.innerHTML = "";
 
         let subtotal = 0;
-
         services.forEach(service => {
             const totalPrice = service.price * service.quantity;
             subtotal += totalPrice;
@@ -355,13 +373,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const total = Math.max(subtotal - discount, 0);
 
+        let additionalPayment = parseFloat(additionalPaymentInput?.value || 0);
+        const totalWithAdditional = total + additionalPayment;
+
         if (subtotalEl) subtotalEl.textContent = `₱${subtotal.toFixed(2)}`;
+        if (additionalPaymentDisplay) {
+            additionalPaymentDisplay.textContent = `₱${additionalPayment.toFixed(2)}`;
+        }
         if (discountEl) discountEl.textContent = `-₱${discount.toFixed(2)}`;
-        if (totalEl) totalEl.textContent = `₱${total.toFixed(2)}`;
-        
-        const totalPaymentInput = document.getElementById("total_payment");
+        if (totalEl) totalEl.textContent = `₱${totalWithAdditional.toFixed(2)}`;
+
         if (totalPaymentInput) {
-            totalPaymentInput.value = total.toFixed(2);
+            totalPaymentInput.value = totalWithAdditional.toFixed(2);
         }
     }
 
@@ -584,7 +607,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ${isEdit ? `
                 <div class="form-group">
                     <input type="text" id="dateUpdated" class="form-control" value="${data.date_updated}" disabled>
-                    <label for="dateUpdated" class="form-label">Last Update</label>
+                    <label for="dateUpdated" class="form-label">Last Updated</label>
                 </div>` : ""}
 
                 <div class="button-group">
@@ -659,7 +682,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ${isEdit ? `
                 <div class="form-group">
                     <input type="text" id="dateUpdated" class="form-control" value="${data.date_updated}" disabled>
-                    <label for="dateUpdated" class="form-label">Last Update</label>
+                    <label for="dateUpdated" class="form-label">Last Updated</label>
                 </div>` : ""}
 
                 <div class="button-group">

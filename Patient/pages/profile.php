@@ -32,7 +32,7 @@ if ($result && $row = $result->fetch_assoc()) {
 }
 
 $medcertPrice = 150;
-$priceStmt = $conn->prepare("SELECT price FROM service WHERE name = 'Medical Certificate' LIMIT 1");
+$priceStmt = $conn->prepare("SELECT price FROM service WHERE name = 'Dental Certificate' LIMIT 1");
 $priceStmt->execute();
 $priceStmt->bind_result($priceFromDB);
 $priceStmt->fetch();
@@ -146,8 +146,8 @@ if ($priceFromDB !== null) {
 
 <div id="medCertModal" class="booking-modal" data-transaction-id="">
     <div class="booking-modal-content">
-        <h2>Request Medical Certificate</h2>
-        <p>Please scan the QR code below to pay for the medical certificate fee.</p>
+        <h2>Request Dental Certificate</h2>
+        <p>Please scan the QR code below to pay for the Dental Certificate fee.</p>
 
         <div style="text-align: center; margin: 15px 0;">
             <img src="<?= htmlspecialchars($qrImage) ?>" alt="Payment QR Code" style="width: 210px; height: 300px; border: 1px solid #ccc; border-radius: 4px;">
