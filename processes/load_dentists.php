@@ -3,75 +3,122 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
 
 if (empty($_POST['appointmentBranch'])) {
-    echo '<option disabled>No branch ID provided</option>';
+    echo '<option disabled>No branch selected</option>';
+    exit;
+}
+
+if (empty($_POST['appointmentDate'])) {
+    echo '<option disabled>No date selected</option>';
+    exit;
+}
+
+if (empty($_POST['appointmentTime'])) {
+    echo '<option disabled>No time selected</option>';
     exit;
 }
 
 $branchId = intval($_POST['appointmentBranch']);
-$services = $_POST['appointmentServices'] ?? [];
-$selectedDentistId = isset($_POST['selectedDentistId']) ? intval($_POST['selectedDentistId']) : null;
-$transactionId = $_POST['appointment_transaction_id'] ?? null;
-$appointmentId = $_POST['appointment_id'] ?? null;
+$appointmentDate = $_POST['appointmentDate'];
+$appointmentTime = $_POST['appointmentTime'];
+$dayName = date('l', strtotime($appointmentDate));
 
+$services = $_POST['appointmentServices'] ?? [];
+if (!is_array($services)) {
+    $services = [$services];
+}
+$services = array_map('intval', $services);
+
+$selectedDentistId = isset($_POST['selectedDentistId']) ? intval($_POST['selectedDentistId']) : null;
+$transactionId     = $_POST['appointment_transaction_id'] ?? null;
+$appointmentId     = $_POST['appointment_id'] ?? null;
 $preassignedDentistId = null;
+
 if ($transactionId) {
     $stmtTx = $conn->prepare("
         SELECT dentist_id 
         FROM dental_transaction 
-        WHERE dental_transaction_id = ?
-        LIMIT 1
+        WHERE dental_transaction_id = ? LIMIT 1
     ");
-    $stmtTx->bind_param("i", $transactionId);
-    $stmtTx->execute();
-    $resultTx = $stmtTx->get_result();
-    if ($row = $resultTx->fetch_assoc()) {
-        $preassignedDentistId = intval($row['dentist_id']);
+    if ($stmtTx) {
+        $stmtTx->bind_param("i", $transactionId);
+        $stmtTx->execute();
+        $resultTx = $stmtTx->get_result();
+        if ($row = $resultTx->fetch_assoc()) {
+            $preassignedDentistId = intval($row['dentist_id']);
+        }
+        $stmtTx->close();
     }
-    $stmtTx->close();
 } elseif ($appointmentId) {
     $stmtApp = $conn->prepare("
         SELECT dentist_id 
         FROM appointment_transaction 
-        WHERE appointment_transaction_id = ?
-        LIMIT 1
+        WHERE appointment_transaction_id = ? LIMIT 1
     ");
-    $stmtApp->bind_param("i", $appointmentId);
-    $stmtApp->execute();
-    $resultApp = $stmtApp->get_result();
-    if ($row = $resultApp->fetch_assoc()) {
-        $preassignedDentistId = intval($row['dentist_id']);
+    if ($stmtApp) {
+        $stmtApp->bind_param("i", $appointmentId);
+        $stmtApp->execute();
+        $resultApp = $stmtApp->get_result();
+        if ($row = $resultApp->fetch_assoc()) {
+            $preassignedDentistId = intval($row['dentist_id']);
+        }
+        $stmtApp->close();
     }
-    $stmtApp->close();
 }
 
 if (!$selectedDentistId && $preassignedDentistId) {
     $selectedDentistId = $preassignedDentistId;
 }
 
-if (!is_array($services)) {
-    $services = [$services];
-}
+$stmt = null;
 
 if (empty($services)) {
+
     $sql = "
         SELECT d.dentist_id, d.first_name, d.last_name
         FROM dentist d
-        INNER JOIN dentist_branch db ON d.dentist_id = db.dentist_id
-        WHERE db.branch_id = ? AND d.status = 'Active'
+        INNER JOIN dentist_branch db 
+            ON d.dentist_id = db.dentist_id
+        INNER JOIN dentist_schedule sch
+            ON sch.dentist_id = d.dentist_id
+            AND sch.branch_id = db.branch_id
+            AND sch.day = ?
+            AND (
+                    (sch.start_time IS NULL AND sch.end_time IS NULL)
+                    OR (sch.start_time <= ? AND sch.end_time > ?)
+                )
+        WHERE db.branch_id = ?
+            AND d.status = 'Active'
         ORDER BY d.first_name ASC
     ";
+
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $branchId);
+    if ($stmt === false) {
+        echo '<option disabled>SQL prepare error: ' . htmlspecialchars($conn->error) . '</option>';
+        exit;
+    }
+
+    $stmt->bind_param("sssi", $dayName, $appointmentTime, $appointmentTime, $branchId);
+
 } else {
-    $services = array_map('intval', $services);
+
     $countServices = count($services);
     $placeholders = implode(',', array_fill(0, $countServices, '?'));
 
     $sql = "
         SELECT d.dentist_id, d.first_name, d.last_name
         FROM dentist d
-        INNER JOIN dentist_branch db ON d.dentist_id = db.dentist_id
-        INNER JOIN dentist_service ds ON d.dentist_id = ds.dentist_id
+        INNER JOIN dentist_branch db 
+            ON d.dentist_id = db.dentist_id
+        INNER JOIN dentist_schedule sch
+            ON sch.dentist_id = d.dentist_id
+            AND sch.branch_id = db.branch_id
+            AND sch.day = ?
+            AND (
+                    (sch.start_time IS NULL AND sch.end_time IS NULL)
+                    OR (sch.start_time <= ? AND sch.end_time > ?)
+                )
+        INNER JOIN dentist_service ds 
+            ON d.dentist_id = ds.dentist_id
         WHERE db.branch_id = ?
             AND ds.service_id IN ($placeholders)
             AND d.status = 'Active'
@@ -81,74 +128,79 @@ if (empty($services)) {
     ";
 
     $stmt = $conn->prepare($sql);
-    $values = array_merge([$branchId], $services, [$countServices]);
-    $types = str_repeat('i', count($values));
-    $bindParams = [];
-    $bindParams[] = $types;
-    foreach ($values as $i => $val) {
-        $bindParams[] = &$values[$i];
+    if ($stmt === false) {
+        echo '<option disabled>SQL prepare error: ' . htmlspecialchars($conn->error) . '</option>';
+        exit;
     }
-    call_user_func_array([$stmt, 'bind_param'], $bindParams);
+
+    $types = 'sss' . 'i' . str_repeat('i', $countServices) . 'i';
+
+    $values = array_merge(
+        [$dayName, $appointmentTime, $appointmentTime, $branchId],
+        $services,
+        [$countServices]
+    );
+
+    $bind_names[] = $types;
+    for ($i = 0; $i < count($values); $i++) {
+        $bind_name = 'bind' . $i;
+        $$bind_name = $values[$i];
+        $bind_names[] = &$$bind_name;
+    }
+
+    call_user_func_array([$stmt, 'bind_param'], $bind_names);
 }
 
-$stmt->execute();
+if (! $stmt->execute()) {
+    echo '<option disabled>SQL execute error: ' . htmlspecialchars($stmt->error) . '</option>';
+    exit;
+}
+
 $result = $stmt->get_result();
 
 $dentists = [];
-if ($result && $result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $dentists[$row['dentist_id']] = [
-            'first_name' => $row['first_name'],
-            'last_name' => $row['last_name']
-        ];
-    }
+while ($row = $result->fetch_assoc()) {
+    $dentists[$row['dentist_id']] = [
+        'first_name' => $row['first_name'],
+        'last_name'  => $row['last_name']
+    ];
 }
 
-$fallbackAdded = false;
-if ($preassignedDentistId && !array_key_exists($preassignedDentistId, $dentists)) {
+$stmt->close();
+
+if ($preassignedDentistId && !isset($dentists[$preassignedDentistId])) {
+
     $stmtExtra = $conn->prepare("
         SELECT dentist_id, first_name, last_name
         FROM dentist
-        WHERE dentist_id = ?
-        LIMIT 1
+        WHERE dentist_id = ? LIMIT 1
     ");
-    $stmtExtra->bind_param("i", $preassignedDentistId);
-    $stmtExtra->execute();
-    $resultExtra = $stmtExtra->get_result();
-    if ($row = $resultExtra->fetch_assoc()) {
-        $dentists[$row['dentist_id']] = [
-            'first_name' => $row['first_name'],
-            'last_name' => $row['last_name']
-        ];
-        $fallbackAdded = true;
+    if ($stmtExtra) {
+        $stmtExtra->bind_param("i", $preassignedDentistId);
+        $stmtExtra->execute();
+        $resultExtra = $stmtExtra->get_result();
+        if ($row = $resultExtra->fetch_assoc()) {
+            $dentists[$row['dentist_id']] = [
+                'first_name' => $row['first_name'],
+                'last_name'  => $row['last_name']
+            ];
+        }
+        $stmtExtra->close();
     }
-    $stmtExtra->close();
 }
 
-if (!empty($_POST['forTransaction'])) {
-    $options = '<option value="" disabled hidden></option>';
-} else {
-    $options = '<option value="" disabled selected hidden></option>';
-    $options .= '<option value="none">Available Dentist</option>';
-}
+$options = '<option value="" disabled selected>Select Dentist</option>';
+$options .= '<option value="none">Available Dentist</option>';
 
 if (!empty($dentists)) {
     foreach ($dentists as $id => $info) {
-        $dentistName = "Dr. " . htmlspecialchars($info['first_name'] . ' ' . $info['last_name']);
-        $selected = ($selectedDentistId && $id == $selectedDentistId) ? 'selected' : '';
-        $options .= "<option value='{$id}' {$selected}>{$dentistName}</option>";
+        $dentistName = "Dr. " . htmlspecialchars($info['first_name'] . " " . $info['last_name']);
+        $selected = ($selectedDentistId === $id) ? 'selected' : '';
+        $options .= "<option value='$id' $selected>$dentistName</option>";
     }
-} else {
-    $options .= '<option disabled>No dentists available</option>';
-}
-
-if (empty($selectedDentistId)) {
-    $options = preg_replace('/selected/', '', $options);
-    $options = '<option value="" disabled selected>Select Dentist</option>' . $options;
 }
 
 echo $options;
 
-$stmt->close();
 $conn->close();
 ?>

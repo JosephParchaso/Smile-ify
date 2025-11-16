@@ -467,7 +467,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     name: cb.nextElementSibling.textContent
                 }));
 
-                const isWholeDay = saved && saved.start_time === "" && saved.end_time === "";
+                const startVal = saved ? (saved.start_time ?? "") : "";
+                const endVal   = saved ? (saved.end_time ?? "") : "";
+
+                const WHOLE_DAY_START = "09:00";
+                const WHOLE_DAY_END   = "16:30";
+
+                const isWholeDay =
+                    saved && (
+                        (startVal === "" && endVal === "") || 
+                        (startVal?.slice(0,5) === WHOLE_DAY_START && endVal?.slice(0,5) === WHOLE_DAY_END)
+                    );
 
                 const row = document.createElement("div");
                 row.classList.add("schedule-row");
@@ -482,8 +492,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         `).join("")}
                     </select>
 
-                    <input type="time" class="start-time" name="schedule[${day}][start][]" value="${saved ? saved.start_time : ""}" ${isWholeDay ? "disabled" : ""}>
-                    <input type="time" class="end-time" name="schedule[${day}][end][]" value="${saved ? saved.end_time : ""}" ${isWholeDay ? "disabled" : ""}>
+                    <input type="time" class="start-time" name="schedule[${day}][start][]" 
+                        value="${startVal}" ${isWholeDay ? "disabled" : ""}>
+
+                    <input type="time" class="end-time" name="schedule[${day}][end][]" 
+                        value="${endVal}" ${isWholeDay ? "disabled" : ""}>
 
                     <button type="button" class="whole-day-btn">${isWholeDay ? "Undo" : "Whole Day"}</button>
                     <button type="button" class="remove-row-btn">×</button>

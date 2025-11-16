@@ -116,6 +116,8 @@ $stmt3->close();
 
 $schedSql = "
     SELECT 
+        schedule_id,
+        dentist_id,
         day,
         branch_id,
         start_time,
@@ -124,6 +126,7 @@ $schedSql = "
     WHERE dentist_id = ?
     ORDER BY FIELD(day,'Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday')
 ";
+
 $stmt4 = $conn->prepare($schedSql);
 $stmt4->bind_param("i", $dentistId);
 $stmt4->execute();
@@ -139,16 +142,18 @@ while ($sc = $resSched->fetch_assoc()) {
     }
 
     $schedule[$day][] = [
-        "branch"     => (int)$sc['branch_id'],
-        "start"      => $sc['start_time'],
-        "end"        => $sc['end_time']
+        "schedule_id"  => (int)$sc['schedule_id'],
+        "dentist_id"   => (int)$sc['dentist_id'],
+        "day"          => $sc['day'],
+        "branch_id"    => (int)$sc['branch_id'],
+        "start_time"   => $sc['start_time'],
+        "end_time"     => $sc['end_time']
     ];
 }
 
-$row['schedule'] = $schedule;
+$row['branch_schedule'] = $schedule;
 
 $stmt4->close();
-
 
 echo json_encode($row);
 $conn->close();

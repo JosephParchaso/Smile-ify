@@ -1197,3 +1197,75 @@ Reminders checked at 2025-11-16 07:30:01. Sent to 0 recipient(s).
 [2025-11-16 08:00:01] Checking between 2025-11-17 08:00:01 and 2025-11-17 08:30:01
 Reminders checked at 2025-11-16 08:00:01. Sent to 0 recipient(s).
 
+[2025-11-16 08:30:01] Script started
+[2025-11-16 08:30:01] Checking between 2025-11-17 08:30:01 and 2025-11-17 09:00:01
+Reminders checked at 2025-11-16 08:30:01. Sent to 0 recipient(s).
+
+[2025-11-17 00:00:01] Script started
+[2025-11-17 00:00:02] Checking between 2025-11-18 00:00:02 and 2025-11-18 00:30:02
+Reminders checked at 2025-11-17 00:00:02. Sent to 0 recipient(s).
+
+[2025-11-17 00:30:03] Script started
+[2025-11-17 00:30:03] Checking between 2025-11-18 00:30:03 and 2025-11-18 01:00:03
+Reminders checked at 2025-11-17 00:30:03. Sent to 0 recipient(s).
+
+[2025-11-17 01:00:02] Script started
+[2025-11-17 01:00:02] Checking between 2025-11-18 01:00:02 and 2025-11-18 01:30:02
+Reminders checked at 2025-11-17 01:00:02. Sent to 0 recipient(s).
+
+[2025-11-17 01:30:03] Script started
+[2025-11-17 01:30:03] Checking between 2025-11-18 01:30:03 and 2025-11-18 02:00:03
+Reminders checked at 2025-11-17 01:30:03. Sent to 0 recipient(s).
+
+[2025-11-17 02:00:03] Script started
+[2025-11-17 02:00:03] Checking between 2025-11-18 02:00:03 and 2025-11-18 02:30:03
+Reminders checked at 2025-11-17 02:00:03. Sent to 0 recipient(s).
+
+[2025-11-17 02:30:02] Script started
+[2025-11-17 02:30:02] Checking between 2025-11-18 02:30:02 and 2025-11-18 03:00:02
+Reminders checked at 2025-11-17 02:30:02. Sent to 0 recipient(s).
+
+[2025-11-17 03:00:04] Script started
+[2025-11-17 03:00:04] Checking between 2025-11-18 03:00:04 and 2025-11-18 03:30:04
+Reminders checked at 2025-11-17 03:00:04. Sent to 0 recipient(s).
+
+[2025-11-17 03:30:01] Script started
+[2025-11-17 03:30:01] Checking between 2025-11-18 03:30:01 and 2025-11-18 04:00:01
+Reminders checked at 2025-11-17 03:30:01. Sent to 0 recipient(s).
+
+[2025-11-17 03:30:03] Script started
+[2025-11-17 03:30:03] Checking between 2025-11-18 03:30:03 and 2025-11-18 04:00:03
+Reminders checked at 2025-11-17 03:30:03. Sent to 0 recipient(s).
+
+[2025-11-17 04:00:02] Script started
+[2025-11-17 04:00:02] Checking between 2025-11-18 04:00:02 and 2025-11-18 04:30:02
+Reminders checked at 2025-11-17 04:00:02. Sent to 0 recipient(s).
+
+[2025-11-17 04:30:02] Script started
+[2025-11-17 04:30:03] Checking between 2025-11-18 04:30:03 and 2025-11-18 05:00:03
+Reminders checked at 2025-11-17 04:30:03. Sent to 0 recipient(s).
+
+[2025-11-17 05:00:02] Script started
+[2025-11-17 05:00:02] Checking between 2025-11-18 05:00:02 and 2025-11-18 05:30:02
+Reminders checked at 2025-11-17 05:00:02. Sent to 0 recipient(s).
+
+[2025-11-17 05:30:02] Script started
+[2025-11-17 05:30:02] Checking between 2025-11-18 05:30:02 and 2025-11-18 06:00:02
+Reminders checked at 2025-11-17 05:30:02. Sent to 0 recipient(s).
+
+[2025-11-17 06:00:02] Script started
+[2025-11-17 06:00:02] Checking between 2025-11-18 06:00:02 and 2025-11-18 06:30:02
+Reminders checked at 2025-11-17 06:00:02. Sent to 0 recipient(s).
+
+[2025-11-17 06:30:02] Script started
+[2025-11-17 06:30:02] Checking between 2025-11-18 06:30:02 and 2025-11-18 07:00:02
+Reminders checked at 2025-11-17 06:30:02. Sent to 0 recipient(s).
+
+[2025-11-17 07:00:02] Script started
+[2025-11-17 07:00:02] Checking between 2025-11-18 07:00:02 and 2025-11-18 07:30:02
+Reminders checked at 2025-11-17 07:00:02. Sent to 0 recipient(s).
+
+[2025-11-17 07:30:02] Script started
+[2025-11-17 07:30:02] Checking between 2025-11-18 07:30:02 and 2025-11-18 08:00:02
+Reminders checked at 2025-11-17 07:30:02. Sent to 0 recipient(s).
+

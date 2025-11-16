@@ -115,19 +115,6 @@ require_once BASE_PATH . '/Admin/includes/navbar.php';
                     </div>
 
                     <div class="form-group">
-                        <div id="servicesContainer" class="checkbox-group">
-                            <p class="loading-text">Select a branch to load available services</p>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <select id="appointmentDentist" name="appointmentDentist" class="form-control" required>
-                            <option value="" disabled selected hidden></option>
-                        </select>
-                        <label for="appointmentDentist" class="form-label">Dentist <span class="required">*</span></label>
-                    </div>
-
-                    <div class="form-group">
                         <input type="date" id="appointmentDate" name="appointmentDate" class="form-control" required />
                         <label for="appointmentDate" class="form-label">Date <span class="required">*</span></label>
                         <span id="dateError" class="error-msg-calendar error" style="display:none;">
@@ -139,6 +126,19 @@ require_once BASE_PATH . '/Admin/includes/navbar.php';
                         <select id="appointmentTime" name="appointmentTime" class="form-control" required></select>
                         <label for="appointmentTime" class="form-label">Time <span class="required">*</span></label>
                         <div id="estimatedEnd" class="text-gray-600 mt-2"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <div id="servicesContainer" class="checkbox-group">
+                            <p class="loading-text">Select a branch to load available services</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <select id="appointmentDentist" name="appointmentDentist" class="form-control" required>
+                            <option value="" disabled selected hidden></option>
+                        </select>
+                        <label for="appointmentDentist" class="form-label">Dentist <span class="required">*</span></label>
                     </div>
 
                     <div class="form-group">

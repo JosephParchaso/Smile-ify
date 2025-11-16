@@ -240,7 +240,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             throw new Exception("Mailer Error: " . $mail->ErrorInfo);
         }
 
-        $_SESSION['updateSuccess'] = "Walk-in patient booked (with multiple services) and credentials emailed successfully.";
+        $_SESSION['updateSuccess'] = "Walk-in patient booked and credentials emailed successfully.";
         header("Location: " . BASE_URL . "/Admin/pages/calendar.php");
         exit;
 

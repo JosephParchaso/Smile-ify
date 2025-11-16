@@ -4,44 +4,51 @@ document.addEventListener("DOMContentLoaded", function () {
 
     document.body.addEventListener("click", function (e) {
         if (e.target.id === "insertAppointmentBtn") {
+
             renderAppointmentForm();
             bookingModal.style.display = "block";
 
             const branchSelect = bookingBody.querySelector("#appointmentBranch");
-            const dentistSelect = bookingBody.querySelector("#appointmentDentist");
             const dateSelect = bookingBody.querySelector("#appointmentDate");
             const timeSelect = bookingBody.querySelector("#appointmentTime");
             const servicesContainer = bookingBody.querySelector("#servicesContainer");
+            const dentistSelect = bookingBody.querySelector("#appointmentDentist");
             const estimatedEndDiv = bookingBody.querySelector("#estimatedEnd");
 
-            if (branchSelect) {
-                loadBranches(branchSelect);
+            dateSelect.disabled = true;
+            timeSelect.disabled = true;
+            dentistSelect.disabled = true;
 
-                branchSelect.addEventListener("change", () => {
-                    loadServices(branchSelect.value, servicesContainer);
-                    resetDentistDateTime(dentistSelect, dateSelect, timeSelect, estimatedEndDiv);
-                });
+            loadBranches(branchSelect);
 
-                dentistSelect.addEventListener("change", () => {
-                    resetDateAndTime(dateSelect, timeSelect, estimatedEndDiv);
-                });
+            branchSelect.addEventListener("change", () => {
+                resetAll(dateSelect, timeSelect, dentistSelect, estimatedEndDiv);
+                loadServices(branchSelect.value, servicesContainer);
+                dateSelect.disabled = false;
+            });
 
-                dateSelect.addEventListener("change", () => {
-                    resetTime(timeSelect, estimatedEndDiv);
-                    loadAvailableTimes(branchSelect, dateSelect, servicesContainer, timeSelect);
-                });
+            dateSelect.addEventListener("change", () => {
+                resetTime(timeSelect, estimatedEndDiv);
+                resetDentist(dentistSelect);
+                timeSelect.disabled = false;
+                loadAvailableTimes(branchSelect, dateSelect, servicesContainer, timeSelect);
+            });
 
-                timeSelect.addEventListener("change", () => {
-                    calculateEstimatedEnd(timeSelect.value, servicesContainer, estimatedEndDiv);
-                });
-            }
+            timeSelect.addEventListener("change", () => {
+                resetDentist(dentistSelect);
+                calculateEstimatedEnd(timeSelect.value, servicesContainer, estimatedEndDiv);
+                attemptLoadDentists(branchSelect, dateSelect, timeSelect, servicesContainer, dentistSelect);
+            });
         }
     });
 
     function renderAppointmentForm() {
         bookingBody.innerHTML = `
             <h2>Book Appointment</h2>
-            <form id="manageAppointmentForm" action="${BASE_URL}/Admin/processes/manage_patient/insert_appointment.php" method="POST" autocomplete="off">
+            <form id="manageAppointmentForm" 
+                  action="${BASE_URL}/Admin/processes/manage_patient/insert_appointment.php" 
+                  method="POST" autocomplete="off">
+
                 <input type="hidden" name="user_id" value="${userId}">
 
                 <div class="form-group">
@@ -52,24 +59,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 </div>
 
                 <div class="form-group">
-                    <div id="servicesContainer" class="checkbox-group">
-                        <p class="loading-text">Select a branch to load available services</p>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <select id="appointmentDentist" class="form-control" name="appointmentDentist" required>
-                        <option value="" disabled selected hidden></option>
-                    </select>
-                    <label for="appointmentDentist" class="form-label">Dentist <span class="required">*</span></label>
-                </div>
-
-                <div class="form-group">
-                    <input type="date" id="appointmentDate" class="form-control" name="appointmentDate" required />
+                    <input type="date" id="appointmentDate" name="appointmentDate" class="form-control" required />
                     <label for="appointmentDate" class="form-label">Date <span class="required">*</span></label>
-                    <span id="dateError" class="error-msg-calendar error">
-                        Sundays are not available for appointments. Please select another date.
-                    </span>
+                    <span id="dateError" class="error-msg-calendar error">Sundays are not available.</span>
                 </div>
 
                 <div class="form-group">
@@ -79,7 +71,20 @@ document.addEventListener("DOMContentLoaded", function () {
                 </div>
 
                 <div class="form-group">
-                    <textarea id="notes" class="form-control" name="notes" rows="3" placeholder=" "></textarea>
+                    <div id="servicesContainer" class="checkbox-group">
+                        <p class="loading-text">Select a branch to load services</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <select id="appointmentDentist" name="appointmentDentist" class="form-control" required>
+                        <option value="" disabled selected hidden></option>
+                    </select>
+                    <label for="appointmentDentist" class="form-label">Dentist <span class="required">*</span></label>
+                </div>
+
+                <div class="form-group">
+                    <textarea id="notes" name="notes" class="form-control" rows="3"></textarea>
                     <label for="notes" class="form-label">Add a note</label>
                 </div>
 
@@ -136,31 +141,25 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function getClosedDates(branchId) {
+    async function getClosedDates(branchId) {
         return fetch(`${BASE_URL}/processes/get_closed_dates.php?branch_id=${branchId}`)
             .then(res => res.json())
-            .then(data => Array.isArray(data.closedDates) ? data.closedDates : [])
-            .catch(err => {
-                console.error("Error fetching closed dates:", err);
-                return [];
-            });
+            .then(data => data.closedDates || [])
+            .catch(() => []);
     }
 
     function loadBranches(branchSelect) {
         $.ajax({
             type: "GET",
             url: `${BASE_URL}/Admin/processes/index/load_branches.php`,
-            success: function (response) {
-                branchSelect.innerHTML = response;
-            },
-            error: function () {
-                branchSelect.innerHTML = '<option disabled>Error loading branches</option>';
-            }
+            success: res => branchSelect.innerHTML = res,
+            error: () => branchSelect.innerHTML = '<option disabled>Error loading branches</option>'
         });
     }
 
     function loadServices(branchId, container) {
-        container.innerHTML = '<p class="loading-text">Loading services</p>';
+        container.innerHTML = `<p>Loading services...</p>`;
+
         $.ajax({
             type: "POST",
             url: `${BASE_URL}/processes/load_services.php`,
@@ -168,60 +167,32 @@ document.addEventListener("DOMContentLoaded", function () {
             success: function (response) {
                 container.innerHTML = response;
 
-                const dentistSelect = document.getElementById("appointmentDentist");
-                const dateSelect = document.getElementById("appointmentDate");
-                const timeSelect = document.getElementById("appointmentTime");
-                const estimatedEndDiv = document.getElementById("estimatedEnd");
+                container.querySelectorAll('input[name="appointmentServices[]"]').forEach(cb => {
+                    cb.addEventListener("change", () => {
+                        attemptLoadDentists(
+                            bookingBody.querySelector("#appointmentBranch"),
+                            bookingBody.querySelector("#appointmentDate"),
+                            bookingBody.querySelector("#appointmentTime"),
+                            container,
+                            bookingBody.querySelector("#appointmentDentist")
+                        );
 
-                const serviceCheckboxes = container.querySelectorAll('input[name="appointmentServices[]"]');
-
-                serviceCheckboxes.forEach(cb => {
-                    cb.addEventListener("change", function () {
-                        const selectedServices = [...container.querySelectorAll('input[name="appointmentServices[]"]:checked')]
-                            .map(cb => cb.value);
-
-                        resetDentistDateTime(dentistSelect, dateSelect, timeSelect, estimatedEndDiv);
-
-                        loadDentists(branchId, selectedServices, dentistSelect);
+                        calculateEstimatedEnd(
+                            bookingBody.querySelector("#appointmentTime").value,
+                            container,
+                            bookingBody.querySelector("#estimatedEnd")
+                        );
                     });
                 });
-            },
-            error: function () {
-                container.innerHTML = '<p class="error">Error loading services</p>';
-            }
-        });
-    }
-
-    function loadDentists(branchId, selectedServices, dentistSelect) {
-        if (!selectedServices.length) {
-            dentistSelect.innerHTML = '<option value="" disabled selected hidden></option>';
-            return;
-        }
-
-        $.ajax({
-            type: "POST",
-            url: `${BASE_URL}/processes/load_dentists.php`,
-            data: {
-                appointmentBranch: branchId,
-                appointmentServices: selectedServices
-            },
-            success: function (response) {
-                dentistSelect.innerHTML = response;
-            },
-            error: function () {
-                dentistSelect.innerHTML = '<option disabled>Error loading dentists</option>';
             }
         });
     }
 
     function loadAvailableTimes(branchSelect, dateSelect, servicesContainer, timeSelect) {
-        const branchId = branchSelect?.value;
-        const date = dateSelect?.value;
-        const services = [
-            ...servicesContainer.querySelectorAll("input[type='checkbox']:checked")
-        ].map(cb => cb.value);
+        const branchId = branchSelect.value;
+        const date = dateSelect.value;
 
-        if (!branchId || !date || services.length === 0) {
+        if (!branchId || !date) {
             resetTime(timeSelect);
             return;
         }
@@ -229,137 +200,120 @@ document.addEventListener("DOMContentLoaded", function () {
         const fd = new FormData();
         fd.append("branch_id", branchId);
         fd.append("appointment_date", date);
-        services.forEach(s => fd.append("services[]", s));
 
         fetch(`${BASE_URL}/processes/load_available_times.php`, {
             method: "POST",
-            body: fd,
+            body: fd
         })
             .then(res => res.json())
             .then(data => {
-                timeSelect.innerHTML = "";
+                timeSelect.innerHTML = '<option value="" disabled selected hidden></option>';
 
-                if (data.error) {
-                    timeSelect.innerHTML = `<option disabled selected>${data.error}</option>`;
-                    return;
-                }
-
-                if (!Array.isArray(data.times) || data.times.length === 0) {
-                    timeSelect.innerHTML = '<option disabled selected>No available times</option>';
-                    return;
-                }
-
-                const allSlots = [];
-                const start = new Date("2000-01-01T09:00:00");
-                const end = new Date("2000-01-01T16:30:00");
-
-                while (start < end) {
-                    const hh = String(start.getHours()).padStart(2, "0");
-                    const mm = String(start.getMinutes()).padStart(2, "0");
-                    allSlots.push(`${hh}:${mm}`);
-                    start.setMinutes(start.getMinutes() + 30);
-                }
-
-                const blocked = Array.isArray(data.blocked) ? data.blocked : [];
-                let options = "";
+                const allSlots = generateSlots("09:00", "16:30", 30);
+                const availableTimes = data.times || []; // <- returned by backend
 
                 allSlots.forEach(time => {
-                    const [h, m] = time.split(":");
-                    const formatted = new Date(0, 0, 0, h, m).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit"
-                    });
+                    const formatted = formatTimeAMPM(time);
 
-                    const isAvailable = data.times.includes(time);
-                    const isBlocked = blocked.includes(time);
+                    const isAvailable = availableTimes.includes(time);
 
-                    if (!isAvailable || isBlocked) {
-                        options += `<option value="${time}" disabled style="color:gray;">${formatted}</option>`;
-                    } else {
-                        options += `<option value="${time}">${formatted}</option>`;
-                    }
+                    timeSelect.innerHTML += `
+                        <option value="${time}" ${isAvailable ? "" : "disabled"}>${formatted}</option>
+                    `;
                 });
 
-                timeSelect.innerHTML = `<option value="" disabled selected hidden></option>` + options;
-            })
-            .catch(err => {
-                console.error("Error loading available times:", err);
-                timeSelect.innerHTML = '<option disabled selected>Error loading times</option>';
+                timeSelect.disabled = false;
             });
     }
 
+    function generateSlots(start, end, mins) {
+        const out = [];
+        let t = new Date(`2000-01-01T${start}`);
+        const e = new Date(`2000-01-01T${end}`);
+
+        while (t < e) {
+            out.push(t.toTimeString().slice(0, 5));
+            t.setMinutes(t.getMinutes() + mins);
+        }
+        return out;
+    }
+
+    function formatTimeAMPM(time) {
+        const [h, m] = time.split(":");
+        return new Date(0, 0, 0, h, m).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    }
+
+    function attemptLoadDentists(branchSelect, dateSelect, timeSelect, servicesContainer, dentistSelect) {
+        const branchId = branchSelect.value;
+        const date = dateSelect.value;
+        const time = timeSelect.value;
+
+        const services = [...servicesContainer.querySelectorAll("input[type='checkbox']:checked")].map(cb => cb.value);
+
+        if (!branchId || !date || !time || services.length === 0) {
+            resetDentist(dentistSelect);
+            return;
+        }
+
+        loadDentists(branchId, date, time, services, dentistSelect);
+    }
+
+    function loadDentists(branchId, date, time, services, dentistSelect) {
+        $.ajax({
+            type: "POST",
+            url: `${BASE_URL}/processes/load_dentists.php`,
+            data: {
+                appointmentBranch: branchId,
+                appointmentDate: date,
+                appointmentTime: time,
+                appointmentServices: services
+            },
+            success: res => {
+                dentistSelect.innerHTML = res;
+                dentistSelect.disabled = false;
+            },
+            error: () => {
+                dentistSelect.innerHTML = '<option disabled>Error loading dentists</option>';
+            }
+        });
+    }
+
     function calculateEstimatedEnd(startTime, servicesContainer, outputDiv) {
-        if (!startTime) {
-            outputDiv.textContent = "";
-            return;
-        }
+        if (!startTime) return outputDiv.textContent = "";
 
-        const selectedServices = servicesContainer.querySelectorAll('input[name="appointmentServices[]"]:checked');
-        if (selectedServices.length === 0) {
-            outputDiv.textContent = "";
-            return;
-        }
+        const totalDuration = [...servicesContainer.querySelectorAll("input:checked")]
+            .reduce((sum, cb) => sum + parseInt(cb.dataset.duration || "0"), 0);
 
-        const totalDuration = Array.from(selectedServices).reduce((sum, cb) => {
-            return sum + parseInt(cb.dataset.duration || 0);
-        }, 0);
-
-        if (totalDuration === 0) {
-            outputDiv.textContent = "";
-            return;
-        }
+        if (totalDuration === 0) return outputDiv.textContent = "";
 
         const [h, m] = startTime.split(":").map(Number);
         const start = new Date();
         start.setHours(h, m, 0, 0);
         start.setMinutes(start.getMinutes() + totalDuration);
 
-        let endHours = start.getHours();
-        const endMinutes = String(start.getMinutes()).padStart(2, "0");
-        const ampm = endHours >= 12 ? "PM" : "AM";
-        endHours = endHours % 12 || 12;
-        const endFormatted = `${endHours}:${endMinutes} ${ampm}`;
-
-        const hours = Math.floor(totalDuration / 60);
-        const minutes = totalDuration % 60;
-        let durationText = "";
-        if (hours > 0) {
-            durationText += `${hours} hour${hours > 1 ? "s" : ""}`;
-            if (minutes > 0) durationText += ` and ${minutes} min${minutes > 1 ? "s" : ""}`;
-        } else {
-            durationText = `${minutes} min${minutes > 1 ? "s" : ""}`;
-        }
-
-        outputDiv.textContent = `Estimated End Time: ${endFormatted} (${durationText} total)`;
+        const formatted = start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+        outputDiv.textContent = `Estimated End Time: ${formatted} (${totalDuration} mins)`;
     }
 
-    function resetDentist(dentistSelect) {
-        if (dentistSelect) {
-            dentistSelect.innerHTML = '<option value="" disabled selected hidden></option>';
-        }
+    function resetAll(date, time, dentist, end) {
+        resetDate(date);
+        resetTime(time, end);
+        resetDentist(dentist);
     }
 
     function resetDate(dateSelect) {
-        if (dateSelect) dateSelect.value = "";
+        dateSelect.value = "";
     }
 
-    function resetTime(timeSelect, estimatedEndDiv) {
-        if (timeSelect) {
-            timeSelect.value = "";
-            timeSelect.innerHTML = "";
-        }
-        if (estimatedEndDiv) estimatedEndDiv.textContent = "";
+    function resetTime(timeSelect, endDiv) {
+        timeSelect.value = "";
+        timeSelect.innerHTML = "";
+        if (endDiv) endDiv.textContent = "";
     }
 
-    function resetDateAndTime(dateSelect, timeSelect, estimatedEndDiv) {
-        resetDate(dateSelect);
-        resetTime(timeSelect, estimatedEndDiv);
-    }
-
-    function resetDentistDateTime(dentistSelect, dateSelect, timeSelect, estimatedEndDiv) {
-        resetDentist(dentistSelect);
-        resetDate(dateSelect);
-        resetTime(timeSelect, estimatedEndDiv);
+    function resetDentist(dentistSelect) {
+        dentistSelect.innerHTML = '<option value="" disabled selected hidden></option>';
+        dentistSelect.disabled = true;
     }
 });
 

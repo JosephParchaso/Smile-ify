@@ -74,17 +74,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 contact_number, contact_number_iv, contact_number_tag,
                 license_number, license_number_iv, license_number_tag,
                 date_started, status, signature_image, profile_image
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
 
+        $null = null;
+
         $stmt->bind_param(
-            "ssssssssssssssss",
+            "ssssssssssssssssss",
             $lastName, $firstName, $middleName, $gender,
             $dob_enc, $dob_iv, $dob_tag,
             $email,
             $contact_enc, $contact_iv, $contact_tag,
             $license_enc, $license_iv, $license_tag,
-            $dateStarted, $status
+            $dateStarted, $status,
+            $null, $null
         );
 
         $stmt->execute();
@@ -151,15 +154,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 for ($i = 0; $i < count($branchesArr); $i++) {
 
                     $branch_id = !empty($branchesArr[$i]) ? (int)$branchesArr[$i] : null;
+                    if ($branch_id === null) continue;
 
-                    $isWholeDay = ($startArr[$i] === "" && $endArr[$i] === "");
+                    $rawStart = $startArr[$i] ?? "";
+                    $rawEnd   = $endArr[$i] ?? "";
+
+                    $isWholeDay = (
+                        ($rawStart === "" || $rawStart === null) &&
+                        ($rawEnd === "" || $rawEnd === null)
+                    );
 
                     if ($isWholeDay) {
-                        $start_time = null;
-                        $end_time   = null;
+                        $start_time = "09:00";
+                        $end_time   = "16:30";
                     } else {
-                        $start_time = !empty($startArr[$i]) ? $startArr[$i] : null;
-                        $end_time   = !empty($endArr[$i]) ? $endArr[$i] : null;
+                        $start_time = $rawStart ?: null;
+                        $end_time   = $rawEnd ?: null;
                     }
 
                     $stmt4->bind_param(

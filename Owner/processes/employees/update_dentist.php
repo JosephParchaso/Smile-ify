@@ -275,15 +275,23 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 for ($i = 0; $i < count($branchesArr); $i++) {
 
-                    $branch_id  = !empty($branchesArr[$i]) ? (int)$branchesArr[$i] : null;
+                    $branch_id = !empty($branchesArr[$i]) ? (int)$branchesArr[$i] : null;
 
-                    // WHOLE DAY FIX
-                    if ($startArr[$i] === "" && $endArr[$i] === "") {
+                    $rawStart = $startArr[$i] ?? "";
+                    $rawEnd   = $endArr[$i] ?? "";
+
+                    $isWholeDay = (
+                        $rawStart === "" || $rawStart === null
+                    ) && (
+                        $rawEnd === "" || $rawEnd === null
+                    );
+
+                    if ($isWholeDay) {
                         $start_time = "09:00";
                         $end_time   = "16:30";
                     } else {
-                        $start_time = (!empty($startArr[$i]) ? $startArr[$i] : null);
-                        $end_time   = (!empty($endArr[$i]) ? $endArr[$i] : null);
+                        $start_time = $rawStart ?: null;
+                        $end_time   = $rawEnd ?: null;
                     }
 
                     $stmt->bind_param(
