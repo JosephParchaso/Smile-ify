@@ -15,6 +15,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'owner') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
     $lastName       = trim($_POST['lastName']);
     $firstName      = trim($_POST['firstName']);
     $middleName     = trim($_POST['middleName']);
@@ -27,6 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $dateStarted    = $_POST['dateStarted'] ?? null;
     $branches       = $_POST['branches'] ?? [];
     $services       = $_POST['services'] ?? [];
+    $schedule       = $_POST['schedule'] ?? [];
 
     if (!empty($email) && !isValidEmailDomain($email)) {
         $_SESSION['updateError'] = "Email domain is not valid or unreachable.";
@@ -59,6 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
+
         [$dob_enc, $dob_iv, $dob_tag] = encryptField($dateofBirth, $ENCRYPTION_KEY);
         [$contact_enc, $contact_iv, $contact_tag] = encryptField($contactNumber, $ENCRYPTION_KEY);
         [$license_enc, $license_iv, $license_tag] = encryptField($licenseNumber, $ENCRYPTION_KEY);
@@ -73,6 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 date_started, status, signature_image, profile_image
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL)
         ");
+
         $stmt->bind_param(
             "ssssssssssssssss",
             $lastName, $firstName, $middleName, $gender,
@@ -82,6 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $license_enc, $license_iv, $license_tag,
             $dateStarted, $status
         );
+
         $stmt->execute();
         $dentistId = $stmt->insert_id;
         $stmt->close();
@@ -130,7 +135,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt3->close();
         }
 
+        if (!empty($schedule)) {
+
+            $stmt4 = $conn->prepare("
+                INSERT INTO dentist_schedule (dentist_id, day, branch_id, start_time, end_time)
+                VALUES (?, ?, ?, ?, ?)
+            ");
+
+            foreach ($schedule as $day => $entries) {
+
+                $branchesArr = $entries["branch"] ?? [];
+                $startArr    = $entries["start"] ?? [];
+                $endArr      = $entries["end"] ?? [];
+
+                for ($i = 0; $i < count($branchesArr); $i++) {
+
+                    $branch_id = !empty($branchesArr[$i]) ? (int)$branchesArr[$i] : null;
+
+                    $isWholeDay = ($startArr[$i] === "" && $endArr[$i] === "");
+
+                    if ($isWholeDay) {
+                        $start_time = null;
+                        $end_time   = null;
+                    } else {
+                        $start_time = !empty($startArr[$i]) ? $startArr[$i] : null;
+                        $end_time   = !empty($endArr[$i]) ? $endArr[$i] : null;
+                    }
+
+                    $stmt4->bind_param(
+                        "isiss",
+                        $dentistId,
+                        $day,
+                        $branch_id,
+                        $start_time,
+                        $end_time
+                    );
+
+                    $stmt4->execute();
+                }
+            }
+
+            $stmt4->close();
+        }
+
         $_SESSION['updateSuccess'] = "Dentist added successfully!";
+        
 
     } catch (Exception $e) {
         $_SESSION['updateError'] = "Error: " . $e->getMessage();
@@ -138,8 +187,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     header("Location: " . BASE_URL . "/Owner/pages/employees.php?tab=dentist");
     exit();
-} else {
-    header("Location: " . BASE_URL . "/Owner/pages/employees.php?tab=dentist");
-    exit();
 }
+
+header("Location: " . BASE_URL . "/Owner/pages/employees.php?tab=dentist");
+exit();
 ?>

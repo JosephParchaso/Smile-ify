@@ -1,8 +1,8 @@
 <?php
 $servername = "localhost";
-$username = "root"; //s18100807_smileify || root
-$password = ""; //P@ssw0rdsmile
-$dbname = "smile-ify"; //smile_ify_nodata || smile-ify || s18100807_smileify
+$username = "root"; // s18100807_smileifytest || root
+$password = ""; // P@ssw0rd
+$dbname = "smile-ify"; // s18100807_smileifytest || smile-ify
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 

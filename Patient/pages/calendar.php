@@ -15,7 +15,7 @@ require_once BASE_PATH . '/Patient/includes/navbar.php';
 $updateSuccess = $_SESSION['updateSuccess'] ?? "";
 $updateError = $_SESSION['updateError'] ?? "";
 ?>
-<title>My Schedule</title>
+<title>My Calendar</title>
 
 <div class="calendar-container">
     <div id="calendarLegend" class="legend"></div>

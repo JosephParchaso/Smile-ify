@@ -13,7 +13,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'owner') {
 require_once BASE_PATH . '/includes/header.php';
 require_once BASE_PATH . '/Owner/includes/navbar.php';
 ?>
-<title>Schedules</title>
+<title>Calendar</title>
 
 <div class="calendar-container">
     <div id="calendarLegend" class="legend"></div>

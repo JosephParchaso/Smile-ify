@@ -27,7 +27,7 @@ if ($result) {
 $conn->close();
 ?>
 
-<title>Schedules</title>
+<title>Calendar</title>
 
 <div class="tabs-container">
     <div class="tabs-nomargin">

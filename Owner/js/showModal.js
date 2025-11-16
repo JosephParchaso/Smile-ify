@@ -249,7 +249,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ${isEdit ? `<input type="hidden" name="dentist_id" value="${data.dentist_id}">` : ""}
 
                 <div class="form-group" style="position: relative; margin-bottom: 18px;">
-                    <input type="file" id="profileImage" name="profileImage" class="form-control" accept="image/*" ${isEdit ? "" : "required"}>
+                    <input type="file" id="profileImage" name="profileImage" class="form-control" accept="image/*" ${isEdit ? "" : ""}>
                     <label for="profileImage" class="form-label" style="display: block; margin-top: 6px; margin-bottom: 4px;">Profile Picture </label>
                     
                     ${isEdit && data.profile_image 
@@ -328,6 +328,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
 
                 <div class="form-group">
+                    <div id="branchScheduleContainer" class="schedule-days-container"></div>
+                </div>
+
+                <div class="form-group">
                     <div id="servicesCheckboxes" class="checkbox-group"></div>
                 </div>
 
@@ -403,19 +407,131 @@ document.addEventListener("DOMContentLoaded", () => {
         fetch(`${BASE_URL}/Owner/processes/employees/get_branches.php`)
         .then(res => res.json())
         .then(branches => {
+
             const container = document.getElementById("branchAssignment");
             container.innerHTML = "";
 
             branches.forEach(branch => {
-            const wrapper = document.createElement("div");
-            wrapper.innerHTML = `
-                <div class="checkbox-item">
-                    <input type="checkbox" id="branch_${branch.branch_id}" name="branches[]" value="${branch.branch_id}"
-                        ${isEdit && selectedBranches.includes(parseInt(branch.branch_id)) ? "checked" : ""}>
-                    <label for="branch_${branch.branch_id}">${branch.name}</label>  
-                </div>
-            `;
-            container.appendChild(wrapper);
+                const wrapper = document.createElement("div");
+                wrapper.innerHTML = `
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="branch_${branch.branch_id}" name="branches[]" value="${branch.branch_id}"
+                            ${isEdit ? (selectedBranches.includes(parseInt(branch.branch_id)) ? "checked" : "") : "checked"}>
+                        <label for="branch_${branch.branch_id}">${branch.name}</label>  
+                    </div>
+                `;
+                container.appendChild(wrapper);
+            });
+
+            const scheduleContainer = document.getElementById("branchScheduleContainer");
+            scheduleContainer.innerHTML = "";
+
+            const days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+            const savedSchedule = isEdit ? data.branch_schedule || {} : {};
+
+            days.forEach(day => {
+                const dayWrapper = document.createElement("div");
+                dayWrapper.classList.add("day-schedule-wrapper");
+
+                dayWrapper.innerHTML = `
+                    <h4>${day}</h4>
+                    <div class="schedule-rows" id="rows_${day}"></div>
+                    <button type="button" class="add-schedule-btn" data-day="${day}">+ Add schedule</button>
+                `;
+
+                scheduleContainer.appendChild(dayWrapper);
+
+                const rowsContainer = dayWrapper.querySelector(`#rows_${day}`);
+
+                if (savedSchedule[day]) {
+                    savedSchedule[day].forEach(entry => {
+                        addScheduleRow(day, rowsContainer, branches, entry);
+                    });
+                }
+            });
+
+            scheduleContainer.querySelectorAll(".add-schedule-btn").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    const day = btn.dataset.day;
+                    const rowsContainer = document.getElementById(`rows_${day}`);
+                    addScheduleRow(day, rowsContainer, branches);
+                });
+            });
+
+            function addScheduleRow(day, rowsContainer, branches, saved = null) {
+
+                const checkedBranches = Array.from(
+                    document.querySelectorAll("#branchAssignment input[type=checkbox]:checked")
+                ).map(cb => ({
+                    branch_id: cb.value,
+                    name: cb.nextElementSibling.textContent
+                }));
+
+                const isWholeDay = saved && saved.start_time === "" && saved.end_time === "";
+
+                const row = document.createElement("div");
+                row.classList.add("schedule-row");
+
+                row.innerHTML = `
+                    <select name="schedule[${day}][branch][]" required>
+                        <option value="" disabled ${!saved ? "selected" : ""}>Select Branch</option>
+                        ${checkedBranches.map(b => `
+                            <option value="${b.branch_id}" ${saved && saved.branch_id == b.branch_id ? "selected" : ""}>
+                                ${b.name}
+                            </option>
+                        `).join("")}
+                    </select>
+
+                    <input type="time" class="start-time" name="schedule[${day}][start][]" value="${saved ? saved.start_time : ""}" ${isWholeDay ? "disabled" : ""}>
+                    <input type="time" class="end-time" name="schedule[${day}][end][]" value="${saved ? saved.end_time : ""}" ${isWholeDay ? "disabled" : ""}>
+
+                    <button type="button" class="whole-day-btn">${isWholeDay ? "Undo" : "Whole Day"}</button>
+                    <button type="button" class="remove-row-btn">×</button>
+                `;
+
+                const startInput = row.querySelector(".start-time");
+                const endInput = row.querySelector(".end-time");
+                const wholeDayBtn = row.querySelector(".whole-day-btn");
+
+                wholeDayBtn.addEventListener("click", () => toggleWholeDay(wholeDayBtn));
+
+                row.querySelector(".remove-row-btn").addEventListener("click", () => {
+                    const day = row.closest(".day-schedule-wrapper").querySelector("h4").textContent;
+                    row.remove();
+                    updateAddScheduleButton(day);
+                    updateWholeDayVisibility(day);
+                });
+
+                rowsContainer.appendChild(row);
+                updateAddScheduleButton(day);
+                updateWholeDayVisibility(day);
+            }
+
+            container.querySelectorAll("input[type=checkbox]").forEach(chk => {
+                chk.addEventListener("change", () => {
+
+                    document.querySelectorAll(".schedule-row select").forEach(select => {
+                        const selectedValue = select.value;
+
+                        const checkedBranches = Array.from(
+                            document.querySelectorAll("#branchAssignment input[type=checkbox]:checked")
+                        ).map(cb => ({
+                            branch_id: cb.value,
+                            name: cb.nextElementSibling.textContent
+                        }));
+
+                        select.innerHTML = `
+                            <option value="" disabled>Select Branch</option>
+                            ${checkedBranches.map(b => `
+                                <option value="${b.branch_id}">${b.name}</option>
+                            `).join("")}
+                        `;
+
+                        if (checkedBranches.some(b => b.branch_id == selectedValue)) {
+                            select.value = selectedValue;
+                        }
+                    });
+                });
             });
         });
 
@@ -439,7 +555,75 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-        document.body.addEventListener("submit", function (e) {
+    function toggleWholeDay(button) {
+        const row = button.closest(".schedule-row");
+        const rowsContainer = row.parentElement;
+        const start = row.querySelector(".start-time");
+        const end = row.querySelector(".end-time");
+
+        const day = row.closest(".day-schedule-wrapper")
+                    .querySelector("h4").textContent;
+
+        if (button.textContent === "Whole Day") {
+            rowsContainer.querySelectorAll(".schedule-row").forEach(r => {
+                if (r !== row) r.remove();
+            });
+            start.disabled = true;
+            end.disabled = true;
+            start.value = "";
+            end.value = "";
+
+            start.insertAdjacentHTML("afterend",
+                `<input type="hidden" name="${start.name}" value="">`);
+            end.insertAdjacentHTML("afterend",
+                `<input type="hidden" name="${end.name}" value="">`);
+
+            button.textContent = "Undo";
+
+        } else {
+            start.disabled = false;
+            end.disabled = false;
+
+            row.querySelectorAll("input[type=hidden]").forEach(h => h.remove());
+
+            button.textContent = "Whole Day";
+        }
+
+        updateAddScheduleButton(day);
+        updateWholeDayVisibility(day);
+    }
+
+    function updateAddScheduleButton(day) {
+        const rowsContainer = document.getElementById(`rows_${day}`);
+        const hasWholeDay = rowsContainer.querySelector(".start-time:disabled");
+
+        const addBtn = document.querySelector(`button.add-schedule-btn[data-day="${day}"]`);
+
+        if (hasWholeDay) {
+            addBtn.style.display = "none";
+        } else {
+            addBtn.style.display = "inline-block";
+        }
+    }
+
+    function updateWholeDayVisibility(day) {
+        const rowsContainer = document.getElementById(`rows_${day}`);
+        const rows = rowsContainer.querySelectorAll(".schedule-row");
+
+        rows.forEach(row => {
+            const wholeBtn = row.querySelector(".whole-day-btn");
+            const start = row.querySelector(".start-time");
+            const end = row.querySelector(".end-time");
+
+            if (rows.length > 1) {
+                wholeBtn.style.display = "none";
+            } else {
+                wholeBtn.style.display = "inline-block";
+            }
+        });
+    }
+
+    document.body.addEventListener("submit", function (e) {
         const form = e.target;
         const confirmCheck = form.querySelector("#confirmationCheck");
         const confirmError = form.querySelector("#confirmError");
@@ -454,10 +638,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-function closeEmployeeModal() {
-    document.getElementById("manageModal").style.display = "none";
-}
-
 function clearImage(inputId, hiddenId) {
     const input = document.getElementById(inputId);
     const hidden = document.getElementById(hiddenId);
@@ -470,4 +650,8 @@ function clearImage(inputId, hiddenId) {
 
     const btn = input.closest(".form-group").querySelector("button");
     if (btn) btn.remove();
+}
+
+function closeEmployeeModal() {
+    document.getElementById("manageModal").style.display = "none";
 }

@@ -43,7 +43,7 @@ require_once BASE_PATH . '/Admin/includes/navbar.php';
             <div class="appointment">Today: <span id="todayCount">0</span></div>
             <div class="appointment">This Week: <span id="weekCount">0</span></div>
             <div class="appointment">This Month: <span id="monthCount">0</span></div>
-            <a href="<?= BASE_URL ?>/Admin/pages/calendar.php" class="card-link">View Schedule</a>
+            <a href="<?= BASE_URL ?>/Admin/pages/calendar.php" class="card-link">View Calendar</a>
             <a href="#" class="card-link" onclick="openBookingModal()"><span class="material-symbols-outlined">calendar_add_on</span> Book Appointment</a>
         </div>  
         

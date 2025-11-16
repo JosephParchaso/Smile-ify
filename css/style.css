@@ -249,6 +249,85 @@ form {
     color: #007bff;
 }
 
+.day-schedule-wrapper {
+    margin-bottom: 25px;
+    padding: 12px 15px;
+    border-radius: 4px;
+    background: #f9f9f9;
+    border: 1px solid #e3e3e3;
+}
+
+.day-schedule-wrapper h4 {
+    margin: 0 0 10px;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.schedule-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.schedule-row {
+    display: grid;
+    grid-template-columns: 180px 140px 140px 110px 40px; 
+    gap: 10px;
+    align-items: center;
+}
+
+.schedule-row select,
+.schedule-row input[type=time] {
+    padding: 6px 8px;
+    font-size: 14px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.whole-day-btn {
+    padding: 6px 10px;
+    background: #3498db;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.whole-day-btn:hover {
+    background: #2980b9;
+}
+
+.remove-row-btn {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    display: inline-block;
+}
+
+.remove-row-btn:hover {
+    background: #c0392b;
+}
+
+.add-schedule-btn {
+    margin-top: 10px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: 1px solid #3498db;
+    background: #3498db;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.add-schedule-btn:hover {
+    background: #2980b9;
+}
+
 .confirmation-label {
     display: block;
     background: #fff3cd;

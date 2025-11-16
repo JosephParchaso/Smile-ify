@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 14, 2025 at 09:40 PM
+-- Generation Time: Nov 16, 2025 at 01:28 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -950,7 +950,7 @@ CREATE TABLE `dentist` (
 --
 
 INSERT INTO `dentist` (`dentist_id`, `last_name`, `middle_name`, `first_name`, `gender`, `date_of_birth`, `date_of_birth_iv`, `date_of_birth_tag`, `email`, `contact_number`, `contact_number_iv`, `contact_number_tag`, `license_number`, `license_number_iv`, `license_number_tag`, `date_started`, `status`, `signature_image`, `profile_image`, `date_created`, `date_updated`) VALUES
-(1, 'Ulanday', 'Mansanitass', 'Precious', 'Female', 'rCjjgH2sIlmlgg==', 'xWndtZPYp+qGVoaU', 'mGhemL92aaPF/bJDhqtJlQ==', 'precious@gmail.com', 'QgVLtgQOPKEh9g==', 'sbz3rIIELTI3hxVQ', 'qPAwJpS0CqoIV6SIUH+yaA==', '3leRB/Lci+Vd7Q==', 'wx32rLbCVjUwKgF8', '9HtFS6v3lhkv+2DPWBWkFA==', '2025-10-31', 'Active', NULL, 'ulanday_precious_profile.jpg', '2025-07-11 19:40:26', '2025-11-08 04:00:50'),
+(1, 'Ulanday', 'Mansanitass', 'Precious', 'Female', 'rCjjgH2sIlmlgg==', 'xWndtZPYp+qGVoaU', 'mGhemL92aaPF/bJDhqtJlQ==', 'precious@gmail.com', 'QgVLtgQOPKEh9g==', 'sbz3rIIELTI3hxVQ', 'qPAwJpS0CqoIV6SIUH+yaA==', '3leRB/Lci+Vd7Q==', 'wx32rLbCVjUwKgF8', '9HtFS6v3lhkv+2DPWBWkFA==', '2025-10-31', 'Active', NULL, 'ulanday_precious_profile.jpg', '2025-07-11 19:40:26', '2025-11-16 07:41:50'),
 (2, 'Chan', 'Marie', 'Kyla', 'Female', 'imiaQDvENbQxQA==', '51fdSUqhokvR/UPE', 'tYWooNhWoDmSrO6WdYLbXQ==', 'kyla.marie@gmail.com', 'tFRhTnpy7XlgyA==', 'rs+RAK1FFtk06hsI', 'FsJL/ToD+F+ctEo7J6gCBw==', '43Sa6tKNUDY=', 'lSm43IAFOZ5CUXh1', '2Qv82H2goQdcD+JzSYPA5Q==', '2023-02-10', 'Active', NULL, 'chan_kyla_profile.jpg', '2025-07-11 19:40:26', '2025-11-08 04:01:38'),
 (3, 'Summers', '', 'Daze', 'Female', 'mTuIs0W3s/d6pQ==', 'pzBiCc4qYBps3Gwd', '4mRnKnLLH+2yyyaNoUFonA==', 'daze@gmail.com', '5BluSS/eB9gNqQ==', 'Xn0lqCx9mp/RFjm/', 'F4vOIBC4xJueu4C5Kt80IQ==', 'nOwE8o8HcAg=', 'sqjFM2kDrYL4tlZa', 'm5hbIRh8QlwWGSqHWQCLqw==', '2023-03-05', 'Active', 'summers_daze_signature.png', 'summers_daze_profile.png', '2025-07-11 19:40:26', '2025-11-08 04:01:43'),
 (4, 'San Jose', '', 'Solene', 'Female', '6ygFYrJHh5iIpA==', 'r1Ns0MNQCM96cWym', 'IK8rxtl6Uly8bQCJ84JEuQ==', 'solene@gmail.com', 'MmXTTvngyzNh6A==', 'ECwbbxYf71EvtWuW', 'VGEqw02ZpjaStn1o8/ViGQ==', 'OTn41AnQ1Po=', '0pUV/6P8BIjJyefy', 'n3FY6xlqjMnabb/NSxwWWA==', '2023-04-01', 'Active', NULL, 'san_jose_solene_profile.jpeg', '2025-07-11 19:40:26', '2025-11-08 04:01:46'),
@@ -960,7 +960,12 @@ INSERT INTO `dentist` (`dentist_id`, `last_name`, `middle_name`, `first_name`, `
 (8, 'asd', 'sad', 'asdas', 'Female', '/mvXo/Bm5alKZQ==', 'qM4nz/+ZFabeh3+5', '/utFbc8DvUP2EFhcmegQBw==', 'sample@gmail.com', 'I0c5+7N2HPUWIQ==', 'lXbt9cG5ChQxUV7N', 'TWewxYq42Q+a1arm15xRJQ==', 'sCpILsTZLw==', 'L0F+DfN9Ybmn/KFl', 'tIArG4T2Fac7H4xWe9vcCw==', '2025-09-25', 'Inactive', NULL, NULL, '2025-09-07 22:35:18', '2025-11-08 04:02:01'),
 (10, 'parch', '', 'jj', 'Male', 'sOOKbeJ9sJagPg==', 'dUz/xK3KbUbzeEe2', 'y6+7LRUGBCBAN/9zldUQeg==', 'josephparchaso@gmail.com', 'UW6WwPcJhwY1yA==', 'aEE5IEIi9CC8hfbS', 'fU7l6gkZF3V6G3gnTOQFVQ==', 'CmpG4e8=', 'ES3bAG/rXvF8xiSI', '+I+ZeiLbrcyJhbnMSAg8xQ==', '2025-12-01', 'Inactive', 'parch_jj_signature.png', NULL, '2025-10-31 21:57:54', '2025-11-08 04:02:05'),
 (11, 'Parchaso', 'espana', 'Jhon', 'Male', '9+7WezbQ4zbD7Q==', 'wo2CMkR4k0+Xs3q5', 'rcm3bCdqNwX9DypyPizt9w==', 'josephparchaso@gmail.com', 'idqLYTbzSUrI+Q==', 'qwoDR4pg4xOJw/2M', 'Y0o+01cRhza3tXx64JYRyg==', 'wkIEPDFKP2JD', 'HMDBOGTbx2LXE6Co', 'zQG5jvmu7rR+5lwiiiLLLg==', '2025-11-10', 'Active', NULL, '11_parchaso_profile.jpg', '2025-11-07 19:33:14', '2025-11-15 03:29:58'),
-(12, 'lablab', '', 'lablab', 'Male', 'Vx31WP6kQHqDSA==', 'GAoWwftx0XZpq9z5', 'u/Qu+dyTwnqwE98o3WAxZQ==', 'josephparchaso@gmail.com', 'cYyj5hpdftV0ZA==', 'pK/X9mA2ffHkBNl3', 'X8wxEcld6ZZuyj7YEu5Usw==', 'NDjpiwjcVok=', 'i4eR7dnuxU8GUNQ4', 'bnkcinX6Frd6G7+w6K131Q==', '2025-11-17', 'Active', '12_lablab_signature.png', '12_lablab_profile.jpg', '2025-11-14 19:31:50', NULL);
+(12, 'lablab', '', 'lablab', 'Male', 'Vx31WP6kQHqDSA==', 'GAoWwftx0XZpq9z5', 'u/Qu+dyTwnqwE98o3WAxZQ==', 'josephparchaso@gmail.com', 'cYyj5hpdftV0ZA==', 'pK/X9mA2ffHkBNl3', 'X8wxEcld6ZZuyj7YEu5Usw==', 'NDjpiwjcVok=', 'i4eR7dnuxU8GUNQ4', 'bnkcinX6Frd6G7+w6K131Q==', '2025-11-17', 'Active', '12_lablab_signature.png', '12_lablab_profile.jpg', '2025-11-14 19:31:50', '2025-11-16 06:47:04'),
+(13, 'schedule', '', 'sschedss', 'Female', 'AVSNUSAuLCSQgQ==', '/3hWJPOMSV9sAs5u', 'xUDTAlmAxkYFWOB2YEZFEQ==', 'josephparchaso@gmail.com', 'n8f7O0RLXrxrRA==', 'LT5vujRGk9raXXEZ', '5mVw0jO3Y+7yFjGXD0vmoA==', '38vpbU+K3RA=', 'WBxyUIBQ4caVbNSh', '9FEBM4WmO6RefL6rE/hO2Q==', '2025-11-17', 'Inactive', NULL, NULL, '2025-11-15 21:19:03', '2025-11-16 06:46:56'),
+(14, 'sched', '', 'date and time', 'Female', 'b7WMVW1zaNTK6A==', 'iSCB2/RFRG3xAd58', 'HdKiXJga+ZHkEktJKex0qg==', 'joseph@gmail.com', 'vP+470+tFdAdsg==', 'LBT9yU6YZGUDkA+T', '2qyn8DXLT5u2c4nifyItqg==', 'rEZ85PzaXg==', 'tKQs4uvysAdJ0FqK', 'zr2rhytdGtbRETnX5U3/QQ==', '2025-11-25', 'Active', NULL, NULL, '2025-11-15 22:41:44', '2025-11-16 07:05:18'),
+(15, 'date', '', 'time', 'Male', 'wzwLprP4C9bkyQ==', 'AgYOytFr5T87lWfm', 'SbvG0GkqbomXL4vOoH+JZQ==', 'joseph@gmail.com', 'JWH1LkMaKlJcbQ==', 'bv55paR5o9xl95x1', '69WAvWmT6KcZpsd4EmrY/A==', 'B8i4RKY=', '40TnYaAGenSsNN3O', 'gPZ0MVdfCwzWqGpZvAvWcg==', '2025-11-24', 'Inactive', NULL, NULL, '2025-11-15 23:07:50', '2025-11-16 07:38:01'),
+(16, 'whol', '', 'day', 'Female', 'oup0WfUx8+6jww==', 'kZdcD10jvJ2W4TbW', '3bZQdfc/JEpKF7Kzd7DTpA==', 'jose@gmail.com', '7ElOrm9HYSDhQw==', 'ZlsQO3dojxJBWpVg', 'p3FrAUHNJ//HTztY8gyoEw==', 'q7+y9aT03g==', 'dr80sJFSizFRFpL0', 'upYW7xGhaIREwxwnXzhvMQ==', '2025-11-25', 'Inactive', NULL, NULL, '2025-11-15 23:38:57', NULL),
+(17, 'whole', '', 'day', 'Female', 'wYvGrs29ojZnEg==', 'yccXQdNhkt7yySdz', 'f9srMBHZCarF/HxYPy5Fgw==', 'joseph@gmail.com', 'sj2BdUT2q2mTuA==', 'mgaPjnvS9gHDRGca', 'j14yi8dh13gQaa111JNdrw==', 'quAusxEDXQ==', 'LDaOEizpnLXk7KWL', 'IREr+fMGjKsDg6QmNojeeQ==', '2025-11-24', 'Active', NULL, NULL, '2025-11-15 23:43:55', '2025-11-16 07:52:10');
 
 -- --------------------------------------------------------
 
@@ -984,18 +989,53 @@ INSERT INTO `dentist_branch` (`dentist_branch_id`, `dentist_id`, `branch_id`) VA
 (94, 7, 6),
 (95, 5, 3),
 (96, 4, 3),
-(100, 1, 2),
 (102, 3, 1),
 (103, 3, 2),
 (104, 3, 3),
 (112, 2, 1),
 (114, 10, 7),
 (115, 11, 6),
-(116, 12, 1),
-(117, 12, 7),
-(118, 12, 3),
-(119, 12, 2),
-(120, 12, 6);
+(124, 1, 1),
+(125, 1, 2),
+(131, 13, 1),
+(132, 13, 3),
+(133, 13, 7),
+(138, 12, 7),
+(144, 14, 1),
+(145, 14, 2),
+(146, 15, 1),
+(147, 15, 7),
+(148, 15, 3),
+(149, 15, 2),
+(150, 15, 6),
+(151, 16, 1),
+(152, 16, 7),
+(153, 16, 3),
+(154, 16, 2),
+(155, 16, 6),
+(156, 17, 6);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `dentist_schedule`
+--
+
+CREATE TABLE `dentist_schedule` (
+  `schedule_id` int(11) NOT NULL,
+  `dentist_id` int(11) NOT NULL,
+  `day` enum('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday') NOT NULL,
+  `branch_id` int(11) DEFAULT NULL,
+  `start_time` time NOT NULL,
+  `end_time` time NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `dentist_schedule`
+--
+
+INSERT INTO `dentist_schedule` (`schedule_id`, `dentist_id`, `day`, `branch_id`, `start_time`, `end_time`) VALUES
+(94, 17, 'Monday', 6, '09:00:00', '16:30:00');
 
 -- --------------------------------------------------------
 
@@ -1103,19 +1143,83 @@ INSERT INTO `dentist_service` (`dentist_services_id`, `dentist_id`, `service_id`
 (219, 10, 9),
 (220, 10, 10),
 (221, 10, 13),
-(222, 12, 8),
-(223, 12, 1),
-(224, 12, 13),
-(225, 12, 5),
-(226, 12, 3),
-(227, 12, 10),
-(228, 12, 16),
-(229, 12, 6),
-(230, 12, 9),
-(231, 12, 4),
-(232, 12, 14),
-(233, 12, 7),
-(234, 12, 2);
+(235, 13, 8),
+(236, 13, 1),
+(237, 13, 13),
+(238, 13, 5),
+(239, 13, 3),
+(240, 13, 10),
+(241, 13, 16),
+(242, 13, 6),
+(243, 13, 9),
+(244, 13, 4),
+(245, 13, 14),
+(246, 13, 7),
+(247, 13, 2),
+(248, 12, 2),
+(249, 12, 3),
+(250, 12, 4),
+(251, 12, 5),
+(252, 12, 6),
+(253, 12, 7),
+(254, 12, 8),
+(255, 12, 9),
+(256, 12, 10),
+(257, 12, 13),
+(258, 12, 14),
+(259, 12, 16),
+(260, 14, 8),
+(261, 14, 1),
+(262, 14, 13),
+(263, 14, 5),
+(264, 14, 3),
+(265, 14, 10),
+(266, 14, 16),
+(267, 14, 6),
+(268, 14, 9),
+(269, 14, 4),
+(270, 14, 14),
+(271, 14, 7),
+(272, 14, 2),
+(273, 15, 8),
+(274, 15, 1),
+(275, 15, 13),
+(276, 15, 5),
+(277, 15, 3),
+(278, 15, 10),
+(279, 15, 16),
+(280, 15, 6),
+(281, 15, 9),
+(282, 15, 4),
+(283, 15, 14),
+(284, 15, 7),
+(285, 15, 2),
+(286, 16, 8),
+(287, 16, 1),
+(288, 16, 13),
+(289, 16, 5),
+(290, 16, 3),
+(291, 16, 10),
+(292, 16, 16),
+(293, 16, 6),
+(294, 16, 9),
+(295, 16, 4),
+(296, 16, 14),
+(297, 16, 7),
+(298, 16, 2),
+(299, 17, 8),
+(300, 17, 1),
+(301, 17, 13),
+(302, 17, 5),
+(303, 17, 3),
+(304, 17, 10),
+(305, 17, 16),
+(306, 17, 6),
+(307, 17, 9),
+(308, 17, 4),
+(309, 17, 14),
+(310, 17, 7),
+(311, 17, 2);
 
 -- --------------------------------------------------------
 
@@ -1849,6 +1953,14 @@ ALTER TABLE `dentist_branch`
   ADD KEY `branch_id` (`branch_id`);
 
 --
+-- Indexes for table `dentist_schedule`
+--
+ALTER TABLE `dentist_schedule`
+  ADD PRIMARY KEY (`schedule_id`),
+  ADD KEY `dentist_id` (`dentist_id`),
+  ADD KEY `branch_id` (`branch_id`);
+
+--
 -- Indexes for table `dentist_service`
 --
 ALTER TABLE `dentist_service`
@@ -1990,19 +2102,25 @@ ALTER TABLE `dental_vital`
 -- AUTO_INCREMENT for table `dentist`
 --
 ALTER TABLE `dentist`
-  MODIFY `dentist_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `dentist_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `dentist_branch`
 --
 ALTER TABLE `dentist_branch`
-  MODIFY `dentist_branch_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=121;
+  MODIFY `dentist_branch_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=157;
+
+--
+-- AUTO_INCREMENT for table `dentist_schedule`
+--
+ALTER TABLE `dentist_schedule`
+  MODIFY `schedule_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=95;
 
 --
 -- AUTO_INCREMENT for table `dentist_service`
 --
 ALTER TABLE `dentist_service`
-  MODIFY `dentist_services_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=235;
+  MODIFY `dentist_services_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=312;
 
 --
 -- AUTO_INCREMENT for table `notifications`
@@ -2129,6 +2247,13 @@ ALTER TABLE `dental_vital`
 ALTER TABLE `dentist_branch`
   ADD CONSTRAINT `dentist_branch_ibfk_1` FOREIGN KEY (`dentist_id`) REFERENCES `dentist` (`dentist_id`),
   ADD CONSTRAINT `dentist_branch_ibfk_2` FOREIGN KEY (`branch_id`) REFERENCES `branch` (`branch_id`);
+
+--
+-- Constraints for table `dentist_schedule`
+--
+ALTER TABLE `dentist_schedule`
+  ADD CONSTRAINT `dentist_schedule_ibfk_1` FOREIGN KEY (`dentist_id`) REFERENCES `dentist` (`dentist_id`),
+  ADD CONSTRAINT `dentist_schedule_ibfk_2` FOREIGN KEY (`branch_id`) REFERENCES `branch` (`branch_id`);
 
 --
 -- Constraints for table `dentist_service`

@@ -50,55 +50,106 @@ $stmt->bind_param("i", $dentistId);
 $stmt->execute();
 $result = $stmt->get_result();
 
-if ($row = $result->fetch_assoc()) {
-    if (!empty($row['date_of_birth']) && !empty($row['date_of_birth_iv']) && !empty($row['date_of_birth_tag'])) {
-        $row['date_of_birth'] = decryptField($row['date_of_birth'], $row['date_of_birth_iv'], $row['date_of_birth_tag'], $ENCRYPTION_KEY);
-    }
-
-    if (!empty($row['contact_number']) && !empty($row['contact_number_iv']) && !empty($row['contact_number_tag'])) {
-        $row['contact_number'] = decryptField($row['contact_number'], $row['contact_number_iv'], $row['contact_number_tag'], $ENCRYPTION_KEY);
-    }
-
-    if (!empty($row['license_number']) && !empty($row['license_number_iv']) && !empty($row['license_number_tag'])) {
-        $row['license_number'] = decryptField($row['license_number'], $row['license_number_iv'], $row['license_number_tag'], $ENCRYPTION_KEY);
-    }
-
-    unset(
-        $row['date_of_birth_iv'], $row['date_of_birth_tag'],
-        $row['contact_number_iv'], $row['contact_number_tag'],
-        $row['license_number_iv'], $row['license_number_tag']
-    );
-
-    $branchSql = "SELECT branch_id FROM dentist_branch WHERE dentist_id = ?";
-    $branchStmt = $conn->prepare($branchSql);
-    $branchStmt->bind_param("i", $dentistId);
-    $branchStmt->execute();
-    $branchResult = $branchStmt->get_result();
-
-    $branches = [];
-    while ($branchRow = $branchResult->fetch_assoc()) {
-        $branches[] = (int)$branchRow['branch_id'];
-    }
-    $row['branches'] = $branches;
-    $branchStmt->close();
-
-    $serviceSql = "SELECT service_id FROM dentist_service WHERE dentist_id = ?";
-    $serviceStmt = $conn->prepare($serviceSql);
-    $serviceStmt->bind_param("i", $dentistId);
-    $serviceStmt->execute();
-    $serviceResult = $serviceStmt->get_result();
-
-    $services = [];
-    while ($serviceRow = $serviceResult->fetch_assoc()) {
-        $services[] = (int)$serviceRow['service_id'];
-    }
-    $row['services'] = $services;
-    $serviceStmt->close();
-
-    echo json_encode($row);
-} else {
+if (!$row = $result->fetch_assoc()) {
     echo json_encode(["error" => "Dentist not found"]);
+    exit();
 }
 
+if ($row['date_of_birth']) {
+    $row['date_of_birth'] = decryptField(
+        $row['date_of_birth'],
+        $row['date_of_birth_iv'],
+        $row['date_of_birth_tag'],
+        $ENCRYPTION_KEY
+    );
+}
+
+if ($row['contact_number']) {
+    $row['contact_number'] = decryptField(
+        $row['contact_number'],
+        $row['contact_number_iv'],
+        $row['contact_number_tag'],
+        $ENCRYPTION_KEY
+    );
+}
+
+if ($row['license_number']) {
+    $row['license_number'] = decryptField(
+        $row['license_number'],
+        $row['license_number_iv'],
+        $row['license_number_tag'],
+        $ENCRYPTION_KEY
+    );
+}
+
+unset(
+    $row['date_of_birth_iv'], $row['date_of_birth_tag'],
+    $row['contact_number_iv'], $row['contact_number_tag'],
+    $row['license_number_iv'], $row['license_number_tag']
+);
+
+$branchSql = "SELECT branch_id FROM dentist_branch WHERE dentist_id = ?";
+$stmt2 = $conn->prepare($branchSql);
+$stmt2->bind_param("i", $dentistId);
+$stmt2->execute();
+$resBranches = $stmt2->get_result();
+
+$branches = [];
+while ($b = $resBranches->fetch_assoc()) {
+    $branches[] = (int)$b['branch_id'];
+}
+$row['branches'] = $branches;
+$stmt2->close();
+
+$serviceSql = "SELECT service_id FROM dentist_service WHERE dentist_id = ?";
+$stmt3 = $conn->prepare($serviceSql);
+$stmt3->bind_param("i", $dentistId);
+$stmt3->execute();
+$resServices = $stmt3->get_result();
+
+$services = [];
+while ($s = $resServices->fetch_assoc()) {
+    $services[] = (int)$s['service_id'];
+}
+$row['services'] = $services;
+$stmt3->close();
+
+$schedSql = "
+    SELECT 
+        day,
+        branch_id,
+        start_time,
+        end_time
+    FROM dentist_schedule
+    WHERE dentist_id = ?
+    ORDER BY FIELD(day,'Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday')
+";
+$stmt4 = $conn->prepare($schedSql);
+$stmt4->bind_param("i", $dentistId);
+$stmt4->execute();
+$resSched = $stmt4->get_result();
+
+$schedule = [];
+
+while ($sc = $resSched->fetch_assoc()) {
+    $day = $sc['day'];
+
+    if (!isset($schedule[$day])) {
+        $schedule[$day] = [];
+    }
+
+    $schedule[$day][] = [
+        "branch"     => (int)$sc['branch_id'],
+        "start"      => $sc['start_time'],
+        "end"        => $sc['end_time']
+    ];
+}
+
+$row['schedule'] = $schedule;
+
+$stmt4->close();
+
+
+echo json_encode($row);
 $conn->close();
 ?>

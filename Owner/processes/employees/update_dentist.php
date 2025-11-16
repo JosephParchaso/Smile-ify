@@ -15,6 +15,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'owner') {
 }
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+
     $dentistId      = intval($_POST['dentist_id']);
     $lastName       = trim($_POST['lastName']);
     $firstName      = trim($_POST['firstName']);
@@ -26,8 +27,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $licenseNumber  = trim($_POST['licenseNumber']);
     $dateStarted    = trim($_POST['dateStarted']);
     $status         = $_POST['status'];
+
     $branches       = isset($_POST['branches']) ? array_map('intval', $_POST['branches']) : [];
     $services       = isset($_POST['services']) ? array_map('intval', $_POST['services']) : [];
+    $schedule       = isset($_POST['schedule']) ? $_POST['schedule'] : [];  // NEW FIELD
 
     if (!empty($email) && !isValidEmailDomain($email)) {
         $_SESSION['updateError'] = "Email domain is not valid or unreachable.";
@@ -60,12 +63,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $changed = false;
     $signatureImage = $current['signature_image'];
-    $profileImage = $current['profile_image'];
+    $profileImage   = $current['profile_image'];
 
     $safeLast  = strtolower(preg_replace("/[^a-zA-Z0-9]+/", "_", $lastName));
-    $safeFirst = strtolower(preg_replace("/[^a-zA-Z0-9]+/", "_", $firstName));
 
     if (!empty($_POST['profileCleared']) && $_POST['profileCleared'] === "1") {
+
         if (!empty($current['profile_image'])) {
             $oldPath = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/dentists/profile/' . $current['profile_image'];
             if (file_exists($oldPath)) unlink($oldPath);
@@ -87,12 +90,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $allowedExt = ['jpg', 'jpeg', 'png', 'webp'];
 
         if (in_array($fileExt, $allowedExt)) {
-
             $fileName = "{$dentistId}_{$safeLast}_profile." . $fileExt;
-
-            $targetPath = $uploadDir . $fileName;
-
-            if (move_uploaded_file($_FILES['profileImage']['tmp_name'], $targetPath)) {
+            if (move_uploaded_file($_FILES['profileImage']['tmp_name'], $uploadDir . $fileName)) {
                 $profileImage = $fileName;
                 $changed = true;
             }
@@ -100,6 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     if (!empty($_POST['signatureCleared']) && $_POST['signatureCleared'] === "1") {
+
         if (!empty($current['signature_image'])) {
             $oldPath = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/dentists/signature/' . $current['signature_image'];
             if (file_exists($oldPath)) unlink($oldPath);
@@ -118,12 +118,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
         $fileExt = strtolower(pathinfo($_FILES['signatureImage']['name'], PATHINFO_EXTENSION));
-
         $fileName = "{$dentistId}_{$safeLast}_signature." . $fileExt;
 
-        $targetPath = $uploadDir . $fileName;
-
-        if (move_uploaded_file($_FILES['signatureImage']['tmp_name'], $targetPath)) {
+        if (move_uploaded_file($_FILES['signatureImage']['tmp_name'], $uploadDir . $fileName)) {
             $signatureImage = $fileName;
             $changed = true;
         }
@@ -145,19 +142,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     );
 
     if ($hasChanges) {
-        [$dob_enc, $dob_iv, $dob_tag] = encryptField($dateofBirth, $ENCRYPTION_KEY);
+
+        [$dob_enc, $dob_iv, $dob_tag]         = encryptField($dateofBirth, $ENCRYPTION_KEY);
         [$contact_enc, $contact_iv, $contact_tag] = encryptField($contactNumber, $ENCRYPTION_KEY);
         [$license_enc, $license_iv, $license_tag] = encryptField($licenseNumber, $ENCRYPTION_KEY);
 
         $sql = "UPDATE dentist
-                SET last_name=?, first_name=?, middle_name=?, gender=?, 
+                SET last_name=?, first_name=?, middle_name=?, gender=?,
                     date_of_birth=?, date_of_birth_iv=?, date_of_birth_tag=?,
-                    email=?, 
+                    email=?,
                     contact_number=?, contact_number_iv=?, contact_number_tag=?,
                     license_number=?, license_number_iv=?, license_number_tag=?,
-                    date_started=?, status=?, signature_image=?, profile_image=?, 
-                    date_updated = NOW()
+                    date_started=?, status=?, signature_image=?, profile_image=?,
+                    date_updated=NOW()
                 WHERE dentist_id=?";
+
         $stmt = $conn->prepare($sql);
         $stmt->bind_param(
             "ssssssssssssssssssi",
@@ -171,6 +170,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         );
         $stmt->execute();
         $stmt->close();
+
         $changed = true;
     }
 
@@ -179,61 +179,135 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $res->bind_param("i", $dentistId);
     $res->execute();
     $result = $res->get_result();
-    while ($row = $result->fetch_assoc()) {
-        $currentBranches[] = (int)$row['branch_id'];
-    }
+    while ($row = $result->fetch_assoc()) $currentBranches[] = (int)$row['branch_id'];
     $res->close();
 
     sort($currentBranches);
     sort($branches);
 
     if ($currentBranches !== $branches) {
-        $del = $conn->prepare("DELETE FROM dentist_branch WHERE dentist_id = ?");
+
+        $del = $conn->prepare("DELETE FROM dentist_branch WHERE dentist_id=?");
         $del->bind_param("i", $dentistId);
         $del->execute();
         $del->close();
 
         if (!empty($branches)) {
-            $insertSql = "INSERT INTO dentist_branch (dentist_id, branch_id) VALUES (?, ?)";
-            $insertStmt = $conn->prepare($insertSql);
-            foreach ($branches as $branchId) {
-                $insertStmt->bind_param("ii", $dentistId, $branchId);
-                $insertStmt->execute();
+            $stmt = $conn->prepare("INSERT INTO dentist_branch (dentist_id, branch_id) VALUES (?,?)");
+            foreach ($branches as $b) {
+                $stmt->bind_param("ii", $dentistId, $b);
+                $stmt->execute();
             }
-            $insertStmt->close();
+            $stmt->close();
         }
+
         $changed = true;
     }
 
     $currentServices = [];
-    $res = $conn->prepare("SELECT service_id FROM dentist_service WHERE dentist_id = ?");
+    $res = $conn->prepare("SELECT service_id FROM dentist_service WHERE dentist_id=?");
     $res->bind_param("i", $dentistId);
     $res->execute();
     $result = $res->get_result();
-    while ($row = $result->fetch_assoc()) {
-        $currentServices[] = (int)$row['service_id'];
-    }
+    while ($row = $result->fetch_assoc()) $currentServices[] = (int)$row['service_id'];
     $res->close();
 
     sort($currentServices);
     sort($services);
 
     if ($currentServices !== $services) {
-        $del = $conn->prepare("DELETE FROM dentist_service WHERE dentist_id = ?");
+
+        $del = $conn->prepare("DELETE FROM dentist_service WHERE dentist_id=?");
         $del->bind_param("i", $dentistId);
         $del->execute();
         $del->close();
 
         if (!empty($services)) {
-            $insertSql = "INSERT INTO dentist_service (dentist_id, service_id) VALUES (?, ?)";
-            $insertStmt = $conn->prepare($insertSql);
-            foreach ($services as $serviceId) {
-                $insertStmt->bind_param("ii", $dentistId, $serviceId);
-                $insertStmt->execute();
+            $stmt = $conn->prepare("INSERT INTO dentist_service (dentist_id, service_id) VALUES (?,?)");
+            foreach ($services as $s) {
+                $stmt->bind_param("ii", $dentistId, $s);
+                $stmt->execute();
             }
-            $insertStmt->close();
+            $stmt->close();
         }
+
         $changed = true;
+    }
+
+    $currentSched = [];
+    $res = $conn->prepare("SELECT day, branch_id FROM dentist_schedule WHERE dentist_id=?");
+    $res->bind_param("i", $dentistId);
+    $res->execute();
+    $result = $res->get_result();
+    while ($row = $result->fetch_assoc()) {
+        $currentSched[] = $row;
+    }
+    $res->close();
+
+    $newSched = [];
+    foreach ($schedule as $day => $branchId) {
+        if (!empty($branchId)) {
+            $newSched[] = [
+                "day"       => $day,
+                "branch_id" => (int)$branchId
+            ];
+        }
+    }
+
+    if (json_encode($currentSched) !== json_encode($newSched)) {
+        $del = $conn->prepare("DELETE FROM dentist_schedule WHERE dentist_id=?");
+        $del->bind_param("i", $dentistId);
+        $del->execute();
+        $del->close();
+
+        if (!empty($schedule)) {
+
+            $stmt = $conn->prepare("
+                INSERT INTO dentist_schedule (dentist_id, day, branch_id, start_time, end_time)
+                VALUES (?, ?, ?, ?, ?)
+            ");
+
+            foreach ($schedule as $day => $entries) {
+
+                $branchesArr = $entries["branch"] ?? [];
+                $startArr    = $entries["start"] ?? [];
+                $endArr      = $entries["end"] ?? [];
+
+                for ($i = 0; $i < count($branchesArr); $i++) {
+
+                    $branch_id  = !empty($branchesArr[$i]) ? (int)$branchesArr[$i] : null;
+
+                    // WHOLE DAY FIX
+                    if ($startArr[$i] === "" && $endArr[$i] === "") {
+                        $start_time = "09:00";
+                        $end_time   = "16:30";
+                    } else {
+                        $start_time = (!empty($startArr[$i]) ? $startArr[$i] : null);
+                        $end_time   = (!empty($endArr[$i]) ? $endArr[$i] : null);
+                    }
+
+                    $stmt->bind_param(
+                        "isiss",
+                        $dentistId,
+                        $day,
+                        $branch_id,
+                        $start_time,
+                        $end_time
+                    );
+
+                    $stmt->execute();
+                }
+            }
+
+            $stmt->close();
+        }
+
+        $changed = true;
+
+        $upd = $conn->prepare("UPDATE dentist SET date_updated = NOW() WHERE dentist_id = ?");
+        $upd->bind_param("i", $dentistId);
+        $upd->execute();
+        $upd->close();
     }
 
     if ($changed) {
@@ -243,8 +317,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $conn->close();
     header("Location: " . BASE_URL . "/Owner/pages/employees.php?tab=dentist");
     exit();
-} else {
-    header("Location: " . BASE_URL . "/Owner/pages/employees.php?tab=dentist");
-    exit();
 }
+
+header("Location: " . BASE_URL . "/Owner/pages/employees.php?tab=dentist");
+exit();
 ?>
