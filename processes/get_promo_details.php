@@ -1,5 +1,5 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
 
 header('Content-Type: application/json; charset=utf-8');

@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -36,12 +36,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $oldData = $checkStmt->get_result()->fetch_assoc();
         $checkStmt->close();
 
-        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/promos/';
+        $uploadDir = BASE_PATH . '/images/promos/';
         $image_path = $oldData['image_path'] ?? null;
         $hasChanges = false;
 
         if ($promoImageCleared && $image_path) {
-            $absolutePath = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify' . $image_path;
+            $absolutePath = BASE_PATH . $image_path;
             if (file_exists($absolutePath)) unlink($absolutePath);
             $image_path = null;
             $hasChanges = true;

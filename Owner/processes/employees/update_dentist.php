@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
 
 function isValidEmailDomain($email) {
@@ -70,7 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if (!empty($_POST['profileCleared']) && $_POST['profileCleared'] === "1") {
 
         if (!empty($current['profile_image'])) {
-            $oldPath = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/dentists/profile/' . $current['profile_image'];
+            $oldPath = BASE_PATH . '/images/dentists/profile/' . $current['profile_image'];
             if (file_exists($oldPath)) unlink($oldPath);
         }
         $profileImage = null;
@@ -78,7 +78,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     } elseif (isset($_FILES['profileImage']) && $_FILES['profileImage']['error'] === UPLOAD_ERR_OK) {
 
-        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/dentists/profile/';
+        $uploadDir = BASE_PATH . '/images/dentists/profile/';
         if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
 
         if (!empty($current['profile_image'])) {
@@ -101,7 +101,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if (!empty($_POST['signatureCleared']) && $_POST['signatureCleared'] === "1") {
 
         if (!empty($current['signature_image'])) {
-            $oldPath = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/dentists/signature/' . $current['signature_image'];
+            $oldPath = BASE_PATH . '/images/dentists/signature/' . $current['signature_image'];
             if (file_exists($oldPath)) unlink($oldPath);
         }
         $signatureImage = null;
@@ -109,7 +109,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     } elseif (isset($_FILES['signatureImage']) && $_FILES['signatureImage']['error'] === UPLOAD_ERR_OK) {
 
-        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/dentists/signature/';
+        $uploadDir = BASE_PATH . '/images/dentists/signature/';
         if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
 
         if (!empty($current['signature_image'])) {

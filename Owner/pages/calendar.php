@@ -2,7 +2,7 @@
 session_start();
 
 $currentPage = 'calendar';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/includes/config.php';
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'owner') {
     session_unset();

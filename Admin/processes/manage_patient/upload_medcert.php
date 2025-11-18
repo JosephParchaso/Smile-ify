@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -63,7 +63,7 @@ if (empty($existingReceipt) && $payment_method === 'cashless' && isset($_FILES['
         exit();
     }
 
-    $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/payments/medcert_payments/';
+    $uploadDir = BASE_PATH . '/images/payments/medcert_payments/';
     if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
 
     $fileName = $transaction_id . "_" . $last_name_clean . "." . $fileExt;

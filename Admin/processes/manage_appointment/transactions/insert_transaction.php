@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
 
 ini_set('display_errors', 1);
@@ -157,7 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit();
             }
 
-            $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/payments/cashless_payments/';
+            $uploadDir = BASE_PATH . '/images/payments/cashless_payments/';
             if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
 
             $fileName = $dental_transaction_id . "_" . $last_name_clean . "." . $fileExt;
@@ -184,7 +184,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $updateReceipt->close();
         }
 
-        $xrayDir = $_SERVER['DOCUMENT_ROOT'] . "/Smile-ify/images/transactions/xrays/";
+        $xrayDir = BASE_PATH . "/images/transactions/xrays/";
         if (!is_dir($xrayDir)) mkdir($xrayDir, 0777, true);
 
         $getServiceName = $conn->prepare("SELECT name FROM service WHERE service_id = ?");

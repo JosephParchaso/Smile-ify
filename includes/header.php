@@ -1,5 +1,5 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
 
 header("Cache-Control: no-cache, no-store, must-revalidate");
@@ -128,7 +128,7 @@ if (isset($_SESSION['user_id'])) {
     <script src="<?= BASE_URL ?>/js/logoutModal.js?v=<?= time(); ?>"></script>
 
     <!-- CHART JS  -->
-    <script src="/Smile-ify/js/reports.js?v=<?= time(); ?>"></script>
+    <script src="<?= BASE_URL ?>/js/reports.js?v=<?= time(); ?>"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>

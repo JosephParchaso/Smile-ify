@@ -65,7 +65,7 @@ function switchSubTab(branch_id, mode) {
 }
 
 function loadReports(branch_id, mode) {
-    fetch(`/Smile-ify/processes/fetch_Reports.php?branch_id=${branch_id}&mode=${mode}`)
+    fetch(`${BASE_URL}/processes/fetch_Reports.php?branch_id=${branch_id}&mode=${mode}`)
     .then(res => res.json())
     .then(data => {
         if (data.error) {

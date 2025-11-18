@@ -22,7 +22,7 @@ if (!function_exists('encryptField')) {
             return [null, null, null];
         }
 
-        $iv = random_bytes(12); // 96-bit IV for GCM
+        $iv = random_bytes(12);
         $tag = '';
         $ciphertext = openssl_encrypt(
             $plaintext,
@@ -72,33 +72,38 @@ define('SMTP_PASS', getenv('SMTP_PASS'));
 // ===== Default timezone =====
 date_default_timezone_set('Asia/Manila');
 
-// ===== Session setup =====
-if (session_status() === PHP_SESSION_NONE) {
+// ===== Session setup (browser only) =====
+if (php_sapi_name() !== 'cli' && session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
 // ===== Token setup =====
-if (!isset($_SESSION['tab_token'])) {
+if (php_sapi_name() !== 'cli' && !isset($_SESSION['tab_token'])) {
     $_SESSION['tab_token'] = bin2hex(random_bytes(16));
 }
 
-// ===== Define constants (CLI-safe) =====
+// ===== Define BASE_URL and BASE_PATH (corrected final version) =====
 if (php_sapi_name() === 'cli') {
-    // CLI mode — no $_SERVER vars
+
+    // CLI mode: BASE_URL not needed, BASE_PATH auto-detected
     define('BASE_URL', '');
-    define('BASE_PATH', __DIR__ . '/..');
+    define('BASE_PATH', realpath(__DIR__ . '/..'));
+
 } else {
-    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    $basePath = (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], '/Smile-ify') !== false)
-        ? '/Smile-ify'
-        : '';
+
+    // website is in the root (no subfolder)
+    $basePath = '';
 
     define('BASE_URL', "$protocol://$host$basePath");
-    define('BASE_PATH', $_SERVER['DOCUMENT_ROOT'] . $basePath);
+
+    // Correct physical path
+    define('BASE_PATH', rtrim($_SERVER['DOCUMENT_ROOT'], '/') . $basePath);
 }
 
-// ===== Session timeout =====
+// ===== Session timeout (browser only) =====
 if (php_sapi_name() !== 'cli') {
     $timeout_duration = 1800;
 
@@ -117,3 +122,4 @@ if (php_sapi_name() !== 'cli') {
 
     $_SESSION['LAST_ACTIVITY'] = time();
 }
+?>

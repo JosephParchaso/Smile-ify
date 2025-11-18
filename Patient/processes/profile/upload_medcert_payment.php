@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'patient') {
@@ -56,7 +56,7 @@ if ($fileSize > $maxFileSize) {
     exit();
 }
 
-$uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/payments/medcert_payments/';
+$uploadDir = BASE_PATH . '/images/payments/medcert_payments/';
 if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
 
 $fileName = $transaction_id . "_" . $last_name_clean . "." . $fileExt;

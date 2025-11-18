@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
@@ -104,7 +104,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $removed_receipt = $_POST['removed_receipt'] ?? "0";
 
         if ($removed_receipt !== "0") {
-            $oldPath = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify' . $removed_receipt;
+            $oldPath = BASE_PATH . $removed_receipt;
             if (is_file($oldPath)) unlink($oldPath);
 
             $clr = $conn->prepare("
@@ -126,7 +126,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $svc = intval($rx['service_id']);
                 $filepath = $rx['file_path'];
 
-                $full = $_SERVER['DOCUMENT_ROOT'] . "/Smile-ify/" . $filepath;
+                $full = BASE_PATH . "/" . $filepath;
                 if (is_file($full)) unlink($full);
 
                 $conn->query("
@@ -183,7 +183,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $rc->close();
 
                 if (!empty($receipt['cashless_receipt'])) {
-                    $oldPath = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify' . $receipt['cashless_receipt'];
+                    $oldPath = BASE_PATH . $receipt['cashless_receipt'];
                     if (is_file($oldPath)) unlink($oldPath);
                     $clr = $conn->prepare("UPDATE dental_transaction SET cashless_receipt=NULL, date_updated=NOW() WHERE dental_transaction_id=?");
                     $clr->bind_param("i", $dental_transaction_id);
@@ -247,7 +247,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 exit();
             }
 
-            $dir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/payments/cashless_payments/';
+            $dir = BASE_PATH . '/images/payments/cashless_payments/';
             if (!is_dir($dir)) mkdir($dir, 0777, true);
 
             foreach (glob($dir . $dental_transaction_id . "_*.*") as $old) {
@@ -265,7 +265,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $ur->close();
         }
 
-        $xrayDir = $_SERVER['DOCUMENT_ROOT'] . "/Smile-ify/images/transactions/xrays/";
+        $xrayDir = BASE_PATH . "/images/transactions/xrays/";
         if (!is_dir($xrayDir)) mkdir($xrayDir, 0777, true);
 
         $gp = $conn->prepare("
@@ -299,7 +299,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $old->execute();
                 $res = $old->get_result();
                 while ($row = $res->fetch_assoc()) {
-                    $p = $_SERVER['DOCUMENT_ROOT'] . "/Smile-ify/" . $row['file_path'];
+                    $p = BASE_PATH . "/" . $row['file_path'];
                     if (is_file($p)) unlink($p);
                 }
                 $conn->query("DELETE FROM transaction_xrays WHERE dental_transaction_id={$dental_transaction_id} AND service_id={$svcId}");

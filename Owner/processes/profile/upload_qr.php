@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'owner') {
@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'owner') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['qrImage'])) {
-    $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/qr/';
+    $uploadDir = BASE_PATH . '/images/qr/';
     if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
 
     $fileExt = strtolower(pathinfo($_FILES['qrImage']['name'], PATHINFO_EXTENSION));

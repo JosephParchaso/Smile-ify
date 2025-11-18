@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
 
 function isValidEmailDomain($email) {
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $tempProfile = null;
 
     if (isset($_FILES['signatureImage']) && $_FILES['signatureImage']['error'] === UPLOAD_ERR_OK) {
-        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/dentists/signature/';
+        $uploadDir = BASE_PATH . '/images/dentists/signature/';
         if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
         $ext = strtolower(pathinfo($_FILES['signatureImage']['name'], PATHINFO_EXTENSION));
         $tempSignature = "tmp_sig_" . uniqid() . "." . $ext;
@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (isset($_FILES['profileImage']) && $_FILES['profileImage']['error'] === UPLOAD_ERR_OK) {
-        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/dentists/profile/';
+        $uploadDir = BASE_PATH . '/images/dentists/profile/';
         if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
         $ext = strtolower(pathinfo($_FILES['profileImage']['name'], PATHINFO_EXTENSION));
         $allowed = ['jpg', 'jpeg', 'png', 'webp'];
@@ -101,8 +101,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $ext = pathinfo($tempSignature, PATHINFO_EXTENSION);
             $finalSig = "{$dentistId}_{$safeLast}_signature." . $ext;
             rename(
-                $_SERVER['DOCUMENT_ROOT'] . "/Smile-ify/images/dentists/signature/" . $tempSignature,
-                $_SERVER['DOCUMENT_ROOT'] . "/Smile-ify/images/dentists/signature/" . $finalSig
+                BASE_PATH . "/images/dentists/signature/" . $tempSignature,
+                BASE_PATH . "/images/dentists/signature/" . $finalSig
             );
         }
 
@@ -110,8 +110,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $ext = pathinfo($tempProfile, PATHINFO_EXTENSION);
             $finalProf = "{$dentistId}_{$safeLast}_profile." . $ext;
             rename(
-                $_SERVER['DOCUMENT_ROOT'] . "/Smile-ify/images/dentists/profile/" . $tempProfile,
-                $_SERVER['DOCUMENT_ROOT'] . "/Smile-ify/images/dentists/profile/" . $finalProf
+                BASE_PATH . "/images/dentists/profile/" . $tempProfile,
+                BASE_PATH . "/images/dentists/profile/" . $finalProf
             );
         }
 

@@ -1,7 +1,7 @@
 <div class="footer">
     <div class="footer-container">
         <div class="footer-column">
-            <img class="footer-logo" src="/Smile-ify/images/logo/logo_default.png" alt="Logo">
+            <img class="footer-logo" src="/images/logo/logo_default.png" alt="Logo">
             <p class="footer-about">
                 Arriesgado Dental Clinic is your Convenient, Accommodating, and Affordable Dental Care Partner.
             </p>
