@@ -10,11 +10,11 @@ $loginError = '';
 $otpError = '';
 $usernameError = '';
 $showForgotPasswordModal = false;
+
 if (isset($_SESSION['show_forgot_modal'])) {
     $showForgotPasswordModal = true;
     unset($_SESSION['show_forgot_modal']);
 }
-
 if (isset($_SESSION['login_success'])) {
     $loginSuccess = $_SESSION['login_success'];
     unset($_SESSION['login_success']);
@@ -23,12 +23,10 @@ if (isset($_SESSION['login_error'])) {
     $loginError = $_SESSION['login_error'];
     unset($_SESSION['login_error']);
 }
-
 if (isset($_SESSION['otp_error'])) {
     $otpError = $_SESSION['otp_error'];
     unset($_SESSION['otp_error']);
 }
-
 if (isset($_SESSION['username_error'])) {
     $usernameError = $_SESSION['username_error'];
     unset($_SESSION['username_error']);
@@ -37,10 +35,20 @@ if (isset($_SESSION['timeoutError'])) {
     $timeoutError = $_SESSION['timeoutError'];
     unset($_SESSION['timeoutError']);
 }
+
 ?>
 <head>    
     <title>Welcome!</title>
 </head>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    <?php if (!empty($usernameError) && $showForgotPasswordModal): ?>
+        openForgotPasswordModal();
+    <?php endif; ?>
+});
+</script>
+
 <body>
 
     <div class="main-container">
