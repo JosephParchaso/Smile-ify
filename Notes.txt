@@ -1,0 +1,449 @@
+Error on change password OTP Fix 👍
+Validation for the Date of Birth, so that it will not accept 0000 👍
+In adding dentist for the owner, autocheck services all by default, and the owner will just uncheck on what the dentist's non specialty 👍
+Disable future dates in choosing date of birth 👍
+Suggestion: Change the color / change the symbol or an indicator which will distinguish by branch 👍 with legend
+Disable letter input in OTP verification 👍
+Change joined in profile to Registered 👍
+appointment Search/' : Service , Branch, Service 👍dentist di lng?
+Completed should not be in the appointment history👍
+Remove Route from prescription 👍
+Prescription Download: Digital Prescription, alignment changes 👍
+Not bullet, but number in the digital prescription 👍
+Signature will adjust on the layput 👍
+Time and Gender will be removed 👍
+Add Quantity of drugs in prescription👍
+Change the Date to date Issued : extraction date In the release of prescription 👍
+pages 👍
+In teh footer, make it formal, and aligned properly Remove space of the branch 👍
+In forgot password, Change the please contact support to please contact the clinic. 👍
+change the view password (eye) to individual 👍
+Adding Branch- Owner Google Maps URL : Cannot be null 👍
+In adding admin, cannot allow multiple unless specified. 👍
+In adding the past dates should not be clickable 👍
+Add Start date in managing of admin by default/ 👍
+
+
+In the Home: place Welcome Joseph on the side, (left) add for the promos home display images 👍
+tabs branch reports owner 👍
+In profile, center and add picture no picutres lng 👍
+date_updated in patients,denitists,admins after booking and updating 👍
+update status when status is inactive in booking appointment 👍
+Switch status from pending ->> booked 👍
+Add the change email function in profile with otp verification 👍
+
+MAJOR CHANGE - MULTIPLE SERVICE 👍
+
+add admin or prepared by admin 👍
+apply promo transact 👍
+one add vitals and transaction only 👍
+supplies with transact / add and link the service materials per transaction 👍
+cancel appointment and complete appointment / to save transaction and status completed notify user 👍
+receipt admin 👍
+prescription admin 👍
+medical cert admin 👍
+announcments, disable dates if branch is closed 👍
+
+send reminder 👍
+Owner - OTP Every Login 👍
+Admin - OTP Every Login 👍
+Patient - OTP Every Login 👍
+
+home/index reports = achas  👍
+
+PATIENT SIDE
+Welcome, Potot_R3! But it should be Welcome Mr. Richard D. Potot 👍
+Last Update: must be last updated 👍
+Appointment History PATIENT & ADMIN: change 'manage' to 'view' 👍
+
+ADMIN/SECRETARY SIDE
+Upcoming Appointments: exclude tomorrow, instead this 'month'. 👍
+In the calendar, add buttons to separate the branches. remain the colors 👍
+IF POSSIBLE: Pre selected branch in the book appointment. If not keri, its okay my love 👍
+Add 'ANNOUNCEMENT' in the profile page 👍
+
+OWNER SIDE
+remove 'change vs last month' 👍
+add 'ALL' tab in the report 👍
+add 'BRANCHES' in the profile 👍
+remove opening/closing time 👍
+
+ROLE
+uppercase the first letter ex. Patient 👍
+
+patient and outside can view dentists w/ pic 👍
+fixed, files downloadable without image sign 👍
+prescription availabilty 1 year 👍
+upload qr on admin or owner? best owner 👍
+notify owner if services, promos change 👍
+added cashless receipt if payment method is cashless, display also in transaction 👍
+added promo and service in owner for add and edit, admin only change status 👍
+fix promo, service update in receipt 👍
+auto deactivate accounts 3 years 👍
+add checkmark on admin 👍
+promos at index and patient 👍
+display also index in the home pages 👍
+add text box on medcert payment for contact number or reference 👍
+Consultation - â‚±150.00 (15 mins), Total: â‚±150.00 (15 mins total) try again appointment confirmation 👍
+prescription issued after downloading admin or patient/// keep downloadable 👍
+1 owner only creation, how = CLI thru setup creation 👍 
+profile image session saved change file name into dentist_id 👍 
+if nay medcert, update medcert_request_date 👍 
+additional payment 👍 
+branches in above footer 👍 
+Minimum of 5 minutes for OTP time remaining expiration time 👍 
+dentist sched 👍
+edit owner service enable for xray 👍
+xray file upload and display 👍
+schedule available denitists 👍
+transact dentists 👍
+verify if 8 am mawa ang booking for current date 💖
+
+
+
+fixed date pickers{
+    employees, start date - only accepts tomorrow 👍
+    promos - start date, end date validation 👍
+
+    supplies - expiration date - only accepts tomorrow 👍
+    announcments - start date, end date validation 👍
+}
+medcert {
+    PATIENT
+    WALKIN, REQUEST FOR MEDCERT 👍
+
+    PATIENT 
+    ONLINE REQUEST PATIENT 👍
+    CHECK VALIDITY 7 DAYS - EXPIRED 👍
+    PAY VIA QR, UPLOAD RECEIPT, PENDING, 👍
+    NOTIFY ALL ADMINS IN THAT BRANCHES 👍
+
+    ADMINS
+    CHECK AND DISPLAY PAYMENT WITH 3 INPUTS 👍
+    AFTER ISSUE MEDCERT, UPDATE TOTAL medcert_request_payment 👍
+    NOTIFY PATIENT 👍
+    
+    PATIENT
+    CHECK STATUS, DOWNLOAD MEDCERT, UPDATE STATUS 👍
+
+    view issued button admins and patients, receipt 👍
+    walkin request medcert 👍
+}
+ENCRYPTION {
+    New Patient, insert appointment dob, contact number 👍
+
+    Users {
+        Patient display edit, contact number, address 👍
+    }
+    Admins {
+        Walkin Patient insert appointment 👍
+    }
+    Owners {
+        Dentist sub address into license number 👍
+        Admins 👍
+    }
+}
+
+Contact Fr. Peter for the database hosting and server 💖
+dungan register/book different user 💖
+task scheduler 💖
+
+
+Owner - CEO
+Admin Secretary
+Patients
+| Username      | Password   |
+| ------------- | ---------- |
+| patient01     | patient123 |
+| admin01       | P@rch@s0   |
+| admin_b1_01   | admin_b1   | - babag
+| admin_b1_02   | admin_b1   | - babag
+| admin_b2_01   | admin_b2   | - pusok
+| admin_b2_02   | admin_b2   | - pusok
+| admin_b3_01   | admin_b3   | - mandaue
+| owner01       | P@ssw0rd   |
+
+
+|   Naming Variables   |
+| Type             | Example                       | Notation Style                                    |
+| ---------------- | ----------------------------- | ------------------------------------------------- |
+| **id && name**   | `emailInput`, `mainHeader`    | camelCase (no spaces, first word lowercase)       |
+| **class**        | `form-control`, `input-group` | kebab-case (all lowercase, hyphens between words) |
+| **JS variables** | `userEmail`, `formData`       | camelCase                                         |
+
+|   Naming Variables DB      |
+| Type                       | Example                            | Notation Style                             |
+| -------------------------- | ---------------------------------- | ------------------------------------------ |
+| **Table**                  | `users`, `order_items`             | snake\_case (lowercase, underscores)       |
+| **Column**                 | `email`, `user_name`, `date_created` | snake\_case                                |
+| **Primary Key**            | `id`                               | Usually `id` for primary key in each table |
+| **Foreign Key**            | `user_id`, `product_id`            | `table_singular_id`                        |
+| **Foreign Key Constraint** | `fk_user_id`, `fk_product_id`      | `fk_table_singular_id`                     |
+
+|   Naming Folders  |
+| Type           | Example                                        | Notation Style                              |
+| -------------- | ---------------------------------------------- | ------------------------------------------- |
+| **Folders**    | `css`, `js`, `includes`                        | all lowercase, descriptive                  |
+| **Subfolders** | `home`, `icons`, `logo`                        | all lowercase, single-word                  |
+| **CSS Files**  | `style.css`                                    | lowercase with hyphens if needed            |
+| **PHP Files**  | `about.php`, `navbar.php`                      | lowercase, underscores optional for clarity |
+| **JS Files**   | `togglePassword.js`, `openEducationalModal.js` | camelCase (matches function purpose)        |
+
+
+Appointment / Transaction Details (single record)
+✅ Use get → e.g. get_appointment_details.php, get_dental_transaction_details.php
+Reason: These scripts just fetch details for one record, so get matches REST-like conventions.
+Tables (lists of patients, appointments, transactions, admins, etc.)
+✅ Use load → e.g. load_patients.php, load_transactions.php, load_admins.php
+Reason: These endpoints are usually consumed by DataTables or similar, and they load a dataset, not just a single item.
+REST stands for Representational State Transfer.
+It’s an architectural style (not a strict standard) used when designing APIs.
+
+
+Root/
+│
+├── Admin/
+│   ├── css/
+│   ├── includes/
+│   ├── processes/
+│   ├── pages/
+│   └── index.php ← Admin landing page
+│
+├── Owner/
+│   ├── css/
+│   ├── includes/
+│   ├── processes/
+│   ├── pages/
+│   └── index.php ← Owner landing page
+│
+├── Patient/ 
+│   ├── css/
+│   ├── includes/
+│   ├── processes/
+│   ├── pages/
+│   └── index.php ← Patient landing page 
+│ 
+├── css    
+├── js    
+├── includes
+├── processes
+├── images    
+├── index.php ← Shared login form (for all users)
+└── Notes.txt
+
+
+Font {
+    font-family: "Montserrat", sans-serif;
+}
+
+Buttons {
+    background-color: #122130;
+    transition: background-color 0.3s ease;
+}
+
+Buttons Hover {
+    background-color: #2a394d;
+}
+
+Form {
+    form {
+    width: 100%;
+    }
+
+    .form-group {
+        position: relative;
+        margin-bottom: 20px;
+    }
+
+    .form-control {
+        width: 100%;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 12px;
+        font-size: 16px;
+        outline: none;
+    }
+
+    .form-label {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        background: #fff;
+        color: #999;
+        font-size: 16px;
+        padding: 0 4px;
+        pointer-events: none;
+        transition: 0.2s ease all;
+    }
+
+    .form-control:focus {
+        border-color: #2196f3;
+    }
+
+    .form-control:focus + .form-label,
+    .form-control:not(:placeholder-shown) + .form-label {
+        top: -10px;
+        left: 10px;
+        color: #2196f3;
+        font-size: 12px;
+    }
+}
+    
+
+
+
+==========================================================================================================================================================================================  
+==========================================================================================================================================================================================
+
+
+OWNER creation
+
+run "php setup/create_owner.php" on cli /Smile-ify/
+then
+"del setup\create_owner.php"
+
+<?php
+/**
+ * Smile-ify One-Time Owner Account Creator
+ * Usage (CLI only): php setup/create_owner.php
+ */
+require_once __DIR__ . '/../includes/config.php';
+require_once BASE_PATH . '/includes/db.php'; // database connection
+
+if (php_sapi_name() !== 'cli') {
+    exit("⚠️ Run this script in CLI only.\n");
+}
+
+// Check if an owner already exists
+$check = $conn->query("SELECT COUNT(*) AS c FROM users WHERE role='owner'");
+$count = $check->fetch_assoc()['c'];
+if ($count > 0) {
+    exit("❌ Owner already exists. Aborting.\n");
+}
+
+echo "=== Smile-ify Owner Setup ===\n";
+
+// --- Helper for required inputs ---
+function prompt($label, $required = true)
+{
+    do {
+        echo "$label: ";
+        $input = trim(fgets(STDIN));
+        if ($required && $input === '') {
+            echo "⚠️ This field is required.\n";
+        }
+    } while ($required && $input === '');
+    return $input;
+}
+
+// --- Helper for hidden password input ---
+function promptPassword($label)
+{
+    if (strncasecmp(PHP_OS, 'WIN', 3) === 0) {
+        // Windows CLI fallback: input visible
+        echo "$label: ";
+        return trim(fgets(STDIN));
+    } else {
+        echo "$label: ";
+        system('stty -echo');
+        $password = trim(fgets(STDIN));
+        system('stty echo');
+        echo "\n";
+        return $password;
+    }
+}
+
+// --- Collect info ---
+$username   = prompt("Enter username");
+
+// Password + confirm
+do {
+    $password = promptPassword("Enter password");
+    $confirm  = promptPassword("Confirm password");
+    if ($password !== $confirm) {
+        echo "⚠️ Passwords do not match. Try again.\n";
+    }
+} while ($password !== $confirm);
+
+$first_name = prompt("Enter first name");
+$last_name  = prompt("Enter last name");
+$email      = prompt("Enter email");
+while (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    echo "⚠️ Invalid email format. Try again.\n";
+    $email = prompt("Enter email");
+}
+
+$contact = prompt("Enter contact number");
+
+$dob = prompt("Enter date of birth (YYYY-MM-DD)");
+while (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $dob)) {
+    echo "⚠️ Invalid date format. Use YYYY-MM-DD.\n";
+    $dob = prompt("Enter date of birth (YYYY-MM-DD)");
+}
+
+$address = prompt("Enter address");
+
+// Gender (required, no default)
+$gender = prompt("Enter gender (Male/Female/Other)");
+
+// --- Account metadata ---
+$role = 'owner';
+$status = 'Active';
+$date_started = date('Y-m-d');
+$hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+// --- Encrypt sensitive fields ---
+list($dob_encrypted, $dob_iv, $dob_tag) = encryptField($dob);
+list($contact_encrypted, $contact_iv, $contact_tag) = encryptField($contact);
+list($address_encrypted, $address_iv, $address_tag) = encryptField($address);
+
+// --- Insert into database ---
+$stmt = $conn->prepare("
+    INSERT INTO users (
+        username, password, first_name, last_name, email, gender,
+        date_of_birth, date_of_birth_iv, date_of_birth_tag,
+        contact_number, contact_number_iv, contact_number_tag,
+        address, address_iv, address_tag,
+        role, status, date_started, date_created
+    ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW())
+");
+
+if (!$stmt) {
+    exit("❌ Prepare failed: " . $conn->error . "\n");
+}
+
+$stmt->bind_param(
+    "ssssssssssssssssss",
+    $username,
+    $hashed_password,
+    $first_name,
+    $last_name,
+    $email,
+    $gender,
+    $dob_encrypted,
+    $dob_iv,
+    $dob_tag,
+    $contact_encrypted,
+    $contact_iv,
+    $contact_tag,
+    $address_encrypted,
+    $address_iv,
+    $address_tag,
+    $role,
+    $status,
+    $date_started
+);
+
+// --- Execute ---
+if ($stmt->execute()) {
+    echo "\n✅ Owner account successfully created!\n";
+    echo "👤 Username: $username\n";
+    echo "📧 Email: $email\n";
+} else {
+    echo "❌ Error inserting record: " . $stmt->error . "\n";
+}
+
+$stmt->close();
+$conn->close();
+
+echo "\n⚠️ IMPORTANT: Delete this script after use for security.\n";

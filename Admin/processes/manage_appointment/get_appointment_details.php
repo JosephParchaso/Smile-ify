@@ -1,0 +1,123 @@
+<?php
+session_start();
+
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
+require_once BASE_PATH . '/includes/db.php';
+
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    http_response_code(403);
+    echo json_encode(['error' => 'Unauthorized']);
+    exit();
+}
+
+$appointmentId = $_GET['id'] ?? null;
+if (!$appointmentId) {
+    http_response_code(400);
+    echo json_encode(['error' => 'No appointment ID provided.']);
+    exit();
+}
+
+$sql = "
+    SELECT 
+        u.first_name, 
+        u.middle_name, 
+        u.last_name, 
+        u.gender, 
+        u.date_of_birth,
+        u.date_of_birth_iv,
+        u.date_of_birth_tag,
+        u.email, 
+        u.contact_number,
+        u.contact_number_iv,
+        u.contact_number_tag,
+        u.address,
+        u.address_iv,
+        u.address_tag,
+        u.date_created AS user_created,
+        u.date_updated,
+        a.appointment_transaction_id,
+        a.appointment_date,
+        a.appointment_time,
+        a.status,
+        a.notes,
+        a.date_created,
+        b.name AS branch_name,
+        GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR '\n') AS services,
+        d.first_name AS dentist_first,
+        d.last_name AS dentist_last
+    FROM appointment_transaction a
+    INNER JOIN users u ON a.user_id = u.user_id
+    INNER JOIN branch b ON a.branch_id = b.branch_id
+    LEFT JOIN appointment_services aps ON a.appointment_transaction_id = aps.appointment_transaction_id
+    LEFT JOIN service s ON aps.service_id = s.service_id
+    LEFT JOIN dentist d ON a.dentist_id = d.dentist_id
+    WHERE a.appointment_transaction_id = ?
+    GROUP BY a.appointment_transaction_id
+";
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $appointmentId);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($row = $result->fetch_assoc()) {
+    $decryptedDOB = null;
+    if (!empty($row['date_of_birth']) && !empty($row['date_of_birth_iv']) && !empty($row['date_of_birth_tag'])) {
+        $decryptedDOB = decryptField(
+            $row['date_of_birth'],
+            $row['date_of_birth_iv'],
+            $row['date_of_birth_tag']
+        );
+    }
+
+    $decryptedContact = null;
+    if (!empty($row['contact_number']) && !empty($row['contact_number_iv']) && !empty($row['contact_number_tag'])) {
+        $decryptedContact = decryptField(
+            $row['contact_number'],
+            $row['contact_number_iv'],
+            $row['contact_number_tag']
+        );
+    }
+
+    $decryptedAddress = null;
+    if (!empty($row['address']) && !empty($row['address_iv']) && !empty($row['address_tag'])) {
+        $decryptedAddress = decryptField(
+            $row['address'],
+            $row['address_iv'],
+            $row['address_tag']
+        );
+    }
+
+    $profile = [
+        'full_name'       => trim($row['first_name'] . ' ' . ($row['middle_name'] ?? '') . ' ' . $row['last_name']),
+        'gender'          => ucfirst($row['gender']),
+        'date_of_birth'   => $decryptedDOB ? date("F j, Y", strtotime($decryptedDOB)) : '-',
+        'email'           => $row['email'],
+        'contact_number'  => $decryptedContact ?? '-',
+        'address'         => $decryptedAddress ?? '-',
+        'joined'          => $row['user_created'] ? date("F j, Y", strtotime($row['user_created'])) : '-',
+        'date_updated'    => $row['date_updated'] ? date("F j, Y", strtotime($row['date_updated'])) : '-',
+
+        'appointment_transaction_id' => $row['appointment_transaction_id'],
+        'appointment_date' => $row['appointment_date'] ? date("F j, Y", strtotime($row['appointment_date'])) : '-',
+        'appointment_time' => $row['appointment_time'] ? date("g:i A", strtotime($row['appointment_time'])) : '-',
+        'status'           => $row['status'],
+        'notes'            => $row['notes'] ?? '-',
+
+        'branch'          => $row['branch_name'],
+        'services'        => $row['services'] ?: '-',
+        'dentist'         => $row['dentist_first']
+                                ? 'Dr. ' . trim($row['dentist_first'] . ' ' . $row['dentist_last'])
+                                : 'Not Assigned',
+        'date_created'    => $row['date_created'] ? date("F j, Y", strtotime($row['date_created'])) : '-',
+    ];
+
+    header('Content-Type: application/json');
+    echo json_encode($profile);
+} else {
+    http_response_code(404);
+    echo json_encode(['error' => 'Appointment not found or no user linked.']);
+}
+
+$conn->close();
+?>

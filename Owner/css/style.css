@@ -1,0 +1,193 @@
+.dashboard {
+    padding: 5rem;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.card {
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+}
+
+.card h2 {
+    color: #122130;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.card .appointment,
+.card .announcement {
+    margin-bottom: 0.8rem;
+    padding: 0.5rem;
+    border-left: 4px solid #122130;
+    background: #eef4ff;
+    border-radius: 4px;
+    font-size: 0.95rem;
+}
+
+.quick-links a,
+.card-link {
+    display: inline-block;
+    margin: 0.5rem 0.3rem;
+    padding: 0.8rem 1.2rem;
+    background: #122130;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background 0.3s;
+}
+
+.quick-links a:hover {
+    background: #2a394d;
+}
+
+.profile-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 40px;
+    flex-wrap: wrap;
+}
+
+.message-box {
+    width: 350px;
+    margin-top: 15px;
+    text-align: center;
+}
+
+.tabs-container {
+    flex: 1;
+    min-width: 350px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.tabs {
+    display: flex;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 20px;
+    padding: 10px 0 0 0;
+    justify-content: center;
+    width: 100%;
+}
+
+.tabs-container-branch {
+    flex: 1;
+    min-width: 350px;
+}
+
+.tabs-branch {
+    display: flex;
+}
+
+.tab-content {
+    display: none;
+    width: 80%;
+}
+
+#adminsTable,
+#dentistsTable,
+#servicesTable,
+#promosTable {
+    width: 100% !important;
+}
+
+.branches-table {
+    width: 100% !important;
+}
+
+.services-table,
+.promos-table {
+    width: 80% !important;
+    margin: 3% auto;
+}
+
+#adminsTable_filter,
+#dentistsTable_filter,
+#branchesTable_filter,
+#servicesTable_filter,
+#promosTable_filter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#adminsTable_filter input[type="search"],
+#dentistsTable_filter input[type="search"],
+#branchesTable_filter input[type="search"],
+#servicesTable_filter input[type="search"],
+#promosTable_filter input[type="search"] {
+    height: 38px;
+    padding: 6px 12px;
+}
+
+#adminsTable_filter button,
+#dentistsTable_filter button,
+#branchesTable_filter button,
+#servicesTable_filter button,
+#promosTable_filter button {
+    height: 38px;
+    padding: 6px 12px;
+    border: 1px solid #1e293b;
+    border-radius: 4px;
+    background-color: #1e293b;
+    color: #fff;
+    cursor: pointer;
+}
+
+#servicesTable th:nth-child(1), #servicesTable td:nth-child(1) { width: 5% !important; text-align: center;}
+#servicesTable th:nth-child(2), #servicesTable td:nth-child(2) { width: 20% !important; }
+#servicesTable th:nth-child(3), #servicesTable td:nth-child(3) { width: 25% !important; }
+#servicesTable th:nth-child(4), #servicesTable td:nth-child(4) { width: 10% !important; }
+#servicesTable th:nth-child(5), #servicesTable td:nth-child(5) { width: 10% !important; }
+#servicesTable th:nth-child(6), #servicesTable td:nth-child(6) { width: 10% !important; text-align: center;}
+
+#promosTable th:nth-child(1), #promosTable td:nth-child(1) { width: 5% !important; text-align: center;}
+#promosTable th:nth-child(2), #promosTable td:nth-child(2) { width: 20% !important; }
+#promosTable th:nth-child(3), #promosTable td:nth-child(3) { width: 25% !important; }
+#promosTable th:nth-child(4), #promosTable td:nth-child(4) { width: 10% !important; }
+#promosTable th:nth-child(5), #promosTable td:nth-child(5) { width: 10% !important; }
+#promosTable th:nth-child(6), #promosTable td:nth-child(6) { width: 10% !important; text-align: center;}
+
+#branchesTable th:nth-child(1), #branchesTable td:nth-child(1) { width: 5% !important; text-align: center;}
+#branchesTable th:nth-child(2), #branchesTable td:nth-child(2) { width: 20% !important; }
+#branchesTable th:nth-child(3), #branchesTable td:nth-child(3) { width: 30% !important; }
+#branchesTable th:nth-child(4), #branchesTable td:nth-child(4) { width: 15% !important; }
+#branchesTable th:nth-child(5), #branchesTable td:nth-child(5) { width: 10% !important; }
+#branchesTable th:nth-child(6), #branchesTable td:nth-child(6) { width: 10% !important; text-align: center;}
+
+.transaction-table th:nth-child(1),.transaction-table td:nth-child(1) { width: 10% !important; text-align: center;}
+.transaction-table th:nth-child(2),.transaction-table td:nth-child(2) { width: 30% !important; }
+.transaction-table th:nth-child(3),.transaction-table td:nth-child(3) { width: 30% !important; }
+.transaction-table th:nth-child(4),.transaction-table td:nth-child(4) { width: 15% !important; }
+.transaction-table th:nth-child(5),.transaction-table td:nth-child(5) { width: 15% !important; text-align: center;}
+
+@media (max-width: 900px) {
+    .cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .cards {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .profile-container {
+        justify-content: center;
+        align-items: center;
+    }
+    .profile-card {
+        width: 90%;
+        max-width: 400px;
+    }
+}
