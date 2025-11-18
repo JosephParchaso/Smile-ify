@@ -5,6 +5,28 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/includes/config.php';
 require_once BASE_PATH . '/includes/header.php';
 require_once BASE_PATH . '/includes/db.php';
 
+$query = $conn->query("
+    SELECT 
+        a.title,
+        a.description,
+        a.type,
+        ba.start_date,
+        ba.end_date,
+        ba.status,
+        ba.branch_id,
+        b.address
+    FROM announcements a
+    INNER JOIN branch_announcements ba 
+        ON a.announcement_id = ba.announcement_id
+    INNER JOIN branch b 
+        ON ba.branch_id = b.branch_id
+    WHERE ba.status = 'Active'
+    ORDER BY ba.date_created DESC
+    LIMIT 5
+");
+
+$announcements = $query->fetch_all(MYSQLI_ASSOC);
+
 $loginSuccess = '';
 $loginError = '';
 $otpError = '';
@@ -332,6 +354,45 @@ document.addEventListener("DOMContentLoaded", function () {
             <div class="educational-container">
                 <button onclick="openEducationalModal()" class="educational-button" id="openEducationalModal">Learn More</button>
             </div>
+        </div>
+        
+        <div class="announcement-panel">
+            <h3 class="announce-title">Announcements</h3>
+
+            <?php if (empty($announcements)): ?>
+                <p>No announcements available.</p>
+            <?php else: ?>
+
+                <?php foreach ($announcements as $item): ?>
+
+                    <?php
+                        $start = $item['start_date'] ? date("F j, Y", strtotime($item['start_date'])) : null;
+                        $end   = $item['end_date'] ? date("F j, Y", strtotime($item['end_date'])) : null;
+
+                        if ($start && $end) {
+                            if ($item['start_date'] === $item['end_date']) {
+                                $dateDisplay = "On: $start";
+                            } else {
+                                $dateDisplay = "From: $start to $end";
+                            }
+                        } else {
+                            $dateDisplay = "";
+                        }
+                    ?>
+
+                    <div class="announcement-card">
+                        <h4><?= htmlspecialchars($item['title']) ?></h4>
+                        <p><?= htmlspecialchars($item['description']) ?></p>
+
+                        <small>
+                            <?= $dateDisplay ?><br>
+                            Branch: <?= htmlspecialchars($item['address']) ?>
+                        </small>
+                    </div>
+
+                <?php endforeach; ?>
+
+            <?php endif; ?>
         </div>
     </div>
 

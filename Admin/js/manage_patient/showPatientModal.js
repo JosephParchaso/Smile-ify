@@ -77,11 +77,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         prescriptionButtonHtml = `
                             <div class="button-group button-group-profile">
                                 <button class="confirm-btn" id="downloadPrescription">Download Prescription</button>
-                                ${
-                                    data.prescription_downloaded == 0
-                                    ? `<button class="confirm-btn" disabled>Not yet Issued</button>`
-                                    : `<button class="confirm-btn" disabled>Issued</button>`
-                                }
                             </div>
                         `;
                     }

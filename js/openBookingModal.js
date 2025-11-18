@@ -32,13 +32,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const lastStart = new Date();
             lastStart.setHours(16, 0, 0, 0);
 
-            let minDate = now;
-
-            if (now >= lastStart) {
-                minDate = new Date();
-                minDate.setDate(now.getDate() + 1);
-            }
-
+            let minDate = new Date();
+            minDate.setDate(minDate.getDate() + 1);
             dateSelect.min = minDate.toISOString().split("T")[0];
         }
     };

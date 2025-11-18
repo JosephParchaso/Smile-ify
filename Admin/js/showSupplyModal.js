@@ -133,6 +133,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
             </form>
         `;
+        const expInput = document.getElementById("expiration_date");
+
+        const today2 = new Date();
+        const year = today2.getFullYear();
+        const month = String(today2.getMonth() + 1).padStart(2, "0");
+        const day = String(today2.getDate()).padStart(2, "0");
+        expInput.min = `${year}-${month}-${day}`;
 
         validateExpirationDate();
         loadBranchServices(data);
@@ -142,24 +149,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const expInput = document.getElementById("expiration_date");
         const expError = document.getElementById("expErrorMsg");
 
-        document.body.addEventListener("change", function (e) {
-            if (e.target && e.target.id === "expiration_date") {
-                const todayDate = new Date();
-
-                const selectedDate = new Date(e.target.value);
-
-                if (!e.target.value || isNaN(selectedDate)) {
-                    expError.textContent = "Please enter a valid date.";
-                    expError.style.display = "block";
-                    e.target.value = "";
-                } else if (selectedDate < todayDate) {
-                    expError.textContent = "Please enter a valid date.";
-                    expError.style.display = "block";
-                    e.target.value = "";
-                } else {
-                    expError.style.display = "none";
-                }
-            }
+        expInput.addEventListener("change", function () {
+            expError.style.display = "none";
         });
     }
 
