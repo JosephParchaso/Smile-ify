@@ -1,1 +1,1 @@
-web: frankenphp run --config=frankenphp.json
+web: php -S 0.0.0.0:8080 index.php
