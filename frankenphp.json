@@ -1,6 +1,9 @@
 {
   "address": ":8080",
-  "workers": "auto",
-  "document_root": "/app",
-  "bootstrap": "index.php"
+  "workers": {
+    "app": {
+      "type": "php",
+      "root": "."
+    }
+  }
 }
