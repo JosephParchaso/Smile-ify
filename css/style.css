@@ -505,10 +505,14 @@ form {
 }
 
 .transaction-record-modal-content {
-    margin: 15vh auto;
+    margin: 10vh auto;
     max-width: 1500px;
     width: 1000%;
-    overflow: hidden;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 30px 40px;
+    border-radius: 4px;
+    background: #fff;
     animation: fadeIn 0.3s ease-in-out;
 }
 
@@ -524,6 +528,33 @@ form {
 @keyframes fadeIn {
     from { opacity: 0; transform: scale(0.9); }
     to { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 768px) {
+    .transaction-record-modal-content {
+        margin: 4vh auto;
+        width: 95%;
+        max-width: 95%;
+        max-height: 92vh;
+        padding: 20px;
+    }
+
+    .transaction-columns {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .transaction-section p strong {
+        display: block;
+        width: 100%;
+        margin-bottom: 4px;
+    }
+
+    .transaction-section p span {
+        display: block;
+        max-width: 100%;
+        white-space: normal;
+    }
 }
 
 .promo-modal-content .modal-img {
@@ -960,53 +991,6 @@ form {
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
-}
-
-.branch-list {
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
-    flex-wrap: wrap;
-    padding-bottom: 10px;
-    text-align: center;
-    justify-content: center;
-}
-
-.branch-column {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 4px;
-    text-align: center;
-    min-width: 250px;
-    max-width: 280px;
-    flex: 0 0 auto;
-    }
-
-.branch-column a {
-    text-decoration: none;
-}
-
-.branch-column img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    border-radius: 4px;
-    display: block;
-}
-
-.branch-column h2 {
-    margin: 10px 0 5px;
-    color: #000;
-}
-
-.branch-column p {
-    margin: 0;
-    color: #555;
-    font-size: 14px;
 }
 
 .aboutus-info {

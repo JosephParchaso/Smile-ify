@@ -50,10 +50,12 @@ document.addEventListener("DOMContentLoaded", () => {
             manageModal.style.display = "block";
         }
         if (e.target.id === "insertVitalBtn") {
+            window.appointmentId = e.target.getAttribute("data-appointment-id");
             renderVitalForm(null);
             manageModal.style.display = "block";
         }
         if (e.target.id === "insertPrescriptionBtn") {
+            window.appointmentId = e.target.getAttribute("data-appointment-id");
             renderPrescriptionForm(null);
             manageModal.style.display = "block";
         }
@@ -61,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function renderTransactionForm(data) {
         const isEdit = !!data;
-        const appointmentId = data?.appointment_id || window.appointmentId || null;
+        const appointmentId = data?.appointment_transaction_id || window.appointmentId || null;
 
         modalBody.innerHTML = `
             <h2>${isEdit ? "Manage Transaction" : "Add Transaction"}</h2>
@@ -70,8 +72,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 method="POST" enctype="multipart/form-data" autocomplete="off">
 
                 ${isEdit ? `<input type="hidden" name="dental_transaction_id" value="${data.dental_transaction_id}">` : ""}
-                <input type="hidden" name="appointment_transaction_id" value="${appointmentId}">
+                <input type="hidden" name="appointment_transaction_id" value="${data?.appointment_transaction_id || window.appointmentId}">
                 <input type="hidden" name="admin_user_id" value="${userId}" readonly required>
+                <input type="hidden" name="removed_xrays" id="removed_xrays">
+                <input type="hidden" id="removed_receipt" name="removed_receipt" value="0">
 
                 <div class="form-group">
                     <div id="servicesContainer" class="checkbox-group">
@@ -87,6 +91,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
 
                 <div id="medicalCertFields"></div>
+
+                <div id="xrayFields"></div>
 
                 <div class="form-group">
                     <select id="transactionPromo" class="form-control" name="promo_id">
@@ -114,7 +120,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="form-group" id="cashlessReceiptGroup" style="display: none;">
                     <input type="file" id="cashlessReceipt" class="form-control" name="receipt_upload" accept="image/*,.pdf">
                     <label for="cashlessReceipt" class="form-label">Upload Cashless Receipt</label>
-                    ${isEdit && data.cashless_receipt ? `<p>Current file:</p><img src="${BASE_URL}/${data.cashless_receipt}" alt="Cashless Receipt" style="max-width:200px;border-radius:4px;margin-top:5px;">` : ""}
+                    ${isEdit && data.cashless_receipt ? `
+                        <div class="receipt-preview">
+                            <p>Current file:</p>
+                            <img src="${BASE_URL}/${data.cashless_receipt}" 
+                                alt="Receipt" 
+                                class="receipt-img" style="max-width:200px;border-radius:4px;margin-top:5px;">
+                            <br>
+                            <button type="button" class="confirm-btn"
+                                onclick="removeReceiptPreview('${data.cashless_receipt}')">
+                                Remove
+                            </button>
+                        </div>
+                    ` : ""}
                 </div>
 
                 <div class="form-group">
@@ -180,6 +198,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const paymentMethodSelect = modalBody.querySelector("#paymentMethod");
         const cashlessGroup = modalBody.querySelector("#cashlessReceiptGroup");
         const cashlessInput = modalBody.querySelector("#cashlessReceipt");
+        const selectedServices = data?.services?.map(s => s.service_id) || [];
+
+        loadDentists(effectiveBranchId, [], dentistSelect, appointmentDentistId);
 
         function toggleCashlessField() {
             if (paymentMethodSelect.value === "Cashless") {
@@ -246,16 +267,78 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
+        function toggleXrayUploads() {
+            const xrayContainer = document.getElementById("xrayFields");
+            xrayContainer.innerHTML = "";
+
+            const selected = [...document.querySelectorAll('input[name="appointmentServices[]"]:checked')];
+
+            selected.forEach(cb => {
+                if (cb.dataset.requiresXray === "1") {
+
+                    const serviceId = cb.value;
+                    const serviceName = cb.dataset.serviceName;
+
+                    let previewHtml = "";
+
+                    if (isEdit && data.xrays && data.xrays[serviceId]) {
+                        previewHtml += `
+                            <div class="xray-preview-section">
+                                <p>Existing X-rays for ${serviceName}:</p>
+                                <div class="xray-preview-grid">
+                        `;
+
+                    data.xrays[serviceId].forEach(xray => {
+
+                        const xrayId = xray.xray_id || xray.id || null;
+                        const xrayPath = xray.file_path;
+
+                        previewHtml += `
+                            <div class="xray-thumb" data-xray-id="${xrayId}">
+                                <img src="${BASE_URL}/${xrayPath}" class="xray-img">
+                            <br>
+
+                                <button type="button" 
+                                    class="confirm-btn"
+                                    onclick="removeXrayPreview(this, '${serviceId}', '${xrayPath}')">
+                                    Remove
+                                </button>
+                            </div>
+                        `;
+                    });
+
+                        previewHtml += `</div></div>`;
+                    }
+
+                    xrayContainer.innerHTML += `
+                        <div class="form-group xray-group">
+                            <input type="file" name="xray_file[${serviceId}][]" class="form-control" multiple accept="image/*,.pdf">
+                            <label class="form-label">Upload X-Ray for ${serviceName} <span class="required">*</span></label>
+
+                            ${previewHtml}
+                        </div>
+                    `;
+                }
+            });
+        }
+        
         if (!isEdit) {
-            loadServices(effectiveBranchId, servicesContainer, null, appointmentServiceIds, () => {
-                loadDentists(effectiveBranchId, appointmentServiceIds, dentistSelect, appointmentDentistId);
+            loadServices(effectiveBranchId, servicesContainer, null, appointmentServiceIds, appointmentId, () => {
+
+                const selected = [...servicesContainer.querySelectorAll('input[name="appointmentServices[]"]:checked')]
+                    .map(cb => cb.value);
+
+                loadDentists(effectiveBranchId, selected, dentistSelect, appointmentDentistId);
+
                 updateServicesSummary();
                 toggleMedicalCertFields();
+                toggleXrayUploads();
             });
         } else {
-            const selectedServices = data.services?.map(s => s.service_id) || [];
-            loadServices(effectiveBranchId, servicesContainer, data.dental_transaction_id, selectedServices, () => {
-                loadDentists(effectiveBranchId, [], dentistSelect, data.dentist_id);
+            loadServices(effectiveBranchId, servicesContainer, data.dental_transaction_id, selectedServices, null, () => {
+                const realSelectedServices = [...servicesContainer.querySelectorAll('input[name="appointmentServices[]"]:checked')]
+                    .map(cb => cb.value);
+                loadDentists(effectiveBranchId, realSelectedServices, dentistSelect, data.dentist_id);
                         
                 selectedServices.forEach(id => {
                     const checkbox = servicesContainer.querySelector(`input[type="checkbox"][value="${id}"]`);
@@ -271,6 +354,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
                 updateServicesSummary();
                 toggleMedicalCertFields();
+                toggleXrayUploads();
             });
         }
         
@@ -310,211 +394,10 @@ document.addEventListener("DOMContentLoaded", () => {
         if (promoSelect) {
             promoSelect.addEventListener("change", updateServicesSummary);
         }
-    }
 
-    function updateServicesSummary() {
-        const serviceCheckboxes = document.querySelectorAll('#servicesContainer input[type="checkbox"][name="appointmentServices[]"]');
-        const services = [];
-
-        serviceCheckboxes.forEach(checkbox => {
-            if (checkbox.checked) {
-                const serviceId = checkbox.value;
-                const name = checkbox.parentElement.textContent.trim();
-                const price = parseFloat(checkbox.closest('.checkbox-item').querySelector('.price').textContent.replace(/[₱,]/g, '')) || 0;
-                const quantityInput = document.querySelector(`input[name="serviceQuantity[${serviceId}]"]`);
-                const quantity = parseInt(quantityInput?.value || 1);
-                services.push({ name, price, quantity });
-            }
-        });
-
-        const promoSelect = document.getElementById("transactionPromo");
-        const selectedPromo = promoSelect ? promoSelect.selectedOptions[0] : null;
-        const discountType = selectedPromo?.dataset?.discountType || null;
-        const discountValue = parseFloat(selectedPromo?.dataset?.discountValue || 0);
-
-        updateCheckoutSummary({
-            services,
-            discountType,
-            discountValue
-        });
-    }
-
-    function updateCheckoutSummary({ services = [], discountType = null, discountValue = 0 }) {
-        const servicesList = document.getElementById("servicesList");
-        const subtotalEl = document.getElementById("subtotalDisplay");
-        const additionalPaymentDisplay = document.getElementById("additionalPaymentDisplay");
-        const discountEl = document.getElementById("discountDisplay");
-        const totalEl = document.getElementById("totalDisplay");
-        const totalPaymentInput = document.getElementById("total_payment");
-        const additionalPaymentInput = document.getElementById("additionalPayment");
-
-        if (servicesList) servicesList.innerHTML = "";
-
-        let subtotal = 0;
-        services.forEach(service => {
-            const totalPrice = service.price * service.quantity;
-            subtotal += totalPrice;
-
-            const item = document.createElement("div");
-            item.classList.add("summary-item");
-            item.innerHTML = `
-                <span>${service.name} × ${service.quantity}</span>
-                <span>₱${totalPrice.toFixed(2)}</span>
-            `;
-            servicesList.appendChild(item);
-        });
-
-        let discount = 0;
-        if (discountType === "fixed") {
-            discount = discountValue;
-        } else if (discountType === "percent" || discountType === "percentage") {
-            discount = subtotal * (discountValue / 100);
-        }
-
-        const total = Math.max(subtotal - discount, 0);
-
-        let additionalPayment = parseFloat(additionalPaymentInput?.value || 0);
-        const totalWithAdditional = total + additionalPayment;
-
-        if (subtotalEl) subtotalEl.textContent = `₱${subtotal.toFixed(2)}`;
-        if (additionalPaymentDisplay) {
-            additionalPaymentDisplay.textContent = `₱${additionalPayment.toFixed(2)}`;
-        }
-        if (discountEl) discountEl.textContent = `-₱${discount.toFixed(2)}`;
-        if (totalEl) totalEl.textContent = `₱${totalWithAdditional.toFixed(2)}`;
-
-        if (totalPaymentInput) {
-            totalPaymentInput.value = totalWithAdditional.toFixed(2);
-        }
-    }
-
-    function loadPromos(promoSelect, selectedId = null, branchId = null) {
-        $.ajax({
-            type: "GET",
-            url: `${BASE_URL}/processes/load_promos.php`,
-            data: { branch_id: branchId || window.branchId || null },
-            dataType: "json",
-            success: function (promos) {
-                promoSelect.innerHTML = '<option value="">None</option>';
-
-                promos.forEach(p => {
-                    const opt = document.createElement("option");
-                    opt.value = p.id;
-                    opt.dataset.discountType = p.discount_type;
-                    opt.dataset.discountValue = p.discount_value;
-
-                    let discountLabel = "";
-                    if (p.discount_type === "percent" || p.discount_type === "percentage") {
-                        discountLabel = ` (${parseFloat(p.discount_value).toFixed(2)}% OFF)`;
-                    } else if (p.discount_type === "fixed") {
-                        discountLabel = ` (₱${parseFloat(p.discount_value).toFixed(2)} OFF)`;
-                    }
-
-                    opt.textContent = `${p.name}${discountLabel}`;
-                    if (selectedId && selectedId == p.id) opt.selected = true;
-                    promoSelect.appendChild(opt);
-                });
-
-                promoSelect.addEventListener("change", updateServicesSummary);
-                updateServicesSummary();
-            },
-            error: function (xhr, status, error) {
-                console.error("Promo load failed:", status, error);
-                promoSelect.innerHTML = '<option disabled>Error loading promos</option>';
-            }
-        });
-    }
-
-    function loadDentists(branchId, serviceIds = [], dentistSelect, selectedId = null, preserveIfStillValid = false) {
-        dentistSelect.innerHTML = '<option disabled>Loading dentists...</option>';
-
-        const finalSelectedId = selectedId || window.appointmentDentistId || null;
-
-        $.ajax({
-            type: "POST",
-            url: `${BASE_URL}/processes/load_dentists.php`,
-            data: {
-                appointmentBranch: branchId,
-                appointmentServices: serviceIds,
-                forTransaction: true,
-                selectedDentistId: finalSelectedId
-            },
-            success: function (response) {
-                dentistSelect.innerHTML = response.trim();
-
-                if (finalSelectedId) {
-                    const optionToSelect = dentistSelect.querySelector(`option[value="${finalSelectedId}"]`);
-                    if (optionToSelect) {
-                        dentistSelect.value = finalSelectedId;
-                    } else if (!preserveIfStillValid) {
-                        dentistSelect.selectedIndex = 0;
-                    }
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error("Dentist load failed:", status, error, xhr.responseText);
-                dentistSelect.innerHTML = '<option disabled>Error loading dentists</option>';
-            }
-        });
-    }
-
-    function loadServices(branchId, container, transactionId = null, appointmentServiceIds = [], callback = null) {
-        container.innerHTML = '<p class="loading-text">Loading services</p>';
-
-        $.ajax({
-            type: "POST",
-            url: `${BASE_URL}/processes/load_services.php`,
-            data: {
-                appointmentBranch: branchId,
-                appointment_transaction_id: transactionId,
-                appointment_id: appointmentId,
-                hide_duration: true 
-            },
-            success: function (response) {
-                container.innerHTML = response;
-
-                const checkboxes = container.querySelectorAll('input[name="appointmentServices[]"]');
-                const dentistSelect = document.getElementById("transactionDentist");
-
-                if (!transactionId && appointmentServiceIds.length > 0) {
-                    checkboxes.forEach(cb => {
-                        if (appointmentServiceIds.includes(cb.value)) {
-                            cb.checked = true;
-                        }
-                    });
-                }
-
-                checkboxes.forEach(cb => {
-                    cb.addEventListener("change", function () {
-                        const selectedServices = [...container.querySelectorAll('input[name="appointmentServices[]"]:checked')]
-                            .map(cb => cb.value);
-
-                        dentistSelect.innerHTML = `<option value="" disabled selected hidden>Select a dentist</option>`;
-
-                        const loadingOption = document.createElement("option");
-                        loadingOption.textContent = "Loading available dentists...";
-                        loadingOption.disabled = true;
-                        dentistSelect.appendChild(loadingOption);
-
-                        if (selectedServices.length === 0) {
-                            dentistSelect.innerHTML = `<option value="" disabled selected hidden>No services selected</option>`;
-                            return;
-                        }
-        const qtyInput = container.querySelector(`input[name="serviceQuantity[${cb.value}]"]`);
-        qtyInput.style.display = cb.checked ? 'inline-block' : 'none';
-
-        if (!cb.checked) qtyInput.value = 1;
-
-                        const currentDentistId = null;
-                        loadDentists(branchId, selectedServices, dentistSelect, currentDentistId, false);
-                    });
-                });
-
-                if (callback) callback();
-            },
-            error: function (xhr, status, error) {
-                console.error("Service load failed:", status, error, xhr.responseText);
-                container.innerHTML = '<p class="error">Error loading services</p>';
+        document.body.addEventListener("change", e => {
+            if (e.target.matches('input[name="appointmentServices[]"]')) {
+                toggleXrayUploads();
             }
         });
     }
@@ -692,10 +575,253 @@ document.addEventListener("DOMContentLoaded", () => {
             </form>
         `;
     }
+
+    function loadServices(branchId, container, transactionId = null, appointmentServiceIds = [], appointmentId = null, callback = null, editServiceIds = []) {
+        container.innerHTML = '<p class="loading-text">Loading services</p>';
+
+        $.ajax({
+            type: "POST",
+            url: `${BASE_URL}/processes/load_services.php`,
+            data: {
+                appointmentBranch: branchId,
+                appointment_transaction_id: transactionId,
+                appointment_id: appointmentId,
+                hide_duration: true 
+            },
+            success: function (response) {
+                container.innerHTML = response;
+
+                const checkboxes = container.querySelectorAll('input[name="appointmentServices[]"]');
+                const dentistSelect = document.getElementById("transactionDentist");
+
+                if (!transactionId && !editServiceIds.length && appointmentServiceIds.length > 0) {
+                    checkboxes.forEach(cb => {
+                        cb.checked = appointmentServiceIds.includes(cb.value);
+                    });
+                }
+
+                if (transactionId !== null && editServiceIds.length > 0) {
+                    checkboxes.forEach(cb => {
+                        cb.checked = editServiceIds.includes(parseInt(cb.value));
+                    });
+                }
+
+                checkboxes.forEach(cb => {
+                    const qtyInput = container.querySelector(`input[name="serviceQuantity[${cb.value}]"]`);
+                    if (qtyInput) {
+                        qtyInput.style.display = cb.checked ? 'inline-block' : 'none';
+                    }
+                });
+
+                checkboxes.forEach(cb => {
+                    cb.addEventListener("change", function (e) {
+
+                        const qtyInput = container.querySelector(`input[name="serviceQuantity[${cb.value}]"]`);
+
+                        if (qtyInput) {
+                            if (cb.checked) {
+                                qtyInput.style.display = "inline-block";
+                            } else {
+                                qtyInput.style.display = "none";
+                                qtyInput.value = 1;
+                            }
+                        }
+
+                        const selectedServices = [...container.querySelectorAll('input[name="appointmentServices[]"]:checked')]
+                            .map(cb => cb.value);
+
+                        dentistSelect.innerHTML = `<option value="" disabled selected hidden>Select a dentist</option>`;
+
+                        const loadingOption = document.createElement("option");
+                        loadingOption.textContent = "Loading available dentists...";
+                        loadingOption.disabled = true;
+                        dentistSelect.appendChild(loadingOption);
+
+                        if (selectedServices.length === 0) {
+                            dentistSelect.innerHTML = `<option value="" disabled selected hidden>No services selected</option>`;
+                            return;
+                        }
+
+                        loadDentists(branchId, selectedServices, dentistSelect, null);
+                    });
+                });
+
+                if (callback) callback();
+            }
+        });
+    }
+
+    function loadDentists(branchId, serviceIds = [], dentistSelect, selectedId = null) {
+        dentistSelect.innerHTML = '<option disabled>Loading dentists...</option>';
+
+        $.ajax({
+            type: "POST",
+            url: `${BASE_URL}/Admin/processes/manage_appointment/transactions/load_dentists_transaction.php`,
+            data: {
+                appointmentBranch: branchId,
+                appointmentServices: serviceIds
+            },
+            success: function (response) {
+                dentistSelect.innerHTML = response.trim();
+
+                if (selectedId) {
+                    dentistSelect.value = selectedId;
+                }
+            },
+            error: function () {
+                dentistSelect.innerHTML = '<option disabled>Error loading dentists</option>';
+            }
+        });
+    }
+
+    function updateServicesSummary() {
+        const serviceCheckboxes = document.querySelectorAll('#servicesContainer input[type="checkbox"][name="appointmentServices[]"]');
+        const services = [];
+
+        serviceCheckboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                const serviceId = checkbox.value;
+                const name = checkbox.parentElement.textContent.trim();
+                const price = parseFloat(checkbox.closest('.checkbox-item').querySelector('.price').textContent.replace(/[₱,]/g, '')) || 0;
+                const quantityInput = document.querySelector(`input[name="serviceQuantity[${serviceId}]"]`);
+                const quantity = parseInt(quantityInput?.value || 1);
+                services.push({ name, price, quantity });
+            }
+        });
+
+        const promoSelect = document.getElementById("transactionPromo");
+        const selectedPromo = promoSelect ? promoSelect.selectedOptions[0] : null;
+        const discountType = selectedPromo?.dataset?.discountType || null;
+        const discountValue = parseFloat(selectedPromo?.dataset?.discountValue || 0);
+
+        updateCheckoutSummary({
+            services,
+            discountType,
+            discountValue
+        });
+    }
+
+    function updateCheckoutSummary({ services = [], discountType = null, discountValue = 0 }) {
+        const servicesList = document.getElementById("servicesList");
+        const subtotalEl = document.getElementById("subtotalDisplay");
+        const additionalPaymentDisplay = document.getElementById("additionalPaymentDisplay");
+        const discountEl = document.getElementById("discountDisplay");
+        const totalEl = document.getElementById("totalDisplay");
+        const totalPaymentInput = document.getElementById("total_payment");
+        const additionalPaymentInput = document.getElementById("additionalPayment");
+
+        if (servicesList) servicesList.innerHTML = "";
+
+        let subtotal = 0;
+        services.forEach(service => {
+            const totalPrice = service.price * service.quantity;
+            subtotal += totalPrice;
+
+            const item = document.createElement("div");
+            item.classList.add("summary-item");
+            item.innerHTML = `
+                <span>${service.name} × ${service.quantity}</span>
+                <span>₱${totalPrice.toFixed(2)}</span>
+            `;
+            servicesList.appendChild(item);
+        });
+
+        let discount = 0;
+        if (discountType === "fixed") {
+            discount = discountValue;
+        } else if (discountType === "percent" || discountType === "percentage") {
+            discount = subtotal * (discountValue / 100);
+        }
+
+        const total = Math.max(subtotal - discount, 0);
+
+        let additionalPayment = parseFloat(additionalPaymentInput?.value || 0);
+        const totalWithAdditional = total + additionalPayment;
+
+        if (subtotalEl) subtotalEl.textContent = `₱${subtotal.toFixed(2)}`;
+        if (additionalPaymentDisplay) {
+            additionalPaymentDisplay.textContent = `₱${additionalPayment.toFixed(2)}`;
+        }
+        if (discountEl) discountEl.textContent = `-₱${discount.toFixed(2)}`;
+        if (totalEl) totalEl.textContent = `₱${totalWithAdditional.toFixed(2)}`;
+
+        if (totalPaymentInput) {
+            totalPaymentInput.value = totalWithAdditional.toFixed(2);
+        }
+    }
+
+    function loadPromos(promoSelect, selectedId = null, branchId = null) {
+        $.ajax({
+            type: "GET",
+            url: `${BASE_URL}/processes/load_promos.php`,
+            data: { branch_id: branchId || window.branchId || null },
+            dataType: "json",
+            success: function (promos) {
+                promoSelect.innerHTML = '<option value="">None</option>';
+
+                promos.forEach(p => {
+                    const opt = document.createElement("option");
+                    opt.value = p.id;
+                    opt.dataset.discountType = p.discount_type;
+                    opt.dataset.discountValue = p.discount_value;
+
+                    let discountLabel = "";
+                    if (p.discount_type === "percent" || p.discount_type === "percentage") {
+                        discountLabel = ` (${parseFloat(p.discount_value).toFixed(2)}% OFF)`;
+                    } else if (p.discount_type === "fixed") {
+                        discountLabel = ` (₱${parseFloat(p.discount_value).toFixed(2)} OFF)`;
+                    }
+
+                    opt.textContent = `${p.name}${discountLabel}`;
+                    if (selectedId && selectedId == p.id) opt.selected = true;
+                    promoSelect.appendChild(opt);
+                });
+
+                promoSelect.addEventListener("change", updateServicesSummary);
+                updateServicesSummary();
+            },
+            error: function (xhr, status, error) {
+                console.error("Promo load failed:", status, error);
+                promoSelect.innerHTML = '<option disabled>Error loading promos</option>';
+            }
+        });
+    }
 });
 
 function closeManageModal() {
     document.getElementById("manageRecordModal").style.display = "none";
 }
 
+function removeXrayPreview(btn, serviceId, filePath) {
 
+    const thumb = btn.closest(".xray-thumb");
+    if (thumb) thumb.remove();
+
+    const hiddenInput = document.getElementById("removed_xrays");
+
+    let removed = [];
+    try {
+        removed = JSON.parse(hiddenInput.value || "[]");
+    } catch {
+        removed = [];
+    }
+
+    removed.push({
+        service_id: serviceId,
+        file_path: filePath
+    });
+
+    hiddenInput.value = JSON.stringify(removed);
+}
+
+function removeReceiptPreview(filePath) {
+
+    const hidden = document.getElementById("removed_receipt");
+    hidden.value = filePath;
+
+    const preview = document.querySelector(".receipt-preview");
+    if (preview) preview.remove();
+
+    const input = document.getElementById("cashlessReceipt");
+    if (input) input.value = "";
+}

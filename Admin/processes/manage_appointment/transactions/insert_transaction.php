@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ");
 
         $stmt->bind_param(
-            "iiisddissss",
+            "iiisddsisss",
             $appointment_transaction_id,
             $dentist_id,
             $promo_id,
@@ -183,6 +183,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $updateReceipt->execute();
             $updateReceipt->close();
         }
+
+        $xrayDir = $_SERVER['DOCUMENT_ROOT'] . "/Smile-ify/images/transactions/xrays/";
+        if (!is_dir($xrayDir)) mkdir($xrayDir, 0777, true);
+
+        $getServiceName = $conn->prepare("SELECT name FROM service WHERE service_id = ?");
+            
+        if (!empty($_FILES['xray_file']['name'])) {
+
+            foreach ($_FILES['xray_file']['name'] as $serviceId => $files) {
+
+                $svcId = intval($serviceId);
+                $getServiceName->bind_param("i", $svcId);
+                $getServiceName->execute();
+                $svcRes = $getServiceName->get_result()->fetch_assoc();
+                $serviceNameClean = $svcRes ? preg_replace('/[^a-zA-Z0-9_-]/', '', $svcRes['name']) : "service$svcId";
+
+                for ($i = 0; $i < count($files); $i++) {
+
+                    if ($files[$i] == "") continue;
+
+                    $tmp = $_FILES['xray_file']['tmp_name'][$serviceId][$i];
+                    $orig = $_FILES['xray_file']['name'][$serviceId][$i];
+
+                    $ext = strtolower(pathinfo($orig, PATHINFO_EXTENSION));
+                    $cleanExt = preg_replace('/[^a-z0-9]/', '', $ext);
+
+                    $newFilename =
+                        $dental_transaction_id . "_" .
+                        $last_name_clean . "_" .
+                        $serviceNameClean . "_" .
+                        ($i + 1) . "." . $cleanExt;
+
+                    $target = $xrayDir . $newFilename;
+
+                    if (move_uploaded_file($tmp, $target)) {
+
+                        $relative = "images/transactions/xrays/" . $newFilename;
+
+                        $stmtX = $conn->prepare("
+                            INSERT INTO transaction_xrays 
+                                (dental_transaction_id, service_id, file_path, date_created)
+                            VALUES (?, ?, ?, NOW())
+                        ");
+
+                        if (!$stmtX) {
+                            throw new Exception("Prepare error (xray insert): " . $conn->error);
+                        }
+
+                        $stmtX->bind_param("iis", $dental_transaction_id, $svcId, $relative);
+
+                        if (!$stmtX->execute()) {
+                            throw new Exception("Execute error (xray insert): " . $stmtX->error);
+                        }
+
+                        $stmtX->close();
+                    }
+                }
+            }
+        }
+
+        $getServiceName->close();
 
         $conn->commit();
         $_SESSION['updateSuccess'] = "Transaction added successfully!";

@@ -15,6 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $price      = floatval($_POST["price"]);
     $duration   = intval($_POST["duration_minutes"]);
     $branches   = isset($_POST["branches"]) ? $_POST["branches"] : [];
+    $requires_xray = isset($_POST["requires_xray"]) ? 1 : 0;
 
     if (!$service_id || empty($name) || $price < 0 || $duration <= 0) {
         $_SESSION['updateError'] = "Invalid or missing service details.";
@@ -25,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     try {
         $conn->begin_transaction();
 
-        $checkSQL = "SELECT name, price, duration_minutes FROM service WHERE service_id = ?";
+        $checkSQL = "SELECT name, price, duration_minutes, requires_xray FROM service WHERE service_id = ?";
         $checkStmt = $conn->prepare($checkSQL);
         $checkStmt->bind_param("i", $service_id);
         $checkStmt->execute();
@@ -34,17 +35,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         $hasChanges = false;
 
-        if ($oldData['name'] !== $name ||
+        if (
+            $oldData['name'] !== $name ||
             floatval($oldData['price']) !== $price ||
-            intval($oldData['duration_minutes']) !== $duration) {
-
+            intval($oldData['duration_minutes']) !== $duration ||
+            intval($oldData['requires_xray']) !== $requires_xray
+        ) {
             $hasChanges = true;
 
             $sql = "UPDATE service 
-                    SET name = ?, price = ?, duration_minutes = ?, date_updated = NOW()
+                    SET name = ?, price = ?, duration_minutes = ?, requires_xray = ?, date_updated = NOW()
                     WHERE service_id = ?";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("sdii", $name, $price, $duration, $service_id);
+            $stmt->bind_param("sdiii", $name, $price, $duration, $requires_xray, $service_id);
             $stmt->execute();
             $stmt->close();
         }
@@ -55,6 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $branchCheckStmt->bind_param("i", $service_id);
         $branchCheckStmt->execute();
         $result = $branchCheckStmt->get_result();
+
         while ($row = $result->fetch_assoc()) {
             $existingBranches[] = intval($row['branch_id']);
         }
@@ -74,8 +78,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $delStmt->close();
 
             if (!empty($newBranches)) {
-                $insertSQL = "INSERT INTO branch_service (branch_id, service_id) VALUES (?, ?)";
+                $insertSQL = "INSERT INTO branch_service (branch_id, service_id, date_created)
+                                VALUES (?, ?, NOW())";
                 $insStmt = $conn->prepare($insertSQL);
+
                 foreach ($newBranches as $branch_id) {
                     $insStmt->bind_param("ii", $branch_id, $service_id);
                     $insStmt->execute();

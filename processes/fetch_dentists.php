@@ -7,6 +7,7 @@ require_once BASE_PATH . '/includes/db.php';
 header('Content-Type: application/json; charset=utf-8');
 
 try {
+
     $sql = "
         SELECT 
             d.dentist_id,
@@ -33,14 +34,19 @@ try {
     $dentists = [];
 
     while ($row = $result->fetch_assoc()) {
+
         if (!empty($row['contact_number']) && !empty($row['contact_number_iv']) && !empty($row['contact_number_tag'])) {
-            $row['contact_number'] = decryptField($row['contact_number'], $row['contact_number_iv'], $row['contact_number_tag'], $ENCRYPTION_KEY);
+            $row['contact_number'] = decryptField(
+                $row['contact_number'],
+                $row['contact_number_iv'],
+                $row['contact_number_tag'],
+                $ENCRYPTION_KEY
+            );
         }
 
         unset($row['contact_number_iv'], $row['contact_number_tag']);
 
         $row['dentist_name'] = 'Dr. ' . $row['full_name'];
-
         $row['profile_image'] = !empty($row['profile_image'])
             ? BASE_URL . '/images/dentists/profile/' . $row['profile_image']
             : BASE_URL . '/images/dentists/profile/default_avatar.jpg';
@@ -48,10 +54,42 @@ try {
         $row['branch_name'] = $row['branch_name'] ?: 'N/A';
         $row['services'] = $row['services'] ?: 'No assigned services';
 
-        $dentists[] = $row;
+        $dentists[$row['dentist_id']] = $row;
+        $dentists[$row['dentist_id']]['schedule'] = [];
     }
 
-    echo json_encode(['success' => true, 'dentists' => $dentists]);
+    $sqlSchedule = "
+        SELECT 
+            ds.dentist_id,
+            ds.day,
+            ds.start_time,
+            ds.end_time,
+            b.name AS branch_name
+        FROM dentist_schedule ds
+        LEFT JOIN branch b ON ds.branch_id = b.branch_id
+        ORDER BY ds.dentist_id, FIELD(ds.day,'Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday')
+    ";
+
+    $scheduleResult = $conn->query($sqlSchedule);
+
+    while ($s = $scheduleResult->fetch_assoc()) {
+
+        $dentistId = $s['dentist_id'];
+
+        if (!isset($dentists[$dentistId])) continue;
+
+        $dentists[$dentistId]['schedule'][] = [
+            'day' => $s['day'],
+            'branch' => $s['branch_name'] ?: 'N/A',
+            'time' => date('h:i A', strtotime($s['start_time'])) . " - " . date('h:i A', strtotime($s['end_time']))
+        ];
+    }
+
+    echo json_encode([
+        'success' => true,
+        'dentists' => array_values($dentists)
+    ]);
+
 } catch (Exception $e) {
     echo json_encode(['success' => false, 'error' => $e->getMessage()]);
 }

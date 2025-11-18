@@ -25,6 +25,7 @@ try {
                 s.name,
                 s.price,
                 s.duration_minutes,
+                s.requires_xray,
                 s.date_created,
                 s.date_updated
             FROM service s

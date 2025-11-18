@@ -17,23 +17,41 @@ function loadDentists() {
         .then((data) => {
             if (data.success && data.dentists.length > 0) {
                 container.innerHTML = data.dentists
-                .map(
-                    (d) => `
-                    <div class="dentist-card">
-                        <img src="${d.profile_image}" alt="${d.dentist_name}" class="dentist-photo" />
-                        <div class="dentist-info">
-                        <h3>${d.dentist_name}</h3>
-                        <div class="dentist-details">
-                            <p><span>Branch:</span> ${d.branch_name}</p>
-                            <p><span>Email:</span> ${d.email}</p>
-                            <p><span>Contact:</span> ${d.contact_number}</p>
-                            <p><span>Services:</span> ${d.services}</p>
+                    .map(
+                        (d) => `
+                        <div class="dentist-card">
+                            <img src="${d.profile_image}" alt="${d.dentist_name}" class="dentist-photo" />
+
+                            <div class="dentist-info">
+                                <h3>${d.dentist_name}</h3>
+
+                                <div class="dentist-details">
+                                    <p><span>Branch:</span> ${d.branch_name}</p>
+                                    <p><span>Email:</span> ${d.email}</p>
+                                    <p><span>Contact:</span> ${d.contact_number}</p>
+                                    <p><span>Services:</span> ${d.services}</p>
+
+                                    <div class="dentist-schedule">
+                                        <p><span>Schedule:</span></p>
+                                        <ul>
+                                            ${
+                                                d.schedule.length > 0
+                                                    ? d.schedule
+                                                        .map(
+                                                            (s) =>
+                                                                `<li>${s.day} – ${s.branch} (${s.time})</li>`
+                                                        )
+                                                        .join("")
+                                                    : "<li>No schedule</li>"
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        </div>
-                    </div>
-                    `
-                )
-                .join("");
+                        `
+                    )
+                    .join("");
             } else {
                 container.innerHTML = "<p>No dentists found.</p>";
             }

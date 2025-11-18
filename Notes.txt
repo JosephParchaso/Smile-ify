@@ -90,9 +90,14 @@ prescription issued after downloading admin or patient/// keep downloadable 👍
 profile image session saved change file name into dentist_id 👍 
 if nay medcert, update medcert_request_date 👍 
 additional payment 👍 
-
-dentist sched
-try removing env, why data still displaying
+branches in above footer 👍 
+Minimum of 5 minutes for OTP time remaining expiration time 👍 
+dentist sched 👍
+edit owner service enable for xray 👍
+xray file upload and display 👍
+schedule available denitists 👍
+transact dentists 👍
+verify if 8 am mawa ang booking for current date 💖
 
 
 
@@ -139,25 +144,9 @@ ENCRYPTION {
     }
 }
 
-
-
-ASK DURING CONSULTATION
-Ask if the services and promos are under admin or it should be under the owner since it involves MONEY? 💖
-and if retain: it should have a notification about the updates. 💖
-gmail suspicious spams - sendgrid? brevo or google parin 💖
-
-Contact Fr. Peter for the database hosting and server💖
-Minimum of 5 minutes for OTP time remaining expiration time 💖
+Contact Fr. Peter for the database hosting and server 💖
 dungan register/book different user 💖
-verify if 8 am mawa ang booking for current date 💖
 task scheduler 💖
-
-Minimum of 5 minutes for OTP time remaining expiration time 💖{
-    const expiryLimit = 60;
-    $expiry_limit = 60;
-    if (($currentTime - $otpCreatedTime) > 60)
-}
-
 
 
 Owner - CEO

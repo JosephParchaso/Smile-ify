@@ -158,6 +158,14 @@ document.addEventListener("DOMContentLoaded", () => {
                                 <p><strong>Swelling:</strong><span>${data.is_swelling}</span></p>
                                 <p><strong>Sensitivity:</strong><span>${data.is_sensitive}</span></p>
                                 <p><strong>Bleeding:</strong><span>${data.is_bleeding}</span></p>
+
+                                <div class="button-group button-group-profile" style="margin-top:10px;">
+                                    ${
+                                        data.xray_results && data.xray_results.length > 0
+                                            ? `<button class="confirm-btn" id="viewXrayResult" data-id="${data.dental_transaction_id}">View Results</button>`
+                                            : `<button class="confirm-btn" disabled>No Results</button>`
+                                    }
+                                </div>
                             </div>
 
                             <div class="transaction-section">
@@ -1049,6 +1057,62 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             } catch (error) {
                 console.error("Error loading receipt:", error);
+            }
+        }
+    });
+
+    document.body.addEventListener("click", async function (e) {
+        if (e.target && e.target.id === "viewXrayResult") {
+            const transactionId = e.target.getAttribute("data-id");
+
+            try {
+                const response = await fetch(`${BASE_URL}/Admin/processes/manage_patient/get_xray_results.php?id=${transactionId}`);
+                const data = await response.json();
+
+                if (data.success && data.files.length > 0) {
+                    const modal = document.getElementById("medCertReceiptModal");
+                    const modalBody = document.getElementById("medCertReceiptBody");
+
+                    let html = `<h2>X-ray Results</h2>`;
+
+                    data.files.forEach((item) => {
+                        const file = item.file_path;
+                        const serviceName = item.service_name ?? "Unknown Service";
+
+                        const createdDate = item.date_created
+                            ? new Date(item.date_created).toLocaleDateString('en-US', { 
+                                month: 'long', 
+                                day: 'numeric', 
+                                year: 'numeric' 
+                            })
+                            : "Unknown Date";
+
+                        let fixedPath = file.startsWith("/") ? file : "/" + file;
+                        const fileUrl = `${BASE_URL}${fixedPath}`;
+                        const isPdf = file.toLowerCase().endsWith(".pdf");
+
+                        html += `
+                            <div style="margin:20px 0; text-align:center;">
+                                <p><strong>${serviceName}</strong></p>
+                                <p style="margin-top:-10px; color:#777; font-size:14px;">${createdDate}</p>
+                                ${
+                                    isPdf
+                                    ? `<iframe src="${fileUrl}" style="width:80%; height:500px; border:none;"></iframe>`
+                                    : `<img src="${fileUrl}" style="width:50%; border-radius:5px; display:block; margin:auto;">`
+                                }
+                            </div>
+                        `;
+                    });
+
+                    modalBody.innerHTML = html;
+                    modal.style.display = "flex";
+
+                } else {
+                    alert("No X-ray results available.");
+                }
+
+            } catch (error) {
+                console.error("Error loading x-ray results:", error);
             }
         }
     });

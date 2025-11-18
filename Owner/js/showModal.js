@@ -185,12 +185,25 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
                             
                 <div class="form-group">
-                    <input type="date" id="dateStarted" name="dateStarted" class="form-control"
-                        value="${isEdit ? data.date_started : ''}" required autocomplete="off">
+                    <input  
+                        type="date" 
+                        id="dateStarted" 
+                        name="dateStarted" 
+                        class="form-control"
+                        value="${isEdit ? data.date_started : ''}"
+                        ${isEdit && hasStarted(data.date_started) ? "disabled" : "required"}
+                        autocomplete="off"
+                    >
                     <label for="dateStarted" class="form-label">Start Date <span class="required">*</span></label>
-                    <span id="dateError" class="error-msg-calendar error" style="display: none;">
-                        Sundays are not available for appointments. Please select another date.
-                    </span>
+                    
+                    ${isEdit && hasStarted(data.date_started)
+                        ? `<small style="color:#999; font-size:0.85em;">
+                                The staff has already started. Start date can no longer be edited.
+                        </small>`
+                        : `<span id="dateError" class="error-msg-calendar error" style="display:none;">
+                                Sundays are not available for work. Please select another date.
+                        </span>`
+                    }
                 </div>
 
                 ${isEdit ? `
@@ -365,12 +378,25 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
                 
                 <div class="form-group">
-                    <input type="date" id="dateStarted" name="dateStarted" class="form-control"
-                        value="${isEdit ? data.date_started : ''}" required autocomplete="off">
+                    <input  
+                        type="date" 
+                        id="dateStarted" 
+                        name="dateStarted" 
+                        class="form-control"
+                        value="${isEdit ? data.date_started : ''}"
+                        ${isEdit && hasStarted(data.date_started) ? "disabled" : "required"}
+                        autocomplete="off"
+                    >
                     <label for="dateStarted" class="form-label">Start Date <span class="required">*</span></label>
-                    <span id="dateError" class="error-msg-calendar error" style="display: none;">
-                        Sundays are not available for appointments. Please select another date.
-                    </span>
+
+                    ${isEdit && hasStarted(data.date_started)
+                        ? `<small style="color:#999; font-size:0.85em;">
+                                The dentist has already started. Start date cannot be changed.
+                        </small>`
+                        : `<span id="dateError" class="error-msg-calendar error" style="display:none;">
+                                Sundays are not available. Please select another date.
+                        </span>`
+                    }
                 </div>
 
                 ${isEdit ? `
@@ -566,6 +592,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 container.appendChild(wrapper);
             });
         });
+    }
+
+    function hasStarted(dateStarted) {
+        if (!dateStarted) return false;
+        const today = new Date();
+        today.setHours(0,0,0,0);
+
+        const started = new Date(dateStarted);
+        started.setHours(0,0,0,0);
+
+        return started <= today;
     }
 
     function toggleWholeDay(button) {

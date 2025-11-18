@@ -4,7 +4,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     document.body.addEventListener("click", function (e) {
         if (e.target.id === "insertAppointmentBtn") {
-
             renderAppointmentForm();
             bookingModal.style.display = "block";
 
@@ -14,6 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const servicesContainer = bookingBody.querySelector("#servicesContainer");
             const dentistSelect = bookingBody.querySelector("#appointmentDentist");
             const estimatedEndDiv = bookingBody.querySelector("#estimatedEnd");
+            const hiddenUserIdInput = bookingBody.querySelector('input[name="user_id"]');
 
             dateSelect.disabled = true;
             timeSelect.disabled = true;
@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             branchSelect.addEventListener("change", () => {
                 resetAll(dateSelect, timeSelect, dentistSelect, estimatedEndDiv);
-                loadServices(branchSelect.value, servicesContainer);
+                loadServices(branchSelect.value, servicesContainer, timeSelect, dentistSelect);
                 dateSelect.disabled = false;
             });
 
@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 resetTime(timeSelect, estimatedEndDiv);
                 resetDentist(dentistSelect);
                 timeSelect.disabled = false;
-                loadAvailableTimes(branchSelect, dateSelect, servicesContainer, timeSelect);
+                loadAvailableTimes(branchSelect, dateSelect, servicesContainer, timeSelect, hiddenUserIdInput);
             });
 
             timeSelect.addEventListener("change", () => {
@@ -46,8 +46,8 @@ document.addEventListener("DOMContentLoaded", function () {
         bookingBody.innerHTML = `
             <h2>Book Appointment</h2>
             <form id="manageAppointmentForm" 
-                  action="${BASE_URL}/Admin/processes/manage_patient/insert_appointment.php" 
-                  method="POST" autocomplete="off">
+                action="${BASE_URL}/Admin/processes/manage_patient/insert_appointment.php" 
+                method="POST" autocomplete="off">
 
                 <input type="hidden" name="user_id" value="${userId}">
 
@@ -99,13 +99,27 @@ document.addEventListener("DOMContentLoaded", function () {
         const errorMsg = bookingBody.querySelector("#dateError");
 
         if (dateInput && errorMsg) {
-            const today = new Date();
-            today.setDate(today.getDate() + 1);
-            dateInput.min = today.toISOString().split("T")[0];
+            const now = new Date();
+            const lastStart = new Date();
+            lastStart.setHours(16, 0, 0, 0);
+
+            function toLocalDateStringPH(date) {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, "0");
+                const day = String(date.getDate()).padStart(2, "0");
+                return `${year}-${month}-${day}`;
+            }
+
+            const minDate = new Date();
+
+            if (now >= lastStart) {
+                minDate.setDate(minDate.getDate() + 1);
+            }
+
+            dateInput.min = toLocalDateStringPH(minDate);
 
             let closedDates = [];
             const branchSelect = bookingBody.querySelector("#appointmentBranch");
-
             if (branchSelect) {
                 branchSelect.addEventListener("change", async () => {
                     const branchId = branchSelect.value;
@@ -157,7 +171,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    function loadServices(branchId, container) {
+    function loadServices(branchId, container, timeSelect, dentistSelect) {
         container.innerHTML = `<p>Loading services...</p>`;
 
         $.ajax({
@@ -169,6 +183,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 container.querySelectorAll('input[name="appointmentServices[]"]').forEach(cb => {
                     cb.addEventListener("change", () => {
+                        if (!timeSelect.value) {
+                            dentistSelect.innerHTML = '<option disabled>Select time first</option>';
+                            dentistSelect.disabled = true;
+                            return;
+                        }
+
                         attemptLoadDentists(
                             bookingBody.querySelector("#appointmentBranch"),
                             bookingBody.querySelector("#appointmentDate"),
@@ -184,22 +204,32 @@ document.addEventListener("DOMContentLoaded", function () {
                         );
                     });
                 });
+            },
+            error: function () {
+                container.innerHTML = `<p class="error-msg">Failed to load services.</p>`;
             }
         });
     }
 
-    function loadAvailableTimes(branchSelect, dateSelect, servicesContainer, timeSelect) {
+    function loadAvailableTimes(branchSelect, dateSelect, servicesContainer, timeSelect, hiddenUserIdInput) {
         const branchId = branchSelect.value;
         const date = dateSelect.value;
-
         if (!branchId || !date) {
             resetTime(timeSelect);
             return;
         }
 
+        const now = new Date();
+        const selectedDateObj = new Date(dateSelect.value);
+        const isToday = selectedDateObj.toDateString() === now.toDateString();
+
         const fd = new FormData();
         fd.append("branch_id", branchId);
         fd.append("appointment_date", date);
+
+        if (hiddenUserIdInput && hiddenUserIdInput.value) {
+            fd.append("user_id", hiddenUserIdInput.value);
+        }
 
         fetch(`${BASE_URL}/processes/load_available_times.php`, {
             method: "POST",
@@ -208,21 +238,39 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(res => res.json())
             .then(data => {
                 timeSelect.innerHTML = '<option value="" disabled selected hidden></option>';
-
                 const allSlots = generateSlots("09:00", "16:30", 30);
-                const availableTimes = data.times || []; // <- returned by backend
+                const availableTimes = data.times || [];
+                const blockedSet = new Set(data.blocked || []);
 
                 allSlots.forEach(time => {
                     const formatted = formatTimeAMPM(time);
 
-                    const isAvailable = availableTimes.includes(time);
+                    let isAvailable = availableTimes.includes(time);
+
+                    if (isToday) {
+                        const [hh, mm] = time.split(":");
+                        const slotTime = new Date();
+                        slotTime.setHours(hh, mm, 0, 0);
+
+                        if (slotTime <= now) {
+                            isAvailable = false;
+                        }
+                    }
+
+                    if (blockedSet.has(time)) isAvailable = false;
 
                     timeSelect.innerHTML += `
-                        <option value="${time}" ${isAvailable ? "" : "disabled"}>${formatted}</option>
+                        <option value="${time}" ${isAvailable ? "" : "disabled"}>
+                            ${formatted}${isAvailable ? "" : " — Booked/Unavailable"}
+                        </option>
                     `;
                 });
 
                 timeSelect.disabled = false;
+            })
+            .catch(err => {
+                console.error("loadAvailableTimes error:", err);
+                resetTime(timeSelect);
             });
     }
 
@@ -255,6 +303,9 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+        dentistSelect.innerHTML = '<option disabled>Loading dentists...</option>';
+        dentistSelect.disabled = true;
+
         loadDentists(branchId, date, time, services, dentistSelect);
     }
 
@@ -274,6 +325,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             error: () => {
                 dentistSelect.innerHTML = '<option disabled>Error loading dentists</option>';
+                dentistSelect.disabled = true;
             }
         });
     }

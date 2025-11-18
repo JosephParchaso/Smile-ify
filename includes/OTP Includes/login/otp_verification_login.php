@@ -80,7 +80,7 @@ $maskedEmail = $pendingUser && !empty($pendingUser['email'])
 document.addEventListener('DOMContentLoaded', function () {
     const timerEl = document.getElementById("timer");
     const resendBtn = document.getElementById("resendOTPButton");
-    const expiryLimit = 60;
+    const expiryLimit = 300;
     let countdown;
 
     const phpOtpCreated = <?php echo isset($_SESSION['otp_created']) ? ($_SESSION['otp_created'] * 1000) : 'null'; ?>;
@@ -107,7 +107,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const remaining = Math.floor((expiryTime - Date.now()) / 1000);
         resendBtn.disabled = true;
-        timerEl.innerText = "0:" + (remaining < 10 ? "0" : "") + remaining;
+        const minutes = Math.floor(remaining / 60);
+        const seconds = remaining % 60;
+
+        timerEl.innerText = minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
     }
 
     function startCountdown() {

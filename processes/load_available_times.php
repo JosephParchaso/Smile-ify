@@ -1,128 +1,256 @@
 <?php
+session_start();
+
 require_once $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
 
 header('Content-Type: application/json');
 
-$branchId        = $_POST['branch_id'] ?? null;
+$branchId        = isset($_POST['branch_id']) ? intval($_POST['branch_id']) : null;
 $appointmentDate = $_POST['appointment_date'] ?? null;
-$services        = $_POST['services'] ?? [];
-$dentistId       = $_POST['dentist_id'] ?? null;
 
-if (!$branchId || !$appointmentDate || empty($services) || !$dentistId) {
+$requestedUserId = isset($_POST['user_id']) ? intval($_POST['user_id']) : (isset($_SESSION['user_id']) ? intval($_SESSION['user_id']) : null);
+
+if (!$branchId || !$appointmentDate) {
     echo json_encode(['error' => 'Missing required inputs.']);
     exit;
 }
 
-$services = array_map('intval', $services);
-$dentistId = intval($dentistId);
-$branchId  = intval($branchId);
+$startTime = new DateTime('09:00');
+$endTime   = new DateTime('16:30');
+$stepMinutes = 30;
+$cleanupBuffer = 15;
 
-$placeholders = implode(',', array_fill(0, count($services), '?'));
-
-$sql = "SELECT SUM(duration_minutes) AS total_duration 
-        FROM service 
-        WHERE service_id IN ($placeholders)";
-
+$sql = "
+    SELECT d.dentist_id
+    FROM dentist d
+    INNER JOIN dentist_branch db ON d.dentist_id = db.dentist_id
+    WHERE db.branch_id = ? AND d.status = 'Active'
+";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param(str_repeat('i', count($services)), ...$services);
+$stmt->bind_param("i", $branchId);
 $stmt->execute();
-$row = $stmt->get_result()->fetch_assoc();
-$totalDuration = (int)($row['total_duration'] ?? 0);
+$res = $stmt->get_result();
+
+$dentists = [];
+while ($r = $res->fetch_assoc()) {
+    $dentists[] = intval($r['dentist_id']);
+}
 $stmt->close();
 
-$cleanupBuffer = 15;
-$blockDuration = $totalDuration + $cleanupBuffer;
-
-if ($blockDuration <= 0) {
-    echo json_encode(['error' => 'Invalid service duration.']);
+if (empty($dentists)) {
+    echo json_encode([
+        'times' => [],
+        'blocked' => []
+    ]);
     exit;
 }
 
 $dayName = date('l', strtotime($appointmentDate));
+$placeholders = implode(',', array_fill(0, count($dentists), '?'));
+$types = str_repeat('i', count($dentists));
 
 $sql = "
-    SELECT start_time, end_time
+    SELECT dentist_id, start_time, end_time
     FROM dentist_schedule
-    WHERE dentist_id = ?
-        AND branch_id = ?
+    WHERE branch_id = ?
         AND day = ?
-    LIMIT 1
+        AND dentist_id IN ($placeholders)
 ";
-
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("iis", $dentistId, $branchId, $dayName);
-$stmt->execute();
-$schedule = $stmt->get_result()->fetch_assoc();
-$stmt->close();
 
-if (!$schedule) {
-    echo json_encode(['error' => 'Dentist is not scheduled on this day.']);
-    exit;
+$bindParams = [];
+$bindParams[] = $branchId;
+$bindParams[] = $dayName;
+$refArr = [];
+$types_full = 'is' . $types;
+$refArr[] = & $types_full;
+$refArr[] = & $bindParams[0];
+$refArr[] = & $bindParams[1];
+
+for ($i = 0; $i < count($dentists); $i++) {
+    $bindParams[] = $dentists[$i];
+    $refArr[] = & $bindParams[2 + $i];
 }
+call_user_func_array(array($stmt, 'bind_param'), $refArr);
+$stmt->execute();
+$res = $stmt->get_result();
 
-$open  = new DateTime($schedule['start_time']);
-$close = new DateTime($schedule['end_time']);
+$dentistSchedules = [];
+while ($row = $res->fetch_assoc()) {
+    $did = intval($row['dentist_id']);
+    if (is_null($row['start_time']) || is_null($row['end_time']) || $row['start_time'] === '' || $row['end_time'] === '') {
+        $dentistSchedules[$did][] = ['start' => '09:00', 'end' => '16:30'];
+    } else {
+        $s = date('H:i', strtotime($row['start_time']));
+        $e = date('H:i', strtotime($row['end_time']));
+        $dentistSchedules[$did][] = ['start' => $s, 'end' => $e];
+    }
+}
+$stmt->close();
 
 $sql = "
-    SELECT at.appointment_time,
-            SUM(s.duration_minutes) AS total_duration
+    SELECT at.appointment_time, at.dentist_id, at.user_id,
+        SUM(s.duration_minutes) AS total_duration
     FROM appointment_transaction AS at
-    INNER JOIN appointment_services AS ats 
-        ON at.appointment_transaction_id = ats.appointment_transaction_id
-    INNER JOIN service AS s 
-        ON ats.service_id = s.service_id
+    INNER JOIN appointment_services AS ats ON at.appointment_transaction_id = ats.appointment_transaction_id
+    INNER JOIN service AS s ON ats.service_id = s.service_id
     WHERE at.branch_id = ?
-        AND at.dentist_id = ?
         AND at.appointment_date = ?
-        AND at.status IN ('Booked', 'Approved', 'Confirmed')
-    GROUP BY at.appointment_transaction_id, at.appointment_time
+        AND at.status IN ('Booked','Approved','Confirmed')
+    GROUP BY at.appointment_transaction_id, at.appointment_time, at.dentist_id, at.user_id
 ";
-
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("iis", $branchId, $dentistId, $appointmentDate);
+$stmt->bind_param("is", $branchId, $appointmentDate);
 $stmt->execute();
-$result = $stmt->get_result();
+$res = $stmt->get_result();
 
-$bookedIntervals = [];
-$blocked = [];
+$bookedByDentist = [];
+$unassignedBookings = [];
+$userBookedSlotsExact = [];
 
-while ($row = $result->fetch_assoc()) {
-    $start = new DateTime($row['appointment_time']);
-    $end   = (clone $start)->modify("+" . ($row['total_duration'] + $cleanupBuffer) . " minutes");
+while ($row = $res->fetch_assoc()) {
+    $dentist_id_db = $row['dentist_id'];
+    $isDentistNull = is_null($dentist_id_db) || $dentist_id_db === '';
 
-    $bookedIntervals[] = ['start' => $start, 'end' => $end];
-    $blocked[] = $start->format('H:i');
-}
+    $start = DateTime::createFromFormat('H:i:s', $row['appointment_time'])
+        ?: DateTime::createFromFormat('H:i', $row['appointment_time']);
+    if (!$start) continue;
 
-$stmt->close();
+    $duration = intval($row['total_duration']);
+    $end = (clone $start)->modify("+".($duration + $cleanupBuffer)." minutes");
 
-$available = [];
-$step = new DateInterval('PT15M');
+    $rowUserId = intval($row['user_id']);
 
-for ($slot = clone $open; $slot < $close; $slot->add($step)) {
-
-    $slotEnd = (clone $slot)->modify("+{$blockDuration} minutes");
-
-    if ($slotEnd > $close) {
-        continue;
+    if ($isDentistNull) {
+        $unassignedBookings[] = ['start' => $start, 'end' => $end, 'user_id' => $rowUserId];
+    } else {
+        $did = intval($dentist_id_db);
+        $bookedByDentist[$did][] = ['start' => $start, 'end' => $end, 'user_id' => $rowUserId];
     }
 
-    $overlap = false;
-    foreach ($bookedIntervals as $b) {
-        if ($slot < $b['end'] && $slotEnd > $b['start']) {
-            $overlap = true;
-            break;
+    if ($requestedUserId && $rowUserId === $requestedUserId) {
+        $userBookedSlotsExact[$start->format('H:i')] = true;
+    }
+}
+$stmt->close();
+
+$userBookings = [];
+
+if ($requestedUserId) {
+    $sql = "
+        SELECT at.appointment_time, SUM(s.duration_minutes) AS total_duration
+        FROM appointment_transaction AS at
+        INNER JOIN appointment_services AS ats ON at.appointment_transaction_id = ats.appointment_transaction_id
+        INNER JOIN service AS s ON ats.service_id = s.service_id
+        WHERE at.user_id = ?
+            AND at.appointment_date = ?
+            AND at.status IN ('Booked','Approved','Confirmed')
+        GROUP BY at.appointment_transaction_id, at.appointment_time
+    ";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("is", $requestedUserId, $appointmentDate);
+    $stmt->execute();
+    $res = $stmt->get_result();
+
+    while ($row = $res->fetch_assoc()) {
+        $start = DateTime::createFromFormat('H:i:s', $row['appointment_time'])
+            ?: DateTime::createFromFormat('H:i', $row['appointment_time']);
+        if (!$start) continue;
+        $duration = intval($row['total_duration']);
+        $end = (clone $start)->modify("+".($duration + $cleanupBuffer)." minutes");
+        $userBookings[] = ['start' => $start, 'end' => $end];
+    }
+    $stmt->close();
+}
+
+function slot_overlaps(DateTime $slot, DateTime $s, DateTime $e) {
+    return ($slot >= $s && $slot < $e);
+}
+
+$available = [];
+$blocked = [];
+
+$slot = clone $startTime;
+$interval = new DateInterval('PT'.$stepMinutes.'M');
+
+while ($slot < $endTime) {
+    $slotStr = $slot->format('H:i');
+
+    $scheduledDentistCount = 0;
+    $dentistsScheduledNow = [];
+    foreach ($dentists as $did) {
+        if (!isset($dentistSchedules[$did])) continue;
+        $isScheduled = false;
+        foreach ($dentistSchedules[$did] as $seg) {
+            $segStart = DateTime::createFromFormat('H:i', $seg['start']);
+            $segEnd   = DateTime::createFromFormat('H:i', $seg['end']);
+            if ($segStart && $segEnd && $slot >= $segStart && $slot < $segEnd) {
+                $isScheduled = true;
+                break;
+            }
+        }
+        if ($isScheduled) {
+            $scheduledDentistCount++;
+            $dentistsScheduledNow[] = $did;
         }
     }
 
-    if (!$overlap) {
-        $available[] = $slot->format('H:i');
+    if ($scheduledDentistCount === 0) {
+        $blocked[] = $slotStr;
+        $slot->add($interval);
+        continue;
     }
+
+    $occupiedDentists = 0;
+    foreach ($dentistsScheduledNow as $did) {
+        $hasConflict = false;
+        if (isset($bookedByDentist[$did])) {
+            foreach ($bookedByDentist[$did] as $appt) {
+                if (slot_overlaps($slot, $appt['start'], $appt['end'])) {
+                    $hasConflict = true;
+                    break;
+                }
+            }
+        }
+        if ($hasConflict) $occupiedDentists++;
+    }
+
+    $unassignedConflicts = 0;
+    foreach ($unassignedBookings as $u) {
+        if (slot_overlaps($slot, $u['start'], $u['end'])) {
+            $unassignedConflicts++;
+        }
+    }
+
+    $userOverlap = false;
+    if ($requestedUserId && !empty($userBookings)) {
+        foreach ($userBookings as $ub) {
+            if (slot_overlaps($slot, $ub['start'], $ub['end'])) {
+                $userOverlap = true;
+                break;
+            }
+        }
+    }
+
+    if (($occupiedDentists + $unassignedConflicts) < $scheduledDentistCount) {
+        if ($userOverlap) {
+            $blocked[] = $slotStr;
+        } else {
+            $available[] = $slotStr;
+        }
+    } else {
+        $blocked[] = $slotStr;
+    }
+
+    $slot->add($interval);
 }
 
+$available = array_values($available);
+$blocked   = array_values(array_unique($blocked));
+
 echo json_encode([
-    'times'   => $available,
+    'times' => $available,
     'blocked' => $blocked
 ]);
 

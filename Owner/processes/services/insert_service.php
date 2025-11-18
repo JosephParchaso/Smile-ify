@@ -10,10 +10,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit;
     }
 
-    $name     = trim($_POST["serviceName"]);
-    $price    = floatval($_POST["price"]);
-    $duration = intval($_POST["duration_minutes"]);
-    $branches = isset($_POST["branches"]) ? $_POST["branches"] : [];
+    $name       = trim($_POST["serviceName"]);
+    $price      = floatval($_POST["price"]);
+    $duration   = intval($_POST["duration_minutes"]);
+    $branches   = isset($_POST["branches"]) ? $_POST["branches"] : [];
+    $requires_xray = isset($_POST["requires_xray"]) ? 1 : 0;
 
     if (empty($name) || $price < 0 || $duration <= 0) {
         $_SESSION['updateError'] = "Please fill in all required fields correctly.";
@@ -24,24 +25,25 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     try {
         $conn->begin_transaction();
 
-        $sql = "INSERT INTO service (name, price, duration_minutes, date_created) VALUES (?, ?, ?, NOW())";
+        $sql = "INSERT INTO service (name, price, duration_minutes, requires_xray, date_created, date_updated)
+                VALUES (?, ?, ?, ?, NOW(), NOW())";
+
         $stmt = $conn->prepare($sql);
         if (!$stmt) {
             throw new Exception("Prepare failed (service): " . $conn->error);
         }
 
-        $stmt->bind_param("sdi", $name, $price, $duration);
+        $stmt->bind_param("sdii", $name, $price, $duration, $requires_xray);
         $stmt->execute();
         $service_id = $stmt->insert_id;
         $stmt->close();
 
         if (!empty($branches)) {
             $sql2 = "INSERT INTO branch_service (branch_id, service_id, date_created)
-                    VALUES (?, ?, NOW())";
+                        VALUES (?, ?, NOW())";
+
             $stmt2 = $conn->prepare($sql2);
-            if (!$stmt2) {
-                throw new Exception("Prepare failed (branch_service): " . $conn->error);
-            }
+            if (!$stmt2) throw new Exception("Prepare failed (branch_service): " . $conn->error);
 
             foreach ($branches as $branch_id) {
                 $branch_id = intval($branch_id);
@@ -68,3 +70,4 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 }
 
 $conn->close();
+?>

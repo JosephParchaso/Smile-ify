@@ -168,32 +168,6 @@ require_once BASE_PATH . '/Patient/includes/navbar.php';
                 So whether you're looking for a regular dental check up or a complete dental rehabilitation, we've got you covered.
             </p>
         </div>
-
-        <div class="branch-list">
-            <div class="branch-column">
-                <img src="<?= BASE_URL ?>/images/logo/mandaue.png">
-                <a href="https://www.google.com/maps?s=web&..." onclick="window.open(this.href,'_blank');return false;">
-                <h2>Mandaue</h2>
-                </a>
-                <p>8XW6+G37, 42 Zone Ube, Mandaue City, 6014 Cebu</p>
-            </div>
-
-            <div class="branch-column">
-                <img src="<?= BASE_URL ?>/images/logo/babag.png">
-                <a href="https://www.google.com/maps/dir//7WHV..." onclick="window.open(this.href,'_blank');return false;">
-                <h2>Babag</h2>
-                </a>
-                <p>7WHV+RP3, Babang II Rd, Lapu-Lapu City, 6015 Cebu</p>
-            </div>
-
-            <div class="branch-column">
-                <img src="<?= BASE_URL ?>/images/logo/branch_default.jpg">
-                <a href="https://www.google.com/maps/dir//Mondejar..." onclick="window.open(this.href,'_blank');return false;">
-                <h2>Pusok</h2>
-                </a>
-                <p>Room 306, Mondejar Bldg., Pusok, Lapu-Lapu City, Cebu</p>
-            </div>
-        </div>
     </div>
 
     <div id="bookingModal" class="booking-modal">

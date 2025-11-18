@@ -87,8 +87,12 @@ $stmt->bind_param("ii", $transactionId, $userId);
 $stmt->execute();
 $result = $stmt->get_result();
 
-if ($row = $result->fetch_assoc()) {
-    $row['services'] = $row['services'] ?: '-';
+if (!$row = $result->fetch_assoc()) {
+    echo json_encode(["error" => "Transaction not found"]);
+    exit();
+}
+
+$row['services'] = $row['services'] ?: '-';
 
 if (!empty($row['license_number']) && !empty($row['license_number_iv']) && !empty($row['license_number_tag'])) {
     $row['license_number'] = decryptField(
@@ -108,30 +112,43 @@ if (!empty($row['patient_dob']) && !empty($row['patient_dob_iv']) && !empty($row
     );
 }
 
-    $appointmentTransactionId = $row['appointment_transaction_id'];
+$appointmentTransactionId = $row['appointment_transaction_id'];
 
-    $prescriptionsSql = "
-        SELECT drug, frequency, dosage, duration, quantity, instructions 
-        FROM dental_prescription 
-        WHERE appointment_transaction_id = ?
-    ";
-    $stmt2 = $conn->prepare($prescriptionsSql);
-    $stmt2->bind_param("i", $appointmentTransactionId);
-    $stmt2->execute();
-    $prescriptionsResult = $stmt2->get_result();
+$prescriptionsSql = "
+    SELECT drug, frequency, dosage, duration, quantity, instructions 
+    FROM dental_prescription 
+    WHERE appointment_transaction_id = ?
+";
+$stmt2 = $conn->prepare($prescriptionsSql);
+$stmt2->bind_param("i", $appointmentTransactionId);
+$stmt2->execute();
+$prescriptionsResult = $stmt2->get_result();
 
-    $prescriptions = [];
-    while ($p = $prescriptionsResult->fetch_assoc()) {
-        $prescriptions[] = $p;
-    }
-
-    $row['dental_transaction_id'] = $transactionId;
-    $row['prescriptions'] = $prescriptions;
-
-    echo json_encode($row);
-} else {
-    echo json_encode(["error" => "Transaction not found"]);
+$prescriptions = [];
+while ($p = $prescriptionsResult->fetch_assoc()) {
+    $prescriptions[] = $p;
 }
 
+$row['prescriptions'] = $prescriptions;
+
+
+$xrayQuery = $conn->prepare("
+    SELECT dx.file_path, s.name AS service_name, dx.date_created
+    FROM transaction_xrays dx
+    LEFT JOIN service s ON dx.service_id = s.service_id
+    WHERE dx.dental_transaction_id = ?
+");
+$xrayQuery->bind_param("i", $transactionId);
+$xrayQuery->execute();
+$xrayResult = $xrayQuery->get_result();
+
+$xrays = [];
+while ($xr = $xrayResult->fetch_assoc()) {
+    $xrays[] = $xr;
+}
+
+$row['xray_results'] = $xrays;
+
+echo json_encode($row);
 $conn->close();
-?>
+exit;

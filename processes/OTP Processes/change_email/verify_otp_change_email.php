@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $otpCreatedTime = (int) $_SESSION['otp_created'];
     $currentTime = time();
 
-    if (($currentTime - $otpCreatedTime) > 60) {
+    if (($currentTime - $otpCreatedTime) > 300) {
         $_SESSION['otp_error'] = "OTP expired. Please request a new one.";
         header("Location: " . BASE_URL . "/includes/OTP Includes/change_email/otp_verification_change_email.php");
         exit;

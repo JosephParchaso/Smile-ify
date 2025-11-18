@@ -13,12 +13,33 @@ document.addEventListener("DOMContentLoaded", function () {
     const servicesContainer = document.getElementById("servicesContainer");
     const dentistSelect = document.getElementById("appointmentDentist");
     const estimatedEndDisplay = document.getElementById("estimatedEnd");
+    const dateError = document.getElementById("dateError");
+
+    const CLINIC_START = { h: 9, m: 0 };
+    const CLINIC_END   = { h: 16, m: 30 };
+    const SLOT_STEP_MIN = 30;
 
     window.openBookingModal = function () {
         const modal = document.getElementById("bookingModal");
-        if (modal) {
-            modal.style.display = "block";
-            document.body.classList.add("modal-open");
+        if (!modal) return;
+
+        modal.style.display = "block";
+        document.body.classList.add("modal-open");
+
+        const dateSelect = document.getElementById("appointmentDate");
+        if (dateSelect) {
+            const now = new Date();
+            const lastStart = new Date();
+            lastStart.setHours(16, 0, 0, 0);
+
+            let minDate = now;
+
+            if (now >= lastStart) {
+                minDate = new Date();
+                minDate.setDate(now.getDate() + 1);
+            }
+
+            dateSelect.min = minDate.toISOString().split("T")[0];
         }
     };
 
@@ -37,9 +58,31 @@ document.addEventListener("DOMContentLoaded", function () {
     dateSelect.disabled = true;
     dentistSelect.disabled = true;
     timeSelect.disabled = true;
+    resetServices();
+
+    function formatDisplay(time24) {
+        const [hh, mm] = time24.split(':').map(Number);
+        let hour = hh % 12 || 12;
+        const ampm = hh >= 12 ? "PM" : "AM";
+        return `${hour}:${String(mm).padStart(2, '0')} ${ampm}`;
+    }
+
+    function buildAllSlots() {
+        const slots = [];
+        const start = new Date(2000,0,1, CLINIC_START.h, CLINIC_START.m);
+        const end = new Date(2000,0,1, CLINIC_END.h, CLINIC_END.m);
+        const step = SLOT_STEP_MIN;
+        for (let s = new Date(start); s < end; s.setMinutes(s.getMinutes() + step)) {
+            const hh = String(s.getHours()).padStart(2, '0');
+            const mm = String(s.getMinutes()).padStart(2, '0');
+            slots.push(`${hh}:${mm}`);
+        }
+        return slots;
+    }
 
     function resetServices() {
-        servicesContainer.innerHTML = `<p class="loading-text">Select a branch to load services</p>`;
+        servicesContainer.innerHTML = `<p class="loading-text">Select a branch and date to load available time slots</p>`;
+        servicesContainer.dataset.loaded = "false";
     }
 
     function resetDentist() {
@@ -57,9 +100,22 @@ document.addEventListener("DOMContentLoaded", function () {
         dateSelect.value = "";
     }
 
-    function loadAvailableTimes() {
+    async function loadAvailableTimes() {
         const branchId = branchSelect.value;
         const date = dateSelect.value;
+
+        if (!date) {
+            resetTime();
+            return;
+        }
+        const day = new Date(date).getDay();
+        if (day === 0) {
+            if (dateError) dateError.style.display = "block";
+            resetTime();
+            return;
+        } else {
+            if (dateError) dateError.style.display = "none";
+        }
 
         if (!branchId || !date) {
             resetTime();
@@ -69,125 +125,132 @@ document.addEventListener("DOMContentLoaded", function () {
         timeSelect.disabled = false;
         timeSelect.innerHTML = '<option value="" disabled selected hidden></option>';
 
-        const allSlots = [];
-        const step = 30;
-        const start = new Date("2000-01-01T09:00:00");
-        const end = new Date("2000-01-01T16:30:00");
+        try {
+            const form = new FormData();
+            form.append('branch_id', branchId);
+            form.append('appointment_date', date);
 
-        while (start < end) {
-            const hh = String(start.getHours()).padStart(2, "0");
-            const mm = String(start.getMinutes()).padStart(2, "0");
-            allSlots.push(`${hh}:${mm}`);
-            start.setMinutes(start.getMinutes() + step);
+            const res = await fetch(`${BASE_URL}/processes/load_available_times.php`, {
+                method: 'POST',
+                body: form
+            });
+
+            const data = await res.json();
+
+            if (data.error) {
+                console.error('loadAvailableTimes error:', data.error);
+                resetTime();
+                return;
+            }
+
+            const blockedSet = new Set(data.blocked || []);
+            const allSlots = buildAllSlots();
+
+            const now = new Date();
+            const selectedDateObj = new Date(dateSelect.value);
+            const isToday =
+                selectedDateObj.toDateString() === now.toDateString();
+
+            allSlots.forEach(slot => {
+                const display = formatDisplay(slot);
+                let isBlocked = blockedSet.has(slot);
+
+                if (isToday) {
+                    const [hh, mm] = slot.split(":").map(Number);
+                    const slotTime = new Date();
+                    slotTime.setHours(hh, mm, 0, 0);
+
+                    if (slotTime <= now) {
+                        isBlocked = true;
+                    }
+                }
+
+                const opt = document.createElement("option");
+                opt.value = slot;
+                opt.disabled = isBlocked;
+
+                if (isBlocked) {
+                    opt.className = "blocked-slot";
+                    opt.textContent = `${display} — Booked/Unavailable`;
+                } else {
+                    opt.textContent = display;
+                }
+
+                timeSelect.appendChild(opt);
+            });
+
+            servicesContainer.innerHTML = `<p class="loading-text">Select a time to load available services</p>`;
+            servicesContainer.dataset.loaded = "false";
+            resetDentist();
+            estimatedEndDisplay.textContent = "";
+
+        } catch (err) {
+            console.error('loadAvailableTimes fetch error:', err);
+            resetTime();
+            servicesContainer.innerHTML = `<p class="error-msg">Failed to load time slots.</p>`;
         }
-
-        allSlots.forEach(time => {
-            const [h, m] = time.split(":");
-            let hour = parseInt(h);
-            const ampm = hour >= 12 ? "PM" : "AM";
-            hour = hour % 12 || 12;
-            const formatted = `${hour}:${m} ${ampm}`;
-
-            timeSelect.innerHTML += `
-                <option value="${time}">${formatted}</option>
-            `;
-        });
     }
 
-    function loadServices() {
+    async function loadServicesAfterTime() {
         const branchId = branchSelect.value;
-        if (!branchId) {
-            resetServices();
-            return;
-        }
+        if (!branchId) return;
 
         servicesContainer.innerHTML = `<p class="loading-text">Loading services...</p>`;
 
-        fetch(`${BASE_URL}/processes/load_services.php`, {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: `appointmentBranch=${branchId}`,
-        })
-        .then(res => res.text())
-        .then(html => {
+        try {
+            const params = new URLSearchParams();
+            params.append('appointmentBranch', branchId);
+            const res = await fetch(`${BASE_URL}/processes/load_services.php`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: params.toString()
+            });
+            const html = await res.text();
             servicesContainer.innerHTML = html;
-        })
-        .catch(err => {
-            console.error("Service load error:", err);
+            servicesContainer.dataset.loaded = "true";
+        } catch (err) {
+            console.error('loadServices error:', err);
             servicesContainer.innerHTML = `<p class="error-msg">Failed to load services.</p>`;
-        });
+        }
     }
 
-    function loadDentists() {
+    function gatherCheckedServices() {
+        return Array.from(document.querySelectorAll("#servicesContainer input[type='checkbox']:checked"))
+            .map(cb => cb.value);
+    }
+
+    async function loadDentists() {
         const branchId = branchSelect.value;
         const date = dateSelect.value;
         const time = timeSelect.value;
 
-        const checkedServices = [
-            ...document.querySelectorAll("#servicesContainer input[type='checkbox']:checked"),
-        ].map(cb => cb.value);
-
+        const checkedServices = gatherCheckedServices();
         if (!branchId || !date || !time || checkedServices.length === 0) {
             resetDentist();
             return;
         }
 
         const fd = new FormData();
-        fd.append("appointmentBranch", branchId);
-        fd.append("appointmentDate", date);
-        fd.append("appointmentTime", time);
-        checkedServices.forEach(s => fd.append("appointmentServices[]", s));
+        fd.append('appointmentBranch', branchId);
+        fd.append('appointmentDate', date);
+        fd.append('appointmentTime', time);
+        checkedServices.forEach(s => fd.append('appointmentServices[]', s));
 
         dentistSelect.disabled = true;
         dentistSelect.innerHTML = `<option disabled>Loading dentists...</option>`;
 
-        fetch(`${BASE_URL}/processes/load_dentists.php`, {
-            method: "POST",
-            body: fd
-        })
-        .then(res => res.text())
-        .then(html => {
+        try {
+            const res = await fetch(`${BASE_URL}/processes/load_dentists.php`, {
+                method: 'POST',
+                body: fd
+            });
+            const html = await res.text();
             dentistSelect.innerHTML = html;
             dentistSelect.disabled = false;
-        })
-        .catch(err => {
-            console.error("Dentist load error:", err);
+        } catch (err) {
+            console.error('Dentist load error:', err);
             dentistSelect.innerHTML = `<option disabled>Error loading dentists</option>`;
-        });
-    }
-
-    if (timeSelect) {
-        timeSelect.addEventListener("change", function () {
-            const selected = this.value;
-            if (!selected) return;
-
-            const selectedServices = Array.from(
-                document.querySelectorAll("#servicesContainer input[type='checkbox']:checked")
-            );
-
-            let totalDuration = 0;
-            selectedServices.forEach(cb => {
-                totalDuration += parseInt(cb.dataset.duration || 0);
-            });
-
-            const start = new Date(`2024-01-01T${selected}:00`);
-            start.setMinutes(start.getMinutes() + totalDuration);
-
-            let endHours = start.getHours();
-            const endMinutes = String(start.getMinutes()).padStart(2, "0");
-            const ampm = endHours >= 12 ? "PM" : "AM";
-            endHours = endHours % 12 || 12;
-            const formattedEnd = `${endHours}:${endMinutes} ${ampm}`;
-
-            const hours = Math.floor(totalDuration / 60);
-            const minutes = totalDuration % 60;
-
-            let durationText = hours > 0
-                ? `${hours} hour${hours > 1 ? "s" : ""}${minutes > 0 ? " and " + minutes + " min" : ""}`
-                : `${minutes} min`;
-
-            estimatedEndDisplay.textContent = `Estimated End Time: ${formattedEnd} (${durationText})`;
-        });
+        }
     }
 
     function updateEstimatedEndTime() {
@@ -206,19 +269,13 @@ document.addEventListener("DOMContentLoaded", function () {
             totalDuration += parseInt(cb.dataset.duration || 0);
         });
 
-        if (totalDuration === 0) {
-            estimatedEndDisplay.textContent = `Estimated End Time: ${selectedTime} (0 min)`;
-            return;
-        }
-
-        const start = new Date(`2024-01-01T${selectedTime}:00`);
+        const start = new Date(`2000-01-01T${selectedTime}:00`);
         start.setMinutes(start.getMinutes() + totalDuration);
 
         let endHours = start.getHours();
         const endMinutes = String(start.getMinutes()).padStart(2, "0");
         const ampm = endHours >= 12 ? "PM" : "AM";
         endHours = endHours % 12 || 12;
-
         const formattedEnd = `${endHours}:${endMinutes} ${ampm}`;
 
         const hours = Math.floor(totalDuration / 60);
@@ -238,25 +295,35 @@ document.addEventListener("DOMContentLoaded", function () {
         resetDate();
         resetTime();
         resetDentist();
-        loadServices();
+        resetServices();
     });
 
     dateSelect.addEventListener("change", () => {
         resetTime();
         resetDentist();
-        timeSelect.disabled = false;
-        loadAvailableTimes();
+        updateEstimatedEndTime();
+        if (branchSelect.value && dateSelect.value) {
+            loadAvailableTimes();
+        }
     });
 
-    timeSelect.addEventListener("change", () => {
+    timeSelect.addEventListener("change", async () => {
         resetDentist();
+        estimatedEndDisplay.textContent = "";
+        await loadServicesAfterTime();
         updateEstimatedEndTime();
     });
 
     servicesContainer.addEventListener("change", (e) => {
         if (e.target.matches("input[type='checkbox']")) {
-            loadDentists();
             updateEstimatedEndTime();
+            loadDentists();
+            const checkbox = e.target;
+            const serviceId = checkbox.value;
+            const qtyInput = document.querySelector(`input[name='serviceQuantity[${serviceId}]']`);
+            if (qtyInput) {
+                qtyInput.style.display = checkbox.checked ? 'inline-block' : 'none';
+            }
         }
     });
 });

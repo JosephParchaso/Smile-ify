@@ -16,7 +16,7 @@ $transactionId = intval($_GET['id']);
 $sql = "
     SELECT 
         dt.dental_transaction_id,
-        dt.appointment_transaction_id AS appointment_id,
+        dt.appointment_transaction_id,
         dt.dentist_id,
         dt.promo_id,
         dt.payment_method,
@@ -77,9 +77,37 @@ while ($row = $servicesResult->fetch_assoc()) {
     ];
 }
 
+$xraySql = "
+    SELECT service_id, file_path
+    FROM transaction_xrays
+    WHERE dental_transaction_id = ?
+    ORDER BY service_id, xray_id ASC
+";
+
+$xrayStmt = $conn->prepare($xraySql);
+$xrayStmt->bind_param("i", $transactionId);
+$xrayStmt->execute();
+$xrayResult = $xrayStmt->get_result();
+
+$xrays = [];
+
+while ($row = $xrayResult->fetch_assoc()) {
+    $svcId = (int)$row['service_id'];
+
+    if (!isset($xrays[$svcId])) {
+        $xrays[$svcId] = [];
+    }
+
+    $xrays[$svcId][] = [
+        'file_path' => $row['file_path']
+    ];
+}
+
+$xrayStmt->close();
+
 $response = [
     'dental_transaction_id' => (int)$data['dental_transaction_id'],
-    'appointment_id' => (int)$data['appointment_id'],
+    'appointment_transaction_id' => (int)$data['appointment_transaction_id'],
     'dentist_id' => (int)$data['dentist_id'],
     'promo_id' => $data['promo_id'] ? (int)$data['promo_id'] : null,
     'payment_method' => $data['payment_method'] ?? '',
@@ -97,7 +125,8 @@ $response = [
     'date_created' => $data['date_created'],
     'date_updated' => !empty($data['date_updated']) ? $data['date_updated'] : '-',
     'medcert_eligible' => (int)$data['medcert_eligible'],
-    'services' => $services
+    'services' => $services,
+    'xrays' => $xrays 
 ];
 
 echo json_encode($response);

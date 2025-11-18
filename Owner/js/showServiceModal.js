@@ -60,6 +60,20 @@ document.addEventListener("DOMContentLoaded", () => {
                     <div id="branchAssignment" class="checkbox-group"></div>
                 </div>
 
+                <div class="form-group">
+                    <div id="xrayAssignment" class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input 
+                                type="checkbox" 
+                                id="requires_xray" 
+                                name="requires_xray" 
+                                ${isEdit && data.requires_xray == 1 ? "checked" : ""}
+                            >
+                            <label for="requires_xray">Requires X-ray for this service</label>
+                        </div>
+                    </div>
+                </div>
+
                 ${isEdit ? `
                 <div class="form-group">
                     <input type="text" id="dateCreated" class="form-control" value="${data.date_created || ''}" disabled>
