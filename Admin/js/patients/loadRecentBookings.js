@@ -13,9 +13,10 @@ $(document).ready(function() {
                 { "title": "Date" },
                 { "title": "Time" },
                 { "title": "Status" },
+                { "title": "Created", "visible": false }, 
                 { "title": "Action", "orderable": false, "searchable": false }
             ],
-            "order": [[3, "asc"], [4, "asc"]],
+            "order": [[6, "desc"]],
             "language": {
                 search: "",
                 searchPlaceholder: "Search"

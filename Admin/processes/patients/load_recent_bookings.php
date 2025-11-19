@@ -29,7 +29,7 @@ $sql = "
         AND u.role = 'patient'
         AND a.status = 'booked'
     GROUP BY a.appointment_transaction_id
-    ORDER BY a.appointment_date ASC, a.appointment_time ASC
+    ORDER BY a.date_created DESC
 ";
 
 $stmt = $conn->prepare($sql);
@@ -46,6 +46,7 @@ while ($row = $result->fetch_assoc()) {
         $row['appointment_date'],
         substr($row['appointment_time'], 0, 5),
         $row['status'],
+        $row['date_created'],
         '<a href="' . BASE_URL . '/Admin/pages/manage_appointment.php?id=' . $row['appointment_transaction_id'] . '&backTab=recent&tab=dental_transactions" class="manage-action">Manage</a>'
     ];
 }

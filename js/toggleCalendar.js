@@ -5,12 +5,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let closedDates = [];
 
-    if (appointmentInput) {
-        const today = new Date();
-        today.setDate(today.getDate() + 1);
-        appointmentInput.min = today.toISOString().split("T")[0];
-    }
-
     if (branchSelect) {
         branchSelect.addEventListener("change", async function () {
             const branchId = this.value;
@@ -37,9 +31,25 @@ document.addEventListener("DOMContentLoaded", function () {
         appointmentInput.addEventListener("input", function () {
             if (!this.value) return;
 
-            const selectedDate = this.value;
-            const day = new Date(selectedDate).getDay();
+            const selectedDate = new Date(this.value);
 
+            if (isNaN(selectedDate.getTime())) {
+                appointmentError.textContent = "Please enter a valid date.";
+                appointmentError.style.display = "block";
+                this.classList.add("is-invalid");
+                this.value = "";
+                return;
+            }
+
+            if (selectedDate.getFullYear() < 1900) {
+                appointmentError.textContent = "Please enter a valid date.";
+                appointmentError.style.display = "block";
+                this.classList.add("is-invalid");
+                this.value = "";
+                return;
+            }
+
+            const day = selectedDate.getDay();
             if (day === 0) {
                 appointmentError.textContent = "Sundays are not available for appointments.";
                 appointmentError.style.display = "block";
@@ -48,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            if (closedDates.includes(selectedDate)) {
+            if (closedDates.includes(this.value)) {
                 appointmentError.textContent = "This date is unavailable due to a branch closure.";
                 appointmentError.style.display = "block";
                 this.classList.add("is-invalid");

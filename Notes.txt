@@ -97,7 +97,8 @@ edit owner service enable for xray 👍
 xray file upload and display 👍
 schedule available denitists 👍
 transact dentists 👍
-verify if 8 am mawa ang booking for current date 💖
+verify if 8 am mawa ang booking for current date 
+verify recent bookings badge
 
 
 
