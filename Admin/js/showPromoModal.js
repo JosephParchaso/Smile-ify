@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
 
                 <div class="form-group">
-                    <input type="text" class="form-control" value="${data.date_updated || ''}" disabled>
+                    <input type="text" class="form-control" value="${data.date_updated ? data.date_updated : '-'}" disabled>
                     <label class="form-label">Last Updated</label>
                 </div>
 

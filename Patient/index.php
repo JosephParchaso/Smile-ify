@@ -77,7 +77,7 @@ require_once BASE_PATH . '/Patient/includes/navbar.php';
                     <a href="#" onclick="openBookingModal()"><span class="material-symbols-outlined">calendar_add_on</span> Book Appointment</a>
                     <a href="#" onclick="openDentistsModal()"><span class="material-symbols-outlined">medical_information</span> View Dentists</a>
                     <a href="<?= BASE_URL ?>/Patient/pages/profile.php"><span class="material-symbols-outlined">manage_accounts</span> Profile Settings</a><br>
-                    <a href="#" onclick="openEducationalModal()"><span class="material-symbols-outlined">info</span> About</a>
+                    <a href="#" onclick="openEducationalModal()"><span class="material-symbols-outlined">info</span> View Infographics</a>
                 </div>
             </div>
             <?php if (!empty($error_msg)): ?>
@@ -254,7 +254,7 @@ require_once BASE_PATH . '/Patient/includes/navbar.php';
     <div id="dentistsModal" class="booking-modal">
         <div class="booking-modal-content">
             <h2>Available Dentists</h2>
-            <p>Below is the list of dentists, their assigned branches, and services.</p>
+            <p>Below is the list of dentists, their assigned branches, schedules and services.</p>
 
             <div id="dentistsContainer" style="max-height: 400px; overflow-y: auto;">
                 <p>Loading dentists...</p>

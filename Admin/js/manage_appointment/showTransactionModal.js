@@ -154,7 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 ${isEdit ? `
                 <div class="form-group">
-                    <input type="text" id="dateUpdated" class="form-control" value="${data.date_updated}" disabled>
+                    <input type="text" id="dateUpdated" class="form-control" value="${data.date_updated ? data.date_updated : '-'}" disabled>
                     <label for="dateUpdated" class="form-label">Last Updated</label>
                 </div>` : ""}
 
@@ -489,7 +489,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 ${isEdit ? `
                 <div class="form-group">
-                    <input type="text" id="dateUpdated" class="form-control" value="${data.date_updated}" disabled>
+                    <input type="text" id="dateUpdated" class="form-control" value="${data.date_updated ? data.date_updated : '-'}" disabled>
                     <label for="dateUpdated" class="form-label">Last Updated</label>
                 </div>` : ""}
 
@@ -564,7 +564,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 ${isEdit ? `
                 <div class="form-group">
-                    <input type="text" id="dateUpdated" class="form-control" value="${data.date_updated}" disabled>
+                    <input type="text" id="dateUpdated" class="form-control" value="${data.date_updated ? data.date_updated : '-'}" disabled>
                     <label for="dateUpdated" class="form-label">Last Updated</label>
                 </div>` : ""}
 
