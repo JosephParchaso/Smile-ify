@@ -188,21 +188,26 @@ document.addEventListener("DOMContentLoaded", () => {
                     <input  
                         type="date" 
                         id="dateStarted" 
-                        name="dateStarted" 
+                        name="dateStarted"
                         class="form-control"
                         value="${isEdit ? data.date_started : ''}"
                         ${isEdit && hasStarted(data.date_started) ? "disabled" : "required"}
                         autocomplete="off"
                     >
                     <label for="dateStarted" class="form-label">Start Date <span class="required">*</span></label>
-                    
+
                     ${isEdit && hasStarted(data.date_started)
-                        ? `<small style="color:#999; font-size:0.85em;">
+                        ? `
+                            <input type="hidden" name="dateStarted" value="${data.date_started}">
+                            <small style="color:#999; font-size:0.85em;">
                                 The staff has already started. Start date can no longer be edited.
-                        </small>`
-                        : `<span id="dateError" class="error-msg-calendar error" style="display:none;">
+                            </small>
+                        `
+                        : `
+                            <span id="dateError" class="error-msg-calendar error" style="display:none;">
                                 Sundays are not available for work. Please select another date.
-                        </span>`
+                            </span>
+                        `
                     }
                 </div>
 
@@ -369,7 +374,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <input  
                         type="date" 
                         id="dateStarted" 
-                        name="dateStarted" 
+                        name="dateStarted"
                         class="form-control"
                         value="${isEdit ? data.date_started : ''}"
                         ${isEdit && hasStarted(data.date_started) ? "disabled" : "required"}
@@ -378,12 +383,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     <label for="dateStarted" class="form-label">Start Date <span class="required">*</span></label>
 
                     ${isEdit && hasStarted(data.date_started)
-                        ? `<small style="color:#999; font-size:0.85em;">
-                                The dentist has already started. Start date cannot be changed.
-                        </small>`
-                        : `<span id="dateError" class="error-msg-calendar error" style="display:none;">
-                                Sundays are not available. Please select another date.
-                        </span>`
+                        ? `
+                            <input type="hidden" name="dateStarted" value="${data.date_started}">
+                            <small style="color:#999; font-size:0.85em;">
+                                The staff has already started. Start date can no longer be edited.
+                            </small>
+                        `
+                        : `
+                            <span id="dateError" class="error-msg-calendar error" style="display:none;">
+                                Sundays are not available for work. Please select another date.
+                            </span>
+                        `
                     }
                 </div>
 

@@ -44,7 +44,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_FILES['signatureImage']) && $_FILES['signatureImage']['error'] === UPLOAD_ERR_OK) {
         $uploadDir = BASE_PATH . '/images/dentists/signature/';
         if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+
         $ext = strtolower(pathinfo($_FILES['signatureImage']['name'], PATHINFO_EXTENSION));
+        $allowed = ['jpg', 'jpeg', 'png', 'webp'];
+
+        if (!in_array($ext, $allowed)) {
+            $_SESSION['updateError'] = "Invalid file type for signature. Only JPG, PNG, or WEBP allowed.";
+            header("Location: " . BASE_URL . "/Owner/pages/employees.php?tab=dentist");
+            exit();
+        }
+
         $tempSignature = "tmp_sig_" . uniqid() . "." . $ext;
         move_uploaded_file($_FILES['signatureImage']['tmp_name'], $uploadDir . $tempSignature);
     }
@@ -52,12 +61,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_FILES['profileImage']) && $_FILES['profileImage']['error'] === UPLOAD_ERR_OK) {
         $uploadDir = BASE_PATH . '/images/dentists/profile/';
         if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+
         $ext = strtolower(pathinfo($_FILES['profileImage']['name'], PATHINFO_EXTENSION));
         $allowed = ['jpg', 'jpeg', 'png', 'webp'];
-        if (in_array($ext, $allowed)) {
-            $tempProfile = "tmp_prof_" . uniqid() . "." . $ext;
-            move_uploaded_file($_FILES['profileImage']['tmp_name'], $uploadDir . $tempProfile);
+
+        if (!in_array($ext, $allowed)) {
+            $_SESSION['updateError'] = "Invalid profile image type. Only JPG, PNG, or WEBP allowed.";
+            header("Location: " . BASE_URL . "/Owner/pages/employees.php?tab=dentist");
+            exit();
         }
+
+        $tempProfile = "tmp_prof_" . uniqid() . "." . $ext;
+        move_uploaded_file($_FILES['profileImage']['tmp_name'], $uploadDir . $tempProfile);
     }
 
     try {

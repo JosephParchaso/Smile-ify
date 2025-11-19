@@ -52,6 +52,7 @@
     justify-content: flex-start;
     align-items: flex-start;
     padding: 40px;
+    gap: 20px;
     flex-wrap: wrap;
 }
 
