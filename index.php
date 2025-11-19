@@ -280,7 +280,7 @@ document.addEventListener("DOMContentLoaded", function () {
     <div id="dentistsModal" class="booking-modal">
         <div class="booking-modal-content">
             <h2>Available Dentists</h2>
-            <p>Below is the list of dentists, their assigned branches, and services.</p>
+            <p>Below is the list of dentists, their assigned branches, schedules and services.</p>
 
             <div id="dentistsContainer" style="max-height: 400px; overflow-y: auto;">
                 <p>Loading dentists...</p>
@@ -352,7 +352,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     So whether you're looking for a regular dental check up or a complete dental rehabilitation, we've got you covered.
                 </p>
             <div class="educational-container">
-                <button onclick="openEducationalModal()" class="educational-button" id="openEducationalModal">Learn More</button>
+                <button onclick="openEducationalModal()" class="educational-button" id="openEducationalModal">View Infographics</button>
             </div>
         </div>
         

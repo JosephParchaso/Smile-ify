@@ -30,11 +30,21 @@ document.addEventListener("DOMContentLoaded", function () {
         if (dateSelect) {
             const now = new Date();
             const lastStart = new Date();
-            lastStart.setHours(16, 0, 0, 0);
+            lastStart.setHours(15, 0, 0, 0);
 
             let minDate = new Date();
-            minDate.setDate(minDate.getDate());
-            dateSelect.min = minDate.toISOString().split("T")[0];
+            if (now >= lastStart) {
+                minDate.setDate(minDate.getDate() + 1);
+            }
+            function toLocalDateStringPH(date) {
+                const y = date.getFullYear();
+                const m = String(date.getMonth() + 1).padStart(2, "0");
+                const d = String(date.getDate()).padStart(2, "0");
+                return `${y}-${m}-${d}`;
+            }
+
+            dateSelect.min = toLocalDateStringPH(minDate);
+
         }
     };
 

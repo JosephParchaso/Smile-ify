@@ -83,7 +83,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         );
 
         if ($stmt->execute()) {
-            $_SESSION['updateSuccess'] = "Admin added successfully! Username: {$username}, Default password: {$raw_password}";
+            $new_admin_id = $stmt->insert_id;
+
+            $notif_msg = "Your admin account has been created. Branch Assignment: $branch_name. Username: $username";
+            $notif_sql = "INSERT INTO notifications (user_id, message) VALUES (?, ?)";
+            $notif_stmt = $conn->prepare($notif_sql);
+            $notif_stmt->bind_param("is", $new_admin_id, $notif_msg);
+            $notif_stmt->execute();
+            $notif_stmt->close();
+
+            require BASE_PATH . '/Mail/phpmailer/PHPMailerAutoload.php';
+
+            $mail = new PHPMailer;
+            $mail->CharSet = 'UTF-8';
+            $mail->Encoding = 'base64';
+            $mail->isSMTP();
+            $mail->Host       = SMTP_HOST;
+            $mail->Port       = SMTP_PORT;
+            $mail->SMTPAuth   = SMTP_AUTH;
+            $mail->SMTPSecure = SMTP_SECURE;
+            $mail->Username   = SMTP_USER;
+            $mail->Password   = SMTP_PASS;
+
+            $mail->setFrom('smileify.web@gmail.com', 'Smile-ify Team');
+            $mail->addAddress($email);
+
+            $mail->isHTML(true);
+            $mail->Subject = "Your Smile-ify Admin Account";
+            $mail->Body = "
+                <p>Dear <strong>$firstName $lastName</strong>,</p>
+                <p>Your admin account for <strong>Smile-ify</strong> has been successfully created.</p>
+
+                <p><strong>Branch Assignment:</strong> $branch_name</p>
+
+                <p><strong>Login Credentials:</strong></p>
+                <p>
+                    <strong>Username:</strong> $username<br>
+                    <strong>Password:</strong> $raw_password
+                </p>
+
+                <p>You may now access the admin dashboard.</p>
+
+                <br>
+                <p>Best regards,<br><strong>Smile-ify Team</strong></p>
+            ";
+
+            try {
+                $mail->send();
+                $_SESSION['updateSuccess'] = "Admin added successfully! Username: {$username}, Default password: {$raw_password}. Email sent.";
+            } catch (Exception $e) {
+                error_log("Mail Error: " . $mail->ErrorInfo);
+                $_SESSION['updateSuccess'] = "Admin added successfully, but failed to send email. Username: {$username}, Password: {$raw_password}";
+            }
+
         } else {
             $_SESSION['updateError'] = "Failed to insert admin.";
         }

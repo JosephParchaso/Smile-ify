@@ -214,21 +214,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 ${isEdit ? `
                 <div class="form-group">
-                    <input type="text" id="dateUpdated" class="form-control" value="${data.date_updated}" disabled>
+                    <input type="text" id="dateUpdated" class="form-control" value="${data.date_updated ? data.date_updated : '-'}" disabled>
                     <label for="dateUpdated" class="form-label">Last Updated</label>
                 </div>` : ""}
-
-                <div class="form-group">
-                    <label class="confirmation-label">
-                        <input type="checkbox" id="confirmationCheck" required>
-                        I hereby confirm that all information provided above for this <strong>Admin account</strong> is true and accurate. <br>
-                        I understand that adding or updating an Admin may affect access permissions, assigned branches, or ongoing operations. 
-                        I take responsibility to ensure that the <strong>Admin</strong> is notified about any significant changes made to this account.
-                    </label>
-                    <span id="confirmError" class="error-msg" style="display:none; color:red; font-size:0.9em;">
-                        Please confirm before proceeding.
-                    </span>
-                </div>
 
                 <div class="button-group button-group-profile">
                     <button type="submit" class="form-button confirm-btn">${isEdit ? "Save Changes" : "Add Admin"}</button>
@@ -407,21 +395,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 ${isEdit ? `
                 <div class="form-group">
-                    <input type="text" id="dateUpdated" class="form-control" value="${data.date_updated}" disabled>
+                    <input type="text" id="dateUpdated" class="form-control" value="${data.date_updated ? data.date_updated : '-'}" disabled>
                     <label for="dateUpdated" class="form-label">Last Updated</label>
                 </div>` : ""}
-
-                <div class="form-group">
-                    <label class="confirmation-label">
-                        <input type="checkbox" id="confirmationCheck" required>
-                        I hereby confirm that all information provided above for this <strong>Dentist Info</strong> is true and accurate. <br>
-                        I understand that adding or updating a Dentist may affect access permissions, assigned branches, or ongoing operations. 
-                        I take responsibility to ensure that the <strong>Admin and Dentist</strong> are notified about any significant changes made to this account.
-                    </label>
-                    <span id="confirmError" class="error-msg" style="display:none; color:red; font-size:0.9em;">
-                        Please confirm before proceeding.
-                    </span>
-                </div>
 
                 <div class="button-group button-group-profile">
                     <button type="submit" class="form-button confirm-btn">${isEdit ? "Save Changes" : "Add Dentist"}</button>
@@ -672,20 +648,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
-
-    document.body.addEventListener("submit", function (e) {
-        const form = e.target;
-        const confirmCheck = form.querySelector("#confirmationCheck");
-        const confirmError = form.querySelector("#confirmError");
-
-        if (confirmCheck && !confirmCheck.checked) {
-            e.preventDefault();
-            confirmError.style.display = "block";
-            confirmCheck.focus();
-        } else if (confirmError) {
-            confirmError.style.display = "none";
-        }
-    });
 });
 
 function clearImage(inputId, hiddenId) {

@@ -98,11 +98,13 @@ xray file upload and display 👍
 schedule available denitists 👍
 transact dentists 👍
 openEducational content final 👍
-verify if 8 am mawa ang booking for current date 
-verify recent bookings badge
-send email on admin creation
+verify if 8 am mawa ang booking for current date 👍 verified, all past dates and time with the current date is disabled
+verify recent bookings badge 👍 current date onwards
+send email on admin creation 👍 
+hereby2 sa owner 👍 
 double insert on otp
 block admin in mobile
+remove contact number and address on owner and edit function
 
 
 
