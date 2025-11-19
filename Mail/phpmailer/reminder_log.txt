@@ -1482,3 +1482,19 @@ Reminders checked at 2025-11-20 05:00:02. Sent to 0 recipient(s).
 [2025-11-20 05:30:02] Checking between 2025-11-21 05:30:02 and 2025-11-21 06:00:02
 Reminders checked at 2025-11-20 05:30:02. Sent to 0 recipient(s).
 
+[2025-11-20 06:00:02] Script started
+[2025-11-20 06:00:02] Checking between 2025-11-21 06:00:02 and 2025-11-21 06:30:02
+Reminders checked at 2025-11-20 06:00:02. Sent to 0 recipient(s).
+
+[2025-11-20 06:30:02] Script started
+[2025-11-20 06:30:02] Checking between 2025-11-21 06:30:02 and 2025-11-21 07:00:02
+Reminders checked at 2025-11-20 06:30:02. Sent to 0 recipient(s).
+
+[2025-11-20 07:00:02] Script started
+[2025-11-20 07:00:02] Checking between 2025-11-21 07:00:02 and 2025-11-21 07:30:02
+Reminders checked at 2025-11-20 07:00:02. Sent to 0 recipient(s).
+
+[2025-11-20 07:30:02] Script started
+[2025-11-20 07:30:02] Checking between 2025-11-21 07:30:02 and 2025-11-21 08:00:02
+Reminders checked at 2025-11-20 07:30:02. Sent to 0 recipient(s).
+

@@ -30,8 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $branches       = isset($_POST['branches']) ? array_map('intval', $_POST['branches']) : [];
     $services       = isset($_POST['services']) ? array_map('intval', $_POST['services']) : [];
-    $schedule       = isset($_POST['schedule']) ? $_POST['schedule'] : [];  // NEW FIELD
-
+    $schedule       = isset($_POST['schedule']) ? $_POST['schedule'] : [];
     if (!empty($email) && !isValidEmailDomain($email)) {
         $_SESSION['updateError'] = "Email domain is not valid or unreachable.";
         header("Location: " . BASE_URL . "/Owner/pages/employees.php?tab=dentist");
@@ -81,20 +80,24 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/dentists/profile/';
         if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
 
+        $fileExt = strtolower(pathinfo($_FILES['profileImage']['name'], PATHINFO_EXTENSION));
+        $allowedExt = ['jpg', 'jpeg', 'png', 'webp'];
+
+        if (!in_array($fileExt, $allowedExt)) {
+            $_SESSION['updateError'] = "Invalid profile image type. Only JPG, PNG, or WEBP allowed.";
+            header("Location: " . BASE_URL . "/Owner/pages/employees.php?tab=dentist");
+            exit();
+        }
+
         if (!empty($current['profile_image'])) {
             $oldPath = $uploadDir . $current['profile_image'];
             if (file_exists($oldPath)) unlink($oldPath);
         }
 
-        $fileExt = strtolower(pathinfo($_FILES['profileImage']['name'], PATHINFO_EXTENSION));
-        $allowedExt = ['jpg', 'jpeg', 'png', 'webp'];
-
-        if (in_array($fileExt, $allowedExt)) {
-            $fileName = "{$dentistId}_{$safeLast}_profile." . $fileExt;
-            if (move_uploaded_file($_FILES['profileImage']['tmp_name'], $uploadDir . $fileName)) {
-                $profileImage = $fileName;
-                $changed = true;
-            }
+        $fileName = "{$dentistId}_{$safeLast}_profile." . $fileExt;
+        if (move_uploaded_file($_FILES['profileImage']['tmp_name'], $uploadDir . $fileName)) {
+            $profileImage = $fileName;
+            $changed = true;
         }
     }
 
@@ -112,14 +115,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/Smile-ify/images/dentists/signature/';
         if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
 
+        $fileExt = strtolower(pathinfo($_FILES['signatureImage']['name'], PATHINFO_EXTENSION));
+        $allowedExt = ['jpg', 'jpeg', 'png', 'webp'];
+
+        if (!in_array($fileExt, $allowedExt)) {
+            $_SESSION['updateError'] = "Invalid signature image type. Only JPG, PNG, or WEBP allowed.";
+            header("Location: " . BASE_URL . "/Owner/pages/employees.php?tab=dentist");
+            exit();
+        }
+
         if (!empty($current['signature_image'])) {
             $oldPath = $uploadDir . $current['signature_image'];
             if (file_exists($oldPath)) unlink($oldPath);
         }
 
-        $fileExt = strtolower(pathinfo($_FILES['signatureImage']['name'], PATHINFO_EXTENSION));
         $fileName = "{$dentistId}_{$safeLast}_signature." . $fileExt;
-
         if (move_uploaded_file($_FILES['signatureImage']['tmp_name'], $uploadDir . $fileName)) {
             $signatureImage = $fileName;
             $changed = true;

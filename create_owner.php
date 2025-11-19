@@ -9,11 +9,12 @@ if (php_sapi_name() !== 'cli') {
 
 $check = $conn->query("SELECT COUNT(*) AS c FROM users WHERE role='owner'");
 $count = $check->fetch_assoc()['c'];
+
 if ($count > 0) {
     exit("Owner already exists. Aborting.\n");
 }
 
-echo "=== Smile-ify Owner Setup ===\n\n";
+echo "=== Smile-ify Owner Setup (Simplified) ===\n\n";
 
 function prompt($label, $required = true)
 {
@@ -62,13 +63,6 @@ while (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     $email = prompt("Enter email");
 }
 
-$dob = prompt("Enter date of birth (YYYY-MM-DD)");
-while (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $dob)) {
-    echo "Invalid date format. Use YYYY-MM-DD.\n";
-    $dob = prompt("Enter date of birth (YYYY-MM-DD)");
-}
-
-$gender = prompt("Enter gender (Male/Female/Other)");
 $middle_name = ($middle_name === '') ? NULL : $middle_name;
 
 $role = 'owner';
@@ -76,16 +70,15 @@ $status = 'Active';
 $date_started = date('Y-m-d');
 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-list($dob_encrypted, $dob_iv, $dob_tag) = encryptField($dob);
 list($cn_encrypted, $cn_iv, $cn_tag) = encryptField($contact_number);
 
 $stmt = $conn->prepare("
     INSERT INTO users (
         username, password, first_name, middle_name, last_name, email,
         contact_number, contact_number_iv, contact_number_tag,
-        gender, date_of_birth, date_of_birth_iv, date_of_birth_tag,
         role, status, date_started, date_created
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+    )
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
 ");
 
 if (!$stmt) {
@@ -93,7 +86,7 @@ if (!$stmt) {
 }
 
 $stmt->bind_param(
-    "ssssssssssssssss",
+    "ssssssssssss",
     $username,
     $hashed_password,
     $first_name,
@@ -103,10 +96,6 @@ $stmt->bind_param(
     $cn_encrypted,
     $cn_iv,
     $cn_tag,
-    $gender,
-    $dob_encrypted,
-    $dob_iv,
-    $dob_tag,
     $role,
     $status,
     $date_started

@@ -24,34 +24,18 @@ $updateError = $_SESSION['updateError'] ?? "";
         </div>
         
         <?php
-        require_once BASE_PATH . '/includes/db.php';
-        $qrImage = null;
+            require_once BASE_PATH . '/includes/db.php';
+            $qrImage = null;
 
-        $result = $conn->query("SELECT file_path FROM qr_payment ORDER BY id DESC LIMIT 1");
-        if ($result && $row = $result->fetch_assoc()) {
-            $qrImage = BASE_URL . $row['file_path'];
-        }
+            $result = $conn->query("SELECT file_path FROM qr_payment ORDER BY id DESC LIMIT 1");
+            if ($result && $row = $result->fetch_assoc()) {
+                $qrImage = BASE_URL . $row['file_path'];
+            }
         ?>
 
-        <div style="margin-top: 20px; text-align: center;">
-            <h4 style="margin-bottom: 10px;">Payment QR Code</h4>
-
-            <?php if ($qrImage): ?>
-                <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
-                    <img src="<?= htmlspecialchars($qrImage) ?>" alt="QR Code"
-                        style="width:150px; border:1px solid #ccc; border-radius:4px;">
-                    <form method="POST" action="<?= BASE_URL ?>/Owner/processes/profile/upload_qr.php" enctype="multipart/form-data">
-                        <input type="file" name="qrImage" accept="image/*" required style="margin-top:10px;">
-                        <button type="submit" class="confirm-btn" style="width:150px; margin-top:5px;">Replace QR</button>
-                    </form>
-                </div>
-            <?php else: ?>
-                <form method="POST" action="<?= BASE_URL ?>/Owner/processes/profile/upload_qr.php" enctype="multipart/form-data">
-                    <input type="file" name="qrImage" accept="image/*" required>
-                    <button type="submit" class="confirm-btn" style="width:150px; margin-top:5px;">Upload QR</button>
-                </form>
-            <?php endif; ?>
-        </div>
+        <script>
+            const QR_IMAGE_URL = "<?= $qrImage ? htmlspecialchars($qrImage) : '' ?>";
+        </script>
 
         <?php if (!empty($updateSuccess) || !empty($updateError)): ?>
             <div id="toastContainer">
@@ -67,8 +51,6 @@ $updateError = $_SESSION['updateError'] ?? "";
             </div>
         <?php endif; ?>
     </div>
-
-    
 
 <div id="editProfileModal" class="edit-profile-modal">
     <div class="edit-profile-modal-content">

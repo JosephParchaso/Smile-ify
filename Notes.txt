@@ -102,9 +102,11 @@ verify if 8 am mawa ang booking for current date 👍 verified, all past dates a
 verify recent bookings badge 👍 current date onwards
 send email on admin creation 👍 
 hereby2 sa owner 👍 
+remove contact number and address on owner and edit function
+service add 0 price
 double insert on otp
 block admin in mobile
-remove contact number and address on owner and edit function
+mobile view
 
 
 

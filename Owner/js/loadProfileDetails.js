@@ -16,28 +16,34 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             profileCard.innerHTML = `
-                <h3>${data.full_name}</h3>
-                <p><strong>Gender:</strong><span>${data.gender}</p></span> 
-                <p><strong>Date of Birth:</strong><span>${data.date_of_birth}</p></span> 
-                <p><strong>Email:</strong><span>${data.email}</p></span> 
-                <p><strong>Contact Number:</strong><span>${data.contact_number}</p></span> 
-                <p><strong>Address:</strong><span>${data.address}</p></span> 
-                <p><strong>Registered:</strong><span>${data.joined}</p></span>
-                <p><strong>Last Updated:</strong><span>${data.date_updated}</span></p>
+                <div class="profile-info">
+                    <h3>${data.full_name}</h3>
+
+                    <p><strong>Email:</strong> <span>${data.email}</span></p>
+                    <p><strong>Contact Number:</strong> <span>${data.contact_number}</span></p>
+                    <p><strong>Registered:</strong> <span>${data.joined}</span></p>
+                    <p><strong>Last Updated:</strong> <span>${data.date_updated ? data.date_updated : '—'}</span></p>
+                </div>
+
+                <div class="profile-qr" style="text-align:center; margin-top:15px;">
+                    <h4>Payment QR Code</h4>
+                    ${
+                        QR_IMAGE_URL
+                            ? `<img src="${QR_IMAGE_URL}" alt="QR Code" style="width:140px;">`
+                            : `<p style="color:#888;">No QR uploaded</p>`
+                    }
+
+                    <form method="POST" action="${BASE_URL}/Owner/processes/profile/upload_qr.php" enctype="multipart/form-data">
+                        <input type="file" name="qrImage" accept="image/*" required>
+                        <button type="submit" class="confirm-btn">Replace QR</button>
+                    </form>
+                </div>
+
                 <div class="button-group button-group-profile">
-                    <button class="confirm-btn" id="editDetails">Edit Profile</button>
                     <button class="confirm-btn" id="changePasswordBtn">Change Password</button>
                     <button class="confirm-btn" id="changeEmailBtn">Change Email</button>
                 </div>
             `;
-            const editDetails = document.getElementById("editDetails");
-            if (editDetails) {
-                editDetails.addEventListener("click", () => {
-                    document.getElementById("contactNumber").value = data.contact_number || "";
-                    document.getElementById("address").value = data.address || "";
-                    document.getElementById("editProfileModal").style.display = "block";
-                });
-            }
 
             const changePasswordBtn = document.getElementById("changePasswordBtn");
             if (changePasswordBtn) {
@@ -61,9 +67,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function closeEditProfileModal() {
     document.getElementById("editProfileModal").style.display = "none";
-}
-function closeChangePasswordModal() {
-    document.getElementById("changePasswordModal").style.display = "none";
 }
 function closeChangeEmailModal() {
     document.getElementById("changeEmailModal").style.display = "none";
