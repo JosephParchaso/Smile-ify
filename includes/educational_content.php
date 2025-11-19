@@ -3,18 +3,8 @@
         <h2>Dental Health Infographic</h2>
         <div class="carousel-container">
             <div class="infographic-carousel">
-            <img src=" /images/services/dental_care_services.jpg" alt="Dental Care Services">
-            <img src=" /images/services/dental_care.jpg" alt="Dental Care">
-            <img src=" /images/services/dental_infographics.jpg" alt="Dental Infographics">
-            <img src=" /images/services/dental_care_services.jpg" alt="Dental Care Services">
-            <img src=" /images/services/dental_care.jpg" alt="Dental Care">
-            <img src=" /images/services/dental_infographics.jpg" alt="Dental Infographics">
-            <img src=" /images/services/dental_care_services.jpg" alt="Dental Care Services">
-            <img src=" /images/services/dental_care.jpg" alt="Dental Care">
-            <img src=" /images/services/dental_infographics.jpg" alt="Dental Infographics">
-            <img src=" /images/services/dental_care_services.jpg" alt="Dental Care Services">
-            <img src=" /images/services/dental_care.jpg" alt="Dental Care">
-            <img src=" /images/services/dental_infographics.jpg" alt="Dental Infographics">
+            <img src=" /images/services/dental_care_tips.jpg" alt="Dental Tips">
+            <img src=" /images/services/oral_health.jpg" alt="Oral Health">
             </div>
         </div>
     </section>

@@ -1020,8 +1020,8 @@ form {
     min-width: 320px;
     max-width: 420px;
     background: #fff;
-    padding: 18px 22px;
-    border-radius: 12px;
+    padding: 0.5rem;
+    border-radius: 4px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.08);
 }
 
@@ -1034,8 +1034,8 @@ form {
 
 .announcement-card {
     background: #f6f6f6;
-    padding: 14px 16px;
-    border-radius: 8px;
+    padding: 0.5rem;
+    border-radius: 4px;
     margin-bottom: 12px;
     border-left: 4px solid #122130;
 }
