@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
             lastStart.setHours(16, 0, 0, 0);
 
             let minDate = new Date();
-            minDate.setDate(minDate.getDate() + 1);
+            minDate.setDate(minDate.getDate());
             dateSelect.min = minDate.toISOString().split("T")[0];
         }
     };
@@ -143,8 +143,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const now = new Date();
             const selectedDateObj = new Date(dateSelect.value);
+
             const isToday =
-                selectedDateObj.toDateString() === now.toDateString();
+                selectedDateObj.getFullYear() === now.getFullYear() &&
+                selectedDateObj.getMonth() === now.getMonth() &&
+                selectedDateObj.getDate() === now.getDate();
 
             allSlots.forEach(slot => {
                 const display = formatDisplay(slot);

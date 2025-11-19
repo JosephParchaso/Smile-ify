@@ -97,8 +97,12 @@ edit owner service enable for xray 👍
 xray file upload and display 👍
 schedule available denitists 👍
 transact dentists 👍
+openEducational content final 👍
 verify if 8 am mawa ang booking for current date 
 verify recent bookings badge
+send email on admin creation
+double insert on otp
+block admin in mobile
 
 
 

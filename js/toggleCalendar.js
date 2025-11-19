@@ -31,7 +31,21 @@ document.addEventListener("DOMContentLoaded", function () {
         appointmentInput.addEventListener("input", function () {
             if (!this.value) return;
 
-            const selectedDate = new Date(this.value);
+            const selectedDate = new Date(this.value);  
+
+            const now = new Date();
+            const isSameDay =
+                selectedDate.getFullYear() === now.getFullYear() &&
+                selectedDate.getMonth() === now.getMonth() &&
+                selectedDate.getDate() === now.getDate();
+
+            if (isSameDay && now.getHours() >= 16) {
+                appointmentError.textContent = "Same-day appointments are no longer available after 4:00 PM.";
+                appointmentError.style.display = "block";
+                this.classList.add("is-invalid");
+                this.value = "";
+                return;
+            }
 
             if (isNaN(selectedDate.getTime())) {
                 appointmentError.textContent = "Please enter a valid date.";
