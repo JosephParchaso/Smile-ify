@@ -2,8 +2,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const promoModal = document.getElementById("managePromoModal");
     const promoBody = document.getElementById("promoModalBody");
 
+    function toLocalDateStringPH(date) {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        return `${y}-${m}-${d}`;
+    }
+
     const today = new Date();
-    const formattedToday = today.toISOString().split("T")[0];
+    const formattedToday = toLocalDateStringPH(today);
 
     document.body.addEventListener("click", function (e) {
         if (e.target.classList.contains("btn-promo")) {
