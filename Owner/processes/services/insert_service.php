@@ -16,8 +16,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $branches   = isset($_POST["branches"]) ? $_POST["branches"] : [];
     $requires_xray = isset($_POST["requires_xray"]) ? 1 : 0;
 
-    if (empty($name) || $price < 0 || $duration <= 0) {
-        $_SESSION['updateError'] = "Please fill in all required fields correctly.";
+    if ($name === "" || $price <= 0 || $duration < 0) {
+        $_SESSION['updateError'] = "Price must be more than 0.";
         header("Location: " . BASE_URL . "/Owner/pages/services.php");
         exit;
     }

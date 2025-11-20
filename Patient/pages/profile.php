@@ -106,7 +106,7 @@ if ($priceFromDB !== null) {
 
 <div id="changePasswordModal" class="change-password-modal">
     <div class="change-password-modal-content">
-        <form id="requestOtpForm" method="POST" action="<?= BASE_URL ?>/processes/OTP Processes/change_password/request_otp_change_password.php">
+        <form id="requestOtpChangePassword" method="POST" action="<?= BASE_URL ?>/processes/OTP Processes/change_password/request_otp_change_password.php">
             <p style="text-align:center;">Click below to request an OTP for password change.</p>
             <div class="button-group">
                 <button type="submit" class="form-button confirm-btn">Send OTP</button>
@@ -118,7 +118,7 @@ if ($priceFromDB !== null) {
 
 <div id="changeEmailModal" class="change-password-modal">
     <div class="change-password-modal-content">
-        <form id="requestOtpForm" method="POST" action="<?= BASE_URL ?>/processes/OTP Processes/change_email/request_otp_change_email.php">
+        <form id="requestOtpChangeEmail" method="POST" action="<?= BASE_URL ?>/processes/OTP Processes/change_email/request_otp_change_email.php">
             <p style="text-align:center;">Click below to request an OTP for email change.</p>
             <div class="button-group">
                 <button type="submit" class="form-button confirm-btn">Send OTP</button>
@@ -192,5 +192,25 @@ function closeMedCertReceiptModal() {
 document.addEventListener("click", (e) => {
     const modal = document.getElementById("medCertReceiptModal");
     if (e.target === modal) closeMedCertReceiptModal();
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    
+    function protectForm(formId) {
+        const form = document.getElementById(formId);
+        if (!form) return;
+        
+        form.addEventListener("submit", function () {
+            const btn = form.querySelector("button[type='submit']");
+            if (btn) {
+                btn.disabled = true;
+                btn.innerText = "Sending...";
+            }
+        });
+    }
+
+    protectForm("requestOtpChangePassword");
+    protectForm("requestOtpChangeEmail");
+
 });
 </script>
