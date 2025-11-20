@@ -110,19 +110,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $mail->isHTML(true);
             $mail->Subject = "Your Smile-ify Admin Account";
+
+            if (!empty($dateStarted)) {
+                $ts = strtotime($dateStarted);
+                $dateStartedFormatted = $ts ? date('F j, Y', $ts) : $dateStarted;
+            } else {
+                $dateStartedFormatted = 'Not provided';
+            }
+
             $mail->Body = "
-                <p>Dear <strong>$firstName $lastName</strong>,</p>
+                <p>Dear <strong>{$firstName} {$lastName}</strong>,</p>
                 <p>Your admin account for <strong>Smile-ify</strong> has been successfully created.</p>
 
-                <p><strong>Branch Assignment:</strong> $branch_name</p>
+                <p><strong>Email:</strong> {$email}</p>
+                <p><strong>Date to Start:</strong> {$dateStartedFormatted}</p>
+
+                <p><strong>Branch Assignment:</strong> {$branch_name}</p>
 
                 <p><strong>Login Credentials:</strong></p>
                 <p>
-                    <strong>Username:</strong> $username<br>
-                    <strong>Password:</strong> $raw_password
+                    <strong>Username:</strong> {$username}<br>
+                    <strong>Password:</strong> {$raw_password}
                 </p>
 
                 <p>You may now access the admin dashboard.</p>
+
+                <p style='color:#c0392b; font-weight:bold;'>
+                    NOTE: Kindly change your password after your first login to ensure account security.
+                </p>
 
                 <br>
                 <p>Best regards,<br><strong>Smile-ify Team</strong></p>

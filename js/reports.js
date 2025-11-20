@@ -161,12 +161,6 @@ function renderBranchGrowthChart(branch_id, mode, branchGrowthChartData, chartTy
         console.error(`Canvas element not found: branchGrowthChart${branch_id}-${mode}`);
         return;
     }
-    
-    const parentContainer = ctx.parentElement;
-    if (parentContainer && !parentContainer.style.height) {
-        parentContainer.style.height = '350px'; 
-        parentContainer.style.position = 'relative';
-    }
 
     if (charts[key]) {
         charts[key].destroy();
@@ -241,12 +235,26 @@ function renderBranchGrowthChart(branch_id, mode, branchGrowthChartData, chartTy
                         label: ctx => {
                             const label = ctx.dataset.label || '';
                             const value = ctx.parsed.y;
-                            return `${label}: ₱${value.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+                        return `${label}: ₱${value.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
                         }
                     }
+                },
+                datalabels: {
+                    anchor: 'end',
+                    align: 'end',
+                    offset: 6,
+                    color: (context) => {
+
+                    return context.dataset.backgroundColor;
+                    },
+                    font: {
+                        size: 12,
+                    },
+                    formatter: (value) => "₱" + Number(value).toLocaleString()
                 }
             }
-        }
+        },
+        plugins: [ChartDataLabels]
     });
 }
 
@@ -366,6 +374,7 @@ function renderDeclineChart(branch_id, mode, declineData, chartType = 'bar') {
         btn.textContent = currentType === 'pie' ? 'Switch to Bar Chart' : 'Switch to Pie Chart';
     };
 }
+
 function updateKPI(branch_id, mode, kpi) {
     if (!kpi) return;
     const safeSet = (id, value) => {
@@ -485,6 +494,35 @@ function renderServicesTrendChart(branch_id, mode, trend) {
                         family: 'Poppins, sans-serif'
                     },
                     formatter: (value) => value > 0 ? value : ''
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    titleFont: {
+                        size: 14,
+                        weight: 'bold'
+                    },
+                    bodyFont: {
+                        size: 13
+                    },
+                    callbacks: {
+                        title: (context) => {
+                            return `${context[0].label}`;
+                        },
+                        label: (context) => {
+                            return `Total Services: ${context.parsed.y}`;
+                        },
+                        afterLabel: (context) => {
+                        
+                            const dataIndex = context.dataIndex;
+                            const servicesBreakdown = trend.servicesBreakdown?.[dataIndex];
+                            
+                            if (servicesBreakdown && servicesBreakdown.length > 0) {
+                                return 'Services:\n' + servicesBreakdown.join('\n');
+                            }
+                            return '';
+                        }
+                    }
                 }
             },
             scales: {
