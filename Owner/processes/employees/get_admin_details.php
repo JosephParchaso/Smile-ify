@@ -13,7 +13,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'owner') {
 }
 
 if (!isset($_GET['id'])) {
-    echo json_encode(["error" => "No admin ID provided"]);
+    echo json_encode(["error" => "No secretary ID provided"]);
     exit();
 }
 
