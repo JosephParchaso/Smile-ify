@@ -17,8 +17,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $branches   = isset($_POST["branches"]) ? $_POST["branches"] : [];
     $requires_xray = isset($_POST["requires_xray"]) ? 1 : 0;
 
-    if (!$service_id || empty($name) || $price < 0 || $duration <= 0) {
-        $_SESSION['updateError'] = "Invalid or missing service details.";
+    if ($name === "" || $price <= 0 || $duration < 0) {
+        $_SESSION['updateError'] = "Price must be more than 0.";
         header("Location: " . BASE_URL . "/Owner/pages/services.php");
         exit;
     }

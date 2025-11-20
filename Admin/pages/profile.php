@@ -106,6 +106,26 @@ $updateError = $_SESSION['updateError'] ?? "";
 
 <script>
     const ADMIN_BRANCH_ID = <?= isset($_SESSION['branch_id']) ? intval($_SESSION['branch_id']) : 'null' ?>;
+    
+    document.addEventListener("DOMContentLoaded", function () {
+        
+        function protectForm(formId) {
+            const form = document.getElementById(formId);
+            if (!form) return;
+            
+            form.addEventListener("submit", function () {
+                const btn = form.querySelector("button[type='submit']");
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerText = "Sending...";
+                }
+            });
+        }
+
+        protectForm("requestOtpChangePassword");
+        protectForm("requestOtpChangeEmail");
+
+    });
 </script>
 <?php require_once BASE_PATH . '/includes/footer.php'; ?>
 

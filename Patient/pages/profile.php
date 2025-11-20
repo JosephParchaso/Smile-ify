@@ -193,4 +193,24 @@ document.addEventListener("click", (e) => {
     const modal = document.getElementById("medCertReceiptModal");
     if (e.target === modal) closeMedCertReceiptModal();
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+    
+    function protectForm(formId) {
+        const form = document.getElementById(formId);
+        if (!form) return;
+        
+        form.addEventListener("submit", function () {
+            const btn = form.querySelector("button[type='submit']");
+            if (btn) {
+                btn.disabled = true;
+                btn.innerText = "Sending...";
+            }
+        });
+    }
+
+    protectForm("requestOtpChangePassword");
+    protectForm("requestOtpChangeEmail");
+
+});
 </script>

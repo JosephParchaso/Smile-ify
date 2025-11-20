@@ -118,3 +118,25 @@ $updateError = $_SESSION['updateError'] ?? "";
 </div>
 
 <?php require_once BASE_PATH . '/includes/footer.php'; ?>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    
+    function protectForm(formId) {
+        const form = document.getElementById(formId);
+        if (!form) return;
+        
+        form.addEventListener("submit", function () {
+            const btn = form.querySelector("button[type='submit']");
+            if (btn) {
+                btn.disabled = true;
+                btn.innerText = "Sending...";
+            }
+        });
+    }
+
+    protectForm("requestOtpChangePassword");
+    protectForm("requestOtpChangeEmail");
+
+});
+</script>
