@@ -65,7 +65,7 @@ function switchSubTab(branch_id, mode) {
 }
 
 function loadReports(branch_id, mode) {
-    fetch(`${BASE_URL}/processes/fetch_Reports.php?branch_id=${branch_id}&mode=${mode}`)
+    fetch(`/processes/fetch_Reports.php?branch_id=${branch_id}&mode=${mode}`)
     .then(res => res.json())
     .then(data => {
         if (data.error) {
@@ -88,7 +88,7 @@ function loadReports(branch_id, mode) {
         });
 
         renderBranchGrowthTable(branch_id, mode, data.branchGrowthData);
-        renderBranchGrowthChart(branch_id, mode, data.branchGrowthChartData, 'bar');
+        renderBranchGrowthChart(branch_id, mode, data.branchGrowthChartData, 'line');
         renderDeclineTable(branch_id, mode, data.declineData);
         renderDeclineChart(branch_id, mode, data.declineData, 'bar');
         return;
@@ -115,8 +115,20 @@ function loadReports(branch_id, mode) {
         renderBranchComparisonChart(branch_id, mode, data.branchComparison);
         renderServicePricesTable(branch_id, mode, data.servicePrices);
         renderStaffPerformanceTable(branch_id, mode, data.staffPerformance);
-        renderStaffPerformanceChart(branch_id, mode, data.staffPerformance);
-        renderGrowthTrendChart(branch_id, mode, data.growthTrend);
+        
+        if (mode === 'weekly' || mode === 'monthly') {
+            renderGrowthTrendChart(branch_id, mode, data.growthTrend);
+        } else if (mode === 'daily') {
+        
+            const growthChartKey = `growthTrend${branch_id}-${mode}`;
+            if (charts[growthChartKey]) {
+                charts[growthChartKey].destroy();
+                delete charts[growthChartKey];
+            }
+            const growthContainer = document.getElementById(`growthTrendChart${branch_id}-${mode}`)?.parentElement;
+            if (growthContainer) growthContainer.style.display = 'none';
+        }
+
         renderPatientMixChart(branch_id, mode, data.patientMix);
         renderPeakHoursChart(branch_id, mode, data.peakHours);
         renderServicesBreakdownChart(branch_id, mode, data.servicesBreakdown);
@@ -146,14 +158,17 @@ function renderBranchGrowthTable(branch_id, mode, branchGrowthData) {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td><strong>${branch.branch_name}</strong></td>
-            <td>₱${Number(branch.revenue).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-            <td>${branch.percentage}%</td>
+            <td style="text-align: right;">${Number(branch.revenue).toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            })}</td>
+            <td style="text-align: right;">${branch.percentage}</td>
         `;
         tbody.appendChild(row);
     });
 }
 
-function renderBranchGrowthChart(branch_id, mode, branchGrowthChartData, chartType = 'bar') {
+function renderBranchGrowthChart(branch_id, mode, branchGrowthChartData, chartType = 'line') {
     const ctx = document.getElementById(`branchGrowthChart${branch_id}-${mode}`);
     const key = `branchGrowth${branch_id}-${mode}`;
     
@@ -175,10 +190,12 @@ function renderBranchGrowthChart(branch_id, mode, branchGrowthChartData, chartTy
     const datasets = branchGrowthChartData.datasets.map((dataset, i) => ({
         label: dataset.label,
         data: dataset.data,
-        backgroundColor: getBranchColor(dataset.label),
-        borderColor: '#fff',
-        borderWidth: 2,
-        borderRadius: 6
+        borderColor: getBranchColor(dataset.label), 
+        backgroundColor: 'rgba(0,0,0,0)', 
+        tension: 0.3, 
+        pointBackgroundColor: getBranchColor(dataset.label),
+        pointRadius: 5, 
+        fill: false 
     }));
 
     let xLabel = 'Date';
@@ -197,6 +214,7 @@ function renderBranchGrowthChart(branch_id, mode, branchGrowthChartData, chartTy
             interaction: { mode: 'index', intersect: false },
             scales: {
                 x: {
+                    offset: true,
                     title: {
                         display: true,
                         text: xLabel,
@@ -210,6 +228,7 @@ function renderBranchGrowthChart(branch_id, mode, branchGrowthChartData, chartTy
                 },
                 y: {
                     beginAtZero: true,
+                    grace: '40%',
                     title: {
                         display: true,
                         text: 'Revenue (₱)',
@@ -217,7 +236,8 @@ function renderBranchGrowthChart(branch_id, mode, branchGrowthChartData, chartTy
                         color: '#333'
                     },
                     ticks: {
-                        callback: value => '₱' + value.toLocaleString('en-US')
+                        precision: 0,
+                        callback: value => Math.round(value).toLocaleString('en-US')
                     }
                 }
             },
@@ -235,23 +255,24 @@ function renderBranchGrowthChart(branch_id, mode, branchGrowthChartData, chartTy
                         label: ctx => {
                             const label = ctx.dataset.label || '';
                             const value = ctx.parsed.y;
-                        return `${label}: ₱${value.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+                            return `${label}: ₱${value.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
                         }
                     }
                 },
                 datalabels: {
                     anchor: 'end',
                     align: 'end',
-                    offset: 6,
+                    offset: 8,
                     color: (context) => {
-
-                    return context.dataset.backgroundColor;
+                        return context.dataset.pointBackgroundColor || context.dataset.borderColor;
                     },
-                    font: {
-                        size: 12,
-                    },
-                    formatter: (value) => "₱" + Number(value).toLocaleString()
-                }
+                font: {
+                    size: 15,
+                    weight: 'bold',
+                    family: 'SF Pro Text, sans-serif',
+                },
+                formatter: (value) => value !== 0 ? Number(value).toLocaleString() : null
+            }
             }
         },
         plugins: [ChartDataLabels]
@@ -374,7 +395,6 @@ function renderDeclineChart(branch_id, mode, declineData, chartType = 'bar') {
         btn.textContent = currentType === 'pie' ? 'Switch to Bar Chart' : 'Switch to Pie Chart';
     };
 }
-
 function updateKPI(branch_id, mode, kpi) {
     if (!kpi) return;
     const safeSet = (id, value) => {
@@ -436,8 +456,15 @@ function renderAppointmentsChart(branch_id, mode, appointments) {
             scales: {
                 y: {
                     beginAtZero: true,
-                    grace: '20%',  
+                    grace: '20%', 
+                    title: {
+                        display: true,
+                        text: 'Number of Appointments',
+                        font: { size: 13, weight: 'bold' },
+                        color: '#000000ff'
+                    },
                     ticks: {
+                        precision: 0,
                         color: '#000000ff',
                         font: { size: 12 }
                     },
@@ -446,6 +473,13 @@ function renderAppointmentsChart(branch_id, mode, appointments) {
                     }
                 },
                 x: {
+                
+                    title: {
+                        display: true,
+                        text: 'Appointment Status',
+                        font: { size: 13, weight: 'bold' },
+                        color: '#000000ff'
+                    },
                     ticks: {
                         color: '#333',
                         font: { size: 13, weight: 'bold' }
@@ -463,6 +497,10 @@ function renderAppointmentsChart(branch_id, mode, appointments) {
 function renderServicesTrendChart(branch_id, mode, trend) {
     const ctx = document.getElementById(`servicesTrendChart${branch_id}-${mode}`);
     if (!ctx || !trend) return;
+
+    let xLabel = 'Date';
+    if (mode === 'weekly') xLabel = 'Days of the Week';
+    else if (mode === 'monthly') xLabel = 'Days of the Month';
 
     charts[`servicesTrend${branch_id}-${mode}`] = new Chart(ctx, {
         type: "line",
@@ -528,8 +566,15 @@ function renderServicesTrendChart(branch_id, mode, trend) {
             scales: {
                 y: {
                     beginAtZero: true,
-                    grace: '20%',
+                    grace: '40%',
+                    title: {
+                        display: true,
+                        text: 'Number of Services',
+                        font: { size: 13, weight: 'bold' },
+                        color: '#000000ff'
+                    },
                     ticks: {
+                        precision: 0,
                         color: '#333',
                         font: { size: 13 }
                     },
@@ -538,9 +583,17 @@ function renderServicesTrendChart(branch_id, mode, trend) {
                     }
                 },
                 x: {
+                    offset: true,
                     ticks: {
+                        precision: 0,
                         color: '#333',
                         font: { size: 13, weight: 'bold' }
+                    },
+                    title: {
+                        display: true,
+                        text: xLabel,
+                        font: { size: 13, weight: 'bold' },
+                        color: '#000000ff'
                     },
                     grid: {
                         display: false
@@ -555,6 +608,10 @@ function renderServicesTrendChart(branch_id, mode, trend) {
 function renderIncomeTrendChart(branch_id, mode, trend) {
     const ctx = document.getElementById(`incomeTrendChart${branch_id}-${mode}`);
     if (!ctx || !trend) return;
+
+    let xLabel = 'Date';
+    if (mode === 'weekly') xLabel = 'Days of the Week';
+    else if (mode === 'monthly') xLabel = 'Days of the Month';
 
     charts[`incomeTrend${branch_id}-${mode}`] = new Chart(ctx, {
         type: "bar",
@@ -584,14 +641,22 @@ function renderIncomeTrendChart(branch_id, mode, trend) {
                         weight: 'bold',
                         family: 'Poppins, sans-serif'
                     },
-                    formatter: (value) => "₱" + Number(value).toLocaleString()
+                    formatter: (value) => value > 0 ? Number(value).toLocaleString() : '',
+                    display: (ctx) => ctx.dataset.data[ctx.dataIndex] > 0
                 }
             },
             scales: {
                 y: {
                     beginAtZero: true,
                     grace: '20%',
+                    title: {
+                        display: true,
+                        text: 'Total Revenue (₱)',
+                        font: { size: 13, weight: 'bold' },
+                        color: '#000000ff'
+                    },
                     ticks: {
+                        precision: 0,
                         color: '#333',
                         font: { size: 13 }
                     },
@@ -600,6 +665,12 @@ function renderIncomeTrendChart(branch_id, mode, trend) {
                     }
                 },
                 x: {
+                    title: {
+                        display: true,
+                        text: xLabel,
+                        font: { size: 13, weight: 'bold' },
+                        color: '#000000ff'
+                    },
                     ticks: {
                         color: '#333',
                         font: { size: 13, weight: 'bold' }
@@ -628,9 +699,8 @@ function renderStaffPerformanceTable(branch_id, mode, staffData) {
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>${row.dentist_name}</td>
-            <td>${row.branch_name}</td>
             <td>${row.services_rendered}</td>
-            <td>₱${Number(row.total_income).toLocaleString()}</td>
+            <td style="text-align: right;">${Number(row.total_income).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
         `;
         tbody.appendChild(tr);
     });
@@ -672,20 +742,33 @@ function renderStaffPerformanceChart(branch_id, mode, staffData) {
                         weight: 'bold',
                         family: 'Poppins, sans-serif'
                     },
-                    formatter: (value) => "₱" + Number(value).toLocaleString()
+                    formatter: (value) => Number(value).toLocaleString()
                 }
             },
             scales: {
                 y: {
                     beginAtZero: true,
                     grace: '20%',
+                    title: {
+                        display: true,
+                        text: 'Total Revenue (₱)',
+                        font: { size: 13, weight: 'bold' },
+                        color: '#000000ff'
+                    },
                     ticks: {
+                        precision: 0,
                         color: '#333',
                         font: { size: 13 }
                     },
                     grid: { color: 'rgba(0,0,0,0.05)' }
                 },
                 x: {
+                    title: {
+                        display: true,
+                        text: 'Dentist',
+                        font: { size: 13, weight: 'bold' },
+                        color: '#000000ff'
+                    },
                     ticks: {
                         color: '#333',
                         font: { size: 13, weight: 'bold' }
@@ -722,6 +805,10 @@ function renderBranchComparisonChart(branch_id, mode, branchComparison) {
     const ctx = document.getElementById(`branchComparisonChart${branch_id}-${mode}`);
     if (!ctx || !branchComparison) return;
 
+    let xLabel = 'Date';
+    if (mode === 'weekly') xLabel = 'Days of the Week';
+    else if (mode === 'monthly') xLabel = 'Days of the Month';
+    
     charts[`branchComparison${branch_id}-${mode}`] = new Chart(ctx, {
         type: "bar",
         data: {
@@ -802,6 +889,10 @@ function renderGrowthTrendChart(branch_id, mode, growthData) {
     if (!ctx || !growthData) return;
 
     let labels, currValues, prevValues;
+    
+    let xLabel = 'Date';
+    if (mode === 'weekly') xLabel = 'Days of the Week';
+    else if (mode === 'monthly') xLabel = 'Days of the Month';
 
     if (mode === 'weekly') {
         labels = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
@@ -843,60 +934,94 @@ function renderGrowthTrendChart(branch_id, mode, growthData) {
     }
 
     if (ctx.chartInstance) ctx.chartInstance.destroy();
-    ctx.chartInstance = new Chart(ctx, {
-    type: 'line',
-    data: { labels, datasets:[
-        {
-            label:'Current',
-            data:currValues,
-            borderColor:'#1d445d',
-            backgroundColor:'rgba(41,128,185,0.2)',
-            fill:true, tension:0.3
-        },
-        {
-            label:'Previous',
-            data:prevValues,
-            borderColor:'#fa2912',
-            backgroundColor:'rgba(173, 75, 68, 0.2)',
-            fill:true, tension:0.3
-        }
-    ]},
-    options:{
-        responsive:true,
-        maintainAspectRatio:true,
-        plugins:{
-            legend:{ position:'bottom' },
-            datalabels:{
-                anchor:'end',align:'top',
-                font:{ size:20, weight:'bold' },
-                formatter:v=>`₱${v.toLocaleString()}`,
-                color:ctx=>ctx.dataset.borderColor
+        ctx.chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: { labels, datasets:[
+            {
+                label:'Current',
+                data:currValues,
+                borderColor:'#1d445d',
+                backgroundColor:'rgba(41,128,185,0.2)',
+                fill:true, tension:0.3
             },
-            tooltip:{
-                callbacks:{
-                    label:ctx=>`${ctx.dataset.label}: ₱${ctx.parsed.y.toLocaleString()}`
+            {
+                label:'Previous',
+                data:prevValues,
+                borderColor:'#fa2912',
+                backgroundColor:'rgba(173, 75, 68, 0.2)',
+                fill:true, tension:0.3
+            }
+        ]},
+        options:{
+            responsive:true,
+            maintainAspectRatio:true,
+            plugins:{
+                legend:{ position:'bottom' },
+                datalabels:{
+                    anchor:'end',align:'top',
+                    font:{ size:20, weight:'bold' },
+                    formatter: v => v > 0 ? v.toLocaleString() : '',
+                    color:ctx=>ctx.dataset.borderColor
+                },
+                tooltip: {
+                callbacks: {
+                    label: function(ctx) {
+                        const index = ctx.dataIndex;
+                        const datasets = ctx.chart.data.datasets;
+
+                        let result = [];
+
+                    
+                        if (datasets[0]) {
+                            const currentVal = datasets[0].data[index];
+                            result.push(
+                                `${datasets[0].label || 'Current'}: ₱${Number(currentVal).toLocaleString('en-US', { minimumFractionDigits: 2 })}`
+                            );
+                        }
+
+                        
+                        if (datasets[1]) {
+                            const previousVal = datasets[1].data[index];
+                            result.push(
+                                `${datasets[1].label || 'Previous'}: ₱${Number(previousVal).toLocaleString('en-US', { minimumFractionDigits: 2 })}`
+                            );
+                        }
+
+                        return result;
+                    }
+                }
+            }
+
+            },
+            scales:{
+                x:{
+                    offset:true,
+                    title: {
+                            display: true,
+                            text: xLabel,
+                            font: { size: 13, weight: 'bold' },
+                            color: '#000000ff'
+                    },
+                },
+                y:{
+                    ticks: {
+                        precision:0,
+                        color: '#333',
+                        font: { size: 13, weight: 'bold' }
+                        },
+                    beginAtZero:true,
+                    grace:'20%',
+                    title: {
+                            display: true,
+                            text: "Revenue (₱)",
+                            font: { size: 13, weight: 'bold' },
+                            color: '#000000ff'
+                        },
                 }
             }
         },
-        scales:{
-            x:{
-                offset:true,
-                title:{
-                    display:true,
-                    text: mode==='weekly'?'Day of Week':
-                        mode==='monthly'?'Day of Month':
-                        mode.charAt(0).toUpperCase()+mode.slice(1)
-                }
-            },
-            y:{
-                beginAtZero:true,
-                grace:'20%',
-                title:{ display:true, text:'Revenue (₱)' }
-            }
-        }
-    },
-    plugins:[ChartDataLabels]
-});
+        plugins:[ChartDataLabels]
+    });
 }
 
 function renderPatientMixChart(branch_id, mode, mix, chartType = 'bar') {
@@ -952,17 +1077,7 @@ function renderPatientMixChart(branch_id, mode, mix, chartType = 'bar') {
                         }
                     }
                 },
-                tooltip: {
-                    callbacks: {
-                        label(ctx) {
-                            const i = ctx.dataIndex;
-                            const val = ctx.dataset.data[i];
-                            const total = data.reduce((a, b) => a + b, 0) || 1;
-                            const pct = ((val / total) * 100).toFixed(1);
-                            return `${ctx.label}: ${val} (${pct}%)`;
-                        }
-                    }
-                },
+                
                 datalabels: {
                     anchor: "end",
                     align: "end",
@@ -974,14 +1089,36 @@ function renderPatientMixChart(branch_id, mode, mix, chartType = 'bar') {
             },
             scales: {
                 y: {
+                    title: {
+                        display: true,
+                        text: "Number of Patients",
+                        font: { size: 13, weight: 'bold' },
+                        color: '#000000ff'
+                    },
                     beginAtZero: true,
                     grace: 0.2,
-                    ticks: { color: '#333', font: { size: 13 } },
+                    ticks: { 
+                        precision: 0,
+                        color: '#333', 
+                        font: { 
+                            size: 13 
+                        } 
+                    },
                     grid: { color: 'rgba(0,0,0,0.05)' }
                 },
                 x: {
+                    title: {
+                        display: true,
+                        text: "Patient Type",
+                        font: { size: 13, weight: 'bold' },
+                        color: '#000000ff'
+                    },
                     type: 'category',
-                    ticks: { color: '#333', font: { size: 13, weight: 'bold' } },
+                    ticks: { 
+                        
+                        color: '#333', 
+                        font: { size: 13, 
+                        weight: 'bold' } },
                     grid: { display: false }
                 }
             }
@@ -1049,16 +1186,22 @@ function renderPeakHoursChart(branch_id, mode, hoursData) {
                     title: {
                         display: true,
                         text: "Hour of Day",
-                        color: "#333",
-                        font: { size: 14, weight: "bold" }
+                        font: { size: 13, weight: 'bold' },
+                        color: '#000000ff'
                     },
                     ticks: { color: "#333", font: { size: 13, weight: "bold" } },
                     grid: { display: false }
                 },
                 y: {
+                    title: {
+                        display: true,
+                        text: "Number of Appointments",
+                        font: { size: 13, weight: 'bold' },
+                        color: '#000000ff'
+                    },
                     beginAtZero: true,
                     grace: "20%",
-                    ticks: { color: "#333", font: { size: 13 } },
+                    ticks: { precision: 0, color: "#333", font: { size: 13 } },
                     grid: { color: "rgba(0,0,0,0.05)" }
                 }
             }
@@ -1101,7 +1244,7 @@ function renderServicesBreakdownTable(branch_id, mode, breakdownData) {
         tr.innerHTML = `
             <td>${row.service}</td>
             <td>${row.service_count}</td>
-            <td>${row.percent_total}%</td>
+            <td style="text-align:right;">${row.percent_total}</td>
         `;
         tbody.appendChild(tr);
     });
@@ -1124,7 +1267,7 @@ function renderServicesBreakdownChart(branch_id, mode, breakdownData) {
     const percentages = breakdownData.map(row => row.percent_total);
 
     ctx.chartInstance = new Chart(ctx, {
-        type: 'pie',
+        type: 'doughnut',
         data: {
             labels: labels,
             datasets: [{
@@ -1135,6 +1278,7 @@ function renderServicesBreakdownChart(branch_id, mode, breakdownData) {
         },
         options: {
             responsive: true,
+            cutout: '50%',
             plugins: {
                 legend: {
                     position: 'bottom' 
@@ -1183,7 +1327,7 @@ function renderPromosTable(branch_id, mode, promosData) {
     promosData.forEach(row => {
         totalCount += row.promo_count;
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${row.promo_name}</td><td>${row.promo_count}</td><td>${row.percent_total}%</td>`;
+        tr.innerHTML = `<td>${row.promo_name}</td><td>${row.promo_count}</td><td style="text-align: right;">${row.percent_total}</td>`;
         tableBody.appendChild(tr);
     });
 

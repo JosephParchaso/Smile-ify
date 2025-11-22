@@ -198,6 +198,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["verify"])) {
             <hr>
             <p><strong>Appointment Details:</strong></p>
             <p>
+                <strong>Appointment ID:</strong> $appointment_transaction_id<br>
                 <strong>Date:</strong> $appointmentDate<br>
                 <strong>Time:</strong> $appointmentTime<br>
                 <strong>Estimated End Time:</strong> $formattedEndTime<br>
