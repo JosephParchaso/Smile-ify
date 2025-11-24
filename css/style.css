@@ -1959,6 +1959,7 @@ nav {
     font-weight: 600;
     color: #122130;
     margin-bottom: 15px;
+    margin-top: 0px;
     text-align: center;
 }
 
@@ -1997,10 +1998,24 @@ nav {
 }
 
 /* ===================== STAFF PERFORMANCE ===================== */
+
+.branch-growth-tracker-text {
+    display: block;
+    margin-block-start: 0px;
+    margin-block-end: 1.33em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+    unicode-bidi: isolate;
+}
+
+
 .staff-performance {
-    margin-top: 2rem;
     background: #fff;
-    padding: 1.5rem;
+    padding-top: 0.4rem;
+    padding-bottom: 1.5rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
     border-radius: 4px;
     box-shadow: 0 8px 16px rgba(0,0,0,0.1);
     transition: all 0.25s ease-in-out;
@@ -2138,14 +2153,112 @@ nav {
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
-@media (max-width: 1000px) {
+/* @media (max-width: 1000px) {
     .services-breakdown-grid {
         grid-template-columns: 1fr;
     }
-}
+} */
 
 /* ===================== INCOME TREND WRAPPER ===================== */
 .chart-wrapper-income-trend {
     width: 100% !important;
     height: 50% !important;
+}
+
+
+/* ============================== MOB RES ==============================*/
+@media (max-width: 768px){
+    .main-container {
+                flex-direction: column;
+                padding: 10px;
+            }
+
+    .motto-container {
+                margin-bottom: 20px;
+            }
+
+    .login-container {
+                margin-left: 0;
+                max-width: 100%;
+            }
+
+    .tagline-container {
+                flex-direction: column;
+                padding: 10px;
+                align-items: center;
+            }
+
+    .column1, .column2, .column3, .column4 {
+                margin: 10px 0;
+                padding: 15px;
+            }
+
+    .service-container .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+    .image-column {
+            text-align: center;
+        }
+
+    /* .aboutus-wrapper {
+                flex-direction: column;
+                padding: 10px;
+            } */
+
+    .booking-modal-content, .forgot-password-modal-content, .promo-modal-content, .educational-modal-content {
+                width: 95%;
+                margin: 10% auto;
+                padding: 15px;
+            }
+
+    .button-group {
+                flex-direction: column;
+            }
+
+    .button-group button {
+                margin-bottom: 10px;
+            }
+
+    .promo-slider {
+                width: 100%;
+            }
+
+    .motto{
+        font-size: 2rem;
+    }
+
+    /* FOOTER */
+    .footer-container {
+        flex-direction: column;
+        /* align-items: center; */
+        padding: 0 10px;
+        gap: 0;
+    }
+
+    .footer-column {
+        flex: none;
+        width: 100%;
+        margin: 15px 0;
+        text-align: left; /* Aligns text to the left on mobile for readability */
+    }
+
+    .footer-logo {
+        max-width: 175px; /* Smaller logo on mobile */
+    }
+
+    .footer-about {
+        font-size: 13px;
+    }
+
+    .footer-column h3 {
+        font-size: 16px;
+    }
+
+    .footerDes {
+        font-size: 13px;
+    }
 }

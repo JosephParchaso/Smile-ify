@@ -95,7 +95,7 @@ try {
         $stmt->execute();
         $res = $stmt->get_result()->fetch_assoc();
         if ($res) {
-            $topService = $res['service_name'] . " — " . $res['cnt'];
+            $topService = $res['service_name'];
         }
         $stmt->close();
         
@@ -127,17 +127,125 @@ try {
     $incomeTrend = [];
     $labels = [];
 
+
+$servicesBreakdownPerDate = [];
+
+if ($mode === 'daily') {
+    for ($i = 6; $i >= 0; $i--) {
+        $day = date('Y-m-d', strtotime("-$i days"));
+        $sql = "SELECT s.name AS service_name, SUM(dts.quantity) AS cnt
+                FROM dental_transaction_services dts
+                JOIN dental_transaction dt ON dts.dental_transaction_id = dt.dental_transaction_id
+                JOIN appointment_transaction at ON dt.appointment_transaction_id = at.appointment_transaction_id
+                JOIN service s ON dts.service_id = s.service_id
+                WHERE at.branch_id = ?
+                AND DATE(at.appointment_date) = ?
+                GROUP BY s.service_id
+                ORDER BY cnt DESC";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("is", $branch_id, $day);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $dayServices = [];
+        while ($row = $result->fetch_assoc()) {
+            $dayServices[] = $row['service_name'] . " (" . $row['cnt'] . ")";
+        }
+        $servicesBreakdownPerDate[] = $dayServices;
+        $stmt->close();
+    }
+} elseif ($mode === 'weekly') {
+    $days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+    foreach ($days as $d) {
+        $sql = "SELECT s.name AS service_name, SUM(dts.quantity) AS cnt
+                FROM dental_transaction_services dts
+                JOIN dental_transaction dt ON dts.dental_transaction_id = dt.dental_transaction_id
+                JOIN appointment_transaction at ON dt.appointment_transaction_id = at.appointment_transaction_id
+                JOIN service s ON dts.service_id = s.service_id
+                WHERE at.branch_id = ?
+                AND YEARWEEK(at.appointment_date,1) = YEARWEEK(CURDATE(),1)
+                AND DAYNAME(at.appointment_date) = ?
+                GROUP BY s.service_id
+                ORDER BY cnt DESC";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("is", $branch_id, $d);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $dayServices = [];
+        while ($row = $result->fetch_assoc()) {
+            $dayServices[] = $row['service_name'] . " (" . $row['cnt'] . ")";
+        }
+        $servicesBreakdownPerDate[] = $dayServices;
+        $stmt->close();
+    }
+} elseif ($mode === 'monthly') {
+    $daysInMonth = date('t');
+    for ($d = 1; $d <= $daysInMonth; $d++) {
+        $sql = "SELECT s.name AS service_name, SUM(dts.quantity) AS cnt
+                FROM dental_transaction_services dts
+                JOIN dental_transaction dt ON dts.dental_transaction_id = dt.dental_transaction_id
+                JOIN appointment_transaction at ON dt.appointment_transaction_id = at.appointment_transaction_id
+                JOIN service s ON dts.service_id = s.service_id
+                WHERE at.branch_id = ?
+                AND YEAR(at.appointment_date) = YEAR(CURDATE())
+                AND MONTH(at.appointment_date) = MONTH(CURDATE())
+                AND DAY(at.appointment_date) = ?
+                GROUP BY s.service_id
+                ORDER BY cnt DESC";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ii", $branch_id, $d);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $dayServices = [];
+        while ($row = $result->fetch_assoc()) {
+            $dayServices[] = $row['service_name'] . " (" . $row['cnt'] . ")";
+        }
+        $servicesBreakdownPerDate[] = $dayServices;
+        $stmt->close();
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     if ($mode === 'daily') {
         for ($i = 6; $i >= 0; $i--) {
             $day = date('Y-m-d', strtotime("-$i days"));
             $labels[] = $day;
 
-            $sql = "SELECT COALESCE(SUM(dts.quantity),0) AS cnt
-                    FROM dental_transaction_services dts
-                    JOIN dental_transaction dt ON dts.dental_transaction_id = dt.dental_transaction_id
-                    JOIN appointment_transaction at ON dt.appointment_transaction_id = at.appointment_transaction_id
-                    WHERE at.branch_id = ? 
-                    AND DATE(at.appointment_date) = ?";
+            $sql = "SELECT COALESCE(
+                SUM(
+                    dt.total 
+                    + IFNULL(dt.additional_payment, 0) 
+                    + IFNULL(dt.medcert_request_payment, 0)
+                ), 0) AS total
+            FROM dental_transaction dt
+            JOIN appointment_transaction at
+                ON dt.appointment_transaction_id = at.appointment_transaction_id
+            WHERE at.branch_id = ?
+            AND DATE(at.appointment_date) = ?
+            AND at.status = 'Completed'";
+
+
+
+
+
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("is", $branch_id, $day);
             $stmt->execute();
@@ -156,7 +264,8 @@ try {
                     JOIN appointment_transaction at 
                         ON dt.appointment_transaction_id = at.appointment_transaction_id
                     WHERE at.branch_id = ? 
-                    AND DATE(at.appointment_date) = ?";
+                    AND DATE(at.appointment_date) = ?
+                    AND at.status = 'Completed'";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("is", $branch_id, $day);
             $stmt->execute();
@@ -174,7 +283,8 @@ try {
                     JOIN appointment_transaction at ON dt.appointment_transaction_id = at.appointment_transaction_id
                     WHERE at.branch_id = ? 
                     AND YEARWEEK(at.appointment_date,1) = YEARWEEK(CURDATE(),1)
-                    AND DAYNAME(at.appointment_date) = ?";
+                    AND DAYNAME(at.appointment_date) = ?
+                    AND at.status = 'Completed'";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("is", $branch_id, $d);
             $stmt->execute();
@@ -194,7 +304,8 @@ try {
                         ON dt.appointment_transaction_id = at.appointment_transaction_id
                     WHERE at.branch_id = ? 
                     AND YEARWEEK(at.appointment_date, 1) = YEARWEEK(CURDATE(), 1)
-                    AND DAYNAME(at.appointment_date) = ?";
+                    AND DAYNAME(at.appointment_date) = ?
+                    AND at.status = 'Completed'";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("is", $branch_id, $d);
             $stmt->execute();
@@ -213,7 +324,8 @@ try {
                     WHERE at.branch_id = ? 
                     AND YEAR(at.appointment_date) = YEAR(CURDATE()) 
                     AND MONTH(at.appointment_date) = MONTH(CURDATE()) 
-                    AND DAY(at.appointment_date) = ?";
+                    AND DAY(at.appointment_date) = ?
+                    AND at.status = 'Completed'";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("ii", $branch_id, $d);
             $stmt->execute();
@@ -234,7 +346,8 @@ try {
                     WHERE at.branch_id = ? 
                     AND YEAR(at.appointment_date) = YEAR(CURDATE()) 
                     AND MONTH(at.appointment_date) = MONTH(CURDATE()) 
-                    AND DAY(at.appointment_date) = ?";
+                    AND DAY(at.appointment_date) = ?
+                    AND at.status = 'Completed'";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("ii", $branch_id, $d);
             $stmt->execute();
@@ -311,21 +424,23 @@ try {
         }
 
         $periodSql = "
-            SELECT 
+            SELECT
                 DATE(at.appointment_date) AS period,
                 SUM(
-                    dt.total 
-                    + IFNULL(dt.additional_payment, 0) 
+                    dt.total
+                    + IFNULL(dt.additional_payment, 0)
                     + IFNULL(dt.medcert_request_payment, 0)
                 ) AS revenue
             FROM appointment_transaction AS at
             JOIN dental_transaction AS dt
                 ON at.appointment_transaction_id = dt.appointment_transaction_id
-            WHERE at.branch_id = ? 
+            WHERE at.branch_id = ?
             AND DATE(at.appointment_date) BETWEEN ? AND ?
+            AND at.status = 'Completed'
             GROUP BY period
             ORDER BY period ASC
         ";
+
 
         $stmt = $conn->prepare($periodSql);
         $stmt->bind_param("iss", $branch_id, $currStart, $currEnd);
@@ -410,7 +525,7 @@ try {
     $branchGrowthChartData = [];
     if ($_SESSION['role'] === 'owner' && $branch_id === 'all') {
         
-        $branchesQuery = "SELECT branch_id, name FROM branch WHERE status = 'active' ORDER BY branch_id";
+        $branchesQuery = "SELECT branch_id, name FROM branch WHERE status IN ('active', 'inactive') ORDER BY branch_id";
         $branchesResult = $conn->query($branchesQuery);
         $allBranches = [];
         while ($b = $branchesResult->fetch_assoc()) {
@@ -670,9 +785,11 @@ try {
             ON at.branch_id = b.branch_id
         WHERE at.branch_id = ? 
         AND DATE(dt.date_created) BETWEEN ? AND ?
+        AND at.status = 'Completed'
         GROUP BY d.dentist_id, b.branch_id
         ORDER BY total_income DESC
     ";
+
 
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("iss", $branch_id, $startDate, $endDate); 
@@ -899,7 +1016,8 @@ try {
         "trend" => [
             "labels" => $labels,
             "services" => $servicesTrend,
-            "income" => $incomeTrend
+            "income" => $incomeTrend,
+            "servicesBreakdown" => $servicesBreakdownPerDate
         ],
         "branchComparison" => $branchComparison,
         'servicePrices'     => $servicePrices,

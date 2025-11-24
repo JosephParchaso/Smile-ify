@@ -53,6 +53,7 @@ if (isset($_SESSION['user_id'])) {
 
     <!-- Global Styles -->
     <link rel="stylesheet" href="<?= BASE_URL ?>/css/style.css?v=<?= time(); ?>" />
+    <!-- <link rel="stylesheet" href="<?= BASE_URL ?>/css/mobres.css?v=<?= time(); ?>" /> -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
