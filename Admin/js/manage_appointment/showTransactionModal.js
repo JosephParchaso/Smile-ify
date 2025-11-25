@@ -225,7 +225,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 mcFields.innerHTML = `
                     <div class="form-group">
                         <input class="form-control" name="fitness_status" value="${data?.fitness_status || ""}">
-                        <label class="form-label">Fitness Status <span class="required">*</span></label>
+                        <label class="form-label">Period of Rest <span class="required">*</span></label>
                     </div>
 
                     <div class="form-group">
@@ -301,14 +301,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 selectedServices.forEach(id => {
                     const checkbox = servicesContainer.querySelector(`input[value="${id}"]`);
                     if (checkbox) {
+
                         checkbox.checked = true;
 
                         const s = data.services.find(s => s.service_id == id);
 
-                        const qty = document.querySelector(`input[name="serviceQuantity[${id}]"]`);
-                        if (qty) {
-                            qty.value = s?.quantity || 1;
-                            qty.style.display = "inline-block";
+                        const qtyInput = servicesContainer.querySelector(`input[name="serviceQuantity[${id}]"]`);
+                        if (qtyInput) {
+                            qtyInput.disabled = false;
+                            qtyInput.style.display = "inline-block";
+                            qtyInput.value = s?.quantity || 1;
                         }
 
                         const extraField = document.querySelector(`input[name="additional_payment[${id}]"]`);
@@ -338,6 +340,121 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.addEventListener("change", e => {
             if (e.target.matches('input[name="appointmentServices[]"]')) {
                 updateXrayVisibility();
+            }
+        });
+    }
+
+    function loadServices(branchId, container, transactionId = null, appointmentServiceIds = [], appointmentId = null, callback = null, editServiceIds = []) {
+        container.innerHTML = '<p class="loading-text">Loading services</p>';
+
+        $.ajax({
+            type: "POST",
+            url: `${BASE_URL}/processes/load_services.php`,
+            data: {
+                appointmentBranch: branchId,
+                appointment_transaction_id: transactionId,
+                appointment_id: appointmentId,
+                hide_duration: true 
+            },
+            success: function (response) {
+                container.innerHTML = response;
+
+                const checkboxes = container.querySelectorAll('input[name="appointmentServices[]"]');
+                const dentistSelect = document.getElementById("transactionDentist");
+
+                if (!transactionId && !editServiceIds.length && appointmentServiceIds.length > 0) {
+                    checkboxes.forEach(cb => {
+                        if (appointmentServiceIds.includes(cb.value)) {
+                            cb.checked = true;
+
+                            const qtyInput = container.querySelector(`input[name="serviceQuantity[${cb.value}]"]`);
+                            if (qtyInput) {
+                                qtyInput.style.display = "inline-block";
+
+                                const service = window.appointmentServices?.find(s => s.service_id == cb.value);
+                                qtyInput.value = service?.quantity || 1;
+                            }
+                        }
+                    });
+                }
+
+                if (transactionId !== null && editServiceIds.length > 0) {
+                    checkboxes.forEach(cb => {
+                        cb.checked = editServiceIds.includes(parseInt(cb.value));
+                    });
+                }
+
+                checkboxes.forEach(cb => {
+                    cb.addEventListener("change", () => {
+
+                        const qtyInput = container.querySelector(`input[name="serviceQuantity[${cb.value}]"]`);
+                        if (qtyInput) {
+                            qtyInput.style.display = cb.checked ? "inline-block" : "none";
+                        }
+
+                        rebuildExtrasSection();
+                        updateServicesSummary();
+                        updateXrayVisibility();
+                    });
+                });
+                const extrasContainer = document.getElementById("serviceExtrasContainer");
+
+                function rebuildExtrasSection() {
+                    const extrasContainer = document.getElementById("serviceExtrasContainer");
+
+                    const existingValues = {};
+                    extrasContainer.querySelectorAll("input[name^='additional_payment']").forEach(input => {
+                        const id = input.name.match(/\[(\d+)\]/)[1];
+                        existingValues[id] = input.value;
+                    });
+
+                    extrasContainer.innerHTML = "";
+
+                    const checked = [...document.querySelectorAll('input[name="appointmentServices[]"]:checked')];
+
+                    checked.forEach(cb => {
+                        const serviceId = cb.value;
+                        const serviceName = cb.dataset.serviceName;
+
+                        let savedExtra = 0;
+
+                        if (existingValues[serviceId] !== undefined) {
+                            savedExtra = existingValues[serviceId];
+                        } else if (window.editTransactionData?.services) {
+                            const srv = window.editTransactionData.services.find(s => s.service_id == serviceId);
+                            savedExtra = srv ? (srv.extra ?? srv.additional_payment ?? 0) : 0;
+                        }
+
+                        extrasContainer.innerHTML += `
+                            <div class="service-extra-block">
+                                <h4>${serviceName}</h4>
+
+                                <div class="form-group">
+                                    <input type="number"
+                                        class="form-control service-extra-input"
+                                        name="additional_payment[${serviceId}]"
+                                        min="0" step="0.01"
+                                        value="${savedExtra}">
+                                    <label class="form-label">Additional Payment</label>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    extrasContainer.querySelectorAll("input")
+                        .forEach(el => el.addEventListener("input", updateServicesSummary));
+                }
+
+                rebuildExtrasSection();
+
+                checkboxes.forEach(cb => {
+                    cb.addEventListener("change", () => {
+                        rebuildExtrasSection();
+                        updateServicesSummary();
+                    });
+                });
+
+                if (callback) callback();
             }
         });
     }
@@ -497,111 +614,6 @@ document.addEventListener("DOMContentLoaded", () => {
             error: function (xhr, status, error) {
                 console.error("Promo load failed:", status, error);
                 promoSelect.innerHTML = '<option disabled>Error loading promos</option>';
-            }
-        });
-    }
-
-    function loadServices(branchId, container, transactionId = null, appointmentServiceIds = [], appointmentId = null, callback = null, editServiceIds = []) {
-        container.innerHTML = '<p class="loading-text">Loading services</p>';
-
-        $.ajax({
-            type: "POST",
-            url: `${BASE_URL}/processes/load_services.php`,
-            data: {
-                appointmentBranch: branchId,
-                appointment_transaction_id: transactionId,
-                appointment_id: appointmentId,
-                hide_duration: true 
-            },
-            success: function (response) {
-                container.innerHTML = response;
-
-                const checkboxes = container.querySelectorAll('input[name="appointmentServices[]"]');
-                const dentistSelect = document.getElementById("transactionDentist");
-
-                if (!transactionId && !editServiceIds.length && appointmentServiceIds.length > 0) {
-                    checkboxes.forEach(cb => {
-                        cb.checked = appointmentServiceIds.includes(cb.value);
-                    });
-                }
-
-                if (transactionId !== null && editServiceIds.length > 0) {
-                    checkboxes.forEach(cb => {
-                        cb.checked = editServiceIds.includes(parseInt(cb.value));
-                    });
-                }
-
-                checkboxes.forEach(cb => {
-                    cb.addEventListener("change", () => {
-
-                        const qtyInput = container.querySelector(`input[name="serviceQuantity[${cb.value}]"]`);
-                        if (qtyInput) {
-                            qtyInput.style.display = cb.checked ? "inline-block" : "none";
-                        }
-
-                        rebuildExtrasSection();
-                        updateServicesSummary();
-                        updateXrayVisibility();
-                    });
-                });
-                const extrasContainer = document.getElementById("serviceExtrasContainer");
-
-                function rebuildExtrasSection() {
-                    const extrasContainer = document.getElementById("serviceExtrasContainer");
-
-                    const existingValues = {};
-                    extrasContainer.querySelectorAll("input[name^='additional_payment']").forEach(input => {
-                        const id = input.name.match(/\[(\d+)\]/)[1];
-                        existingValues[id] = input.value;
-                    });
-
-                    extrasContainer.innerHTML = "";
-
-                    const checked = [...document.querySelectorAll('input[name="appointmentServices[]"]:checked')];
-
-                    checked.forEach(cb => {
-                        const serviceId = cb.value;
-                        const serviceName = cb.dataset.serviceName;
-
-                        let savedExtra = 0;
-
-                        if (existingValues[serviceId] !== undefined) {
-                            savedExtra = existingValues[serviceId];
-                        } else if (window.editTransactionData?.services) {
-                            const srv = window.editTransactionData.services.find(s => s.service_id == serviceId);
-                            savedExtra = srv ? (srv.extra ?? srv.additional_payment ?? 0) : 0;
-                        }
-
-                        extrasContainer.innerHTML += `
-                            <div class="service-extra-block">
-                                <h4>${serviceName}</h4>
-
-                                <div class="form-group">
-                                    <input type="number"
-                                        class="form-control service-extra-input"
-                                        name="additional_payment[${serviceId}]"
-                                        min="0" step="0.01"
-                                        value="${savedExtra}">
-                                    <label class="form-label">Additional Payment</label>
-                                </div>
-                            </div>
-                        `;
-                    });
-
-                    extrasContainer.querySelectorAll("input")
-                        .forEach(el => el.addEventListener("input", updateServicesSummary));
-                }
-
-                rebuildExtrasSection();
-
-                checkboxes.forEach(cb => {
-                    cb.addEventListener("change", () => {
-                        rebuildExtrasSection();
-                        updateServicesSummary();
-                    });
-                });
-
-                if (callback) callback();
             }
         });
     }
