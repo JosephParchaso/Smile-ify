@@ -15,15 +15,52 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+        const isDependent = data.is_dependent === true;
+
+        let personalContactHtml = "";
+        if (!isDependent) {
+            personalContactHtml = `
+                <p><strong>Email:</strong><span>${data.email}</span></p>
+                <p><strong>Contact Number:</strong><span>${data.contact_number}</span></p>
+                <p><strong>Address:</strong><span>${data.address}</span></p>
+            `;
+        }
+
+        let guardianHtml = "";
+        if (isDependent && data.guardian_info) {
+            const g = data.guardian_info;
+            const guardianAge = calculateAge(g.dob);
+
+            guardianHtml = `
+                <hr style="margin:15px 0;">
+                <h4 style="margin-bottom:10px;">Guardian Information</h4>
+
+                <p><strong>Name:</strong> <span>${g.full_name}</span></p>
+                <p><strong>Gender:</strong> <span>${g.gender}</span></p>
+                <p><strong>Date of Birth:</strong> <span>${g.dob}</span></p>
+                <p><strong>Age:</strong> <span>${guardianAge}</span></p>
+                <p><strong>Email:</strong> <span>${g.email}</span></p>
+                <p><strong>Contact Number:</strong> <span>${g.contact_number}</span></p>
+                <p><strong>Address:</strong> <span>${g.address}</span></p>
+            `;
+        }
+
+        const age = calculateAge(data.date_of_birth);
+
         appointmentCard.innerHTML = `
             <h3>${data.full_name}</h3>
+
             <p><strong>Gender:</strong><span>${data.gender}</span></p>
             <p><strong>Date of Birth:</strong><span>${data.date_of_birth}</span></p>
-            <p><strong>Email:</strong><span>${data.email}</span></p>
-            <p><strong>Contact Number:</strong><span>${data.contact_number}</span></p>
-            <p><strong>Address:</strong><span>${data.address}</span></p>
+            <p><strong>Age:</strong><span>${age}</span></p>
+
+            ${personalContactHtml}
+
             <p><strong>Registered:</strong><span>${data.joined}</span></p>
             <p><strong>Last Updated:</strong><span>${data.date_updated}</span></p>
+
+            ${guardianHtml}
+
             <hr>
             <h3>Appointment Details</h3>
             <p><strong>Appointment ID:</strong><span>${data.appointment_transaction_id}</span></p>
@@ -35,6 +72,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <p><strong>Status:</strong><span>${data.status}</span></p>
             <p><strong>Notes:</strong><span>${data.notes || '-'}</span></p>
             <p><strong>Date Booked:</strong><span>${data.date_created}</span></p>
+
             <div class="button-group button-group-profile">
                 <button class="confirm-btn" id="markDone">Complete Transaction</button>
                 <button class="confirm-btn" id="reSched">Resched Appointment</button>
@@ -44,20 +82,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const hasTx = Number(data.has_transaction || 0);
         const hasVitals = Number(data.has_vitals || 0);
+        const hasPres = Number(data.has_prescriptions || 0);
 
         const reSchedBtn = document.getElementById("reSched");
         const cancelBtn = document.getElementById("markCancel");
         const completeBtn = document.getElementById("markDone");
 
-        if (hasTx > 0 || hasVitals > 0) {
+        if (hasTx > 0 || hasVitals > 0 || hasPres > 0) {
             if (reSchedBtn) reSchedBtn.style.display = "none";
             if (cancelBtn) cancelBtn.style.display = "none";
         }
 
-        if (hasTx === 0 && hasVitals === 0) {
+        if (hasTx === 0 && hasVitals === 0 && hasPres === 0) {
             if (completeBtn) completeBtn.style.display = "none";
         }
-
+        
         if (reSchedBtn) {
             reSchedBtn.addEventListener("click", () => {
                 openReschedModal(data);
@@ -115,6 +154,21 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+function calculateAge(dobString) {
+    if (!dobString) return "-";
+    const dob = new Date(dobString);
+    if (isNaN(dob)) return "-";
+
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const monthDiff = today.getMonth() - dob.getMonth();
+
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+        age--;
+    }
+    return age;
+}
+
 function openReschedModal(data) {
     const bookingModal = document.getElementById("manageAppointmentModal");
     const bookingBody = document.getElementById("appointmentModalBody");
@@ -144,7 +198,12 @@ function openReschedModal(data) {
     });
 
     timeSelect.addEventListener("change", () => {
-        estimatedEnd.textContent = "";
+        calculateEstimatedEnd(
+            timeSelect.value,
+            servicesContainer,
+            bookingBody.querySelector("#estimatedEnd")
+        );
+
         attemptLoadDentists(
             branchSelect,
             dateSelect,
@@ -158,6 +217,10 @@ function openReschedModal(data) {
 
     loadBranches(branchSelect, () => {
         branchSelect.value = data.branch_id;
+
+        getClosedDates(branchSelect.value).then(dates => {
+            window.closedDates = dates;
+        });
 
         loadServices(branchSelect.value, servicesContainer, timeSelect, dentistSelect, () => {
             preselectServices(window.preselectedServiceIds, servicesContainer);
@@ -297,7 +360,7 @@ function renderReschedForm(data) {
                 return;
             }
 
-            if (closedDates.includes(formatted)) {
+            if (window.closedDates && window.closedDates.includes(formatted)) {
                 this.value = "";
                 this.classList.add("is-invalid");
                 errorMsg.textContent = "This date is unavailable due to a branch closure.";

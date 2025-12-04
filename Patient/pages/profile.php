@@ -20,7 +20,7 @@ $updateError = $_SESSION['updateError'] ?? "";
 $expireSql = "
     UPDATE dental_transaction
     SET medcert_status = 'Expired', date_updated = NOW()
-    WHERE medcert_status NOT IN ('None')
+    WHERE medcert_status NOT IN ('None', 'Expired')
         AND DATEDIFF(NOW(), date_created) >= 7
 ";
 $conn->query($expireSql);
@@ -70,6 +70,7 @@ if ($priceFromDB !== null) {
         <div class="tabs">
             <div class="tab active" onclick="switchTab('appointment_history')">Appointment History</div>
             <div class="tab" onclick="switchTab('dental_transaction')">Dental Transactions</div>
+            <div class="tab" onclick="switchTab('dependant_accounts')">Dependent Accounts</div>
         </div> 
 
         <div class="tab-content active" id="appointment_history">
@@ -78,6 +79,10 @@ if ($priceFromDB !== null) {
 
         <div class="tab-content" id="dental_transaction">
             <table id="transactionTable" class="transaction-table"></table>
+        </div>
+        
+        <div class="tab-content" id="dependant_accounts">
+            <table id="dependentTable" class="transaction-table"></table>
         </div>
     </div>
 </div>
@@ -106,7 +111,7 @@ if ($priceFromDB !== null) {
 
 <div id="changePasswordModal" class="change-password-modal">
     <div class="change-password-modal-content">
-        <form id="requestOtpForm" method="POST" action="<?= BASE_URL ?>/processes/OTP Processes/change_password/request_otp_change_password.php">
+        <form id="requestOtpChangePassword" method="POST" action="<?= BASE_URL ?>/processes/OTP Processes/change_password/request_otp_change_password.php">
             <p style="text-align:center;">Click below to request an OTP for password change.</p>
             <div class="button-group">
                 <button type="submit" class="form-button confirm-btn">Send OTP</button>
@@ -118,7 +123,7 @@ if ($priceFromDB !== null) {
 
 <div id="changeEmailModal" class="change-password-modal">
     <div class="change-password-modal-content">
-        <form id="requestOtpForm" method="POST" action="<?= BASE_URL ?>/processes/OTP Processes/change_email/request_otp_change_email.php">
+        <form id="requestOtpChangeEmail" method="POST" action="<?= BASE_URL ?>/processes/OTP Processes/change_email/request_otp_change_email.php">
             <p style="text-align:center;">Click below to request an OTP for email change.</p>
             <div class="button-group">
                 <button type="submit" class="form-button confirm-btn">Send OTP</button>
@@ -236,4 +241,8 @@ document.addEventListener("DOMContentLoaded", function () {
     protectForm("requestOtpChangePassword");
     protectForm("requestOtpChangeEmail");
 });
+
+function viewDependent(userId) {
+    window.location.href = "<?= BASE_URL ?>/Patient/pages/manage_dependent.php?user_id=" + userId;
+}
 </script>
