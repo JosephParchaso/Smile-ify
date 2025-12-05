@@ -65,9 +65,11 @@
 .tabs-container {
     flex: 1;
     min-width: 350px;
+    /* width: 100%; */
     display: flex;
     flex-direction: column;
     align-items: center;
+    /* overflow-x: auto; */
 }
 
 .tabs {
@@ -233,8 +235,26 @@
         padding: 10px;
     }
 
-    .tabs-nomargin {
-        display: none; /* Hide tabs on mobile */
+    /* Hide tabs on mobile */
+    /* .tabs-nomargin {
+        display: none; 
+    } */
+
+    /* Allow wrapping on mobile */
+    .tabs-nomargin, .sub-tabs {
+        flex-wrap: wrap; 
+        justify-content: center;
+    }
+
+    .tab, .sub-tab {
+        flex: 1 1 auto; /* Allow tabs to grow and shrink */
+        min-width: 120px; /* Minimum width for usability */
+        text-align: center;
+        margin-bottom: 5px;
+    }
+
+    .tab-content, .sub-tab-content {
+        padding: 10px;
     }
 
     .mobile-branch-select, .mobile-mode-select {
@@ -246,12 +266,19 @@
         font-size: 16px; /* Prevent zoom on iOS */
     }
 
-    .sub-tabs {
-        display: none; /* Hide sub-tabs on mobile */
-    }
+    /* Hide sub-tabs on mobile */
+    /* .sub-tabs {
+        display: none; 
+    } */
 
     .branch-growth-grid {
         grid-template-columns: 1fr;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .branch-growth-list {
+        margin-bottom: 20px;
     }
 
     .branch-growth-table {
@@ -268,6 +295,10 @@
     .branch-growth-chart canvas {
         width: 100% !important;
         height: auto !important;
+    }
+
+    .branch-growth-chart {
+        margin-top: 20px;
     }
 
     .branch-growth-chart, .branch-growth-chart-decline{
@@ -425,5 +456,17 @@
     .form-button {
         width: 100%;
         margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .tab, .sub-tab {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+    
+    .branch-growth-table th, .branch-growth-table td {
+        padding: 6px 8px;
+        font-size: 12px;
     }
 }
