@@ -181,9 +181,9 @@
     .manage-calendar-modal-content,
     .transaction-record-modal-content,
     .booking-modal-content {
-        width: 90%;
+        /* width: 90%; */
         max-width: none;
-        margin: 10% auto;
+        /* margin: 10% auto; */
         padding: 20px;
     }
 
