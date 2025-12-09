@@ -3,7 +3,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/includes/config.php';
 require_once BASE_PATH . '/includes/db.php';
 
 $stmt = $conn->prepare("
-    SELECT nickname 
+    SELECT nickname
     FROM branch
     WHERE status = 'Active'
     ORDER BY nickname ASC

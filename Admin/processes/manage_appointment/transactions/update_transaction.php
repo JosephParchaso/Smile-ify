@@ -25,7 +25,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $remarks = trim($_POST['remarks'] ?? '');
 
     try {
-
         $stmt = $conn->prepare("
             SELECT dentist_id, promo_id, payment_method, total, additional_payment,
                     notes, fitness_status, diagnosis, remarks, cashless_receipt, xray_file
@@ -81,16 +80,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         $removed_receipt = $_POST['removed_receipt'] ?? "0";
         $receiptChanged = false;
-
         if ($removed_receipt !== "0") {
             $oldPath = $_SERVER['DOCUMENT_ROOT'] . $removed_receipt;
             if (is_file($oldPath)) unlink($oldPath);
-
             $clr = $conn->prepare("UPDATE dental_transaction SET cashless_receipt = NULL, date_updated = NOW() WHERE dental_transaction_id = ?");
             $clr->bind_param("i", $dental_transaction_id);
             $clr->execute();
             $clr->close();
-
             $receiptChanged = true;
         }
 
@@ -105,7 +101,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $p->execute();
                 $promo = $p->get_result()->fetch_assoc();
                 $p->close();
-
                 if ($promo) {
                     $promo_name_snapshot = $promo['name'];
                     $promo_type_snapshot = $promo['discount_type'];
@@ -122,8 +117,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     date_updated = NOW(), promo_name = ?, promo_type = ?, promo_value = ?
                 WHERE dental_transaction_id = ? AND appointment_transaction_id = ?
             ");
+            $types = "iisddssssissdii";
             $u->bind_param(
-                "iisddssssissdii",
+                $types,
                 $dentist_id,
                 $promo_id,
                 $payment_method,
@@ -145,7 +141,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
         if ($servicesChanged) {
-
             $del = $conn->prepare("DELETE FROM dental_transaction_services WHERE dental_transaction_id = ?");
             $del->bind_param("i", $dental_transaction_id);
             $del->execute();
@@ -157,9 +152,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     (dental_transaction_id, service_id, service_name, service_price, quantity, additional_payment)
                     VALUES (?, ?, ?, ?, ?, ?)
                 ");
-
                 $fetchStmt = $conn->prepare("SELECT name, price FROM service WHERE service_id = ?");
-
                 foreach ($services as $service_id) {
                     $service_id = intval($service_id);
                     $quantity = isset($quantities[$service_id]) ? intval($quantities[$service_id]) : 1;
@@ -168,56 +161,69 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     $fetchStmt->execute();
                     $res = $fetchStmt->get_result()->fetch_assoc();
 
-                    $name  = $res['name'] ?? 'Unknown';
-                    $price = floatval($res['price'] ?? 0.00);
+                    $service_name  = $res['name'] ?? 'Unknown';
+                    $service_price = floatval($res['price'] ?? 0.00);
 
-                    $extra = isset($_POST['additional_payment'][$service_id])
-                        ? floatval($_POST['additional_payment'][$service_id])
-                        : 0.0;
+                    $extra = isset($_POST['additional_payment'][$service_id]) ? floatval($_POST['additional_payment'][$service_id]) : 0.0;
 
                     $serviceStmt->bind_param("iisdid",
-                        $dental_transaction_id, $service_id, $name, $price, $quantity, $extra
+                        $dental_transaction_id,
+                        $service_id,
+                        $service_name,
+                        $service_price,
+                        $quantity,
+                        $extra
                     );
                     $serviceStmt->execute();
                 }
-
                 $fetchStmt->close();
                 $serviceStmt->close();
             }
-
         } else {
-
             if (!empty($services)) {
-
                 $upd = $conn->prepare("
                     UPDATE dental_transaction_services
                     SET quantity = ?, additional_payment = ?
                     WHERE dental_transaction_id = ? AND service_id = ?
                 ");
-
                 foreach ($services as $service_id) {
                     $service_id = intval($service_id);
                     $quantity = isset($quantities[$service_id]) ? intval($quantities[$service_id]) : 1;
                     $extra = isset($_POST['additional_payment'][$service_id]) ? floatval($_POST['additional_payment'][$service_id]) : 0.0;
-
                     $upd->bind_param("didi", $quantity, $extra, $dental_transaction_id, $service_id);
                     $upd->execute();
                 }
-
                 $upd->close();
             }
         }
 
-        $sumStmt = $conn->prepare("SELECT IFNULL(SUM(additional_payment), 0) AS total_extra FROM dental_transaction_services WHERE dental_transaction_id = ?");
+        $sumStmt = $conn->prepare("
+            SELECT IFNULL(SUM(additional_payment), 0) AS total_extra
+            FROM dental_transaction_services
+            WHERE dental_transaction_id = ?
+        ");
         $sumStmt->bind_param("i", $dental_transaction_id);
         $sumStmt->execute();
-        $total_extra = floatval($sumStmt->get_result()->fetch_assoc()['total_extra'] ?? 0.0);
+        $sumRes = $sumStmt->get_result()->fetch_assoc();
         $sumStmt->close();
+
+        $total_extra = floatval($sumRes['total_extra'] ?? 0.0);
 
         $updateExtra = $conn->prepare("UPDATE dental_transaction SET additional_payment = ?, date_updated = NOW() WHERE dental_transaction_id = ?");
         $updateExtra->bind_param("di", $total_extra, $dental_transaction_id);
         $updateExtra->execute();
         $updateExtra->close();
+
+        if ($hasChanges) {
+            $u2 = $conn->prepare("
+                UPDATE dental_transaction
+                SET additional_payment = ?, date_updated = NOW()
+                WHERE dental_transaction_id = ?
+            ");
+            $u2->bind_param("di", $total_extra, $dental_transaction_id);
+            $u2->execute();
+            $u2->close();
+        }
 
         if (strtolower($payment_method) === 'cashless' &&
             isset($_FILES['receipt_upload']) &&
@@ -235,16 +241,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $gp->execute();
             $p = $gp->get_result()->fetch_assoc();
             $gp->close();
-
             $last_name_clean = $p ? preg_replace('/[^a-zA-Z0-9_-]/', '', strtolower($p['last_name'])) : 'unknown';
 
             $fileTmpPath = $_FILES['receipt_upload']['tmp_name'];
             $fileExt = strtolower(pathinfo($_FILES['receipt_upload']['name'], PATHINFO_EXTENSION));
             $allowed = ['jpg', 'jpeg', 'png', 'webp'];
-
             if (!in_array($fileExt, $allowed)) {
-                $_SESSION['updateError'] = "Invalid receipt file format.";
-                header("Location: " . BASE_URL . "/Admin/pages/manage_appointment.php?id=$appointment_transaction_id&backTab=recent&tab=transaction");
+                $_SESSION['updateError'] = "Invalid file type.";
+                header("Location: " . BASE_URL . "/Admin/pages/manage_appointment.php?id={$appointment_transaction_id}&backTab=recent&tab=transaction");
                 exit();
             }
 
@@ -252,24 +256,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             if (!is_dir($dir)) mkdir($dir, 0777, true);
 
             foreach (glob($dir . $dental_transaction_id . "_*.*") as $old) {
-                unlink($old);
+                if (is_file($old)) unlink($old);
             }
 
             $fileName = "{$dental_transaction_id}_{$last_name_clean}.{$fileExt}";
             $target = $dir . $fileName;
-
             move_uploaded_file($fileTmpPath, $target);
 
             $path = "/images/payments/cashless_payments/" . $fileName;
-
-            $ur = $conn->prepare("UPDATE dental_transaction SET cashless_receipt=?, date_updated=NOW() WHERE dental_transaction_id=?");
+            $ur = $conn->prepare("UPDATE dental_transaction SET cashless_receipt = ?, date_updated = NOW() WHERE dental_transaction_id = ?");
             $ur->bind_param("si", $path, $dental_transaction_id);
             $ur->execute();
             $ur->close();
         }
 
         if (strtolower($payment_method) === 'cash') {
-
             $rc = $conn->prepare("SELECT cashless_receipt FROM dental_transaction WHERE dental_transaction_id = ?");
             $rc->bind_param("i", $dental_transaction_id);
             $rc->execute();
@@ -277,21 +278,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $rc->close();
 
             if (!empty($receipt['cashless_receipt'])) {
-
                 $old = $_SERVER['DOCUMENT_ROOT'] . $receipt['cashless_receipt'];
-                if (is_file($old)) unlink($old);
-
+                if (is_file($oldPath)) unlink($oldPath);
                 $clr = $conn->prepare("UPDATE dental_transaction SET cashless_receipt = NULL, date_updated = NOW() WHERE dental_transaction_id = ?");
                 $clr->bind_param("i", $dental_transaction_id);
                 $clr->execute();
                 $clr->close();
-
                 $receiptChanged = true;
             }
         }
 
         if ($remove_xray_flag) {
-
             $cur = $conn->prepare("SELECT xray_file FROM dental_transaction WHERE dental_transaction_id = ?");
             $cur->bind_param("i", $dental_transaction_id);
             $cur->execute();
@@ -310,19 +307,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
         if (isset($_FILES['xray_file']) && is_uploaded_file($_FILES['xray_file']['tmp_name'])) {
-
             $gp = $conn->prepare("
                 SELECT u.last_name 
                 FROM appointment_transaction at
                 JOIN users u ON u.user_id = at.user_id
-                WHERE at.appointment_transaction_id = ?
+                WHERE at.appointment_transaction_id=?
             ");
             $gp->bind_param("i", $appointment_transaction_id);
             $gp->execute();
             $p = $gp->get_result()->fetch_assoc();
             $gp->close();
-
-            $lname_clean = $p ? preg_replace('/[^a-zA-Z0-9_-]/', '', strtolower($p['last_name'])) : 'patient';
+            $last_name_clean = $p ? preg_replace('/[^a-zA-Z0-9_-]/', '', strtolower($p['last_name'])) : 'patient';
 
             $ext = strtolower(pathinfo($_FILES['xray_file']['name'], PATHINFO_EXTENSION));
             $cleanExt = preg_replace('/[^a-z0-9]/', '', $ext);
@@ -331,22 +326,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
 
             foreach (glob($uploadDir . $dental_transaction_id . "_*.*") as $oldFile) {
-                unlink($oldFile);
+                if (is_file($oldFile)) unlink($oldFile);
             }
 
-            $fileName = "{$dental_transaction_id}_{$lname_clean}.{$cleanExt}";
+            $fileName = $dental_transaction_id . "_" . $last_name_clean . "." . $cleanExt;
             $fullPath = $uploadDir . $fileName;
 
             if (move_uploaded_file($_FILES['xray_file']['tmp_name'], $fullPath)) {
                 $relativePath = "images/transactions/xrays/" . $fileName;
-
-                $saveX = $conn->prepare("
-                    UPDATE dental_transaction SET xray_file = ?, date_updated = NOW()
-                    WHERE dental_transaction_id = ?
-                ");
-                $saveX->bind_param("si", $relativePath, $dental_transaction_id);
-                $saveX->execute();
-                $saveX->close();
+                $saveXray = $conn->prepare("UPDATE dental_transaction SET xray_file = ?, date_updated = NOW() WHERE dental_transaction_id = ?");
+                $saveXray->bind_param("si", $relativePath, $dental_transaction_id);
+                $saveXray->execute();
+                $saveXray->close();
             }
         }
 
@@ -358,8 +349,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     } catch (Exception $e) {
         if ($conn->in_transaction()) $conn->rollback();
-        error_log("UPDATE ERROR: " . $e->getMessage());
-        $_SESSION['updateError'] = "Update failed.";
+        error_log("UPDATE TRANSACTION ERROR: " . $e->getMessage() . " | SQL Error: " . $conn->error);
+        $_SESSION['updateError'] = "Failed to update transaction. Check error_log for details.";
     }
 
     header("Location: " . BASE_URL . "/Admin/pages/manage_appointment.php?id={$appointment_transaction_id}&backTab=recent&tab=transaction");
