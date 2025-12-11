@@ -15,7 +15,7 @@ $(document).ready(function() {
                 { title: "Status" },
                 { title: "Action", orderable: false }
             ],
-            order: [[5, "desc"]],
+            order: [[0, "asc"],[5, "asc"]],
             language: {
                 search: "",
                 searchPlaceholder: "Search"
