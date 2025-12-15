@@ -27,6 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $licenseNumber  = trim($_POST['licenseNumber']);
     $dateStarted    = trim($_POST['dateStarted']);
     $status         = $_POST['status'];
+    $ignoreScheduleUpdate = ($status === 'Inactive');
 
     $branches       = isset($_POST['branches']) ? array_map('intval', $_POST['branches']) : [];
     $services       = isset($_POST['services']) ? array_map('intval', $_POST['services']) : [];
@@ -156,35 +157,122 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     if ($hasChanges) {
 
-        [$dob_enc, $dob_iv, $dob_tag]         = encryptField($dateofBirth, $ENCRYPTION_KEY);
-        [$contact_enc, $contact_iv, $contact_tag] = encryptField($contactNumber, $ENCRYPTION_KEY);
-        [$license_enc, $license_iv, $license_tag] = encryptField($licenseNumber, $ENCRYPTION_KEY);
+        $conn->begin_transaction();
 
-        $sql = "UPDATE dentist
-                SET last_name=?, first_name=?, middle_name=?, gender=?,
-                    date_of_birth=?, date_of_birth_iv=?, date_of_birth_tag=?,
-                    email=?,
-                    contact_number=?, contact_number_iv=?, contact_number_tag=?,
-                    license_number=?, license_number_iv=?, license_number_tag=?,
-                    date_started=?, status=?, signature_image=?, profile_image=?,
-                    date_updated=NOW()
-                WHERE dentist_id=?";
+        try {
 
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param(
-            "ssssssssssssssssssi",
-            $lastName, $firstName, $middleName, $gender,
-            $dob_enc, $dob_iv, $dob_tag,
-            $email,
-            $contact_enc, $contact_iv, $contact_tag,
-            $license_enc, $license_iv, $license_tag,
-            $dateStarted, $status, $signatureImage, $profileImage,
-            $dentistId
-        );
-        $stmt->execute();
-        $stmt->close();
+            [$dob_enc, $dob_iv, $dob_tag]         = encryptField($dateofBirth, $ENCRYPTION_KEY);
+            [$contact_enc, $contact_iv, $contact_tag] = encryptField($contactNumber, $ENCRYPTION_KEY);
+            [$license_enc, $license_iv, $license_tag] = encryptField($licenseNumber, $ENCRYPTION_KEY);
 
-        $changed = true;
+            $sql = "UPDATE dentist
+                    SET last_name=?, first_name=?, middle_name=?, gender=?,
+                        date_of_birth=?, date_of_birth_iv=?, date_of_birth_tag=?,
+                        email=?,
+                        contact_number=?, contact_number_iv=?, contact_number_tag=?,
+                        license_number=?, license_number_iv=?, license_number_tag=?,
+                        date_started=?, status=?, signature_image=?, profile_image=?
+                    WHERE dentist_id=?";
+
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param(
+                "ssssssssssssssssssi",
+                $lastName, $firstName, $middleName, $gender,
+                $dob_enc, $dob_iv, $dob_tag,
+                $email,
+                $contact_enc, $contact_iv, $contact_tag,
+                $license_enc, $license_iv, $license_tag,
+                $dateStarted, $status, $signatureImage, $profileImage,
+                $dentistId
+            );
+            $stmt->execute();
+            $stmt->close();
+
+            $changed = true;
+
+            if ($current['status'] === 'Active' && $status === 'Inactive') {
+
+                if (($_POST['confirmDentistUpdate'] ?? '0') !== '1') {
+                    throw new Exception("Dentist deactivation not confirmed.");
+                }
+
+                $apptSql = "
+                    SELECT 
+                        at.appointment_transaction_id,
+                        at.user_id,
+                        u.guardian_id
+                    FROM appointment_transaction at
+                    JOIN users u ON u.user_id = at.user_id
+                    WHERE at.dentist_id = ?
+                    AND at.status = 'Booked'
+                    AND at.appointment_date >= CURDATE()
+                ";
+
+                $apptStmt = $conn->prepare($apptSql);
+                $apptStmt->bind_param("i", $dentistId);
+                $apptStmt->execute();
+                $appointments = $apptStmt->get_result()->fetch_all(MYSQLI_ASSOC);
+                $apptStmt->close();
+
+                if (!empty($appointments)) {
+
+                    $updateAppt = $conn->prepare("
+                        UPDATE appointment_transaction
+                        SET status = 'Pending Reschedule'
+                        WHERE appointment_transaction_id = ?
+                    ");
+
+                    $notif = $conn->prepare("
+                        INSERT INTO notifications (user_id, appointment_transaction_id, message)
+                        VALUES (?, ?, ?)
+                    ");
+
+                    foreach ($appointments as $appt) {
+
+                        $appointmentTransactionId = (int)$appt['appointment_transaction_id'];
+
+                        $updateAppt->bind_param("i", $appointmentTransactionId);
+                        $updateAppt->execute();
+
+                        $notifyUserId = !empty($appt['guardian_id'])
+                            ? (int)$appt['guardian_id']
+                            : (int)$appt['user_id'];
+
+                        $message = "Your dental appointment requires action.
+                                    Dr. {$current['first_name']} {$current['last_name']} is no longer available. Please reschedule or cancel.";
+
+
+
+                        $notif->bind_param(
+                            "iis",
+                            $notifyUserId,
+                            $appointmentTransactionId,
+                            $message
+                        );
+                        $notif->execute();
+                    }
+
+                    $updateAppt->close();
+                    $notif->close();
+                }
+            }
+
+            $upd = $conn->prepare("UPDATE dentist SET date_updated = NOW() WHERE dentist_id = ?");
+            $upd->bind_param("i", $dentistId);
+            $upd->execute();
+            $upd->close();
+
+            $conn->commit();
+
+            $_SESSION['updateSuccess'] = "Dentist updated successfully!";
+
+        } catch (Exception $e) {
+
+            $conn->rollback();
+            $_SESSION['updateError'] = "Failed to update dentist and affected appointments.";
+            header("Location: " . BASE_URL . "/Owner/pages/employees.php?tab=dentist");
+            exit;
+        }
     }
 
     $currentBranches = [];
@@ -247,91 +335,97 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $changed = true;
     }
 
-    $currentSched = [];
-    $res = $conn->prepare("SELECT day, branch_id FROM dentist_schedule WHERE dentist_id=?");
-    $res->bind_param("i", $dentistId);
-    $res->execute();
-    $result = $res->get_result();
-    while ($row = $result->fetch_assoc()) {
-        $currentSched[] = $row;
-    }
-    $res->close();
+    $scheduleSubmitted = array_key_exists('schedule', $_POST);
 
-    $newSched = [];
-    foreach ($schedule as $day => $branchId) {
-        if (!empty($branchId)) {
-            $newSched[] = [
-                "day"       => $day,
-                "branch_id" => (int)$branchId
+    if (!$ignoreScheduleUpdate && $scheduleSubmitted) {
+
+        $currentSched = [];
+        $res = $conn->prepare("
+            SELECT day, branch_id, start_time, end_time
+            FROM dentist_schedule
+            WHERE dentist_id=?
+            ORDER BY day, branch_id, start_time
+        ");
+        $res->bind_param("i", $dentistId);
+        $res->execute();
+        $result = $res->get_result();
+        while ($row = $result->fetch_assoc()) {
+            $currentSched[] = [
+                "day"        => $row["day"],
+                "branch_id"  => (int)$row["branch_id"],
+                "start_time" => $row["start_time"],
+                "end_time"   => $row["end_time"]
             ];
         }
-    }
+        $res->close();
 
-    if (json_encode($currentSched) !== json_encode($newSched)) {
-        $del = $conn->prepare("DELETE FROM dentist_schedule WHERE dentist_id=?");
-        $del->bind_param("i", $dentistId);
-        $del->execute();
-        $del->close();
+        $newSched = [];
 
-        if (!empty($schedule)) {
+        foreach ($schedule as $day => $entries) {
+            $branchesArr = $entries["branch"] ?? [];
+            $startArr    = $entries["start"] ?? [];
+            $endArr      = $entries["end"] ?? [];
 
-            $stmt = $conn->prepare("
-                INSERT INTO dentist_schedule (dentist_id, day, branch_id, start_time, end_time)
-                VALUES (?, ?, ?, ?, ?)
-            ");
+            for ($i = 0; $i < count($branchesArr); $i++) {
+                if (empty($branchesArr[$i])) continue;
 
-            foreach ($schedule as $day => $entries) {
+                $newSched[] = [
+                    "day"        => $day,
+                    "branch_id"  => (int)$branchesArr[$i],
+                    "start_time" => $startArr[$i] ?? "09:00",
+                    "end_time"   => $endArr[$i] ?? "16:00"
+                ];
+            }
+        }
 
-                $branchesArr = $entries["branch"] ?? [];
-                $startArr    = $entries["start"] ?? [];
-                $endArr      = $entries["end"] ?? [];
+        $sortFn = function ($a, $b) {
+            return strcmp(
+                $a["day"] . $a["branch_id"] . $a["start_time"] . $a["end_time"],
+                $b["day"] . $b["branch_id"] . $b["start_time"] . $b["end_time"]
+            );
+        };
 
-                for ($i = 0; $i < count($branchesArr); $i++) {
+        usort($currentSched, $sortFn);
+        usort($newSched, $sortFn);
 
-                    $branch_id = !empty($branchesArr[$i]) ? (int)$branchesArr[$i] : null;
+        if (json_encode($currentSched) !== json_encode($newSched)) {
 
-                    $rawStart = $startArr[$i] ?? "";
-                    $rawEnd   = $endArr[$i] ?? "";
+            $del = $conn->prepare("DELETE FROM dentist_schedule WHERE dentist_id=?");
+            $del->bind_param("i", $dentistId);
+            $del->execute();
+            $del->close();
 
-                    $isWholeDay = (
-                        $rawStart === "" || $rawStart === null
-                    ) && (
-                        $rawEnd === "" || $rawEnd === null
-                    );
+            if (!empty($newSched)) {
+                $stmt = $conn->prepare("
+                    INSERT INTO dentist_schedule (dentist_id, day, branch_id, start_time, end_time)
+                    VALUES (?, ?, ?, ?, ?)
+                ");
 
-                    if ($isWholeDay) {
-                        $start_time = "09:00";
-                        $end_time   = "16:30";
-                    } else {
-                        $start_time = $rawStart ?: null;
-                        $end_time   = $rawEnd ?: null;
-                    }
-
+                foreach ($newSched as $s) {
                     $stmt->bind_param(
                         "isiss",
                         $dentistId,
-                        $day,
-                        $branch_id,
-                        $start_time,
-                        $end_time
+                        $s["day"],
+                        $s["branch_id"],
+                        $s["start_time"],
+                        $s["end_time"]
                     );
-
                     $stmt->execute();
                 }
+                $stmt->close();
             }
 
-            $stmt->close();
+            $changed = true;
         }
+    }
 
-        $changed = true;
+    if ($changed) {
 
         $upd = $conn->prepare("UPDATE dentist SET date_updated = NOW() WHERE dentist_id = ?");
         $upd->bind_param("i", $dentistId);
         $upd->execute();
         $upd->close();
-    }
 
-    if ($changed) {
         $_SESSION['updateSuccess'] = "Dentist updated successfully!";
     }
 

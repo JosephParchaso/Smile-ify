@@ -120,8 +120,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                     ? (int)$appt['guardian_id']
                                     : (int)$appt['user_id'];
 
-                                $message = "Your dental appointment requires action because the branch has been deactivated.
-                                            Please confirm a new schedule or cancel the appointment.";
+                                $message = "Your dental appointment requires action.
+                                            The branch has been deactivated. Please confirm a new schedule or cancel the appointment.";
 
                                 $notif->bind_param(
                                     "iis",

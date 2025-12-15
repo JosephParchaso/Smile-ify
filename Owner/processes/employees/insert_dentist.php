@@ -162,35 +162,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             foreach ($schedule as $day => $entries) {
 
+                $dayVal = $day;
+
                 $branchesArr = $entries["branch"] ?? [];
                 $startArr    = $entries["start"] ?? [];
                 $endArr      = $entries["end"] ?? [];
 
                 for ($i = 0; $i < count($branchesArr); $i++) {
 
-                    $branch_id = !empty($branchesArr[$i]) ? (int)$branchesArr[$i] : null;
-                    if ($branch_id === null) continue;
+                    if (empty($branchesArr[$i])) continue;
 
-                    $rawStart = $startArr[$i] ?? "";
-                    $rawEnd   = $endArr[$i] ?? "";
+                    $branch_id = (int)$branchesArr[$i];
 
-                    $isWholeDay = (
-                        ($rawStart === "" || $rawStart === null) &&
-                        ($rawEnd === "" || $rawEnd === null)
-                    );
+                    $rawStart = $startArr[$i] ?? null;
+                    $rawEnd   = $endArr[$i] ?? null;
 
-                    if ($isWholeDay) {
-                        $start_time = "09:00";
-                        $end_time   = "16:30";
-                    } else {
-                        $start_time = $rawStart ?: null;
-                        $end_time   = $rawEnd ?: null;
-                    }
+                    $start_time = $rawStart ?: "09:00";
+                    $end_time   = $rawEnd   ?: "16:00";
 
                     $stmt4->bind_param(
                         "isiss",
                         $dentistId,
-                        $day,
+                        $dayVal,
                         $branch_id,
                         $start_time,
                         $end_time

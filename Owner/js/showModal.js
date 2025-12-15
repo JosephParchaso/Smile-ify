@@ -207,8 +207,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const CHAIR_OCCUPANCY = {};
+    let SCHEDULE_LOCKED = false;
     function renderDentistForm(data) {
         const isEdit = !!data;
+        SCHEDULE_LOCKED = false;
         const selectedBranches = isEdit && data.branches ? data.branches.map(b => parseInt(b)) : [];
         const selectedServices = isEdit && data.services ? data.services.map(s => parseInt(s)) : [];
         
@@ -216,6 +218,9 @@ document.addEventListener("DOMContentLoaded", () => {
             <h2>${isEdit ? "Manage Dentist" : "Add Dentist"}</h2>
             <form id="dentistForm" action="${BASE_URL}/Owner/processes/employees/${isEdit ? "update_dentist.php" : "insert_dentist.php"}" method="POST" enctype="multipart/form-data" autocomplete="off">
                 ${isEdit ? `<input type="hidden" name="dentist_id" value="${data.dentist_id}">` : ""}
+
+                <input type="hidden" name="confirmDentistUpdate" id="confirmDentistUpdate" value="0">
+                <input type="hidden" id="originalStatus" value="${data.status}">
 
                 <div class="form-group" style="position: relative; margin-bottom: 18px;">
                     <input type="file" id="profileImage" name="profileImage" class="form-control" accept="image/*" ${isEdit ? "" : ""}>
@@ -286,33 +291,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     <span class="phone-prefix">+63</span>
                 </div>
 
-                <div class="form-group">
-                    <input type="text" id="licenseNumber" name="licenseNumber" class="form-control"
-                        value="${isEdit ? data.license_number : ""}" required placeholder=" " autocomplete="off">
-                    <label for="licenseNumber" class="form-label">License Number <span class="required">*</span></label>
-                </div>
-
-                <div class="form-group">
-                    <div id="branchAssignment" class="checkbox-group"></div>
-                </div>
-
-                <div class="form-group">
-                    <div id="branchScheduleContainer" class="schedule-days-container"></div>
-                </div>
-
-                <div class="form-group">
-                    <div id="servicesCheckboxes" class="checkbox-group"></div>
-                </div>
-
-                <div class="form-group">
-                    <select id="status" name="status" class="form-control" required>
-                        <option value="" disabled selected hidden></option>
-                        <option value="Active" ${isEdit && data.status === "Active" ? "selected" : ""}>Active</option>
-                        <option value="Inactive" ${isEdit && data.status === "Inactive" ? "selected" : ""}>Inactive</option>
-                    </select>
-                    <label for="status" class="form-label">Status <span class="required">*</span></label>
-                </div>
-
                 <div class="form-group" style="position: relative; margin-bottom: 18px;">
                     <input type="file" id="signatureImage" name="signatureImage" class="form-control" accept="image/*">
                     <label for="signatureImage" class="form-label" style="display: block; margin-top: 6px; margin-bottom: 4px;">Signature Image </label>
@@ -331,6 +309,12 @@ document.addEventListener("DOMContentLoaded", () => {
                         </div>`
                         : ""
                     }
+                </div>
+
+                <div class="form-group">
+                    <input type="text" id="licenseNumber" name="licenseNumber" class="form-control"
+                        value="${isEdit ? data.license_number : ""}" required placeholder=" " autocomplete="off">
+                    <label for="licenseNumber" class="form-label">License Number <span class="required">*</span></label>
                 </div>
                 
                 <div class="form-group">
@@ -358,6 +342,27 @@ document.addEventListener("DOMContentLoaded", () => {
                             </span>
                         `
                     }
+                </div>
+
+                <div class="form-group">
+                    <select id="status" name="status" class="form-control" required>
+                        <option value="" disabled selected hidden></option>
+                        <option value="Active" ${isEdit && data.status === "Active" ? "selected" : ""}>Active</option>
+                        <option value="Inactive" ${isEdit && data.status === "Inactive" ? "selected" : ""}>Inactive</option>
+                    </select>
+                    <label for="status" class="form-label">Status <span class="required">*</span></label>
+                </div>
+
+                <div class="form-group">
+                    <div id="branchAssignment" class="checkbox-group"></div>
+                </div>
+
+                <div class="form-group">
+                    <div id="branchScheduleContainer" class="schedule-days-container"></div>
+                </div>
+
+                <div class="form-group">
+                    <div id="servicesCheckboxes" class="checkbox-group"></div>
                 </div>
 
                 ${isEdit ? `
@@ -398,29 +403,38 @@ document.addEventListener("DOMContentLoaded", () => {
                 container.appendChild(wrapper);
             });
 
-            branches.forEach(branch => {
-                fetch(`${BASE_URL}/Owner/processes/employees/get_branch_chair_occupancy.php?branch_id=${branch.branch_id}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        CHAIR_OCCUPANCY[branch.branch_id] = data;
-                    });
+            Promise.all(
+                branches.map(branch =>
+                    fetch(`${BASE_URL}/Owner/processes/employees/get_branch_chair_occupancy.php?branch_id=${branch.branch_id}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            CHAIR_OCCUPANCY[branch.branch_id] = data;
+                        })
+                )
+            ).then(() => {
+                rebuildAllTimeDropdowns();
+
+                if (isEdit && data.status === "Active") {
+                    setScheduleReadonly(true);
+                }
             });
 
             const scheduleContainer = document.getElementById("branchScheduleContainer");
             scheduleContainer.innerHTML = "";
 
             const days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-            const savedSchedule = isEdit ? data.branch_schedule || {} : {};
+            const savedSchedule =
+                isEdit && data.branch_schedule && Object.keys(data.branch_schedule).length
+                    ? data.branch_schedule
+                    : {};
 
             days.forEach(day => {
                 const dayWrapper = document.createElement("div");
                 dayWrapper.classList.add("day-schedule-wrapper");
+                dayWrapper.dataset.day = day;
 
                 dayWrapper.innerHTML = `
-                    <h4>
-                        ${day}
-                        <span class="chair-info" id="chairInfo_${day}" style="font-size:0.8em;color:#666;margin-left:6px;"></span>
-                    </h4>
+                    <h4>${day}</h4>
                     <div class="schedule-rows" id="rows_${day}"></div>
                     <button type="button" class="add-schedule-btn" data-day="${day}">+ Add schedule</button>
                 `;
@@ -432,12 +446,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (savedSchedule[day]) {
                     savedSchedule[day].forEach(entry => {
                         addScheduleRow(day, rowsContainer, branches, entry);
+                        updateAddScheduleButton(day);
                     });
                 }
+                updateAddScheduleButton(day);
             });
 
             scheduleContainer.querySelectorAll(".add-schedule-btn").forEach(btn => {
                 btn.addEventListener("click", () => {
+                    if (SCHEDULE_LOCKED) return;
                     const day = btn.dataset.day;
                     const rowsContainer = document.getElementById(`rows_${day}`);
                     addScheduleRow(day, rowsContainer, branches);
@@ -456,15 +473,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 const startVal = saved ? (saved.start_time ?? "") : "";
                 const endVal   = saved ? (saved.end_time ?? "") : "";
 
-                const WHOLE_DAY_START = "09:00";
-                const WHOLE_DAY_END   = "16:30";
-
-                const isWholeDay =
-                    saved && (
-                        (startVal === "" && endVal === "") || 
-                        (startVal?.slice(0,5) === WHOLE_DAY_START && endVal?.slice(0,5) === WHOLE_DAY_END)
-                    );
-
                 const row = document.createElement("div");
                 row.classList.add("schedule-row");
 
@@ -478,30 +486,23 @@ document.addEventListener("DOMContentLoaded", () => {
                         `).join("")}
                     </select>
 
-                    <select class="start-time" name="schedule[${day}][start][]" ${isWholeDay ? "disabled" : ""}></select>
-                    <select class="end-time" name="schedule[${day}][end][]" ${isWholeDay ? "disabled" : ""}></select>
+                    <select class="start-time" name="schedule[${day}][start][]" required></select>
+                    <select class="end-time" name="schedule[${day}][end][]" required></select>
 
-                    <button type="button" class="whole-day-btn">${isWholeDay ? "Undo" : "Whole Day"}</button>
                     <button type="button" class="remove-row-btn">×</button>
                 `;
 
                 const startInput = row.querySelector(".start-time");
-                const endInput = row.querySelector(".end-time");
-                const wholeDayBtn = row.querySelector(".whole-day-btn");
-
-                wholeDayBtn.addEventListener("click", () => toggleWholeDay(wholeDayBtn));
+                const endInput   = row.querySelector(".end-time");
 
                 row.querySelector(".remove-row-btn").addEventListener("click", () => {
-                    const day = row.closest(".day-schedule-wrapper").querySelector("h4").textContent;
                     row.remove();
                     updateAddScheduleButton(day);
-                    updateWholeDayVisibility(day);
                     updateTimeDropdowns(day);
                 });
 
                 rowsContainer.appendChild(row);
                 updateAddScheduleButton(day);
-                updateWholeDayVisibility(day);
 
                 buildTimeOptions(startInput, startVal);
                 buildTimeOptions(endInput, endVal);
@@ -509,78 +510,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 startInput.addEventListener("change", () => updateTimeDropdowns(day));
                 endInput.addEventListener("change", () => updateTimeDropdowns(day));
 
-                updateTimeDropdowns(day);
-
                 const branchSelect = row.querySelector("select[name$='[branch][]']");
-                branchSelect.addEventListener("change", updateBranchDropdowns);
-
                 branchSelect.addEventListener("change", () => {
+                    updateBranchDropdowns();
                     buildTimeOptions(startInput);
                     buildTimeOptions(endInput);
                 });
-                
+
                 setTimeout(updateBranchDropdowns, 10);
-            }
-
-            function buildTimeOptions(select, selected = "") {
-                const row = select.closest(".schedule-row");
-                const branchSelect = row.querySelector("select[name$='[branch][]']");
-                const day = row.closest(".day-schedule-wrapper")
-                    .querySelector("h4").childNodes[0].textContent.trim();
-
-                const branchId = branchSelect?.value;
-
-                const start = 9 * 60;
-                const end = 16 * 60 + 30;
-
-                select.innerHTML = `<option value="">--</option>`;
-
-                for (let t = start; t <= end; t += 30) {
-                    let hh = String(Math.floor(t / 60)).padStart(2, "0");
-                    let mm = String(t % 60).padStart(2, "0");
-                    let val = `${hh}:${mm}`;
-                    let label = formatTime(val);
-
-                    let opt = document.createElement("option");
-                    opt.value = val;
-
-                    if (branchId && CHAIR_OCCUPANCY[branchId]) {
-                    const total = CHAIR_OCCUPANCY[branchId].dental_chairs;
-                    const used = countOccupiedChairs(branchId, day, val);
-
-                        if (used >= total) {
-                            opt.disabled = true;
-                            opt.textContent = `${label} (Full)`;
-                        } else {
-                            opt.textContent = `${label} (${total - used} chair left)`;
-                        }
-
-                        const info = document.getElementById(`chairInfo_${day}`);
-                        if (info) {
-                            if (Number.isFinite(total)) {
-                                info.textContent = `${total - used} / ${total} chairs available`;
-                            } else {
-                                info.textContent = "";
-                            }
-                        }
-
-                    } else {
-                        opt.textContent = label;
-                    }
-
-                    if (selected === val) opt.selected = true;
-                    select.appendChild(opt);
-                }
-            }
-
-            function formatTime(time) {
-                let [h, m] = time.split(":");
-                h = parseInt(h);
-
-                const ampm = h >= 12 ? "pm" : "am";
-                const hour12 = (h % 12) || 12;
-
-                return `${hour12}:${m} ${ampm}`;
             }
 
             container.querySelectorAll("input[type=checkbox]").forEach(chk => {
@@ -650,45 +587,148 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 60);
     }
 
-    function countOccupiedChairs(branchId, day, time) {
-        const data = CHAIR_OCCUPANCY[branchId];
-        if (!data || !data.occupied?.[day]?.[time]) return 0;
-        return data.occupied[day][time].used;
+    function rebuildAllTimeDropdowns() {
+        document.querySelectorAll(".schedule-row").forEach(row => {
+            const start = row.querySelector(".start-time");
+            const end   = row.querySelector(".end-time");
+
+            const startVal = start.value;
+            const endVal   = end.value;
+
+            buildTimeOptions(start, startVal);
+            buildTimeOptions(end, endVal);
+        });
+
+        ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
+            .forEach(updateTimeDropdowns);
     }
 
-    function updateTimeDropdowns(day) {
-        const rows = document.querySelectorAll(`#rows_${day} .schedule-row`);
+    function formatTime(time) {
+        let [h, m] = time.split(":");
+        h = parseInt(h);
 
-        let takenRanges = [];
+        const ampm = h >= 12 ? "pm" : "am";
+        const hour12 = (h % 12) || 12;
 
-        rows.forEach(row => {
-            const start = row.querySelector(".start-time")?.value;
-            const end   = row.querySelector(".end-time")?.value;
+        return `${hour12}:${m} ${ampm}`;
+    }
+    
+    function buildTimeOptions(select, selected = "") {
+        const row = select.closest(".schedule-row");
+        const branchSelect = row.querySelector("select[name$='[branch][]']");
+        const day = row.closest(".day-schedule-wrapper").dataset.day;
+        const branchId = branchSelect?.value;
 
-            if (start && !end) {
-                takenRanges.push({ type: "single", start, row });
+        const start = 9 * 60;
+        const end = 16 * 60 + 30;
+
+        select.innerHTML = `<option value="">--</option>`;
+
+        for (let t = start; t < end; t += 30) {
+            const hh = String(Math.floor(t / 60)).padStart(2, "0");
+            const mm = String(t % 60).padStart(2, "0");
+            const val = `${hh}:${mm}`;
+            const label = formatTime(val);
+
+            const opt = document.createElement("option");
+            opt.value = val;
+
+            const isCurrent = selected === val;
+
+            const dentistBusy = dentistBusyAt(day, val, row);
+
+            if (dentistBusy && !isCurrent) {
+                opt.textContent = `${label}`;
+                opt.disabled = true;
+                select.appendChild(opt);
+                continue;
             }
-            else if (start && end && start < end) {
-                takenRanges.push({ type: "range", start, end, row });
+
+            if (branchId && CHAIR_OCCUPANCY[branchId]) {
+                const total = CHAIR_OCCUPANCY[branchId].dental_chairs;
+                const usedFromDB = countOccupiedChairs(branchId, day, val);
+                const usedLocal  = countLocalChairUsage(branchId, day, val, row);
+                const used = usedFromDB + usedLocal;
+
+                if (used >= total && !isCurrent) {
+                    opt.textContent = `${label} (occupied)`;
+                    opt.disabled = true;
+                } else {
+                    const remaining = Math.max(total - used, 0);
+                    opt.textContent = `${label} (${remaining} chair${remaining !== 1 ? "s" : ""} left)`;
+                }
+            } else {
+                opt.textContent = label;
+            }
+
+            if (isCurrent) opt.selected = true;
+            select.appendChild(opt);
+        }
+    }
+
+    function dentistBusyAt(day, time, excludeRow = null) {
+        let busy = false;
+
+        document.querySelectorAll(`#rows_${day} .schedule-row`).forEach(row => {
+            if (row === excludeRow) return;
+
+            const startSel = row.querySelector(".start-time");
+            const endSel   = row.querySelector(".end-time");
+
+            if (!startSel.value || !endSel.value) return;
+
+            if (time >= startSel.value && time < endSel.value) {
+                busy = true;
             }
         });
 
-        function isBlocked(time, currentRow) {
-            return takenRanges.some(range => {
+        return busy;
+    }
 
-                if (range.row === currentRow) return false;
+    function countOccupiedChairs(branchId, day, time) {
+        const data = CHAIR_OCCUPANCY[branchId];
+        if (!data) return 0;
 
-                if (range.type === "single") {
-                    return time === range.start;
-                }
+        return data.occupied?.[day]?.[time]?.used || 0;
+    }
 
-                if (range.type === "range") {
-                    return time >= range.start && time <= range.end;
-                }
+    function countLocalChairUsage(branchId, day, time, excludeRow = null) {
+        let count = 0;
 
-                return false;
-            });
-        }
+        document.querySelectorAll(`#rows_${day} .schedule-row`).forEach(row => {
+            if (row === excludeRow) return;
+
+            const branchSel = row.querySelector("select[name$='[branch][]']");
+            if (!branchSel || branchSel.value != branchId) return;
+
+            const startSel = row.querySelector(".start-time");
+            const endSel   = row.querySelector(".end-time");
+
+            if (!startSel.value || !endSel.value) return;
+
+            if (time >= startSel.value && time < endSel.value) {
+                count++;
+            }
+        });
+
+        return count;
+    }
+
+    function updateAddScheduleButton(day) {
+        const rowsContainer = document.getElementById(`rows_${day}`);
+        if (!rowsContainer) return;
+
+        const dayWrapper = rowsContainer.closest(".day-schedule-wrapper");
+        if (!dayWrapper) return;
+
+        const addBtn = dayWrapper.querySelector(".add-schedule-btn");
+        if (!addBtn) return;
+
+        addBtn.style.display = "inline-block";
+    }
+    
+    function updateTimeDropdowns(day) {
+        const rows = document.querySelectorAll(`#rows_${day} .schedule-row`);
 
         rows.forEach(row => {
             const startSelect = row.querySelector(".start-time");
@@ -697,24 +737,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const startVal = startSelect.value;
             const endVal   = endSelect.value;
 
-            [...startSelect.options].forEach(opt => {
-                if (!opt.value) return;
-
-                opt.disabled = isBlocked(opt.value, row);
-            });
-
-            [...endSelect.options].forEach(opt => {
-                if (!opt.value) return;
-
-                opt.disabled = isBlocked(opt.value, row) || (startVal && opt.value <= startVal);
-            });
-
-            if (endVal && (endVal <= startVal || endSelect.querySelector(`option[value="${endVal}"]`)?.disabled)) {
-                endSelect.value = "";
-            }
-
-            if (startVal && startSelect.querySelector(`option[value="${startVal}"]`)?.disabled) {
-                startSelect.value = "";
+            if (endVal && startVal && endVal <= startVal) {
                 endSelect.value = "";
             }
         });
@@ -750,85 +773,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     </option>
                 `).join("")}
             `;
-        });
-    }
-
-    function toggleWholeDay(button) {
-        const row = button.closest(".schedule-row");
-        const rowsContainer = row.parentElement;
-
-        const start = row.querySelector(".start-time");
-        const end = row.querySelector(".end-time");
-
-        const day = row.closest(".day-schedule-wrapper")
-                    .querySelector("h4").textContent;
-
-        if (button.textContent === "Whole Day") {
-
-            rowsContainer.querySelectorAll(".schedule-row").forEach(r => {
-                if (r !== row) r.remove();
-            });
-
-            start.value = "09:00";
-            end.value   = "16:30";
-
-            start.disabled = true;
-            end.disabled = true;
-
-            start.value = "09:00";
-            end.value = "16:30";
-
-            start.insertAdjacentHTML("afterend",
-                `<input type="hidden" class="tmp-start-hidden" name="${start.name}" value="">`);
-            end.insertAdjacentHTML("afterend",
-                `<input type="hidden" class="tmp-end-hidden" name="${end.name}" value="">`);
-
-            button.textContent = "Undo";
-
-        } else {
-
-            start.disabled = false;
-            end.disabled = false;
-
-            start.value = "";
-            end.value = "";
-
-            row.querySelectorAll(".tmp-start-hidden, .tmp-end-hidden").forEach(h => h.remove());
-
-            button.textContent = "Whole Day";
-        }
-
-        updateAddScheduleButton(day);
-        updateWholeDayVisibility(day);
-    }
-
-    function updateAddScheduleButton(day) {
-        const rowsContainer = document.getElementById(`rows_${day}`);
-        const hasWholeDay = rowsContainer.querySelector(".start-time:disabled");
-
-        const addBtn = document.querySelector(`button.add-schedule-btn[data-day="${day}"]`);
-
-        if (hasWholeDay) {
-            addBtn.style.display = "none";
-        } else {
-            addBtn.style.display = "inline-block";
-        }
-    }
-
-    function updateWholeDayVisibility(day) {
-        const rowsContainer = document.getElementById(`rows_${day}`);
-        const rows = rowsContainer.querySelectorAll(".schedule-row");
-
-        rows.forEach(row => {
-            const wholeBtn = row.querySelector(".whole-day-btn");
-            const start = row.querySelector(".start-time");
-            const end = row.querySelector(".end-time");
-
-            if (rows.length > 1) {
-                wholeBtn.style.display = "none";
-            } else {
-                wholeBtn.style.display = "inline-block";
-            }
         });
     }
 
@@ -1053,6 +997,21 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
+    function setScheduleReadonly(isReadonly) {
+        SCHEDULE_LOCKED = isReadonly;
+
+        const container = document.getElementById("branchScheduleContainer");
+        if (!container) return;
+
+        container.querySelectorAll("select").forEach(el => {
+            el.disabled = isReadonly;
+        });
+
+        container.querySelectorAll(".add-schedule-btn, .remove-row-btn").forEach(btn => {
+            btn.style.display = isReadonly ? "none" : "inline-block";
+        });
+    }
 });
 
 function clearImage(inputId, hiddenId) {
@@ -1072,3 +1031,33 @@ function clearImage(inputId, hiddenId) {
 function closeEmployeeModal() {
     document.getElementById("manageModal").style.display = "none";
 }
+
+document.addEventListener("submit", function (e) {
+    const form = e.target;
+    if (form.id !== "dentistForm") return;
+
+    const confirmInput = form.querySelector("#confirmDentistUpdate");
+    const dentistIdInput = form.querySelector("input[name='dentist_id']");
+    const statusSelect = form.querySelector("#status");
+    const originalStatusInput = form.querySelector("#originalStatus");
+
+    if (!confirmInput || !dentistIdInput || !statusSelect || !originalStatusInput) return;
+
+    const dentistId = dentistIdInput.value;
+    const currentStatus = originalStatusInput.value;
+    const newStatus = statusSelect.value;
+
+    if (currentStatus === "Active" && newStatus === "Inactive" && confirmInput.value !== "1") {
+        e.preventDefault();
+
+        openDentistUpdateConfirm(
+            dentistId,
+            currentStatus,
+            newStatus,
+            () => {
+                confirmInput.value = "1";
+                form.submit();
+            }
+        );
+    }
+});

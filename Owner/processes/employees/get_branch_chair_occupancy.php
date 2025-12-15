@@ -50,8 +50,24 @@ while ($row = $res->fetch_assoc()) {
     $start = strtotime($row['start_time']);
     $end   = strtotime($row['end_time']);
 
+    $closing = strtotime("16:00");
+
     for ($t = $start; $t < $end; $t += 1800) {
         $slot = date("H:i", $t);
+
+        if (!isset($occupied[$day][$slot])) {
+            $occupied[$day][$slot] = [
+                "used" => 0,
+                "dentists" => []
+            ];
+        }
+
+        $occupied[$day][$slot]["used"]++;
+        $occupied[$day][$slot]["dentists"][] = $row['dentist_name'];
+    }
+
+    if ($end === $closing) {
+        $slot = date("H:i", $end);
 
         if (!isset($occupied[$day][$slot])) {
             $occupied[$day][$slot] = [
